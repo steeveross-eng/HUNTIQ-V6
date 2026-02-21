@@ -98,12 +98,12 @@ Le nombre de fichiers JS chargés (8 au lieu de 30+) confirme que **React.lazy()
 
 **URLs à tester manuellement :**
 ```
-https://territorial-ai.preview.emergentagent.com/
-https://territorial-ai.preview.emergentagent.com/login
-https://territorial-ai.preview.emergentagent.com/shop
-https://territorial-ai.preview.emergentagent.com/carte-interactive
-https://territorial-ai.preview.emergentagent.com/contenus
-https://territorial-ai.preview.emergentagent.com/mon-territoire
+https://contour-mapper-2.preview.emergentagent.com/
+https://contour-mapper-2.preview.emergentagent.com/login
+https://contour-mapper-2.preview.emergentagent.com/shop
+https://contour-mapper-2.preview.emergentagent.com/carte-interactive
+https://contour-mapper-2.preview.emergentagent.com/contenus
+https://contour-mapper-2.preview.emergentagent.com/mon-territoire
 ```
 
 **Outil recommandé :** [PageSpeed Insights](https://pagespeed.web.dev/)

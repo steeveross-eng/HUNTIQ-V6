@@ -1,70 +1,67 @@
 <analysis>**original_problem_statement:**
-L'utilisateur, COPILOT MAÎTRE (Steeve), dirige le projet HUNTIQ-V5. Le projet est entré dans la PHASE G - BIONIC ULTIMATE INTEGRATION pour construire un écosystème d'intelligence artificielle sur une base de code stable et figée (GOLD MASTER BIONIC V5).
+L'utilisateur, COPILOT MAÎTRE (Steeve), dirige le projet HUNTIQ-V5. Le projet est entré dans une nouvelle phase (P1) après la validation et la promotion de la PHASE G - P0 en version . Cette version P0 intègre 12 facteurs comportementaux avancés dans le moteur d'intelligence artificielle.
 
-Après de multiples itérations de documentation et de planification (création d'un inventaire de données, de contrats JSON, d'une matrice de cohérence et d'un plan de tests), l'agent a obtenu le feu vert pour implémenter les modules P0 (, ). Une version  fonctionnelle et testée a été livrée.
-
-Cependant, l'utilisateur a jugé cette version incomplète et a émis un NO GO pour la promotion vers une version stable. La commande la plus récente et la plus prioritaire est d'intégrer **12 nouveaux facteurs comportementaux majeurs** dans les modules P0 pour atteindre le niveau BIONIC V5 ULTIME x2. C'est un prérequis absolu avant de poursuivre.
+La nouvelle tâche prioritaire et non négociable de la phase P1 est l'implémentation du module . L'objectif est d'afficher sur la carte de l'application des hotspots (zones d'intérêt), des zones comportementales et des corridors de déplacement générés par le moteur P0-STABLE. Cette fonctionnalité requiert le développement de nouveaux endpoints backend, de contrats JSON stricts, et d'une intégration frontend complexe avec des exigences visuelles et UX très spécifiques (HOTSPOTS CONTOURS 200% RÉALISTES).
 
 PRODUCT REQUIREMENTS:
 - **GOLD MASTER BIONIC V5:** L'état de l'application de base est figé et ne doit pas être modifié.
-- **PHASE G (BIONIC ULTIMATE INTEGRATION):** Développer des modules intelligents dans une branche dédiée ().
-    - **P0 (Fondations):** Moteur Prédictif Territorial, Modèles Comportementaux. Doit maintenant inclure 12 facteurs comportementaux avancés (prédation, stress, hiérarchie sociale, etc.).
-    - **P1 (Données & Visualisation):** Intégration de données environnementales, Système de Scoring, Overlays Visuels.
-    - **P2 (Intelligence Avancée):** Moteur de Recommandations, Intégration API Externes.
-    - **P3 (Écosystème):** Préparation BionicMarket.
-- **Cadres Stricts (G-QA, G-SEC, G-DOC):** Tout nouveau module doit inclure des tests, des mesures de sécurité et une documentation exhaustive.
+- **Architecture BIONIC V5:** Tout développement doit respecter une architecture 100% modulaire, être piloté par des contrats JSON, et se conformer aux normes G-QA (Qualité), G-SEC (Sécurité), et G-DOC (Documentation).
+- **Phase P1 - Priorité Absolue :**
+    1.  **Implémentation Backend :** Créer trois nouveaux endpoints (, , ).
+    2.  **Contrats JSON :** Définir les schémas pour les hotspots, zones et corridors.
+    3.  **Implémentation Frontend :** Intégrer les données sur l'onglet CARTE. Afficher les contours des hotspots de manière ultra-réaliste (contours fins, transparents, formes naturelles) sans calcul côté client.
+    4.  **UX :** Permettre à l'utilisateur d'activer/désactiver chaque hotspot individuellement ou par groupe de manière instantanée.
 
 **User's preferred language**: Français
 
 **what currently exists?**
-L'application est une stack full-stack (React, FastAPI, MongoDB) dans un état stable (GOLD MASTER BIONIC V5). Les modules de la Phase G P0 (, ) ont été implémentés dans un nouveau répertoire  pour éviter les conflits avec le code hérité. Ces modules sont fonctionnels, exposent des endpoints API (), sont couverts par plus de 35 tests unitaires et d'intégration, et ont été raffinés dans une version . Cependant, cette version est considérée comme incomplète car elle ne contient pas les 12 facteurs comportementaux avancés demandés par l'utilisateur.
+Le projet dispose d'une base de code stable (GOLD MASTER) et d'un moteur d'IA  entièrement fonctionnel, testé (91 tests unitaires et API) et documenté. Ce moteur intègre 12 facteurs comportementaux avancés. La structure pour la phase P1 a été initiée avec la création du répertoire . Les fichiers de contrats JSON (, , ) et un service backend initial () pour la nouvelle fonctionnalité P1-HOTSPOTS ont été créés.
 
 **Last working item**:
-- **Last item agent was working:** L'agent venait de recevoir la commande de l'utilisateur d'intégrer 12 nouveaux facteurs comportementaux dans les modules P0 existants. L'agent a accusé réception et s'apprêtait à commencer cette mise à jour majeure pour créer la version .
-- **Status:** NOT STARTED
-- **Agent Testing Done:** N/A (pour les 12 nouveaux facteurs).
-- **Which testing method agent to use?** backend testing agent. La tâche implique des modifications profondes de la logique métier, la mise à jour des contrats, des pondérations et l'ajout de nombreux nouveaux cas de test au plan de tests G-QA existant.
-- **User Testing Done:** N/A
+- **Last item agent was working:** L'agent a commencé l'implémentation du module P1-HOTSPOTS. Il a créé l'architecture de base du backend en ajoutant le répertoire , les schémas de contrat JSON pour les hotspots, zones et corridors, ainsi qu'un service initial pour la génération des contours naturels.
+- **Status:** IN PROGRESS
+- **Agent Testing Done:** N
+- **Which testing method agent to use?** both. Le backend nécessitera des tests d'intégration pour les nouveaux endpoints via le . Le frontend nécessitera une validation visuelle via  et une validation fonctionnelle par le  pour l'interactivité du panneau de contrôle des hotspots.
+- **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-- Il n'y a pas de bugs techniques. La seule tâche en attente est une demande de fonctionnalité majeure.
+Aucun bug n'est en cours. Le travail se concentre sur le développement d'une nouvelle fonctionnalité.
 
 **In progress Task List**:
-- **Task 1:** Intégrer les 12 facteurs comportementaux majeurs pour créer P0-beta2 (Priorité : P0 - HIGHEST)
-    - **Where to resume:** La tâche consiste à modifier en profondeur les modules P0 existants et les documents associés. Il faut reprendre le travail en modifiant en parallèle :
-        1.  
-        2.  
-        3.  
-        4.  
-        5.   (v1.2.0)
-        6.  
-        7.  
-    - **What will be achieved with this?** Une version  des modules d'IA, conforme à la vision BIONIC V5 ULTIME x2 de l'utilisateur, intégrant des logiques de prédation, stress, hiérarchie sociale, etc. La livraison de ces 7 livrables mis à jour est nécessaire pour obtenir le GO final de l'utilisateur pour la version P0-stable.
-    - **Status:** NOT STARTED
-    - **Should Test frontend/backend/both after fix?** Backend
+- **Task 1:** Implémentation complète du module P1-HOTSPOTS (Priorité : P0 - HIGHEST)
+    - **Where to resume:** Le travail doit reprendre avec la finalisation de la logique backend.
+        1.  Finaliser le service  pour qu'il génère des données géospatiales conformes aux exigences 200% réalistes.
+        2.  Créer le routeur et les endpoints API dans le module .
+        3.  Intégrer ce nouveau routeur dans l'orchestrateur principal de l'application.
+        4.  Développer les composants React nécessaires dans le frontend pour afficher la carte, les overlays (contours) et le panneau de contrôle (HotspotControlPanel).
+        5.  Connecter le frontend aux nouveaux endpoints API.
+    - **What will be achieved with this?** L'application pourra afficher dynamiquement sur une carte les zones d'activité animale prédites par le moteur d'IA, avec une interface interactive et un rendu visuel de haute fidélité, conformément à la demande de l'utilisateur.
+    - **Status:** IN PROGRESS
+    - **Should Test frontend/backend/both after fix?** Both
     - **Blocked on something:** Rien.
 
 **Upcoming and Future Tasks**
-*   **Upcoming Tasks (Post P0-stable):**
-    *   (P1) Intégrer les données environnementales (OpenWeatherMap, API gouvernementales) via un module ENV-BRIDGE.
-    *   (P1) Implémenter le Système de Scoring Dynamique dans l'interface.
-    *   (P1) Créer les Overlays Visuels (heatmaps) sur la carte.
+*   **Upcoming Tasks (Reste de la Phase P1, après P1-HOTSPOTS):**
+    *   (P1-ENV) Intégration d'OpenWeatherMap pour les données environnementales.
+    *   (P1-SCORE) Développement d'un Système de Scoring Dynamique.
+    *   (P1-VIS) Finalisation des spécifications pour les Overlays Visuels (en partie couverts par P1-HOTSPOTS).
+    *   (P1-API) Création du nouveau endpoint .
 *   **Future Tasks (Backlog):**
     *   (P2) Moteur de Recommandations.
     *   (P2) Intégration d'API externes supplémentaires.
     *   (P3) Préparation de la plateforme BionicMarket.
 
 **Completed work in this session**
-- **Création de l'architecture de la Phase G (DONE):** Mise en place d'une structure modulaire () pour isoler le nouveau code du GOLD MASTER.
-- **Documentation et Contrats (DONE):** Production et itérations multiples des documents fondateurs :  (v1.2.0), , , , et .
-- **Implémentation de P0-alpha (DONE):** Développement de la logique métier pour les modules  et , incluant la gestion des cycles temporels, microclimats, et pression de chasse.
-- **Résolution de conflit d'import (DONE):** Renommage du répertoire du module en  pour éviter un conflit avec un fichier  hérité et intouchable.
-- **Tests de P0-alpha (DONE):** Création et exécution réussie de 35 tests unitaires et d'intégration ().
-- **Rapports de Revue Exécutive (DONE):** Génération des 3 rapports d'audit (, , ).
-- **Implémentation de P0-beta (DONE):** Application des correctifs identifiés dans la revue (ex: règle d'arbitrage rut/pression de chasse), et validation des correctifs via les tests et l'API.
+- **Intégration P0-beta2 (DONE):** Les 12 facteurs comportementaux majeurs ont été intégrés avec succès dans les modules  and .
+- **Mise à jour des Tests (DONE):** Le nombre de tests a été porté de 35 à 70 pour couvrir les nouveaux facteurs.
+- **Validation Complète (DONE):** L'implémentation a été validée par 91 tests (70 unitaires + 21 API) via le testing agent, ainsi que par des tests  manuels.
+- **Mise à jour de la Documentation (DONE):** Tous les documents (contrats JSON, inventaire v1.3.0, matrice de cohérence) ont été mis à jour.
+- **Revue Exécutive (DONE):** Génération des 4 rapports de revue (Fonctionnelle, Technique, Architecturale, Delta) demandés par l'utilisateur.
+- **Promotion en P0-STABLE (DONE):** L'utilisateur a validé la livraison et a officiellement promu la version en .
+- **Planification P1 (DONE):** Création des plans détaillés pour la phase P1, y compris le plan  qui a reçu le GO de l'utilisateur.
 
 **Earlier issues found/mentioned but not fixed**
-- Aucun.
+- Au cours de la revue exécutive, l'agent a noté que certains scores semblaient plafonner à 100, suggérant un problème de bornage. Cela a été jugé non bloquant pour la promotion en P0-STABLE mais pourrait nécessiter une investigation future.
 
 **Known issue recurrence from previous fork**
 - Aucune.
@@ -73,51 +70,49 @@ L'application est une stack full-stack (React, FastAPI, MongoDB) dans un état s
 
 
 **Key Technical Concepts**
-- **Architecture BIONIC V5:** Approche modulaire stricte, pilotée par contrats JSON.
-- **Cadres G-QA, G-SEC, G-DOC:** Standards obligatoires de Qualité, Sécurité, Documentation.
-- **GOLD MASTER:** Version stable et figée de l'application qui ne doit pas être altérée.
-- **Pondérations dynamiques:** Système de règles pour ajuster l'influence des facteurs (météo, saison, pression de chasse) sur les scores prédictifs.
-- **12 Facteurs Comportementaux:** Le nouvel ensemble de logiques à implémenter (prédation, stress, hiérarchie, etc.).
+- **Architecture BIONIC V5:** Approche modulaire stricte, pilotée par contrats JSON, avec des normes de qualité (G-QA), sécurité (G-SEC) et documentation (G-DOC).
+- **GOLD MASTER:** Le code de base de l'application, qui est stable et ne doit jamais être modifié.
+- **Hotspots Contours 200% Réalistes:** Exigence de rendu visuel pour les overlays de la carte, impliquant des formes géospatiales naturelles, des contours fins et transparents, sans simplification géométrique.
 
 **key DB schema**
-- Aucun changement. Le moteur prédictif fonctionne sur des données en entrée via les API, sans modifier le schéma de la base de données existante.
+- Aucun changement. Le moteur et les nouvelles fonctionnalités opèrent sur des données en entrée via les API sans altérer le schéma de la base de données.
 
 **changes in tech stack**
 - Aucun changement.
 
 **All files of reference**
-*   **Modules Python à mettre à jour :**
+*   **Fichiers créés pour P1:**
     *   
     *   
-*   **Fichier de test à mettre à jour :**
-    *   
-*   **Contrats JSON à mettre à jour :**
     *   
     *   
-*   **Documents de référence à mettre à jour :**
+*   **Plan de référence:**
     *   
+*   **Fichiers P0 modifiés (maintenant stables):**
     *   
-*   **Documents de référence (contextuels) :**
     *   
     *   
 
 **Areas that need refactoring**:
-- Aucun. L'architecture a été conçue pour éviter le refactoring du code existant.
+- Aucun.
 
 **key api endpoints**
-- : Calcule le score d'un territoire.
-- : Prédit le comportement animal.
-- : Fournit une analyse combinée.
+- **Existants (P0-STABLE):**
+    - 
+    - 
+- **A implémenter (P1-HOTSPOTS):**
+    - 
+    - 
+    - 
 
 **Critical Info for New Agent**
 - **Langue :** La communication doit impérativement être en **Français**.
-- **Utilisateur (COPILOT MAÎTRE) :** Les directives de l'utilisateur sont absolues et extrêmement précises. La priorité actuelle est unique et non négociable : intégrer les 12 facteurs comportementaux pour livrer .
-- **Prochaine Étape Impérative :** Ne rien faire d'autre que cette intégration. Tout développement sur P1 est bloqué.
-- **GOLD MASTER:** Le code source existant (tout ce qui est en dehors de  et des nouveaux documents/contrats) est intouchable. Ne pas modifier  au-delà de la ligne d'import du router.
-- **Architecture Modulaire:** L'implémentation doit respecter scrupuleusement les contrats JSON, les pondérations et la séparation des logiques. Toute nouvelle logique doit être documentée (G-DOC) et testée (G-QA).
+- **Utilisateur (COPILOT MAÎTRE) :** Les directives de l'utilisateur sont absolues, extrêmement précises et non négociables.
+- **Priorité Actuelle :** L'implémentation complète du module P1-HOTSPOTS est la seule tâche autorisée. Tout le reste est bloqué jusqu'à sa validation.
+- **GOLD MASTER:** Le code source existant en dehors des nouveaux modules P1 est intouchable.
+- **Exigences Visuelles :** Le respect strict des spécifications HOTSPOTS CONTOURS 200% RÉALISTES est un critère de succès majeur. Aucun calcul ne doit être fait côté frontend.
 
 **documents and test reports created in this job**
-*    (v1.2.0)
 *   
 *   
 *   
@@ -126,29 +121,35 @@ L'application est une stack full-stack (React, FastAPI, MongoDB) dans un état s
 *   
 *   
 *   
+*   
+*   
+*   
+*    (mis à jour)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (LATEST - PENDING ACTION):** A émis un NO GO pour . Il a ordonné l'intégration de **12 facteurs comportementaux majeurs** (prédation, stress, hiérarchie, etc.) dans les modules P0, les contrats, les tests et la documentation pour produire . La promotion vers  est conditionnée à la livraison et validation de cette mise à jour. **(STATUS: PENDING)**
-2.  **User (ADDRESSED):** A demandé une revue exécutive complète de la version , exigeant 3 rapports d'audit (fonctionnel, technique, delta).
-3.  **User (ADDRESSED):** A donné le GO FORMEL pour l'implémentation des modules P0 () après validation de tous les documents préparatoires (inventaire, contrats, matrice, plan de tests).
+- **(LATEST - PENDING ACTION)** User gave the official GO to start the implementation of the  module, based on the approved plan. The user reiterated the very strict visual and architectural requirements. **STATUS: IN PROGRESS**
+- User requested a final version of the  after adding the new feature to the P1 scope.
+- User added a new mandatory and high-priority feature for P1: displaying hotspots on the map, with very specific backend, frontend, visual, and UX requirements.
+- User received the P1 planning documents and acknowledged that P0 is stable.
+- User validated the  executive review and officially promoted it to .
+- User requested a full executive review (4 reports) for  before promoting it to stable.
 
 **Project Health Check:**
 - **Broken:** Rien.
-- **Mocked:** La logique métier dans  et  est fonctionnelle mais maintenant considérée comme incomplète par l'utilisateur. Elle doit être massivement étendue.
+- **Mocked:** Le service  est un squelette et doit être implémenté.
 
 **3rd Party Integrations**
-- **Actives:** Google Fonts, .
-- **Planifiées (Phase G):** OpenWeatherMap, APIs gouvernementales du Québec (chasse), GPT-5.2 (via Emergent LLM Key, pour des tâches non-critiques uniquement).
+- **Actives:** Aucune.
+- **Planifiées (Phase P1):** OpenWeatherMap.
 
 **Testing status**
-- **Testing agent used after significant changes:** NO (mais fortement recommandé pour la prochaine étape).
+- **Testing agent used after significant changes:** YES (pour la phase P0).
 - **Troubleshoot agent used after agent stuck in loop:** NO
-- **Test files created:** . Ce fichier contient 35 tests qui passent pour la version  actuelle mais devront être mis à jour.
+- **Test files created:**  (contient maintenant 70 tests). De nouveaux fichiers de test devront être créés pour P1.
 - **Known regressions:** Aucune.
 
 **Credentials to test flow:**
-- **Username:** 
-- **Password:** 
+- N/A pour la tâche actuelle qui est en cours de développement.
 
 **What agent forgot to execute**
-- Rien. L'agent a été interrompu juste après avoir reçu une nouvelle directive majeure de l'utilisateur. Il s'apprêtait à commencer l'implémentation de la version .</analysis>
+- Rien. L'agent suit la feuille de route très stricte définie par l'utilisateur.</analysis>

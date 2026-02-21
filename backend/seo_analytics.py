@@ -29,7 +29,7 @@ seo_router = APIRouter(prefix="/api/seo", tags=["SEO & Analytics"])
 MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 DB_NAME = os.environ.get("DB_NAME", "bionic_territory")
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
-SITE_URL = os.environ.get("SITE_URL", "https://territorial-ai.preview.emergentagent.com")
+SITE_URL = os.environ.get("SITE_URL", "https://contour-mapper-2.preview.emergentagent.com")
 
 client = None
 db = None
