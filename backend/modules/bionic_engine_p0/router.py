@@ -49,6 +49,11 @@ router = APIRouter(prefix="/v1/bionic", tags=["BIONIC Engine P0"])
 _pt_service = PredictiveTerritorialService()
 _bm_service = BehavioralModelsService()
 
+# P1-HOTSPOTS: Services cartographiques
+_hotspot_service = HotspotService()
+_zone_service = ZoneService()
+_corridor_service = CorridorService()
+
 
 # =============================================================================
 # HEALTH & STATUS
