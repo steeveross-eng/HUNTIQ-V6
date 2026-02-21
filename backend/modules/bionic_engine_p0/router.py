@@ -10,7 +10,7 @@ Conformite: G-SEC | G-QA | G-DOC
 """
 
 from fastapi import APIRouter, HTTPException, Query
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 import logging
 
@@ -22,6 +22,23 @@ from modules.bionic_engine_p0.contracts.data_contracts import (
     BehavioralPredictionInput
 )
 from modules.bionic_engine_p0.core import get_engine
+
+# P1-HOTSPOTS: Import services cartographiques
+from modules.bionic_engine_p0.services.hotspot_service import (
+    HotspotService,
+    HotspotRequest,
+    HotspotResponse
+)
+from modules.bionic_engine_p0.services.zone_service import (
+    ZoneService,
+    ZoneRequest,
+    ZoneResponse
+)
+from modules.bionic_engine_p0.services.corridor_service import (
+    CorridorService,
+    CorridorRequest,
+    CorridorResponse
+)
 
 logger = logging.getLogger("bionic_engine.router")
 
