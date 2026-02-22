@@ -336,7 +336,7 @@ class HotspotService:
                 optimal_hours=optimal_hours
             ),
             species=[species],
-            style=HotspotStyle(**create_hotspot_style(hotspot_type)),
+            style=HotspotStyle(**create_hotspot_style(hotspot_type, species)),
             metadata=HotspotMetadata(
                 source_factor=factor_name,
                 factor_score=round(score, 1),
