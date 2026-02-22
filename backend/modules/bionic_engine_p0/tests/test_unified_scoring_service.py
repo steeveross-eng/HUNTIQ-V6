@@ -93,10 +93,10 @@ def illegal_context():
 def dawn_context():
     """Contexte à l'aube (heure optimale légale)."""
     tz = ZoneInfo("America/Montreal")
-    # 6h du matin en été = aube optimale
+    # 7h du matin = légal même en hiver, proche de l'aube
     target_dt = datetime.combine(
         datetime.now(tz).date(),
-        time(6, 0),
+        time(7, 0),
         tzinfo=tz
     )
     return ScoreContext(
