@@ -580,6 +580,9 @@ export const WaypointMap = ({
                       corridorTypes={hotspotSettings.corridorTypes}
                       minScoreThreshold={hotspotSettings.minScoreThreshold}
                       timeRange={hotspotSettings.timeRange}
+                      showTogglePanel={showTogglePanel}
+                      onTogglePanelClose={() => setShowTogglePanel(false)}
+                      onHotspotsLoaded={(count) => setHotspotsCount(count)}
                     />
                   )}
                 </MapContainer>
