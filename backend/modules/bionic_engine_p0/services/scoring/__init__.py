@@ -25,9 +25,11 @@ Conformité: G-SEC | G-QA | G-DOC | BIONIC V5
 from .base_score_service import (
     BaseScoreService,
     ScoreResult,
+    ScoreComponent,
     ScoreLevel,
     ScoreContext,
-    ScoreWeight
+    ScoreWeight,
+    ScoreCategory
 )
 
 from .score_probability_service import ScoreProbabilityService
