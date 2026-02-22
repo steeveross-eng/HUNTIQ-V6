@@ -382,6 +382,17 @@ export const WaypointMap = ({
                 >
                   <Flame className="h-4 w-4 mr-1" /> {showHeatmap ? 'Masquer' : 'Heatmap'}
                 </Button>
+                {/* P1-HOTSPOTS: Bouton Overlays BIONIC */}
+                <Button
+                  size="sm"
+                  className={`${(hotspotSettings.showHotspots || hotspotSettings.showZones || hotspotSettings.showCorridors)
+                    ? 'bg-amber-600 hover:bg-amber-700' 
+                    : 'bg-slate-700 hover:bg-slate-600'}`}
+                  onClick={() => setShowHotspotPanel(!showHotspotPanel)}
+                  data-testid="toggle-hotspots-panel"
+                >
+                  <Layers className="h-4 w-4 mr-1" /> Hotspots BIONIC
+                </Button>
                 <Button
                   size="sm"
                   className={isAddingMode 
@@ -421,6 +432,14 @@ export const WaypointMap = ({
           </CardHeader>
           <CardContent className="p-0 flex-1 min-h-0">
             <div className="h-full relative">
+              {/* P1-HOTSPOTS: Panneau de controle */}
+              <HotspotControlPanel 
+                isOpen={showHotspotPanel}
+                onClose={() => setShowHotspotPanel(false)}
+                defaultSettings={hotspotSettings}
+                onSettingsChange={(settings) => setHotspotSettings(settings)}
+              />
+              
               {loading ? (
                 <div className="h-full flex items-center justify-center bg-slate-900">
                   <div className="text-slate-400">Chargement de la carte...</div>
