@@ -46,9 +46,11 @@ __all__ = [
     # Base
     'BaseScoreService',
     'ScoreResult',
+    'ScoreComponent',
     'ScoreLevel',
     'ScoreContext',
     'ScoreWeight',
+    'ScoreCategory',
     # Services (9 scores)
     'ScoreProbabilityService',
     'ScoreHabitatService',
