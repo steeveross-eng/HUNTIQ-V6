@@ -128,13 +128,17 @@ class ExclusionZone:
 
 @dataclass
 class RegionCache:
-    """Cache d'une région géographique."""
+    """Cache d'une région géographique avec géométries pré-calculées."""
     region_id: str
     region_name: str
     bbox: List[float]  # [west, south, east, north]
     exclusion_zones: List[ExclusionZone] = field(default_factory=list)
     last_updated: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     version: str = "1.0.0"
+    # Cache des géométries préparées
+    _prepared_by_type: Dict[str, Any] = field(default_factory=dict, repr=False)
+    _prepared_all: Any = field(default=None, repr=False)
+    _is_prepared: bool = field(default=False, repr=False)
     
     @property
     def is_valid(self) -> bool:
@@ -142,27 +146,50 @@ class RegionCache:
         age = datetime.now(timezone.utc) - self.last_updated
         return age < timedelta(days=CACHE_VALIDITY_DAYS)
     
+    def prepare_geometries(self) -> None:
+        """Pré-calcule et cache les géométries unifiées."""
+        if self._is_prepared:
+            return
+        
+        logger.info(f"Préparation des géométries pour {self.region_id}...")
+        
+        # Grouper par type
+        by_type: Dict[str, List] = {}
+        for zone in self.exclusion_zones:
+            if zone.geometry is not None:
+                if zone.zone_type not in by_type:
+                    by_type[zone.zone_type] = []
+                by_type[zone.zone_type].append(zone.geometry)
+        
+        # Préparer par type
+        for zone_type, geoms in by_type.items():
+            if geoms:
+                try:
+                    combined = unary_union(geoms)
+                    self._prepared_by_type[zone_type] = prep(combined)
+                except Exception as e:
+                    logger.warning(f"Erreur préparation {zone_type}: {e}")
+        
+        # Préparer union totale
+        all_geoms = [z.geometry for z in self.exclusion_zones if z.geometry is not None]
+        if all_geoms:
+            try:
+                self._prepared_all = prep(unary_union(all_geoms))
+            except Exception as e:
+                logger.warning(f"Erreur préparation union totale: {e}")
+        
+        self._is_prepared = True
+        logger.info(f"Géométries préparées pour {self.region_id}: {len(self._prepared_by_type)} types")
+    
     def get_prepared_geometry(self, zone_type: str) -> Optional[Any]:
         """Retourne la géométrie préparée pour un type d'exclusion."""
-        zones = [z for z in self.exclusion_zones if z.zone_type == zone_type]
-        if not zones:
-            return None
-        
-        geometries = [z.geometry for z in zones if z.geometry is not None]
-        if not geometries:
-            return None
-        
-        combined = unary_union(geometries)
-        return prep(combined)
+        self.prepare_geometries()
+        return self._prepared_by_type.get(zone_type)
     
     def get_all_exclusions_geometry(self) -> Optional[Any]:
         """Retourne la géométrie combinée de toutes les exclusions."""
-        geometries = [z.geometry for z in self.exclusion_zones if z.geometry is not None]
-        if not geometries:
-            return None
-        
-        combined = unary_union(geometries)
-        return prep(combined)
+        self.prepare_geometries()
+        return self._prepared_all
 
 
 # =============================================================================
