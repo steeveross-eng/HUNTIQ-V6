@@ -332,6 +332,12 @@ export const HotspotOverlay = ({
         
         const [hotspotsData, zonesData, corridorsData] = await Promise.all(requests);
         
+        console.log('[HotspotOverlay] Responses:', { 
+          hotspots: hotspotsData?.hotspots?.length, 
+          zones: zonesData?.zones?.length,
+          corridors: corridorsData?.corridors?.length 
+        });
+        
         if (hotspotsData?.success && hotspotsData.hotspots?.length) {
           setHotspots(toGeoJSONCollection(hotspotsData.hotspots));
         } else {
@@ -351,20 +357,19 @@ export const HotspotOverlay = ({
         }
         
       } catch (err) {
-        console.error('HotspotOverlay fetch error:', err);
+        console.error('[HotspotOverlay] Fetch error:', err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
     
-    // Debounce le fetch
-    const timeoutId = setTimeout(fetchData, 300);
+    // Execute immediatement au montage
+    fetchData();
     
     // Recharger quand la carte bouge
     const onMoveEnd = () => {
-      clearTimeout(timeoutId);
-      setTimeout(fetchData, 300);
+      fetchData();
     };
     
     map.on('moveend', onMoveEnd);
