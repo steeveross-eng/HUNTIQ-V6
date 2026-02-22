@@ -258,7 +258,8 @@ export const HotspotOverlay = ({
   minScoreThreshold = 50,
   timeRange = '24h',
   showTogglePanel = false,
-  onTogglePanelClose = () => {}
+  onTogglePanelClose = () => {},
+  onHotspotsLoaded = () => {}  // Callback quand les hotspots sont chargés
 }) => {
   const map = useMap();
   const [hotspots, setHotspots] = useState(null);
