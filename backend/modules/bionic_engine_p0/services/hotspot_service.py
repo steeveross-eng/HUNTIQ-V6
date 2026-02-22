@@ -365,12 +365,19 @@ class HotspotService:
         if not score_result.success or score_result.overall_score < 50:
             return None
         
-        geometry = self._contour_gen.generate_hotspot_geometry(
+        # Generer geometrie CIRCULAIRE naturelle
+        coords = self._contour_gen.generate_natural_polygon(
             center_lat=waypoint.latitude,
             center_lng=waypoint.longitude,
-            score=score_result.overall_score,
-            hotspot_type="composite_optimal"
+            irregularity=0.12,
+            num_vertices=32,
+            species=species.value
         )
+        
+        geometry = {
+            "type": "Polygon",
+            "coordinates": [coords]
+        }
         
         return Hotspot(
             id=generate_id("HS"),
