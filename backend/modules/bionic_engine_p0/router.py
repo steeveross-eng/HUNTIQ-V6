@@ -361,3 +361,162 @@ async def combined_analysis(
     except Exception as e:
         logger.error(f"Combined analysis error: {e}")
         raise HTTPException(status_code=500, detail="Analysis error")
+
+
+
+# =============================================================================
+# P1-HOTSPOTS - MAP ENDPOINTS
+# =============================================================================
+
+@router.post("/map/hotspots", response_model=HotspotResponse)
+async def get_map_hotspots(request: HotspotRequest):
+    """
+    Genere les hotspots cartographiques pour une zone.
+    
+    PHASE P1-HOTSPOTS - Endpoint principal
+    
+    Specifications visuelles BIONIC V5:
+    - Contours ultra-fins (1-2px)
+    - Centre 100% transparent (fill_opacity = 0)
+    - Formes naturelles (Chaikin smoothing)
+    - ZERO glow, shadow, halo
+    
+    Args:
+        request: HotspotRequest conforme au contrat hotspot_contract.json
+            - bounds: Zone geographique (north, south, east, west)
+            - species: Liste d'especes ["moose", "deer", ...]
+            - time_range: "24h" | "72h" | "7d"
+            - hotspot_types: Types de hotspots a generer
+            - min_score_threshold: Seuil minimum (default 70)
+            
+    Returns:
+        HotspotResponse avec hotspots GeoJSON pre-calcules
+        - hotspots[].geometry: Polygones prets pour Leaflet
+        - hotspots[].style: Styles visuels conformes
+        - statistics: Metriques de couverture
+        
+    G-QA: P95 < 2000ms
+    G-SEC: Validation automatique via Pydantic
+    """
+    try:
+        result = _hotspot_service.generate_hotspots(request)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Hotspot generation error: {e}")
+        raise HTTPException(status_code=500, detail="Hotspot generation error")
+
+
+@router.post("/map/zones", response_model=ZoneResponse)
+async def get_map_zones(request: ZoneRequest):
+    """
+    Genere les zones comportementales pour une zone.
+    
+    PHASE P1-HOTSPOTS - Zones comportementales
+    
+    Types de zones:
+    - feeding: Zones d'alimentation
+    - bedding: Zones de repos
+    - rut_arena: Arenes de rut
+    - thermal_cover: Couvert thermique
+    - water_access: Acces a l'eau
+    - predation_zone: Zones de predation
+    - yarding_zone: Ravages hivernaux
+    
+    Args:
+        request: ZoneRequest conforme au contrat zone_contract.json
+            - bounds: Zone geographique
+            - species: Espece cible
+            - zone_types: Types de zones a generer
+            - include_overlaps: Calculer la matrice de superposition
+            
+    Returns:
+        ZoneResponse avec zones GeoJSON
+        - zones[].geometry: Polygones prets pour Leaflet
+        - overlap_matrix: Relations entre zones
+        
+    G-QA: P95 < 1500ms
+    """
+    try:
+        result = _zone_service.generate_zones(request)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Zone generation error: {e}")
+        raise HTTPException(status_code=500, detail="Zone generation error")
+
+
+@router.post("/map/corridors", response_model=CorridorResponse)
+async def get_map_corridors(request: CorridorRequest):
+    """
+    Genere les corridors de deplacement pour une zone.
+    
+    PHASE P1-HOTSPOTS - Corridors de deplacement
+    
+    Types de corridors:
+    - movement: Corridors principaux
+    - avoidance: Corridors d'evitement
+    - preferred: Routes preferees
+    - feeding_transit: Transit alimentation-repos
+    
+    Args:
+        request: CorridorRequest conforme au contrat corridor_contract.json
+            - bounds: Zone geographique
+            - species: Espece cible
+            - corridor_types: Types de corridors
+            - connect_zones: Connecter aux zones comportementales
+            
+    Returns:
+        CorridorResponse avec corridors GeoJSON
+        - corridors[].geometry: LineStrings prets pour Leaflet
+        - corridors[].movement_context: Contexte de deplacement
+        
+    G-QA: P95 < 1200ms
+    """
+    try:
+        result = _corridor_service.generate_corridors(request)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Corridor generation error: {e}")
+        raise HTTPException(status_code=500, detail="Corridor generation error")
+
+
+@router.get("/map/status")
+async def get_map_engine_status():
+    """
+    Statut du module P1-HOTSPOTS.
+    
+    G-DOC: Endpoint de monitoring
+    """
+    return {
+        "module": "P1-HOTSPOTS",
+        "version": "1.0.0",
+        "status": "active",
+        "endpoints": [
+            {
+                "path": "/api/v1/bionic/map/hotspots",
+                "method": "POST",
+                "description": "Hotspots cartographiques"
+            },
+            {
+                "path": "/api/v1/bionic/map/zones",
+                "method": "POST",
+                "description": "Zones comportementales"
+            },
+            {
+                "path": "/api/v1/bionic/map/corridors",
+                "method": "POST",
+                "description": "Corridors de deplacement"
+            }
+        ],
+        "visual_spec": {
+            "contour_width_px": "1-2",
+            "fill_opacity": 0,
+            "smoothing": "chaikin",
+            "effects": "none"
+        }
+    }
