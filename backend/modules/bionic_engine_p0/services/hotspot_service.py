@@ -436,9 +436,10 @@ class HotspotService:
         # Generer geometrie ORGANIQUE V3 autour du waypoint
         from modules.bionic_engine_p0.services.organic_contour_generator import meters_to_degrees_lat, meters_to_degrees_lng
         
-        approx_radius_m = 80
-        lat_offset = meters_to_degrees_lat(approx_radius_m * 3)
-        lng_offset = meters_to_degrees_lng(approx_radius_m * 3, waypoint.latitude)
+        # Zone de génération: ~2km x 2km
+        generation_radius_m = 1000
+        lat_offset = meters_to_degrees_lat(generation_radius_m)
+        lng_offset = meters_to_degrees_lng(generation_radius_m, waypoint.latitude)
         
         local_bounds = {
             "north": waypoint.latitude + lat_offset,
