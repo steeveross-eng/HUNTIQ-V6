@@ -17,16 +17,16 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 /**
  * Style pour les hotspots (Polygon)
- * CONFORME AU CONTRAT: fill_opacity tres faible pour permettre de voir la carte
+ * CONFORME AU CONTRAT: contours fins et visibles, fill tres leger
  */
 const getHotspotStyle = (feature) => {
   const style = feature.properties?.style || {};
   return {
     color: style.stroke_color || '#FFD700',
     weight: Math.max(style.stroke_width || 1.5, 2),  // Minimum 2px pour visibilite
-    opacity: 1,
+    opacity: 0.9,
     fillColor: style.stroke_color || '#FFD700',
-    fillOpacity: 0.08,  // Tres leger fill pour rendre visible sur la carte
+    fillOpacity: 0.0,  // Pas de remplissage pour voir la carte
     dashArray: null
   };
 };
