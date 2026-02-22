@@ -838,6 +838,16 @@ CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
         "phase": "NSE",
         "description": "🎯 BIONIC Next Step Engine - User Context, Setup Builder, Chasseur Jumeau, Score Préparation"
     }),
+    
+    # ==========================================
+    # BIONIC WEATHER ENGINE (Phase P1-ENV)
+    # ==========================================
+    (bionic_weather_router, {
+        "name": "bionic_weather_engine",
+        "version": "1.0.0",
+        "phase": "P1-ENV",
+        "description": "🌤️ BIONIC Weather Engine - OpenWeatherMap Integration, Behavioral Factors"
+    }),
 ]
 
 
