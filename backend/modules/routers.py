@@ -238,6 +238,11 @@ from routes.bionic_engine_router import router as bionic_engine_router
 # ==============================================
 from modules.bionic_engine_p0.weather_router import router as bionic_weather_router
 
+# ==============================================
+# BIONIC SCORING ENGINE (PHASE P1-SCORE)
+# ==============================================
+from modules.bionic_engine_p0.scoring_router import router as bionic_scoring_router
+
 
 # List of all available routers with their metadata
 CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
