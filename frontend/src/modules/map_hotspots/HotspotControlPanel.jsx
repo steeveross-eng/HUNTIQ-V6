@@ -17,7 +17,7 @@ import {
   Eye, EyeOff, Flame, Leaf, Heart, Thermometer, Droplets,
   AlertTriangle, Snowflake, User, Diamond, Star,
   ArrowRight, CircleDot, Route, ChevronDown, ChevronUp, X,
-  Filter
+  Filter, ToggleLeft
 } from 'lucide-react';
 
 // Couleurs par espece (conformes au backend)
