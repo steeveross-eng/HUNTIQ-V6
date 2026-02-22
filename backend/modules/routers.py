@@ -853,6 +853,16 @@ CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
         "phase": "P1-ENV",
         "description": "🌤️ BIONIC Weather Engine - OpenWeatherMap Integration, Behavioral Factors"
     }),
+    
+    # ==========================================
+    # BIONIC SCORING ENGINE (Phase P1-SCORE)
+    # ==========================================
+    (bionic_scoring_router, {
+        "name": "bionic_scoring_engine",
+        "version": "1.0.0",
+        "phase": "P1-SCORE",
+        "description": "📊 BIONIC Scoring Engine - Dynamic Scoring, Behavioral Analysis, Weather Integration"
+    }),
 ]
 
 
