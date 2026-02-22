@@ -520,3 +520,12 @@ async def get_map_engine_status():
             "effects": "none"
         }
     }
+
+
+# =============================================================================
+# P1-FINAL - HUNT PLAN ANALYZER (Include sub-router)
+# =============================================================================
+
+# Import and include the hunt plan analyzer router
+from modules.bionic_engine_p0.routers.hunt_plan_router import router as hunt_plan_router
+router.include_router(hunt_plan_router)
