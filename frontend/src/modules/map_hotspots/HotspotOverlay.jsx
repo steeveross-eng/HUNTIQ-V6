@@ -251,7 +251,12 @@ export const HotspotOverlay = ({
   // Charger les donnees quand les bounds changent
   useEffect(() => {
     const fetchData = async () => {
-      if (!map) return;
+      if (!map) {
+        console.log('[HotspotOverlay] Map not ready');
+        return;
+      }
+      
+      console.log('[HotspotOverlay] Fetching data...', { showHotspots, showZones, showCorridors });
       
       const bounds = map.getBounds();
       const boundsData = {
@@ -261,6 +266,8 @@ export const HotspotOverlay = ({
         west: bounds.getWest()
       };
       
+      console.log('[HotspotOverlay] Bounds:', boundsData);
+      
       setLoading(true);
       setError(null);
       
@@ -269,6 +276,7 @@ export const HotspotOverlay = ({
         
         // Hotspots
         if (showHotspots) {
+          console.log('[HotspotOverlay] Fetching hotspots...');
           requests.push(
             fetch(`${API_URL}/api/v1/bionic/map/hotspots`, {
               method: 'POST',
