@@ -21,7 +21,7 @@ from modules.bionic_engine_p0.services.hunt_plan_analyzer_service import (
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/v1/bionic", tags=["Hunt Plan Analyzer"])
+router = APIRouter(tags=["Hunt Plan Analyzer"])
 
 
 # =============================================================================
