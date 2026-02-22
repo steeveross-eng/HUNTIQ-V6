@@ -66,12 +66,29 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 - ✅ **Boutons multi-espèces** pour superposition
 - ✅ **Seuil par défaut: 50** (réduit pour plus de résultats)
 
-## Tâches En Attente
+### P1-UX — Boutons ON/OFF Individuels (Complété — 22 Février 2026)
+**Implémentation des contrôles de visibilité individuels par hotspot**
 
-### P1-UX — Boutons ON/OFF Individuels (Priorité SECONDAIRE)
-- Implémenter toggle individuel par hotspot
-- Modifications: HotspotOverlay.jsx, HotspotControlPanel.jsx
-- **Status:** NON COMMENCÉ (après validation P1-OSM)
+#### Fonctionnalités
+- ✅ **Panneau ON/OFF dédié** (`HotspotTogglePanel`) — Liste tous les hotspots avec toggle individuel
+- ✅ **Toggle instantané** — Aucun recalcul serveur, purement client-side
+- ✅ **Bouton "Tout ON/OFF"** — Activation/désactivation en masse
+- ✅ **Indicateur de couleur** — Cercle coloré pour chaque hotspot selon l'espèce
+- ✅ **Popup enrichi** — Bouton ON/OFF intégré dans le popup de chaque hotspot
+- ✅ **Compteur dynamique** — Affichage du nombre de hotspots visibles
+
+#### Fichiers Modifiés
+- `/app/frontend/src/modules/map_hotspots/HotspotOverlay.jsx`
+- `/app/frontend/src/modules/map_hotspots/HotspotControlPanel.jsx`
+- `/app/frontend/src/modules/territory/components/WaypointMap.jsx`
+
+#### data-testid Ajoutés
+- `hotspot-toggle-panel` — Panneau ON/OFF
+- `toggle-hotspot-{id}` — Toggle individuel
+- `enable-all-hotspots` / `disable-all-hotspots` — Boutons masse
+- `open-toggle-panel-btn` — Bouton d'ouverture
+
+## Tâches En Attente
 
 ### P1-ENV — Intégration OpenWeatherMap
 - Données météorologiques en temps réel
