@@ -310,13 +310,19 @@ class HotspotService:
         elif advanced_factors.get("digestive", {}).get("phase") == "active_feeding":
             dominant_behavior = "feeding"
         
-        # Generer geometrie naturelle
-        geometry = self._contour_gen.generate_hotspot_geometry(
+        # Generer geometrie CIRCULAIRE naturelle (2000-3000 m²)
+        coords = self._contour_gen.generate_natural_polygon(
             center_lat=lat,
             center_lng=lng,
-            score=score,
-            hotspot_type=hotspot_type
+            irregularity=0.15,
+            num_vertices=32,
+            species=species
         )
+        
+        geometry = {
+            "type": "Polygon",
+            "coordinates": [coords]
+        }
         
         return Hotspot(
             id=generate_id("HS"),
