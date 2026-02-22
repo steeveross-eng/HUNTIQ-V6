@@ -284,3 +284,4 @@ frontend/node_modules/.cache/default-development/0.pack_
 *.env
 *.env.*
 backend/data/osm_cache/CA-QC-QUEBEC.json
+backend/data/osm_cache/CA-QC.json
