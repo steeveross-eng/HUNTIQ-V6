@@ -94,6 +94,37 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 
 ## Tâches En Attente
 
+### P1-SCORE — Système de Scoring Dynamique (Complété — 22 Février 2026)
+**Système de calcul de scores comportementaux dynamiques pour BIONIC V5**
+
+#### Composants du Score (Pondérations)
+| Composant | Poids | Description |
+|-----------|-------|-------------|
+| weather | 20% | Conditions météo actuelles |
+| activity | 20% | Probabilité d'activité |
+| feeding | 15% | Conditions d'alimentation |
+| movement | 15% | Probabilité de mouvement |
+| temporal | 15% | Facteur temporel (heure, saison) |
+| pressure | 10% | Tendance barométrique |
+| lunar | 5% | Phase lunaire |
+
+#### Espèces Supportées
+- moose, deer, bear, wild_turkey, elk
+
+#### Endpoints API
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v1/bionic/score/weights` | Configuration des pondérations |
+| `POST /api/v1/bionic/score/calculate` | Score pour une position |
+| `POST /api/v1/bionic/score/calculate/manual` | Score avec météo manuelle |
+| `POST /api/v1/bionic/score/hotspot` | Score pour un hotspot |
+| `POST /api/v1/bionic/score/batch` | Scores batch (max 50) |
+| `GET /api/v1/bionic/score/species/{name}` | Info espèce |
+
+#### Fichiers Créés
+- `/app/backend/modules/bionic_engine_p0/services/dynamic_scoring_service.py`
+- `/app/backend/modules/bionic_engine_p0/scoring_router.py`
+
 ### P1-ENV — Intégration OpenWeatherMap (Complétée — 22 Février 2026)
 **Module météorologique pour BIONIC V5 — Prêt pour activation**
 
