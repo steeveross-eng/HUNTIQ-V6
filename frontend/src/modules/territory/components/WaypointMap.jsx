@@ -440,6 +440,8 @@ export const WaypointMap = ({
                 onClose={() => setShowHotspotPanel(false)}
                 defaultSettings={hotspotSettings}
                 onSettingsChange={(settings) => setHotspotSettings(settings)}
+                onTogglePanelOpen={() => setShowTogglePanel(true)}
+                hotspotsCount={hotspotsCount}
               />
               
               {loading ? (
