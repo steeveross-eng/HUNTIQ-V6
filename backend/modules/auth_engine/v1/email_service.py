@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev")
 APP_NAME = "HUNTIQ"
-APP_URL = os.environ.get("APP_URL", "https://contour-mapper-2.preview.emergentagent.com")
+APP_URL = os.environ.get("APP_URL", "https://bionic-v5-hunt.preview.emergentagent.com")
 
 
 class EmailService:

@@ -266,7 +266,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://contour-mapper-2.preview.emergentagent.com",
+                "url": "https://bionic-v5-hunt.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],

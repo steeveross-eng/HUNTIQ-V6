@@ -1,67 +1,68 @@
 <analysis>**original_problem_statement:**
-L'utilisateur, COPILOT MAÎTRE (Steeve), dirige le projet HUNTIQ-V5. Le projet est entré dans une nouvelle phase (P1) après la validation et la promotion de la PHASE G - P0 en version . Cette version P0 intègre 12 facteurs comportementaux avancés dans le moteur d'intelligence artificielle.
+L'utilisateur, COPILOT MAÎTRE, dirige le projet HUNTIQ-V5 et a commandé une refonte complète du module . Les exigences initiales ont évolué à travers plusieurs itérations, aboutissant à une spécification finale très stricte.
 
-La nouvelle tâche prioritaire et non négociable de la phase P1 est l'implémentation du module . L'objectif est d'afficher sur la carte de l'application des hotspots (zones d'intérêt), des zones comportementales et des corridors de déplacement générés par le moteur P0-STABLE. Cette fonctionnalité requiert le développement de nouveaux endpoints backend, de contrats JSON stricts, et d'une intégration frontend complexe avec des exigences visuelles et UX très spécifiques (HOTSPOTS CONTOURS 200% RÉALISTES).
-
-PRODUCT REQUIREMENTS:
-- **GOLD MASTER BIONIC V5:** L'état de l'application de base est figé et ne doit pas être modifié.
-- **Architecture BIONIC V5:** Tout développement doit respecter une architecture 100% modulaire, être piloté par des contrats JSON, et se conformer aux normes G-QA (Qualité), G-SEC (Sécurité), et G-DOC (Documentation).
-- **Phase P1 - Priorité Absolue :**
-    1.  **Implémentation Backend :** Créer trois nouveaux endpoints (, , ).
-    2.  **Contrats JSON :** Définir les schémas pour les hotspots, zones et corridors.
-    3.  **Implémentation Frontend :** Intégrer les données sur l'onglet CARTE. Afficher les contours des hotspots de manière ultra-réaliste (contours fins, transparents, formes naturelles) sans calcul côté client.
-    4.  **UX :** Permettre à l'utilisateur d'activer/désactiver chaque hotspot individuellement ou par groupe de manière instantanée.
+PRODUCT REQUIREMENTS (Version actuelle - BIONIC V5):
+- **Géométrie Organique :** Les hotspots doivent avoir des formes 100% organiques et irrégulières, générées via les algorithmes Marching Squares et Chaikin Smoothing. Les formes circulaires précédentes ont été explicitement rejetées.
+- **Superficie Stricte :** Chaque hotspot doit mesurer entre 5,000 et 10,000 m².
+- **Évitement Géospatial Réel :** Les hotspots doivent automatiquement et réellement contourner toutes les zones d'exclusion (étendues d'eau, routes, zones urbaines/industrielles). Cet évitement doit être basé sur des données réelles (OpenStreetMap), et non plus simulé.
+- **Architecture de Cache OSM :** Pour la scalabilité internationale et la performance, l'évitement doit utiliser un cache local de données OSM, rempli via l'API Overpass, plutôt que des appels en temps réel.
+- **Filtrage et Style :** Les hotspots doivent être filtrables par espèce (via un dropdown), avec des couleurs de contour spécifiques à chaque espèce, et un centre totalement transparent.
+- **Contrôles Utilisateur :** Un bouton ON/OFF individuel doit permettre d'activer/désactiver chaque hotspot de manière instantanée.
+- **Modularité BIONIC V5 :** Respect absolu des principes de l'architecture : zéro calcul métier dans le frontend, contrats JSON stricts, et aucune dérive par rapport aux spécifications.
 
 **User's preferred language**: Français
 
 **what currently exists?**
-Le projet dispose d'une base de code stable (GOLD MASTER) et d'un moteur d'IA  entièrement fonctionnel, testé (91 tests unitaires et API) et documenté. Ce moteur intègre 12 facteurs comportementaux avancés. La structure pour la phase P1 a été initiée avec la création du répertoire . Les fichiers de contrats JSON (, , ) et un service backend initial () pour la nouvelle fonctionnalité P1-HOTSPOTS ont été créés.
+Le projet a une base de code stable (). Le module  a été implémenté et a subi deux refontes majeures. La version actuelle (V3) inclut :
+- **Backend :** Un service  qui utilise  et  pour implémenter Marching Squares et Chaikin, générant des polygones de forme organique dans la plage de superficie requise (5000-10000 m²). Les endpoints API (, , ) sont fonctionnels.
+- **Cache OSM :** Une structure de répertoire () a été créée. Des scripts d'extraction ont commencé à peupler ce cache pour la région  avec des données sur l'eau et les routes.
+- **Frontend :** Les composants React (, ) ont été mis à jour pour interagir avec le backend V3, incluant un dropdown pour filtrer par espèce et un seuil de score par défaut ajusté. L'affichage des formes organiques sur la carte a été validé visuellement.
 
 **Last working item**:
-- **Last item agent was working:** L'agent a commencé l'implémentation du module P1-HOTSPOTS. Il a créé l'architecture de base du backend en ajoutant le répertoire , les schémas de contrat JSON pour les hotspots, zones et corridors, ainsi qu'un service initial pour la génération des contours naturels.
+- **Last item agent was working:** L'agent était en train de finaliser l'extraction des données OpenStreetMap (OSM) pour la région du Québec () afin d'alimenter le cache local. Cette étape est cruciale pour implémenter l'évitement géospatial **réel** des hotspots.
 - **Status:** IN PROGRESS
 - **Agent Testing Done:** N
-- **Which testing method agent to use?** both. Le backend nécessitera des tests d'intégration pour les nouveaux endpoints via le . Le frontend nécessitera une validation visuelle via  et une validation fonctionnelle par le  pour l'interactivité du panneau de contrôle des hotspots.
+- **Which testing method agent to use?** both. Une fois l'intégration des données OSM terminée, le  devra valider que les hotspots évitent bien les zones d'exclusion. Le  et le  seront nécessaires pour la validation visuelle du rendu final.
 - **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-Aucun bug n'est en cours. Le travail se concentre sur le développement d'une nouvelle fonctionnalité.
+Aucun bug n'est actuellement signalé. Le travail se concentre sur la finalisation d'une tâche de développement majeure.
 
 **In progress Task List**:
-- **Task 1:** Implémentation complète du module P1-HOTSPOTS (Priorité : P0 - HIGHEST)
-    - **Where to resume:** Le travail doit reprendre avec la finalisation de la logique backend.
-        1.  Finaliser le service  pour qu'il génère des données géospatiales conformes aux exigences 200% réalistes.
-        2.  Créer le routeur et les endpoints API dans le module .
-        3.  Intégrer ce nouveau routeur dans l'orchestrateur principal de l'application.
-        4.  Développer les composants React nécessaires dans le frontend pour afficher la carte, les overlays (contours) et le panneau de contrôle (HotspotControlPanel).
-        5.  Connecter le frontend aux nouveaux endpoints API.
-    - **What will be achieved with this?** L'application pourra afficher dynamiquement sur une carte les zones d'activité animale prédites par le moteur d'IA, avec une interface interactive et un rendu visuel de haute fidélité, conformément à la demande de l'utilisateur.
+- **Task 1:** Finalisation de l'implémentation P1-HOTSPOTS V3 (Priorité : P0 - HIGHEST)
+    - **Where to resume:** Le travail doit reprendre avec la finalisation de l'extraction des données OSM. L'agent a déjà extrait les données sur l'eau et les routes pour la région  mais a été interrompu par le rate-limiting de l'API Overpass.
+        1.  Terminer l'extraction pour  en récupérant les données  (zones résidentielles, industrielles, commerciales).
+        2.  Modifier le  ou  pour utiliser les données du cache OSM. La logique doit vérifier si un hotspot généré intersecte une zone d'exclusion et, si c'est le cas, le rejeter.
+        3.  Rendre le script d'extraction de données OSM paramétrable et scalable pour supporter d'autres régions (ex: , ), conformément à l'exigence de Scalabilité Internationale.
+    - **What will be achieved with this?** La fonctionnalité P1-HOTSPOTS sera entièrement conforme aux exigences BIONIC V5, avec des hotspots de forme organique qui évitent de manière réaliste les obstacles du terrain.
     - **Status:** IN PROGRESS
     - **Should Test frontend/backend/both after fix?** Both
-    - **Blocked on something:** Rien.
+    - **Blocked on something:** Non, mais le rate-limiting de l'API Overpass peut ralentir l'extraction des données.
 
 **Upcoming and Future Tasks**
-*   **Upcoming Tasks (Reste de la Phase P1, après P1-HOTSPOTS):**
-    *   (P1-ENV) Intégration d'OpenWeatherMap pour les données environnementales.
-    *   (P1-SCORE) Développement d'un Système de Scoring Dynamique.
-    *   (P1-VIS) Finalisation des spécifications pour les Overlays Visuels (en partie couverts par P1-HOTSPOTS).
-    *   (P1-API) Création du nouveau endpoint .
+*   **Upcoming Tasks:**
+    *   (P1 - UX) Implémenter les boutons ON/OFF individuels pour chaque hotspot sur l'interface de la carte. (Cette exigence a été mentionnée mais pas encore implémentée).
+    *   (P1 - ENV) Intégration d'OpenWeatherMap pour les données environnementales.
+    *   (P1 - SCORE) Développement d'un Système de Scoring Dynamique.
+    *   (P1 - API) Création du nouveau endpoint .
 *   **Future Tasks (Backlog):**
     *   (P2) Moteur de Recommandations.
     *   (P2) Intégration d'API externes supplémentaires.
     *   (P3) Préparation de la plateforme BionicMarket.
 
 **Completed work in this session**
-- **Intégration P0-beta2 (DONE):** Les 12 facteurs comportementaux majeurs ont été intégrés avec succès dans les modules  and .
-- **Mise à jour des Tests (DONE):** Le nombre de tests a été porté de 35 à 70 pour couvrir les nouveaux facteurs.
-- **Validation Complète (DONE):** L'implémentation a été validée par 91 tests (70 unitaires + 21 API) via le testing agent, ainsi que par des tests  manuels.
-- **Mise à jour de la Documentation (DONE):** Tous les documents (contrats JSON, inventaire v1.3.0, matrice de cohérence) ont été mis à jour.
-- **Revue Exécutive (DONE):** Génération des 4 rapports de revue (Fonctionnelle, Technique, Architecturale, Delta) demandés par l'utilisateur.
-- **Promotion en P0-STABLE (DONE):** L'utilisateur a validé la livraison et a officiellement promu la version en .
-- **Planification P1 (DONE):** Création des plans détaillés pour la phase P1, y compris le plan  qui a reçu le GO de l'utilisateur.
+- **Refonte P1-HOTSPOTS V3 (Backend):** Remplacement complet du générateur de hotspots par un système basé sur Marching Squares et Chaikin () pour créer des formes organiques conformes aux nouvelles exigences de superficie (5000-10000 m²).
+- **Refonte P1-HOTSPOTS V3 (Frontend):** Adaptation du panneau de contrôle pour inclure un filtre par espèce et ajustement des paramètres pour afficher correctement les nouveaux hotspots.
+- **Validation V3 (Partielle):** Utilisation du  pour confirmer que les hotspots générés sont bien de forme organique et dans la bonne plage de superficie.
+- **Création du Cache OSM:** Mise en place de l'architecture de fichiers pour le cache local ().
+- **Extraction OSM (Partielle):** Lancement de l'extraction des données pour , avec succès pour les zones d'eau () et les routes ().
 
 **Earlier issues found/mentioned but not fixed**
-- Au cours de la revue exécutive, l'agent a noté que certains scores semblaient plafonner à 100, suggérant un problème de bornage. Cela a été jugé non bloquant pour la promotion en P0-STABLE mais pourrait nécessiter une investigation future.
+- **Boutons ON/OFF individuels :** L'exigence de l'utilisateur de pouvoir activer/désactiver chaque hotspot individuellement via un bouton dédié n'a pas encore été implémentée. Le contrôle actuel se fait au niveau de la couche entière (tous les hotspots) ou par groupes.
+  - **Debug checklist:** Il faudra modifier les composants  et  pour gérer l'état de visibilité de chaque hotspot individuellement.
+  - **Why to solve this issue and what will be achieved with this?** Cela répond à une exigence UX stricte de l'utilisateur pour une analyse fine du territoire.
+  - **Should Test frontend/backend/both after fix:** Frontend
+  - **Is recurring issue?** N
 
 **Known issue recurrence from previous fork**
 - Aucune.
@@ -70,86 +71,65 @@ Aucun bug n'est en cours. Le travail se concentre sur le développement d'une no
 
 
 **Key Technical Concepts**
-- **Architecture BIONIC V5:** Approche modulaire stricte, pilotée par contrats JSON, avec des normes de qualité (G-QA), sécurité (G-SEC) et documentation (G-DOC).
-- **GOLD MASTER:** Le code de base de l'application, qui est stable et ne doit jamais être modifié.
-- **Hotspots Contours 200% Réalistes:** Exigence de rendu visuel pour les overlays de la carte, impliquant des formes géospatiales naturelles, des contours fins et transparents, sans simplification géométrique.
+- **Marching Squares & Chaikin's Algorithm:** Au cœur du  pour extraire et lisser des formes naturelles à partir d'une grille de données.
+- **Overpass API:** API publique d'OpenStreetMap utilisée pour extraire les données géospatiales (routes, eau, etc.) nécessaires à l'évitement.
+- **Local Caching:** Stratégie approuvée par l'utilisateur pour stocker les données OSM localement, garantissant performance, fiabilité et scalabilité internationale en évitant les appels API en temps réel.
+- **BIONIC V5:** Ensemble de principes stricts définis par l'utilisateur (modularité, contrats JSON, pas de logique métier côté client) qui régit tout le développement.
 
 **key DB schema**
-- Aucun changement. Le moteur et les nouvelles fonctionnalités opèrent sur des données en entrée via les API sans altérer le schéma de la base de données.
+- Aucun changement. La fonctionnalité opère sur des données générées dynamiquement.
 
 **changes in tech stack**
-- Aucun changement.
+-  a été ajouté comme dépendance backend pour les algorithmes de génération de contours.
 
 **All files of reference**
-*   **Fichiers créés pour P1:**
-    *   
-    *   
-    *   
-    *   
-*   **Plan de référence:**
-    *   
-*   **Fichiers P0 modifiés (maintenant stables):**
-    *   
-    *   
-    *   
+*    (Nouveau, cœur de la logique V3)
+*    (Fortement modifié)
+*    (Nouveau, contient les données OSM extraites)
+*    (Fortement modifié)
+*    (Modifié pour intégrer les composants)
 
 **Areas that need refactoring**:
-- Aucun.
+- Le script d'extraction OSM, actuellement une série de commandes bash, doit être transformé en un script Python robuste et paramétrable par région pour répondre à l'exigence de scalabilité internationale.
+- Le fichier  (contenant la logique des hotspots circulaires V2) est maintenant obsolète et devrait être supprimé pour éviter toute confusion.
 
 **key api endpoints**
-- **Existants (P0-STABLE):**
-    - 
-    - 
-- **A implémenter (P1-HOTSPOTS):**
-    - 
-    - 
-    - 
+- : Récupère les hotspots avec les paramètres , , .
+- 
+- 
 
 **Critical Info for New Agent**
-- **Langue :** La communication doit impérativement être en **Français**.
-- **Utilisateur (COPILOT MAÎTRE) :** Les directives de l'utilisateur sont absolues, extrêmement précises et non négociables.
-- **Priorité Actuelle :** L'implémentation complète du module P1-HOTSPOTS est la seule tâche autorisée. Tout le reste est bloqué jusqu'à sa validation.
-- **GOLD MASTER:** Le code source existant en dehors des nouveaux modules P1 est intouchable.
-- **Exigences Visuelles :** Le respect strict des spécifications HOTSPOTS CONTOURS 200% RÉALISTES est un critère de succès majeur. Aucun calcul ne doit être fait côté frontend.
+- **Langue :** La communication doit impérativement se faire en **Français**.
+- **Utilisateur (COPILOT MAÎTRE) :** Les directives de l'utilisateur sont absolues et non négociables. Les principes BIONIC V5 doivent être respectés à la lettre.
+- **Priorité Actuelle :** La tâche la plus urgente est de terminer l'extraction des données OSM, puis d'intégrer ces données dans la logique de génération de hotspots pour activer l'évitement **réel** des obstacles. C'est la dernière étape majeure pour finaliser la V3.
+- **Rejets Précédents :** Les implémentations V1 (polygones simples) et V2 (cercles) ont été rejetées. Seule la logique de la V3 (formes organiques) est valide.
 
 **documents and test reports created in this job**
-*   
-*   
-*   
-*   
-*   
-*   
-*   
-*   
-*   
-*   
-*   
-*    (mis à jour)
+*   : Rapport de test validant la génération de formes organiques (V3).
+*   : A été mis à jour pour refléter les exigences évolutives du projet.
 
 **Last 10 User Messages and any pending HUMAN messages**
-- **(LATEST - PENDING ACTION)** User gave the official GO to start the implementation of the  module, based on the approved plan. The user reiterated the very strict visual and architectural requirements. **STATUS: IN PROGRESS**
-- User requested a final version of the  after adding the new feature to the P1 scope.
-- User added a new mandatory and high-priority feature for P1: displaying hotspots on the map, with very specific backend, frontend, visual, and UX requirements.
-- User received the P1 planning documents and acknowledged that P0 is stable.
-- User validated the  executive review and officially promoted it to .
-- User requested a full executive review (4 reports) for  before promoting it to stable.
+- **(LATEST)** User a donné son accord conditionnel pour l'extraction des données OSM réelles pour la région , en insistant sur la nécessité d'une solution scalable à l'international et sur la validation post-extraction.
+- User a validé la livraison de la V3 (formes organiques) et a confirmé que l'étape suivante était l'activation de l'évitement géospatial RÉEL.
+- User a fourni une analyse détaillée et un plan de correction, rejetant les formes circulaires (V2) et définissant les exigences strictes pour la V3 (formes organiques, superficie 5k-10k m², évitement réel).
+- User a confirmé le GO CONDITIONNEL pour la refonte V3, en précisant les choix techniques (cache local OSM, génération algorithmique).
 
 **Project Health Check:**
 - **Broken:** Rien.
-- **Mocked:** Le service  est un squelette et doit être implémenté.
+- **Mocked:** La fonctionnalité clé d'évitement des obstacles (eau, routes) par les hotspots est actuellement inexistante. La logique de génération ne tient pas encore compte de l'environnement réel. C'est la prochaine étape de développement.
 
 **3rd Party Integrations**
-- **Actives:** Aucune.
+- **Active (en développement):** OpenStreetMap (via l'API Overpass pour l'extraction de données). Ne nécessite pas de clé API.
 - **Planifiées (Phase P1):** OpenWeatherMap.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES (pour la phase P0).
+- **Testing agent used after significant changes:** YES (pour valider la génération de formes organiques V3).
 - **Troubleshoot agent used after agent stuck in loop:** NO
-- **Test files created:**  (contient maintenant 70 tests). De nouveaux fichiers de test devront être créés pour P1.
+- **Test files created:** Aucun nouveau fichier de test permanent, mais des tests ont été effectués via le .
 - **Known regressions:** Aucune.
 
 **Credentials to test flow:**
-- N/A pour la tâche actuelle qui est en cours de développement.
+- N/A
 
 **What agent forgot to execute**
-- Rien. L'agent suit la feuille de route très stricte définie par l'utilisateur.</analysis>
+- L'implémentation des boutons **ON/OFF individuels** pour chaque hotspot, une exigence UX explicite de l'utilisateur pour la V3, n'a pas encore été réalisée.</analysis>

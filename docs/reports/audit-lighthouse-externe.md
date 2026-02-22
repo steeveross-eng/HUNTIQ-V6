@@ -2,7 +2,7 @@
 ## HUNTIQ-V5 BIONIC — BRANCHE 3 COMPLÈTE
 
 **Date:** 2025-12-20
-**URL Auditée:** https://contour-mapper-2.preview.emergentagent.com
+**URL Auditée:** https://bionic-v5-hunt.preview.emergentagent.com
 **Protocole:** HTTP/2
 **Environnement:** Preview (non-production)
 **Statut:** ✅ AUDIT COMPLÉTÉ
