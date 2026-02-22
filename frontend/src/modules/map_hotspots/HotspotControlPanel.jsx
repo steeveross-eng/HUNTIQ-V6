@@ -273,6 +273,23 @@ export const HotspotControlPanel = ({
           
           {expandedSections.hotspots && showHotspots && (
             <div className="px-4 pb-3 space-y-2">
+              {/* Bouton ON/OFF individuels */}
+              {hotspotsCount > 0 && (
+                <button
+                  onClick={onTogglePanelOpen}
+                  className="w-full px-3 py-2 flex items-center justify-between bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/40 rounded-lg transition-colors"
+                  data-testid="open-toggle-panel-btn"
+                >
+                  <div className="flex items-center gap-2">
+                    <ToggleLeft className="h-4 w-4 text-amber-400" />
+                    <span className="text-sm text-amber-300 font-medium">ON/OFF Individuels</span>
+                  </div>
+                  <Badge className="bg-amber-600/30 text-amber-300 border-amber-600/50">
+                    {hotspotsCount}
+                  </Badge>
+                </button>
+              )}
+              
               {/* Groupes rapides */}
               <div className="flex flex-wrap gap-1 pb-2 border-b border-slate-800">
                 <Button
