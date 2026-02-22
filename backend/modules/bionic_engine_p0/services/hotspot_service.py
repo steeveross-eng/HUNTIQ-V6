@@ -167,8 +167,20 @@ class HotspotService:
         
         hotspots = []
         
-        # Generer grille de points dans les bounds
-        grid_points = self._generate_grid(request.bounds, resolution=8)
+        # Calculer la taille de la zone en km
+        lat_range_km = (request.bounds.north - request.bounds.south) * 111
+        lng_range_km = (request.bounds.east - request.bounds.west) * 111 * abs(math.cos(math.radians((request.bounds.north + request.bounds.south) / 2)))
+        area_km2 = lat_range_km * lng_range_km
+        
+        # Adapter la résolution à la taille de la zone (max 16 points pour performance)
+        if area_km2 > 100:
+            resolution = 3  # 9 points pour grandes zones
+        elif area_km2 > 25:
+            resolution = 4  # 16 points
+        else:
+            resolution = 5  # 25 points pour petites zones
+        
+        grid_points = self._generate_grid(request.bounds, resolution=resolution)
         
         # Pour chaque espece demandee
         for species_str in request.species:
