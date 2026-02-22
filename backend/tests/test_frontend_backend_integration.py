@@ -12,7 +12,7 @@ import requests
 import os
 
 # Backend URL
-BACKEND_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://bionic-v5-hunt.preview.emergentagent.com")
+BACKEND_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://hunt-plan-engine.preview.emergentagent.com")
 
 
 class TestLegalTimeIntegration:
