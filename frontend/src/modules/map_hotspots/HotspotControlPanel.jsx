@@ -374,11 +374,13 @@ export const HotspotControlPanel = ({
         
         {/* Section Corridors */}
         <div className="border-b border-slate-800">
-          <button
-            onClick={() => toggleSection('corridors')}
-            className="w-full px-4 py-2 flex items-center justify-between text-left hover:bg-slate-800/30"
+          <div
+            className="w-full px-4 py-2 flex items-center justify-between hover:bg-slate-800/30 cursor-pointer"
           >
-            <div className="flex items-center gap-2">
+            <div 
+              className="flex items-center gap-2 flex-1"
+              onClick={() => toggleSection('corridors')}
+            >
               <Route className="h-4 w-4 text-lime-400" />
               <span className="text-sm font-medium text-white">Corridors</span>
               <Badge variant="outline" className="text-xs">
@@ -392,14 +394,18 @@ export const HotspotControlPanel = ({
                   setShowCorridors(checked);
                   notifyChange({ showCorridors: checked });
                 }}
-                onClick={(e) => e.stopPropagation()}
               />
-              {expandedSections.corridors ? 
-                <ChevronUp className="h-4 w-4 text-slate-400" /> : 
-                <ChevronDown className="h-4 w-4 text-slate-400" />
-              }
+              <div 
+                onClick={() => toggleSection('corridors')}
+                className="cursor-pointer p-1"
+              >
+                {expandedSections.corridors ? 
+                  <ChevronUp className="h-4 w-4 text-slate-400" /> : 
+                  <ChevronDown className="h-4 w-4 text-slate-400" />
+                }
+              </div>
             </div>
-          </button>
+          </div>
           
           {expandedSections.corridors && showCorridors && (
             <div className="px-4 pb-3">
