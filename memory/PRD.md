@@ -20,10 +20,14 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 ### PHASE P1-HOTSPOTS V3 — ÉVITEMENT RÉEL OSM (Complétée — 22 Février 2026)
 **Module d'affichage cartographique des hotspots BIONIC avec évitement géospatial RÉEL**
 
-#### Extraction OSM Complète
-| Région | Zones Water | Zones Roads | Zones Landuse | Total |
-|--------|-------------|-------------|---------------|-------|
-| CA-QC | 13,923 | 6,619 | 2,902 | 23,444 |
+#### Extraction OSM Multi-Régions (COMPLÈTE)
+| Région | Zones | Water | Roads | Landuse | Taille |
+|--------|-------|-------|-------|---------|--------|
+| CA-QC | 23,444 | 13,923 | 6,619 | 2,902 | 7.4 MB |
+| CA-ON | 220,174 | 184,363 | 27,831 | 7,980 | 60.6 MB |
+| US-NY | 54,215 | 34,402 | 16,889 | 2,924 | 18.0 MB |
+| FR-ARA | 120,102 | 32,967 | 71,120 | 16,015 | 31.8 MB |
+| **TOTAL** | **417,935** | 265,655 | 122,459 | 29,821 | ~118 MB |
 
 #### Spécifications Visuelles CONFORMES
 | Critère | Exigé | Implémenté | Statut |
