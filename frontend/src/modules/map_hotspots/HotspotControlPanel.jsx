@@ -450,6 +450,7 @@ export const HotspotControlPanel = ({
             className="w-full px-4 py-2 flex items-center justify-between text-left hover:bg-slate-800/30"
           >
             <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-purple-400" />
               <span className="text-sm font-medium text-white">Filtres</span>
             </div>
             {expandedSections.filters ? 
@@ -460,20 +461,68 @@ export const HotspotControlPanel = ({
           
           {expandedSections.filters && (
             <div className="px-4 pb-3 space-y-3">
-              {/* Especes */}
+              {/* DROPDOWN ESPECE - Proéminent */}
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Especes</label>
+                <label className="text-xs text-slate-400 mb-1.5 block font-medium">
+                  Espece cible
+                </label>
+                <select
+                  value={selectedSpecies[0] || 'moose'}
+                  onChange={(e) => {
+                    const newSpecies = [e.target.value];
+                    setSelectedSpecies(newSpecies);
+                    notifyChange({ species: newSpecies });
+                  }}
+                  className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  data-testid="species-dropdown"
+                >
+                  {SPECIES.map(({ id, label, color }) => (
+                    <option key={id} value={id} style={{ color }}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: SPECIES_COLORS[selectedSpecies[0]] || SPECIES_COLORS.moose }}
+                  />
+                  <span className="text-xs text-slate-500">
+                    Couleur des contours: {SPECIES.find(s => s.id === selectedSpecies[0])?.label || 'Orignal'}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Multi-especes (optionnel) */}
+              <div>
+                <label className="text-xs text-slate-400 mb-1 block">
+                  Ajouter d'autres especes (superposition)
+                </label>
                 <div className="flex flex-wrap gap-1">
-                  {SPECIES.map(({ id, label }) => (
+                  {SPECIES.filter(s => s.id !== selectedSpecies[0]).map(({ id, label, color }) => (
                     <button
                       key={id}
-                      onClick={() => toggleSpecies(id)}
-                      className={`px-2 py-1 rounded text-xs transition-all ${
+                      onClick={() => {
+                        const newSpecies = selectedSpecies.includes(id)
+                          ? selectedSpecies.filter(s => s !== id)
+                          : [...selectedSpecies, id];
+                        setSelectedSpecies(newSpecies);
+                        notifyChange({ species: newSpecies });
+                      }}
+                      className={`px-2 py-1 rounded text-xs transition-all flex items-center gap-1 ${
                         selectedSpecies.includes(id)
-                          ? 'bg-amber-600/30 text-amber-300 border border-amber-600/50'
+                          ? 'text-white border'
                           : 'bg-slate-800/50 text-slate-400 border border-slate-700'
                       }`}
+                      style={{ 
+                        backgroundColor: selectedSpecies.includes(id) ? `${color}30` : undefined,
+                        borderColor: selectedSpecies.includes(id) ? `${color}80` : undefined 
+                      }}
                     >
+                      <div 
+                        className="w-2 h-2 rounded-full" 
+                        style={{ backgroundColor: color }}
+                      />
                       {label}
                     </button>
                   ))}
