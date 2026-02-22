@@ -380,9 +380,19 @@ export const HotspotOverlay = ({
   }, [map, showHotspots, showZones, showCorridors, species, hotspotTypes, zoneTypes, corridorTypes, minScoreThreshold, timeRange]);
 
   // Generer des keys uniques pour forcer le refresh
-  const hotspotsKey = hotspots ? `hotspots-${hotspots.features.length}` : 'hotspots-empty';
-  const zonesKey = zones ? `zones-${zones.features.length}` : 'zones-empty';
-  const corridorsKey = corridors ? `corridors-${corridors.features.length}` : 'corridors-empty';
+  const hotspotsKey = hotspots ? `hotspots-${hotspots.features.length}-${Date.now()}` : 'hotspots-empty';
+  const zonesKey = zones ? `zones-${zones.features.length}-${Date.now()}` : 'zones-empty';
+  const corridorsKey = corridors ? `corridors-${corridors.features.length}-${Date.now()}` : 'corridors-empty';
+  
+  // Log de debug pour le rendu
+  console.log('[HotspotOverlay] Render state:', {
+    hotspots: hotspots?.features?.length || 0,
+    zones: zones?.features?.length || 0,
+    corridors: corridors?.features?.length || 0,
+    showHotspots,
+    showZones,
+    showCorridors
+  });
 
   return (
     <>
