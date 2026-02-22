@@ -544,6 +544,21 @@ export const WaypointMap = ({
                     }}
                     userId={getDefaultUserId()}
                   />
+                  
+                  {/* P1-HOTSPOTS: Overlays BIONIC */}
+                  {(hotspotSettings.showHotspots || hotspotSettings.showZones || hotspotSettings.showCorridors) && (
+                    <HotspotOverlay 
+                      showHotspots={hotspotSettings.showHotspots}
+                      showZones={hotspotSettings.showZones}
+                      showCorridors={hotspotSettings.showCorridors}
+                      species={hotspotSettings.species}
+                      hotspotTypes={hotspotSettings.hotspotTypes}
+                      zoneTypes={hotspotSettings.zoneTypes}
+                      corridorTypes={hotspotSettings.corridorTypes}
+                      minScoreThreshold={hotspotSettings.minScoreThreshold}
+                      timeRange={hotspotSettings.timeRange}
+                    />
+                  )}
                 </MapContainer>
               )}
             </div>
