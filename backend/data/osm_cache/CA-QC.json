@@ -1,0 +1,13 @@
+{
+  "region_id": "CA-QC",
+  "region_name": "Qu\u00e9bec, Canada",
+  "bbox": [
+    -79.8,
+    44.9,
+    -57.1,
+    62.6
+  ],
+  "last_updated": "2026-02-22T11:49:29.702688+00:00",
+  "version": "1.0.0",
+  "exclusion_zones": []
+}
