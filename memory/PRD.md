@@ -138,6 +138,7 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 - **Évitement géospatial = FONCTIONNEL**
 
 ## Changelog
+- **22 Février 2026**: Implémentation boutons ON/OFF individuels pour hotspots (HotspotTogglePanel)
 - **22 Février 2026**: Extraction OSM complète pour CA-QC (water, roads, landuse)
 - **22 Février 2026**: Optimisation cache OSM (112MB → 7.4MB)
 - **22 Février 2026**: Correction génération hotspots (zone de génération agrandie)
