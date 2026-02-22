@@ -2,6 +2,7 @@
  * WaypointMap - Interactive Leaflet map for waypoints
  * Phase P3.2 - Interactive Map with Heatmap
  * Phase P6 - UNIFIED: Uses territory_waypoints as single source of truth
+ * Phase P1-HOTSPOTS - Integration des overlays BIONIC
  * BIONIC Design System compliant
  */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -16,11 +17,13 @@ import { WaypointScoringService } from '../../../services/WaypointScoringService
 import { HeatmapLayer } from '../../../components/HeatmapLayer';
 import { 
   Target, Camera, Eye, MapPin, Leaf, Tent, ParkingCircle, CircleDot,
-  Map, Flame, FileDown, FileText, Trash2
+  Map, Flame, FileDown, FileText, Trash2, Layers
 } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapInteractionLayer } from '../../map_interaction';
+// P1-HOTSPOTS: Import overlays
+import { HotspotOverlay, HotspotControlPanel } from '../../map_hotspots';
 
 // Fix Leaflet default icon issue
 delete L.Icon.Default.prototype._getIconUrl;
