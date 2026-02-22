@@ -424,14 +424,39 @@ class HotspotService:
         if not score_result.success or score_result.overall_score < 50:
             return None
         
-        # Generer geometrie CIRCULAIRE naturelle
-        coords = self._contour_gen.generate_natural_polygon(
-            center_lat=waypoint.latitude,
-            center_lng=waypoint.longitude,
-            irregularity=0.12,
-            num_vertices=32,
-            species=species.value
+        # Vérifier évitement OSM AVANT génération
+        if self._osm_cache:
+            is_excluded, exclusion_type = self._osm_cache.is_point_excluded(
+                waypoint.latitude, waypoint.longitude
+            )
+            if is_excluded:
+                logger.debug(f"Waypoint {waypoint.id} exclu: {exclusion_type}")
+                return None
+        
+        # Generer geometrie ORGANIQUE V3 autour du waypoint
+        from modules.bionic_engine_p0.services.organic_contour_generator import meters_to_degrees_lat, meters_to_degrees_lng
+        
+        approx_radius_m = 80
+        lat_offset = meters_to_degrees_lat(approx_radius_m * 3)
+        lng_offset = meters_to_degrees_lng(approx_radius_m * 3, waypoint.latitude)
+        
+        local_bounds = {
+            "north": waypoint.latitude + lat_offset,
+            "south": waypoint.latitude - lat_offset,
+            "east": waypoint.longitude + lng_offset,
+            "west": waypoint.longitude - lng_offset
+        }
+        
+        coords = self._organic_gen.generate_organic_hotspot(
+            bounds=local_bounds,
+            species=species.value,
+            hotspot_type="composite_optimal",
+            min_area=MIN_AREA_M2,
+            max_area=MAX_AREA_M2
         )
+        
+        if coords is None:
+            return None
         
         geometry = {
             "type": "Polygon",
@@ -450,7 +475,7 @@ class HotspotService:
                 optimal_hours=[6, 7, 8, 17, 18, 19]
             ),
             species=[species.value],
-            style=HotspotStyle(**create_hotspot_style("composite_optimal")),
+            style=HotspotStyle(**create_hotspot_style("composite_optimal", species.value)),
             metadata=HotspotMetadata(
                 source_factor="user_waypoint",
                 factor_score=round(score_result.overall_score, 1),
