@@ -20,7 +20,9 @@ from modules.bionic_engine_p0.services.contour_generator import (
     ContourGenerator,
     generate_id,
     create_hotspot_style,
-    HOTSPOT_COLORS
+    HOTSPOT_COLORS,
+    SPECIES_COLORS,
+    calculate_polygon_area_m2
 )
 
 logger = logging.getLogger("bionic_engine.hotspot_service")
