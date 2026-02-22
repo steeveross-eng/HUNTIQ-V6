@@ -173,7 +173,7 @@ export const WaypointMap = ({
     corridorTypes: ['movement', 'preferred', 'feeding_transit'],
     species: ['moose'],
     timeRange: '24h',
-    minScoreThreshold: 70
+    minScoreThreshold: 50  // Seuil réduit pour plus de résultats
   });
 
   // Load waypoints and heatmap data - UNIFIED API (territory_waypoints)
