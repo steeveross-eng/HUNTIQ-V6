@@ -266,7 +266,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://hunt-plan-engine.preview.emergentagent.com",
+                "url": "https://scoring-fusion.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],
