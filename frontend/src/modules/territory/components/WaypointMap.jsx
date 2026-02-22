@@ -164,6 +164,8 @@ export const WaypointMap = ({
   
   // P1-HOTSPOTS: Etats pour les overlays BIONIC
   const [showHotspotPanel, setShowHotspotPanel] = useState(false);
+  const [showTogglePanel, setShowTogglePanel] = useState(false);  // Panneau ON/OFF individuels
+  const [hotspotsCount, setHotspotsCount] = useState(0);  // Compteur de hotspots
   const [hotspotSettings, setHotspotSettings] = useState({
     showHotspots: false,
     hotspotTypes: ['activity_peak', 'feeding_zone', 'rut_zone'],
