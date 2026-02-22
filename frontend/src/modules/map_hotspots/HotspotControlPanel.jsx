@@ -82,7 +82,9 @@ export const HotspotControlPanel = ({
   onSettingsChange,
   isOpen,
   onClose,
-  defaultSettings = {}
+  defaultSettings = {},
+  onTogglePanelOpen = () => {},  // Callback pour ouvrir le panneau ON/OFF
+  hotspotsCount = 0  // Nombre de hotspots actuellement affichés
 }) => {
   // Etats des hotspots
   const [showHotspots, setShowHotspots] = useState(defaultSettings.showHotspots ?? true);
