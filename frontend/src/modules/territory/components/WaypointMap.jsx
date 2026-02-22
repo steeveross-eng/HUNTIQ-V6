@@ -161,6 +161,20 @@ export const WaypointMap = ({
   const [heatmapData, setHeatmapData] = useState([]);
   const [wqsScores, setWqsScores] = useState({});
   const mapRef = useRef(null);
+  
+  // P1-HOTSPOTS: Etats pour les overlays BIONIC
+  const [showHotspotPanel, setShowHotspotPanel] = useState(false);
+  const [hotspotSettings, setHotspotSettings] = useState({
+    showHotspots: false,
+    hotspotTypes: ['activity_peak', 'feeding_zone', 'rut_zone'],
+    showZones: false,
+    zoneTypes: ['feeding', 'bedding', 'water_access'],
+    showCorridors: false,
+    corridorTypes: ['movement', 'preferred', 'feeding_transit'],
+    species: ['moose'],
+    timeRange: '24h',
+    minScoreThreshold: 70
+  });
 
   // Load waypoints and heatmap data - UNIFIED API (territory_waypoints)
   const loadWaypoints = useCallback(async () => {
