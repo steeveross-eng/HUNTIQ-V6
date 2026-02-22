@@ -123,22 +123,24 @@ class HotspotResponse(BaseModel):
 
 class HotspotService:
     """
-    Service de generation de hotspots.
+    Service de generation de hotspots ORGANIQUES V3.
     
-    Consomme passivement les outputs de P0-STABLE:
-    - PredictiveTerritorialService (scores, 12 facteurs)
-    - BehavioralModelsService (timelines, comportements)
+    REFONTE MAJEURE — Génération via Marching Squares + Chaikin.
     
-    Genere des hotspots conformes aux specifications visuelles:
+    SPÉCIFICATIONS BIONIC V5:
+    - Formes 100% ORGANIQUES (ZÉRO cercle)
+    - Superficie: 5000-10000 m²
+    - Évitement RÉEL: eau, routes, zones urbaines (OSM Cache)
+    - Alignement comportemental par espèce
     - Contours 1-2px, centre transparent
-    - Formes naturelles (Chaikin)
     - ZERO fill, ZERO effets
     """
     
     def __init__(self):
         self._pt_service = PredictiveTerritorialService()
         self._bm_service = BehavioralModelsService()
-        self._contour_gen = ContourGenerator()
+        self._organic_gen = OrganicContourGenerator()
+        self._osm_cache = get_osm_cache() if get_osm_cache else None
     
     def generate_hotspots(self, request: HotspotRequest) -> HotspotResponse:
         """
