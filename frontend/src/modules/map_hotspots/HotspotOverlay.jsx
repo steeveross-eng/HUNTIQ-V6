@@ -39,9 +39,9 @@ const getZoneStyle = (feature) => {
   return {
     color: style.stroke_color || '#4CAF50',
     weight: Math.max(style.stroke_width || 1.5, 2),  // Minimum 2px
-    opacity: 0.9,
+    opacity: 0.8,
     fillColor: style.stroke_color || '#4CAF50',
-    fillOpacity: 0.1,  // Leger fill pour visibilite
+    fillOpacity: 0.0,  // Pas de remplissage
     dashArray: style.stroke_dasharray !== 'none' ? style.stroke_dasharray : null
   };
 };
