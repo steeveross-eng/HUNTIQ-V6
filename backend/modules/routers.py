@@ -233,6 +233,11 @@ from modules.partner_engine.router import router as partner_router
 # ==============================================
 from routes.bionic_engine_router import router as bionic_engine_router
 
+# ==============================================
+# BIONIC WEATHER ENGINE (PHASE P1-ENV)
+# ==============================================
+from modules.bionic_engine_p0.weather_router import router as bionic_weather_router
+
 
 # List of all available routers with their metadata
 CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
