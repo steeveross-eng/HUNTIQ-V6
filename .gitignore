@@ -292,3 +292,7 @@ backend/data/osm_cache/CA-ON-OTTAWA.json
 backend/data/osm_cache/US-NY-CATSKILLS.json
 backend/data/osm_cache/US-NY-SOUTHERN-TIER.json
 backend/data/osm_cache/FR-ARA-ISERE.json
+-e 
+# Environment files
+*.env
+*.env.*
