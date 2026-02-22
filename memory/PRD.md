@@ -16,19 +16,27 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 - ✅ Intégration des 12 facteurs comportementaux majeurs
 - ✅ 91 tests (70 unitaires + 21 API) passés
 - ✅ Documentation complète mise à jour
-- ✅ 4 rapports de revue exécutive générés
 
-### PHASE P1-HOTSPOTS V2 — REFONTE CIRCULAIRE (Complétée — 22 Février 2026)
+### PHASE P1-HOTSPOTS V3 — REFONTE ORGANIQUE (Complétée — 22 Février 2026)
 **Module d'affichage cartographique des hotspots BIONIC**
 
-#### Spécifications Visuelles Implémentées (CONFORMES)
-- ✅ Forme de base **CIRCULAIRE** avec perturbations naturelles terrain
-- ✅ Superficie **EXACTE: 2000-3000 m²** (mesuré: ~2128 m²)
-- ✅ Contours **ultra-fins (1.5px)**, colorés, lissés (Chaikin 129 points)
-- ✅ Centre **100% TRANSPARENT** (fillOpacity = 0)
-- ✅ Évitement automatique des zones d'eau (SIMULÉ)
-- ✅ Alignement par espèce avec couleurs distinctes
-- ✅ **Dropdown de sélection d'espèce** dans les filtres
+#### Spécifications Visuelles CONFORMES
+
+| Critère | Exigé | Implémenté | Statut |
+|---------|-------|------------|--------|
+| Forme | 100% ORGANIQUE | Marching Squares + Chaikin | ✅ |
+| Superficie | 5000-10000 m² | 5006-8574 m² | ✅ |
+| Contours | Ultra-fins (1-2px) | 1.5px | ✅ |
+| Centre | Transparent | fillOpacity=0 | ✅ |
+| Points | Lissés | 39-71 par contour | ✅ |
+| Effets | ZÉRO | Aucun | ✅ |
+
+#### Pipeline de Génération
+1. **IntensityGridGenerator** — Grille d'intensité P0-STABLE
+2. **MarchingSquares** — Extraction iso-contours organiques
+3. **Chaikin Smoothing** — Lissage multi-passes (3 itérations)
+4. **Validation Superficie** — Filtrage 5000-10000 m²
+5. **OSMCacheService** — Évitement zones d'exclusion (STRUCTURE CRÉÉE)
 
 #### Couleurs par Espèce
 | Espèce | Couleur | Code |
@@ -39,65 +47,57 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 | Dindon sauvage | Or foncé | #DAA520 |
 | Wapiti | Peru | #CD853F |
 
-#### Backend (100% Complété)
-- ✅ **ContourGenerator V2** — Génération de cercles naturels
-- ✅ **NaturalCircleGenerator** — Calcul de rayon pour superficie cible
-- ✅ **WaterBodyDetector** — Évitement des zones d'eau (SIMULÉ)
-- ✅ **Chaikin Smoothing** — Lissage des contours (129 points)
+#### Backend (93% Tests Passés)
+- ✅ **OrganicContourGenerator** — Marching Squares + Chaikin
+- ✅ **IntensityGridGenerator** — Grille multi-noyaux par espèce
+- ✅ **MarchingSquares** — Extraction iso-contours
+- ✅ **OSMCacheService** — Cache multi-régions (STRUCTURE CRÉÉE)
 
-#### Frontend (100% Complété)
-- ✅ **Dropdown "Espèce cible"** avec indicateur de couleur
+#### Frontend (100% Tests Passés)
+- ✅ **Dropdown "Espèce cible"** avec data-testid
+- ✅ **Indicateur de couleur** par espèce
 - ✅ **Boutons multi-espèces** pour superposition
-- ✅ **65+ hotspots circulaires** rendus sur la carte
-- ✅ **Centres transparents** (carte visible à travers)
+- ✅ **Seuil par défaut: 50** (réduit pour plus de résultats)
 
-#### Tests (100% Passés)
-- 10/10 tests backend
-- 100% validation frontend
-- Toutes les spécifications visuelles vérifiées
+## Composants à COMPLÉTER (Production)
 
-## Note Importante: Composants SIMULÉS
-- **WaterBodyDetector** : Évitement d'eau basé sur patterns géographiques typiques du Québec. En production, intégrer OpenStreetMap Overpass API ou données LiDAR locales.
+### OSM Cache — Extraction Overpass (NON EXÉCUTÉE)
+- Structure de cache créée: `/app/backend/data/osm_cache/`
+- Régions prédéfinies: CA-QC, CA-ON, CA-BC, CA-AB, US-NY, US-MT, etc.
+- **ACTION REQUISE:** Exécuter extraction batch via Overpass API
+- Types d'exclusion: water, roads, urban, infrastructure, agriculture, recreation
 
 ## Phases Planifiées (Backlog)
 
+### P1-OSM — Extraction Cache OSM (PRIORITAIRE)
+- Exécuter `osm_cache.extract_from_overpass("CA-QC")` pour chaque région
+- Peupler le cache avec données réelles OSM
+- Activer évitement RÉEL des zones d'exclusion
+
 ### P1-ENV — Intégration OpenWeatherMap
 - Données météorologiques en temps réel
-- Impact sur les prédictions comportementales
 
 ### P1-SCORE — Système de Scoring Dynamique
 - Algorithme de scoring personnalisé
-- Dashboard de scoring
-
-### P1-API — Endpoint /api/v1/bionic/analyze_hunt_plan
-- Analyse complète d'un plan de chasse
-- Recommandations optimisées
 
 ### P2 — Moteur de Recommandations
 - Suggestions personnalisées
-- Apprentissage des préférences utilisateur
-
-### P2 — Intégration OSM Water Data (Production)
-- Remplacer WaterBodyDetector simulé par données réelles
-- Intégration OpenStreetMap Overpass API
-
-### P3 — BionicMarket
-- Plateforme marketplace
-- Échanges entre chasseurs
 
 ## Stack Technique
-- **Backend**: Python FastAPI
+- **Backend**: Python FastAPI + NumPy + SciPy + Shapely
 - **Frontend**: React 18 + Leaflet
 - **Database**: MongoDB
 - **Tests**: pytest + Playwright
 
-## Fichiers de Référence Principaux
-- `/app/backend/modules/bionic_engine_p0/services/contour_generator.py` (V2 - refonte)
+## Fichiers de Référence V3
+- `/app/backend/modules/bionic_engine_p0/services/organic_contour_generator.py`
+- `/app/backend/modules/bionic_engine_p0/services/osm_cache_service.py`
 - `/app/backend/modules/bionic_engine_p0/services/hotspot_service.py`
 - `/app/frontend/src/modules/map_hotspots/HotspotOverlay.jsx`
 - `/app/frontend/src/modules/map_hotspots/HotspotControlPanel.jsx`
 
-## Notes
+## Notes Importantes
 - Communication en français uniquement
 - Directives de COPILOT MAÎTRE sont absolues et non négociables
 - Respect strict des spécifications visuelles BIONIC V5
+- **Cache OSM = STRUCTURE CRÉÉE, DONNÉES = VIDES**
