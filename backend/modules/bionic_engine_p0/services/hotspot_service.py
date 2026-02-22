@@ -292,7 +292,11 @@ class HotspotService:
         end_datetime: datetime,
         min_threshold: int
     ) -> Optional[Hotspot]:
-        """Cree un hotspot si le facteur correspondant depasse le seuil."""
+        """
+        Cree un hotspot ORGANIQUE si le facteur depasse le seuil.
+        
+        REFONTE V3: Utilise OrganicContourGenerator pour formes naturelles.
+        """
         
         # Mapper type de hotspot vers facteur P0
         type_to_factor = {
@@ -313,6 +317,13 @@ class HotspotService:
         if score < min_threshold:
             return None
         
+        # Vérifier évitement OSM AVANT génération
+        if self._osm_cache:
+            is_excluded, exclusion_type = self._osm_cache.is_point_excluded(lat, lng)
+            if is_excluded:
+                logger.debug(f"Point {lat},{lng} exclu: {exclusion_type}")
+                return None
+        
         # Determiner heures optimales
         optimal_hours = []
         if hotspot_type in ["activity_peak", "feeding_zone"]:
@@ -328,14 +339,43 @@ class HotspotService:
         elif advanced_factors.get("digestive", {}).get("phase") == "active_feeding":
             dominant_behavior = "feeding"
         
-        # Generer geometrie CIRCULAIRE naturelle (2000-3000 m²)
-        coords = self._contour_gen.generate_natural_polygon(
-            center_lat=lat,
-            center_lng=lng,
-            irregularity=0.15,
-            num_vertices=32,
-            species=species
+        # Generer geometrie ORGANIQUE (5000-10000 m²)
+        # Calculer les bounds locales pour le hotspot
+        from modules.bionic_engine_p0.services.organic_contour_generator import meters_to_degrees_lat, meters_to_degrees_lng
+        
+        # Rayon approximatif pour ~7500 m² (racine de (A/pi))
+        approx_radius_m = 50  # ~50m de rayon
+        lat_offset = meters_to_degrees_lat(approx_radius_m * 3)
+        lng_offset = meters_to_degrees_lng(approx_radius_m * 3, lat)
+        
+        local_bounds = {
+            "north": lat + lat_offset,
+            "south": lat - lat_offset,
+            "east": lng + lng_offset,
+            "west": lng - lng_offset
+        }
+        
+        # Génération ORGANIQUE via Marching Squares + Chaikin
+        coords = self._organic_gen.generate_organic_hotspot(
+            bounds=local_bounds,
+            species=species,
+            hotspot_type=hotspot_type,
+            min_area=MIN_AREA_M2,
+            max_area=MAX_AREA_M2
         )
+        
+        if coords is None:
+            # Échec de génération - retourner None (liste vide acceptable)
+            return None
+        
+        # Calculer superficie réelle
+        center_lat = sum(c[1] for c in coords) / len(coords)
+        area_m2 = calculate_polygon_area_m2(coords, center_lat)
+        
+        # Validation stricte de superficie (5000-10000 m²)
+        if area_m2 < MIN_AREA_M2 * 0.9 or area_m2 > MAX_AREA_M2 * 1.1:
+            logger.debug(f"Hotspot rejeté: superficie {area_m2:.0f} m² hors plage")
+            return None
         
         geometry = {
             "type": "Polygon",
