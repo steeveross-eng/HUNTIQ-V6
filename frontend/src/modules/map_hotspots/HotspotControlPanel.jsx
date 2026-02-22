@@ -1,9 +1,10 @@
 /**
  * HotspotControlPanel - Panneau de controle des hotspots BIONIC
- * PHASE P1-HOTSPOTS
+ * PHASE P1-HOTSPOTS V2 - REFONTE
  * 
  * Fonctionnalites UX (OBLIGATOIRES):
- * - Activation/desactivation individuelle
+ * - Dropdown de selection d'espece
+ * - Activation/desactivation individuelle par hotspot
  * - Activation par groupe en un clic
  * - ZERO rechargement de carte
  * - Etat instantane
@@ -15,8 +16,18 @@ import { Switch } from '@/components/ui/switch';
 import { 
   Eye, EyeOff, Flame, Leaf, Heart, Thermometer, Droplets,
   AlertTriangle, Snowflake, User, Diamond, Star,
-  ArrowRight, CircleDot, Route, ChevronDown, ChevronUp, X
+  ArrowRight, CircleDot, Route, ChevronDown, ChevronUp, X,
+  Filter
 } from 'lucide-react';
+
+// Couleurs par espece (conformes au backend)
+const SPECIES_COLORS = {
+  moose: '#FF6B00',       // Orange vif (Orignal)
+  deer: '#8B4513',        // Brun (Chevreuil)
+  bear: '#4A4A4A',        // Gris fonce (Ours)
+  wild_turkey: '#DAA520', // Or fonce (Dindon)
+  elk: '#CD853F'          // Peru (Wapiti)
+};
 
 // Types de hotspots avec icones et couleurs
 const HOTSPOT_TYPES = [
@@ -26,10 +37,10 @@ const HOTSPOT_TYPES = [
   { id: 'thermal_refuge', label: 'Refuge thermique', Icon: Thermometer, color: '#00BCD4', group: 'environment' },
   { id: 'water_source', label: "Point d'eau", Icon: Droplets, color: '#2196F3', group: 'environment' },
   { id: 'predation_risk', label: 'Risque predation', Icon: AlertTriangle, color: '#F44336', group: 'risk' },
-  { id: 'snow_impact', label: 'Impact neige', Icon: Snowflake, color: '#ECEFF1', group: 'environment' },
-  { id: 'human_avoidance', label: 'Evitement humain', Icon: User, color: '#9E9E9E', group: 'risk' },
+  { id: 'snow_impact', label: 'Impact neige', Icon: Snowflake, color: '#90A4AE', group: 'environment' },
+  { id: 'human_avoidance', label: 'Evitement humain', Icon: User, color: '#795548', group: 'risk' },
   { id: 'mineral_site', label: 'Site mineral', Icon: Diamond, color: '#FFC107', group: 'feeding' },
-  { id: 'composite_optimal', label: 'Zone optimale', Icon: Star, color: '#FFD700', group: 'optimal' }
+  { id: 'composite_optimal', label: 'Zone optimale', Icon: Star, color: '#FF9800', group: 'optimal' }
 ];
 
 // Types de zones comportementales
@@ -40,7 +51,7 @@ const ZONE_TYPES = [
   { id: 'thermal_cover', label: 'Couvert thermique', color: '#00BCD4' },
   { id: 'water_access', label: 'Acces eau', color: '#2196F3' },
   { id: 'predation_zone', label: 'Zone predation', color: '#F44336' },
-  { id: 'yarding_zone', label: 'Ravage hivernal', color: '#ECEFF1' }
+  { id: 'yarding_zone', label: 'Ravage hivernal', color: '#607D8B' }
 ];
 
 // Types de corridors
@@ -51,13 +62,13 @@ const CORRIDOR_TYPES = [
   { id: 'feeding_transit', label: 'Transit alim.', color: '#FF9800' }
 ];
 
-// Especes supportees
+// Especes supportees avec couleurs
 const SPECIES = [
-  { id: 'moose', label: 'Orignal' },
-  { id: 'deer', label: 'Chevreuil' },
-  { id: 'bear', label: 'Ours' },
-  { id: 'wild_turkey', label: 'Dindon sauvage' },
-  { id: 'elk', label: 'Wapiti' }
+  { id: 'moose', label: 'Orignal', color: SPECIES_COLORS.moose },
+  { id: 'deer', label: 'Chevreuil', color: SPECIES_COLORS.deer },
+  { id: 'bear', label: 'Ours', color: SPECIES_COLORS.bear },
+  { id: 'wild_turkey', label: 'Dindon sauvage', color: SPECIES_COLORS.wild_turkey },
+  { id: 'elk', label: 'Wapiti', color: SPECIES_COLORS.elk }
 ];
 
 // Periodes temporelles
