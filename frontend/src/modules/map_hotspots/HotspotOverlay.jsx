@@ -375,7 +375,6 @@ export const HotspotOverlay = ({
     map.on('moveend', onMoveEnd);
     
     return () => {
-      clearTimeout(timeoutId);
       map.off('moveend', onMoveEnd);
     };
   }, [map, showHotspots, showZones, showCorridors, species, hotspotTypes, zoneTypes, corridorTypes, minScoreThreshold, timeRange]);
