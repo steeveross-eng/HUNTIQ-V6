@@ -94,6 +94,33 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 
 ## Tâches En Attente
 
+### P1-ENV — Intégration OpenWeatherMap (Complétée — 22 Février 2026)
+**Module météorologique pour BIONIC V5 — Prêt pour activation**
+
+#### Statut
+- ✅ **Service créé** : `/app/backend/modules/bionic_engine_p0/services/weather_service.py`
+- ✅ **Router API** : `/app/backend/modules/bionic_engine_p0/weather_router.py`
+- ✅ **Mode inactive** fonctionnel (sans clé API)
+- ⏳ **Activation** : Ajouter clé dans `OWM_API_KEY` dans `/app/backend/.env`
+
+#### Endpoints Disponibles
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v1/bionic/weather/status` | Statut du service |
+| `POST /api/v1/bionic/weather/current` | Météo actuelle |
+| `POST /api/v1/bionic/weather/forecast` | Prévisions 24h/72h/7j |
+| `POST /api/v1/bionic/weather/behavior` | Analyse comportementale |
+| `POST /api/v1/bionic/weather/complete` | Données complètes |
+
+#### Données Fournies
+- Température, ressenti, humidité
+- Vent (vitesse, direction, rafales)
+- Précipitations (pluie, neige)
+- Pression atmosphérique + tendance
+- Couverture nuageuse, visibilité
+- Lever/coucher soleil, phase lunaire
+- Facteurs comportementaux (activity, feeding, movement modifiers)
+
 ### P1-ENV — Intégration OpenWeatherMap
 - Données météorologiques en temps réel
 - **Status:** PLANIFIÉ
