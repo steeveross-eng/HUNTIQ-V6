@@ -343,11 +343,11 @@ class HotspotService:
         # Calculer les bounds locales pour le hotspot
         from modules.bionic_engine_p0.services.organic_contour_generator import meters_to_degrees_lat, meters_to_degrees_lng
         
-        # Rayon approximatif pour ~7500 m² (racine de (7500/pi) = ~49m)
-        # On utilise un facteur plus large pour la zone de génération
-        approx_radius_m = 80  # Zone de génération élargie
-        lat_offset = meters_to_degrees_lat(approx_radius_m * 3)
-        lng_offset = meters_to_degrees_lng(approx_radius_m * 3, lat)
+        # Zone de génération: ~2km x 2km pour permettre des contours de 5000-10000 m²
+        # L'algorithme Marching Squares extrait les contours de la grille d'intensité
+        generation_radius_m = 1000  # 1km de rayon = 2km de diamètre
+        lat_offset = meters_to_degrees_lat(generation_radius_m)
+        lng_offset = meters_to_degrees_lng(generation_radius_m, lat)
         
         local_bounds = {
             "north": lat + lat_offset,
