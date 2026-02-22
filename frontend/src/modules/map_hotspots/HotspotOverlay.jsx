@@ -529,8 +529,11 @@ export const HotspotOverlay = ({
           setHotspots(toGeoJSONCollection(hotspotsData.hotspots));
           // Reset disabled set when new hotspots are loaded
           setDisabledHotspots(new Set());
+          // Notifier le parent du nombre de hotspots
+          onHotspotsLoaded(hotspotsData.hotspots.length);
         } else {
           setHotspots(null);
+          onHotspotsLoaded(0);
         }
         
         if (zonesData?.success && zonesData.zones?.length) {
