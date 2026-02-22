@@ -1,9 +1,15 @@
 """
-BIONIC ENGINE - Hotspot Service
-PHASE G - P1-HOTSPOTS
+BIONIC ENGINE - Hotspot Service V3
+PHASE P1-HOTSPOTS — REFONTE MAJEURE
 
-Service de generation des hotspots cartographiques.
-Consomme les outputs P0-STABLE pour generer des hotspots 200% realistes.
+Service de generation des hotspots cartographiques ORGANIQUES.
+Formes 100% naturelles via Marching Squares + Chaikin.
+
+SPÉCIFICATIONS OBLIGATOIRES:
+- Formes ORGANIQUES (ZÉRO cercle)
+- Superficie: 5000-10000 m²
+- Évitement RÉEL: eau, routes, urbain (OSM Cache)
+- Alignement comportemental par espèce
 
 Conformite: G-SEC | G-QA | G-DOC | BIONIC V5
 """
@@ -16,14 +22,24 @@ import logging
 from modules.bionic_engine_p0.modules.predictive_territorial import PredictiveTerritorialService
 from modules.bionic_engine_p0.modules.behavioral_models import BehavioralModelsService
 from modules.bionic_engine_p0.contracts.data_contracts import Species
-from modules.bionic_engine_p0.services.contour_generator import (
-    ContourGenerator,
-    generate_id,
+
+# Import du nouveau générateur ORGANIQUE
+from modules.bionic_engine_p0.services.organic_contour_generator import (
+    OrganicContourGenerator,
     create_hotspot_style,
-    HOTSPOT_COLORS,
+    generate_id,
+    calculate_polygon_area_m2,
     SPECIES_COLORS,
-    calculate_polygon_area_m2
+    HOTSPOT_COLORS,
+    MIN_AREA_M2,
+    MAX_AREA_M2
 )
+
+# Import du cache OSM
+try:
+    from modules.bionic_engine_p0.services.osm_cache_service import get_osm_cache
+except ImportError:
+    get_osm_cache = None
 
 logger = logging.getLogger("bionic_engine.hotspot_service")
 
