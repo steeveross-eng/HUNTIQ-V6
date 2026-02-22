@@ -316,3 +316,7 @@ backend/data/osm_cache/FR-ARA-ISERE.json
 # Environment files
 *.env
 *.env.*
+-e 
+# Environment files
+*.env
+*.env.*
