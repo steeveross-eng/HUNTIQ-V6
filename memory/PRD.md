@@ -200,6 +200,7 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 - **Évitement géospatial = FONCTIONNEL**
 
 ## Changelog
+- **22 Février 2026**: P1-SCORE — Système de Scoring Dynamique complet (7 composants, 5 espèces)
 - **22 Février 2026**: Intégration OpenWeatherMap complète (mode inactive, prêt pour activation)
 - **22 Février 2026**: Extraction OSM multi-régions complète (CA-ON, US-NY, FR-ARA) — 417,935 zones totales
 - **22 Février 2026**: Implémentation boutons ON/OFF individuels pour hotspots (HotspotTogglePanel)
