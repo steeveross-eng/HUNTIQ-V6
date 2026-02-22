@@ -343,8 +343,9 @@ class HotspotService:
         # Calculer les bounds locales pour le hotspot
         from modules.bionic_engine_p0.services.organic_contour_generator import meters_to_degrees_lat, meters_to_degrees_lng
         
-        # Rayon approximatif pour ~7500 m² (racine de (A/pi))
-        approx_radius_m = 50  # ~50m de rayon
+        # Rayon approximatif pour ~7500 m² (racine de (7500/pi) = ~49m)
+        # On utilise un facteur plus large pour la zone de génération
+        approx_radius_m = 80  # Zone de génération élargie
         lat_offset = meters_to_degrees_lat(approx_radius_m * 3)
         lng_offset = meters_to_degrees_lng(approx_radius_m * 3, lat)
         
