@@ -18,38 +18,46 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 - ✅ Documentation complète mise à jour
 - ✅ 4 rapports de revue exécutive générés
 
-### PHASE P1-HOTSPOTS (Complétée — 22 Février 2026)
+### PHASE P1-HOTSPOTS V2 — REFONTE CIRCULAIRE (Complétée — 22 Février 2026)
 **Module d'affichage cartographique des hotspots BIONIC**
 
+#### Spécifications Visuelles Implémentées (CONFORMES)
+- ✅ Forme de base **CIRCULAIRE** avec perturbations naturelles terrain
+- ✅ Superficie **EXACTE: 2000-3000 m²** (mesuré: ~2128 m²)
+- ✅ Contours **ultra-fins (1.5px)**, colorés, lissés (Chaikin 129 points)
+- ✅ Centre **100% TRANSPARENT** (fillOpacity = 0)
+- ✅ Évitement automatique des zones d'eau (SIMULÉ)
+- ✅ Alignement par espèce avec couleurs distinctes
+- ✅ **Dropdown de sélection d'espèce** dans les filtres
+
+#### Couleurs par Espèce
+| Espèce | Couleur | Code |
+|--------|---------|------|
+| Orignal | Orange vif | #FF6B00 |
+| Chevreuil | Brun | #8B4513 |
+| Ours | Gris foncé | #4A4A4A |
+| Dindon sauvage | Or foncé | #DAA520 |
+| Wapiti | Peru | #CD853F |
+
 #### Backend (100% Complété)
-- ✅ **GET /api/v1/bionic/map/status** — Statut du module P1-HOTSPOTS
-- ✅ **POST /api/v1/bionic/map/hotspots** — Génération de hotspots GeoJSON
-  - 10 types supportés: activity_peak, feeding_zone, rut_zone, thermal_refuge, water_source, predation_risk, snow_impact, human_avoidance, mineral_site, composite_optimal
-  - Géométrie: Polygon avec contours Chaikin
-- ✅ **POST /api/v1/bionic/map/zones** — Zones comportementales
-  - 7 types: feeding, bedding, rut_arena, thermal_cover, water_access, predation_zone, yarding_zone
-  - Matrice de superposition incluse
-- ✅ **POST /api/v1/bionic/map/corridors** — Corridors de déplacement
-  - 4 types: movement, avoidance, preferred, feeding_transit
-  - Context de mouvement inclus
+- ✅ **ContourGenerator V2** — Génération de cercles naturels
+- ✅ **NaturalCircleGenerator** — Calcul de rayon pour superficie cible
+- ✅ **WaterBodyDetector** — Évitement des zones d'eau (SIMULÉ)
+- ✅ **Chaikin Smoothing** — Lissage des contours (129 points)
 
 #### Frontend (100% Complété)
-- ✅ **HotspotOverlay.jsx** — Composant Leaflet pour affichage GeoJSON
-- ✅ **HotspotControlPanel.jsx** — Panneau de contrôle ON/OFF
-  - Activation/désactivation individuelle
-  - Activation par groupe (Activity, Feeding, Reproduction, Environment, Risk)
-  - Filtres: espèces, période (24h/72h/7j), score minimum
-
-#### Spécifications Visuelles Respectées
-- Contours ultra-fins (2px minimum)
-- Centres 100% transparents (fillOpacity: 0)
-- Formes naturelles (Chaikin smoothing)
-- ZERO glow, shadow, halo
+- ✅ **Dropdown "Espèce cible"** avec indicateur de couleur
+- ✅ **Boutons multi-espèces** pour superposition
+- ✅ **65+ hotspots circulaires** rendus sur la carte
+- ✅ **Centres transparents** (carte visible à travers)
 
 #### Tests (100% Passés)
-- 20/20 tests API
-- Frontend UI/UX validé
-- 64 hotspots rendus sur la carte
+- 10/10 tests backend
+- 100% validation frontend
+- Toutes les spécifications visuelles vérifiées
+
+## Note Importante: Composants SIMULÉS
+- **WaterBodyDetector** : Évitement d'eau basé sur patterns géographiques typiques du Québec. En production, intégrer OpenStreetMap Overpass API ou données LiDAR locales.
 
 ## Phases Planifiées (Backlog)
 
@@ -69,8 +77,9 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 - Suggestions personnalisées
 - Apprentissage des préférences utilisateur
 
-### P2 — Intégrations API Externes
-- APIs tierces pour enrichissement des données
+### P2 — Intégration OSM Water Data (Production)
+- Remplacer WaterBodyDetector simulé par données réelles
+- Intégration OpenStreetMap Overpass API
 
 ### P3 — BionicMarket
 - Plateforme marketplace
@@ -83,7 +92,7 @@ Projet HUNTIQ-V5 dirigé par COPILOT MAÎTRE (Steeve). Application de chasse ave
 - **Tests**: pytest + Playwright
 
 ## Fichiers de Référence Principaux
-- `/app/backend/modules/bionic_engine_p0/router.py`
+- `/app/backend/modules/bionic_engine_p0/services/contour_generator.py` (V2 - refonte)
 - `/app/backend/modules/bionic_engine_p0/services/hotspot_service.py`
 - `/app/frontend/src/modules/map_hotspots/HotspotOverlay.jsx`
 - `/app/frontend/src/modules/map_hotspots/HotspotControlPanel.jsx`
