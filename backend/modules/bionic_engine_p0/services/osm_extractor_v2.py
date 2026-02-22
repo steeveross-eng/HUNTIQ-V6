@@ -37,12 +37,13 @@ BASE_DELAY = 5
 MAX_RETRIES = 3
 REQUEST_TIMEOUT = 120
 
-# Zones de chasse typiques - sous-régions du Québec
+# Zones de chasse typiques - sous-régions
 # Plus petites zones = requêtes plus rapides et fiables
 HUNTING_SUBREGIONS = {
+    # ================= CANADA - QUÉBEC =================
     "CA-QC-QUEBEC": {
         "name": "Région Québec (Capitale-Nationale)",
-        "bbox": [-72.0, 46.5, -70.5, 47.5],  # Zone autour de Québec City
+        "bbox": [-72.0, 46.5, -70.5, 47.5],
         "parent": "CA-QC"
     },
     "CA-QC-SAGUENAY": {
@@ -64,6 +65,72 @@ HUNTING_SUBREGIONS = {
         "name": "Région Outaouais",
         "bbox": [-78.0, 45.5, -75.0, 47.5],
         "parent": "CA-QC"
+    },
+    
+    # ================= CANADA - ONTARIO =================
+    "CA-ON-NORTH": {
+        "name": "Northern Ontario (Hunting Belt)",
+        "bbox": [-85.0, 46.5, -79.0, 50.0],
+        "parent": "CA-ON"
+    },
+    "CA-ON-ALGONQUIN": {
+        "name": "Algonquin Region",
+        "bbox": [-79.0, 45.0, -77.0, 46.5],
+        "parent": "CA-ON"
+    },
+    "CA-ON-MUSKOKA": {
+        "name": "Muskoka-Parry Sound",
+        "bbox": [-80.5, 44.5, -78.5, 46.0],
+        "parent": "CA-ON"
+    },
+    "CA-ON-OTTAWA": {
+        "name": "Ottawa Valley",
+        "bbox": [-77.5, 44.5, -75.0, 46.0],
+        "parent": "CA-ON"
+    },
+    
+    # ================= USA - NEW YORK =================
+    "US-NY-ADIRONDACKS": {
+        "name": "Adirondacks Region",
+        "bbox": [-75.5, 43.5, -73.5, 45.0],
+        "parent": "US-NY"
+    },
+    "US-NY-CATSKILLS": {
+        "name": "Catskills Region",
+        "bbox": [-75.0, 41.5, -73.5, 42.5],
+        "parent": "US-NY"
+    },
+    "US-NY-FINGER-LAKES": {
+        "name": "Finger Lakes Region",
+        "bbox": [-77.5, 42.0, -76.0, 43.0],
+        "parent": "US-NY"
+    },
+    "US-NY-SOUTHERN-TIER": {
+        "name": "Southern Tier",
+        "bbox": [-79.0, 41.8, -75.5, 42.5],
+        "parent": "US-NY"
+    },
+    
+    # ================= FRANCE - AUVERGNE-RHÔNE-ALPES =================
+    "FR-ARA-ISERE": {
+        "name": "Isère (Alpes)",
+        "bbox": [5.0, 44.7, 6.5, 45.9],
+        "parent": "FR-ARA"
+    },
+    "FR-ARA-DROME": {
+        "name": "Drôme (Préalpes)",
+        "bbox": [4.6, 44.1, 5.8, 45.0],
+        "parent": "FR-ARA"
+    },
+    "FR-ARA-ARDECHE": {
+        "name": "Ardèche",
+        "bbox": [3.8, 44.2, 4.9, 45.0],
+        "parent": "FR-ARA"
+    },
+    "FR-ARA-SAVOIE": {
+        "name": "Savoie (Alpes)",
+        "bbox": [5.6, 45.0, 7.2, 46.0],
+        "parent": "FR-ARA"
     },
 }
 
