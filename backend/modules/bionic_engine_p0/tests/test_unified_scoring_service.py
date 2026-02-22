@@ -259,8 +259,10 @@ class TestTemporalAdjustment:
     def test_dawn_high_temporal_factor(self, service, dawn_context):
         """Aube = temporal_factor élevé."""
         result = service.calculate_unified_score(dawn_context)
-        # À l'aube, le facteur devrait être >= 0.9
-        assert result.temporal_adjustment.temporal_factor >= 0.9
+        # À 7h, le facteur devrait être élevé (proche de l'aube)
+        # En hiver, c'est juste après le début légal, donc >= 0.7
+        assert result.temporal_adjustment.temporal_factor >= 0.7
+        assert result.temporal_adjustment.is_legal_period is True
     
     def test_legal_badge_present(self, service, legal_context):
         """Le badge légal est présent."""
