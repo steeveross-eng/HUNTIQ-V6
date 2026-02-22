@@ -107,7 +107,7 @@ export const HotspotControlPanel = ({
     defaultSettings.species ?? ['moose']
   );
   const [timeRange, setTimeRange] = useState(defaultSettings.timeRange ?? '24h');
-  const [minScore, setMinScore] = useState(defaultSettings.minScoreThreshold ?? 70);
+  const [minScore, setMinScore] = useState(defaultSettings.minScoreThreshold ?? 50);
   
   // Sections collapsibles
   const [expandedSections, setExpandedSections] = useState({
