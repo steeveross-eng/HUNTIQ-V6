@@ -454,7 +454,7 @@ class DynamicScoringService:
             factors.append(f"Précipitations importantes ({inputs.precipitation:.1f} mm)")
         elif inputs.precipitation > 0:
             score -= 5
-            factors.append(f"Légères précipitations")
+            factors.append("Légères précipitations")
         
         # Visibilité
         if inputs.visibility < 1000:
