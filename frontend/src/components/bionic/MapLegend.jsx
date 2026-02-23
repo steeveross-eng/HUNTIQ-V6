@@ -512,8 +512,4 @@ const MapLegend = ({
 
 export default MapLegend;
 
-// Export des utilitaires de coloration pour usage externe
-export {
-  getScoreColorFromPalette,
-  getScoreLevel
-};
+// Les utilitaires getScoreColorFromPalette et getScoreLevel sont déjà exportés inline
