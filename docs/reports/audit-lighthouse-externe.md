@@ -2,7 +2,7 @@
 ## HUNTIQ-V5 BIONIC — BRANCHE 3 COMPLÈTE
 
 **Date:** 2025-12-20
-**URL Auditée:** https://scoring-fusion.preview.emergentagent.com
+**URL Auditée:** https://hotspot-fusion-map.preview.emergentagent.com
 **Protocole:** HTTP/2
 **Environnement:** Preview (non-production)
 **Statut:** ✅ AUDIT COMPLÉTÉ

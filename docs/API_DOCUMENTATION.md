@@ -1,7 +1,7 @@
 # HUNTIQ V5-ULTIME-FUSION — Documentation API
 
 **Version:** 5.0.0  
-**Base URL:** `https://scoring-fusion.preview.emergentagent.com`  
+**Base URL:** `https://hotspot-fusion-map.preview.emergentagent.com`  
 **Date:** 2026-02-17  
 **Phase:** Release Candidate RC-1.0.0
 

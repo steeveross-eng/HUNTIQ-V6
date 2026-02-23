@@ -266,7 +266,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://scoring-fusion.preview.emergentagent.com",
+                "url": "https://hotspot-fusion-map.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],

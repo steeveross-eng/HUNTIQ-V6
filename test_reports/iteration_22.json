@@ -14,7 +14,7 @@
 
   "passed_tests": [
     "Service Worker V2 registered (sw-v2.js) - state: activated",
-    "Service Worker scope: https://scoring-fusion.preview.emergentagent.com/",
+    "Service Worker scope: https://hotspot-fusion-map.preview.emergentagent.com/",
     "ImageCDN AVIF format detection: supported",
     "ImageCDN WebP format detection: supported",
     "ImageCDN optimal format selection: avif",
@@ -65,7 +65,7 @@
     "service_worker_v2": {
       "status": "VERIFIED",
       "file": "/app/frontend/public/sw-v2.js",
-      "script_url": "https://scoring-fusion.preview.emergentagent.com/sw-v2.js",
+      "script_url": "https://hotspot-fusion-map.preview.emergentagent.com/sw-v2.js",
       "state": "activated",
       "caches": ["static-v2", "images-v2", "api-v2", "fonts-v2", "pages-v2"]
     },

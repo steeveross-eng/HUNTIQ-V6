@@ -4,607 +4,58 @@ L'utilisateur, COPILOT MAÎTRE, a commandé une refonte complète de l'interface
 **PRODUCT REQUIREMENTS (directives de l'utilisateur) :**
 1.  **Fusion des Systèmes :** Unifier les systèmes de scoring (WQS + BIONIC) en un seul  (40% WQS + 60% BIONIC). Unifier également les heatmaps.
 2.  **Analyse Waypoint-Centric :** Toutes les analyses (scores, heatmaps, recommandations) doivent être recalculées et centrées sur un waypoint sélectionné par l'utilisateur.
-3.  **Conformité aux Heures Légales :** Une contrainte réglementaire stricte impose que toutes les analyses temporelles (fenêtres optimales, recommandations) respectent les heures légales de chasse (30 min avant le lever du soleil à 30 min après le coucher du soleil). Le moteur doit automatiquement clipper les fenêtres et ajuster les scores en conséquence.
-4.  **Optimisation UX (4 Axes) :**
-    *   **Panneau Analyse du Plan :** Un panneau de synthèse affichant le score global, les scores par espèce, les meilleurs hotspots et les fenêtres optimales.
-    *   **Coloration Dynamique :** Les hotspots sur la carte doivent être colorés en fonction de leur score.
-    *   **Popups Enrichis :** Des popups idiotproof affichant un score clair, les espèces, les fenêtres optimales et les facteurs clés.
-    *   **Tri et Filtrage Intelligents :** Un panneau de contrôle des hotspots avec des options de tri et de filtrage avancées.
-5.  **Graphiques Interactifs :** Intégrer des graphiques (radar, timeline, histogramme) dans le panneau d'analyse.
-6.  **Module Admin pour Hotspots BIONIC :** Créer une nouvelle section dans l'admin pour inventorier, visualiser et filtrer les hotspots BIONIC, séparément du module immobilier existant.
-7.  **Architecture Modulaire Stricte (NON NÉGOCIABLE) :** Chaque fonctionnalité doit être isolée dans son propre module, avec des tests unitaires, et ne communiquer que via des interfaces définies. Aucune modification de fichiers existants sans validation explicite. Le développement se fait par validation séquentielle de chaque module isolé.
+3.  **Conformité aux Heures Légales :** Une contrainte réglementaire stricte impose que toutes les analyses temporelles respectent les heures légales de chasse (30 min avant le lever du soleil à 30 min après le coucher du soleil).
+4.  **Optimisation UX :**
+    *   Panneau de synthèse affichant score, hotspots, et fenêtres optimales.
+    *   Coloration dynamique des hotspots sur la carte.
+    *   Popups enrichis avec score, espèces, fenêtres optimales, etc.
+    *   Panneau de contrôle des hotspots avec tri et filtrage.
+5.  **Graphiques Interactifs :** Intégrer des graphiques de style Insights IA (radar, timeline, histogramme).
+6.  **Module Admin pour Hotspots BIONIC :** Créer une nouvelle section admin pour gérer les hotspots BIONIC.
+7.  **Architecture Modulaire Stricte :** Chaque fonctionnalité doit être isolée dans son propre module, avec des tests unitaires, et ne communiquer que via des interfaces définies. Développement par validation séquentielle.
 
 **User's preferred language**: Français
 
 **what currently exists?**
-Le projet a achevé la phase P1 avec l'endpoint . Une refonte majeure de l'UX et du backend a ensuite été initiée. L'agent a produit un audit UX et une proposition visuelle détaillée qui a été validée.
-L'implémentation de la nouvelle architecture backend modulaire a commencé :
--   ****: Un service isolé et testé (20/20 tests réussis) qui calcule et applique les contraintes des heures légales de chasse.
--   **Architecture de Scoring Canonique**: Une structure de 9 services de scoring isolés (, , etc.) a été créée, avec des data contracts et des tests d'interface (36/36 tests réussis).
--   ****: Un service orchestrateur qui agrège les 9 scores, applique les ajustements temporels légaux et produit un score unifié. Il est isolé et testé (33/33 tests réussis).
--   ****: Un service qui fusionne le score structurel WQS et le score dynamique unifié pour générer une grille de heatmap centrée sur un waypoint. Il est isolé et testé (34/34 tests réussis).
+Le backend a été entièrement refactorisé en une architecture modulaire et testée unitairement. Tous les services requis (, 9 services de scoring, , , et l'orchestrateur final ) sont complets et validés par des tests.
+
+Le développement frontend est en cours et suit le même principe modulaire. Une page de démonstration () a été créée pour afficher et valider visuellement chaque composant avec des données mockées. Les composants pour le panneau d'analyse, le sélecteur de waypoints, les graphiques premium, les popups enrichis et la liste de hotspots avec tri/filtrage sont terminés et ont été validés par l'utilisateur.
 
 **Last working item**:
-- **Last item agent was working:** L'agent a reçu la validation pour commencer la **PHASE 4** du nouveau plan : l'implémentation du . Ce service est l'orchestrateur final qui utilisera tous les services précédents (scoring, heatmap, légal) pour produire une analyse complète et consolidée, entièrement centrée sur le waypoint sélectionné par l'utilisateur.
-- **Status:** NOT STARTED
+- **Last item agent was working:** L'agent a commencé l'implémentation de la **PHASE 5.6 : Coloration Dynamique + Légende**. Il a créé le fichier pour le nouveau composant  mais n'a pas encore ajouté le contenu du composant, ni mis à jour la page de démonstration pour le visualiser.
+- **Status:** IN PROGRESS
 - **Agent Testing Done:** N
-- **Which testing method agent to use?** backend testing agent. L'agent doit créer un fichier de test unitaire dédié () avec un minimum de 15 tests, comme requis par l'utilisateur, et l'exécuter avec ============================= test session starts ==============================
-platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
-rootdir: /app
-plugins: anyio-4.12.0
-collected 1959 items / 61 errors
-
-==================================== ERRORS ====================================
-______________ ERROR collecting backend/tests/test_auth_engine.py ______________
-backend/tests/test_auth_engine.py:25: in <module>
-    raise ValueError("REACT_APP_BACKEND_URL environment variable not set")
-E   ValueError: REACT_APP_BACKEND_URL environment variable not set
-__________ ERROR collecting backend/tests/test_bionic_p0_beta2_api.py __________
-backend/tests/test_bionic_p0_beta2_api.py:26: in <module>
-    raise ValueError("REACT_APP_BACKEND_URL must be set")
-E   ValueError: REACT_APP_BACKEND_URL must be set
-___ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_bionic_engine.py ___
-import file mismatch:
-imported module 'test_bionic_engine' has this __file__ attribute:
-  /app/backend/tests/test_bionic_engine.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_bionic_engine.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_geospatial_apis.py __
-import file mismatch:
-imported module 'test_geospatial_apis' has this __file__ attribute:
-  /app/backend/tests/test_geospatial_apis.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_geospatial_apis.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_hydrography_api.py __
-import file mismatch:
-imported module 'test_hydrography_api' has this __file__ attribute:
-  /app/backend/tests/test_hydrography_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_hydrography_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_live_tracking_chat.py _
-import file mismatch:
-imported module 'test_live_tracking_chat' has this __file__ attribute:
-  /app/backend/tests/test_live_tracking_chat.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_live_tracking_chat.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_permanent_water_exclusion.py _
-import file mismatch:
-imported module 'test_permanent_water_exclusion' has this __file__ attribute:
-  /app/backend/tests/test_permanent_water_exclusion.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_permanent_water_exclusion.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_sharing_groups_api.py _
-import file mismatch:
-imported module 'test_sharing_groups_api' has this __file__ attribute:
-  /app/backend/tests/test_sharing_groups_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_sharing_groups_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_sync_and_brand.py ___
-import file mismatch:
-imported module 'test_sync_and_brand' has this __file__ attribute:
-  /app/backend/tests/test_sync_and_brand.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_sync_and_brand.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_territory_phase2.py __
-import file mismatch:
-imported module 'test_territory_phase2' has this __file__ attribute:
-  /app/backend/tests/test_territory_phase2.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_territory_phase2.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_user_waypoints_api.py _
-import file mismatch:
-imported module 'test_user_waypoints_api' has this __file__ attribute:
-  /app/backend/tests/test_user_waypoints_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_user_waypoints_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-BASE/backend/tests/test_zone_favorites.py ___
-import file mismatch:
-imported module 'test_zone_favorites' has this __file__ attribute:
-  /app/backend/tests/test_zone_favorites.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-BASE/backend/tests/test_zone_favorites.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-____ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_bionic_engine.py ____
-import file mismatch:
-imported module 'test_bionic_engine' has this __file__ attribute:
-  /app/backend/tests/test_bionic_engine.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_bionic_engine.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_geospatial_apis.py ___
-import file mismatch:
-imported module 'test_geospatial_apis' has this __file__ attribute:
-  /app/backend/tests/test_geospatial_apis.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_geospatial_apis.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_hydrography_api.py ___
-import file mismatch:
-imported module 'test_hydrography_api' has this __file__ attribute:
-  /app/backend/tests/test_hydrography_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_hydrography_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_live_tracking_chat.py __
-import file mismatch:
-imported module 'test_live_tracking_chat' has this __file__ attribute:
-  /app/backend/tests/test_live_tracking_chat.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_live_tracking_chat.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_permanent_water_exclusion.py _
-import file mismatch:
-imported module 'test_permanent_water_exclusion' has this __file__ attribute:
-  /app/backend/tests/test_permanent_water_exclusion.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_permanent_water_exclusion.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_sharing_groups_api.py __
-import file mismatch:
-imported module 'test_sharing_groups_api' has this __file__ attribute:
-  /app/backend/tests/test_sharing_groups_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_sharing_groups_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_sync_and_brand.py ____
-import file mismatch:
-imported module 'test_sync_and_brand' has this __file__ attribute:
-  /app/backend/tests/test_sync_and_brand.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_sync_and_brand.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_territory_phase2.py ___
-import file mismatch:
-imported module 'test_territory_phase2' has this __file__ attribute:
-  /app/backend/tests/test_territory_phase2.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_territory_phase2.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_user_waypoints_api.py __
-import file mismatch:
-imported module 'test_user_waypoints_api' has this __file__ attribute:
-  /app/backend/tests/test_user_waypoints_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_user_waypoints_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V2/backend/tests/test_zone_favorites.py ____
-import file mismatch:
-imported module 'test_zone_favorites' has this __file__ attribute:
-  /app/backend/tests/test_zone_favorites.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend/tests/test_zone_favorites.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-______________ ERROR collecting sources/HUNTIQ-V2/backend_test.py ______________
-import file mismatch:
-imported module 'backend_test' has this __file__ attribute:
-  /app/backend_test.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V2/backend_test.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-____ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_bionic_engine.py ____
-import file mismatch:
-imported module 'test_bionic_engine' has this __file__ attribute:
-  /app/backend/tests/test_bionic_engine.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_bionic_engine.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_geospatial_apis.py ___
-import file mismatch:
-imported module 'test_geospatial_apis' has this __file__ attribute:
-  /app/backend/tests/test_geospatial_apis.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_geospatial_apis.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_hydrography_api.py ___
-import file mismatch:
-imported module 'test_hydrography_api' has this __file__ attribute:
-  /app/backend/tests/test_hydrography_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_hydrography_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_live_tracking_chat.py __
-import file mismatch:
-imported module 'test_live_tracking_chat' has this __file__ attribute:
-  /app/backend/tests/test_live_tracking_chat.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_live_tracking_chat.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_nutrition_module.py ___
-ImportError while importing test module '/app/sources/HUNTIQ-V3/backend/tests/test_nutrition_module.py'.
-Hint: make sure your test modules/packages have valid Python names.
-Traceback:
-/usr/local/lib/python3.11/importlib/__init__.py:126: in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-sources/HUNTIQ-V3/backend/tests/test_nutrition_module.py:7: in <module>
-    from geospatial.controllers.nutrition_controller import (
-E   ModuleNotFoundError: No module named 'geospatial'
-_ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_permanent_water_exclusion.py _
-import file mismatch:
-imported module 'test_permanent_water_exclusion' has this __file__ attribute:
-  /app/backend/tests/test_permanent_water_exclusion.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_permanent_water_exclusion.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_sharing_groups_api.py __
-import file mismatch:
-imported module 'test_sharing_groups_api' has this __file__ attribute:
-  /app/backend/tests/test_sharing_groups_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_sharing_groups_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_sync_and_brand.py ____
-import file mismatch:
-imported module 'test_sync_and_brand' has this __file__ attribute:
-  /app/backend/tests/test_sync_and_brand.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_sync_and_brand.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_territory_phase2.py ___
-import file mismatch:
-imported module 'test_territory_phase2' has this __file__ attribute:
-  /app/backend/tests/test_territory_phase2.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_territory_phase2.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_user_waypoints_api.py __
-import file mismatch:
-imported module 'test_user_waypoints_api' has this __file__ attribute:
-  /app/backend/tests/test_user_waypoints_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_user_waypoints_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V3/backend/tests/test_zone_favorites.py ____
-import file mismatch:
-imported module 'test_zone_favorites' has this __file__ attribute:
-  /app/backend/tests/test_zone_favorites.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend/tests/test_zone_favorites.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-______________ ERROR collecting sources/HUNTIQ-V3/backend_test.py ______________
-import file mismatch:
-imported module 'backend_test' has this __file__ attribute:
-  /app/backend_test.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V3/backend_test.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V3/bionic/engines/behaviorV3/tests/test_behavior_v3.py _
-ImportError while importing test module '/app/sources/HUNTIQ-V3/bionic/engines/behaviorV3/tests/test_behavior_v3.py'.
-Hint: make sure your test modules/packages have valid Python names.
-Traceback:
-/usr/local/lib/python3.11/importlib/__init__.py:126: in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-sources/HUNTIQ-V3/bionic/engines/behaviorV3/tests/test_behavior_v3.py:25: in <module>
-    from v3_models.v3_schemas import (
-E   ModuleNotFoundError: No module named 'v3_models'
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_admin_security_p0_p1.py _
-import file mismatch:
-imported module 'test_admin_security_p0_p1' has this __file__ attribute:
-  /app/backend/tests/test_admin_security_p0_p1.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_admin_security_p0_p1.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_____ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_auth_engine.py _____
-sources/HUNTIQ-V4/backend/tests/test_auth_engine.py:25: in <module>
-    raise ValueError("REACT_APP_BACKEND_URL environment variable not set")
-E   ValueError: REACT_APP_BACKEND_URL environment variable not set
-____ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_bionic_engine.py ____
-import file mismatch:
-imported module 'test_bionic_engine' has this __file__ attribute:
-  /app/backend/tests/test_bionic_engine.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_bionic_engine.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_business_security.py __
-import file mismatch:
-imported module 'test_business_security' has this __file__ attribute:
-  /app/backend/tests/test_business_security.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_business_security.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_camera_engine_phase1.py _
-import file mismatch:
-imported module 'test_camera_engine_phase1' has this __file__ attribute:
-  /app/backend/tests/test_camera_engine_phase1.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_camera_engine_phase1.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_camera_engine_phase2.py _
-import file mismatch:
-imported module 'test_camera_engine_phase2' has this __file__ attribute:
-  /app/backend/tests/test_camera_engine_phase2.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_camera_engine_phase2.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_frontend_backend_integration.py _
-import file mismatch:
-imported module 'test_frontend_backend_integration' has this __file__ attribute:
-  /app/backend/tests/test_frontend_backend_integration.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_frontend_backend_integration.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-____ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_geo_engine_v3.py ____
-import file mismatch:
-imported module 'test_geo_engine_v3' has this __file__ attribute:
-  /app/backend/tests/test_geo_engine_v3.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_geo_engine_v3.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_geospatial_apis.py ___
-import file mismatch:
-imported module 'test_geospatial_apis' has this __file__ attribute:
-  /app/backend/tests/test_geospatial_apis.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_geospatial_apis.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_hunting_trip_logger.py _
-import file mismatch:
-imported module 'test_hunting_trip_logger' has this __file__ attribute:
-  /app/backend/tests/test_hunting_trip_logger.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_hunting_trip_logger.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_huntiq_v3_apis.py ____
-import file mismatch:
-imported module 'test_huntiq_v3_apis' has this __file__ attribute:
-  /app/backend/tests/test_huntiq_v3_apis.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_huntiq_v3_apis.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_hydrography_api.py ___
-import file mismatch:
-imported module 'test_hydrography_api' has this __file__ attribute:
-  /app/backend/tests/test_hydrography_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_hydrography_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_legal_time_engine.py __
-import file mismatch:
-imported module 'test_legal_time_engine' has this __file__ attribute:
-  /app/backend/tests/test_legal_time_engine.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_legal_time_engine.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_legal_time_predictive_apis.py _
-import file mismatch:
-imported module 'test_legal_time_predictive_apis' has this __file__ attribute:
-  /app/backend/tests/test_legal_time_predictive_apis.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_legal_time_predictive_apis.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_live_tracking_chat.py __
-import file mismatch:
-imported module 'test_live_tracking_chat' has this __file__ attribute:
-  /app/backend/tests/test_live_tracking_chat.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_live_tracking_chat.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_____ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_p3_features.py _____
-import file mismatch:
-imported module 'test_p3_features' has this __file__ attribute:
-  /app/backend/tests/test_p3_features.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_p3_features.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_p4_geolocation.py ____
-import file mismatch:
-imported module 'test_p4_geolocation' has this __file__ attribute:
-  /app/backend/tests/test_p4_geolocation.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_p4_geolocation.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_permanent_water_exclusion.py _
-import file mismatch:
-imported module 'test_permanent_water_exclusion' has this __file__ attribute:
-  /app/backend/tests/test_permanent_water_exclusion.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_permanent_water_exclusion.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_predictive_engine.py __
-import file mismatch:
-imported module 'test_predictive_engine' has this __file__ attribute:
-  /app/backend/tests/test_predictive_engine.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_predictive_engine.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_sharing_groups_api.py __
-import file mismatch:
-imported module 'test_sharing_groups_api' has this __file__ attribute:
-  /app/backend/tests/test_sharing_groups_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_sharing_groups_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_sync_and_brand.py ____
-import file mismatch:
-imported module 'test_sync_and_brand' has this __file__ attribute:
-  /app/backend/tests/test_sync_and_brand.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_sync_and_brand.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-__ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_territory_phase2.py ___
-import file mismatch:
-imported module 'test_territory_phase2' has this __file__ attribute:
-  /app/backend/tests/test_territory_phase2.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_territory_phase2.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_unified_waypoints_api.py _
-import file mismatch:
-imported module 'test_unified_waypoints_api' has this __file__ attribute:
-  /app/backend/tests/test_unified_waypoints_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_unified_waypoints_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-_ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_user_waypoints_api.py __
-import file mismatch:
-imported module 'test_user_waypoints_api' has this __file__ attribute:
-  /app/backend/tests/test_user_waypoints_api.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_user_waypoints_api.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-___ ERROR collecting sources/HUNTIQ-V4/backend/tests/test_zone_favorites.py ____
-import file mismatch:
-imported module 'test_zone_favorites' has this __file__ attribute:
-  /app/backend/tests/test_zone_favorites.py
-which is not the same as the test file we want to collect:
-  /app/sources/HUNTIQ-V4/backend/tests/test_zone_favorites.py
-HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
-=============================== warnings summary ===============================
-backend/tests/integration/test_bionic_data_validation.py:52
-  /app/backend/tests/integration/test_bionic_data_validation.py:52: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:70
-  /app/backend/tests/integration/test_bionic_data_validation.py:70: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:87
-  /app/backend/tests/integration/test_bionic_data_validation.py:87: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:116
-  /app/backend/tests/integration/test_bionic_data_validation.py:116: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:145
-  /app/backend/tests/integration/test_bionic_data_validation.py:145: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:162
-  /app/backend/tests/integration/test_bionic_data_validation.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:197
-  /app/backend/tests/integration/test_bionic_data_validation.py:197: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/modules/camera_engine/v1/models.py:90
-  /app/backend/modules/camera_engine/v1/models.py:90: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
-    class Camera(CameraBase):
-
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-  /root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319: PydanticDeprecatedSince20: `json_encoders` is deprecated. See https://docs.pydantic.dev/2.12/concepts/serialization/#custom-serializers for alternatives. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
-    warnings.warn(
-
-backend/modules/camera_engine/v1/models.py:153
-  /app/backend/modules/camera_engine/v1/models.py:153: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
-    class CameraEvent(CameraEventBase):
-
-../root/.venv/lib/python3.11/site-packages/starlette/formparsers.py:12
-  /root/.venv/lib/python3.11/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
-    import multipart
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ============================
-ERROR backend/tests/test_auth_engine.py - ValueError: REACT_APP_BACKEND_URL e...
-ERROR backend/tests/test_bionic_p0_beta2_api.py - ValueError: REACT_APP_BACKE...
-ERROR sources/HUNTIQ-BASE/backend/tests/test_bionic_engine.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_geospatial_apis.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_hydrography_api.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_live_tracking_chat.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_permanent_water_exclusion.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_sharing_groups_api.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_sync_and_brand.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_territory_phase2.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_user_waypoints_api.py
-ERROR sources/HUNTIQ-BASE/backend/tests/test_zone_favorites.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_bionic_engine.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_geospatial_apis.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_hydrography_api.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_live_tracking_chat.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_permanent_water_exclusion.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_sharing_groups_api.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_sync_and_brand.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_territory_phase2.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_user_waypoints_api.py
-ERROR sources/HUNTIQ-V2/backend/tests/test_zone_favorites.py
-ERROR sources/HUNTIQ-V2/backend_test.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_bionic_engine.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_geospatial_apis.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_hydrography_api.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_live_tracking_chat.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_nutrition_module.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_permanent_water_exclusion.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_sharing_groups_api.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_sync_and_brand.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_territory_phase2.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_user_waypoints_api.py
-ERROR sources/HUNTIQ-V3/backend/tests/test_zone_favorites.py
-ERROR sources/HUNTIQ-V3/backend_test.py
-ERROR sources/HUNTIQ-V3/bionic/engines/behaviorV3/tests/test_behavior_v3.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_admin_security_p0_p1.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_auth_engine.py - ValueError: REACT...
-ERROR sources/HUNTIQ-V4/backend/tests/test_bionic_engine.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_business_security.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_camera_engine_phase1.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_camera_engine_phase2.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_frontend_backend_integration.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_geo_engine_v3.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_geospatial_apis.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_hunting_trip_logger.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_huntiq_v3_apis.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_hydrography_api.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_legal_time_engine.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_legal_time_predictive_apis.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_live_tracking_chat.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_p3_features.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_p4_geolocation.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_permanent_water_exclusion.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_predictive_engine.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_sharing_groups_api.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_sync_and_brand.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_territory_phase2.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_unified_waypoints_api.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_user_waypoints_api.py
-ERROR sources/HUNTIQ-V4/backend/tests/test_zone_favorites.py
-!!!!!!!!!!!!!!!!!!! Interrupted: 61 errors during collection !!!!!!!!!!!!!!!!!!!
-======================= 15 warnings, 61 errors in 2.25s ========================.
+- **Which testing method agent to use?** manual testing by screenshot tool. L'agent doit terminer le composant, l'ajouter à  et prendre un screenshot pour la validation de l'utilisateur.
 - **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
 Aucun.
 
 **In progress Task List**:
-- **Task 1:** Implémentation de la refonte BIONIC V5 UX/Backend (Priorité: P0 - HIGHEST)
-    - **Where to resume:** Commencer la création du service  et de son fichier de test unitaire associé  dans les répertoires  et  respectifs.
-    - **What will be achieved with this?** Créer le service orchestrateur final du backend qui consolide toutes les analyses (scores, heatmap, légalité) autour d'un waypoint. C'est la dernière étape backend avant de commencer l'intégration frontend.
+- **Task 1:** Implémentation Frontend de la refonte BIONIC V5 (Priorité: P0 - HIGHEST)
+    - **Where to resume:** Terminer l'implémentation du composant  dans le fichier . Ensuite, l'intégrer dans la page de démo  et prendre des screenshots pour la validation de l'utilisateur.
+    - **What will be achieved with this?** Fournir une légende pour la coloration dynamique des hotspots sur la carte, complétant ainsi une exigence clé de l'UX.
     - **Status:** IN PROGRESS
-    - **Should Test frontend/backend/both after fix?** Backend
+    - **Should Test frontend/backend/both after fix?** Frontend
     - **Blocked on something:** Non.
 
 **Upcoming and Future Tasks**
-*   **Upcoming Tasks (Implémentation Frontend de la refonte BIONIC V5):**
-    *   (P0) **Phase 1: Panneau d'Analyse du Plan :** Créer les composants React (, ) pour afficher l'analyse centrée sur le waypoint.
-    *   (P0) **Phase 2: Graphiques Interactifs :** Implémenter les composants de graphiques (, , ).
-    *   (P0) **Phase 3: Popups Enrichis :** Créer le nouveau composant  et l'intégrer.
-    *   (P1) **Phase 4: Tri/Filtrage Intelligent :** Créer le panneau  avec les fonctionnalités de tri et de filtrage.
-    *   (P1) **Phase 5: Coloration Dynamique :** Intégrer la coloration par score sur la carte et ajouter la légende ().
-    *   (P1) **Phase 6: Admin Hotspots BIONIC :** Créer la nouvelle section admin .
-    *   (P2) **Phase 7: Heatmap Unifiée :** Intégrer le  dans le frontend.
+*   **Upcoming Tasks (P0):**
+    *   **Phase 5.7: Admin Hotspots BIONIC :** Créer la nouvelle section admin  pour inventorier, visualiser et filtrer les hotspots BIONIC.
+    *   **Phase 6: Intégration Backend :**
+        *   Créer un nouvel endpoint API (ex: ) dans un nouveau fichier routeur pour exposer la logique du .
+        *   Remplacer les données mockées dans le frontend par des appels à ce nouvel endpoint.
 *   **Future Tasks (Backlog):**
-    *   (P2) Moteur de Recommandations.
-    *   (P3) Préparation de la plateforme BionicMarket.
+    *   (P2) Améliorer le Moteur de Recommandations.
+    *   (P3) Préparer la plateforme BionicMarket.
 
 **Completed work in this session**
-- **Implémentation et validation de :** Service backend pour gérer les heures de chasse légales, avec 20/20 tests unitaires réussis.
-- **Création de l'Architecture de Scoring Canonique:** Structure de 9 services de scoring isolés avec data contracts et 36/36 tests d'interface réussis.
-- **Implémentation et validation de :** Orchestrateur des 9 scores avec intégration des contraintes légales, validé par 33/33 tests unitaires.
-- **Implémentation et validation de :** Service de fusion WQS + Score Final pour générer la heatmap unifiée, validé par 34/34 tests unitaires.
-- **Finalisation de l'endpoint P1 :** L'endpoint a été implémenté et validé avec un succès de 100% par le  avant le début de la refonte.
+- **PHASE 4:  (Backend) :** Service orchestrateur final implémenté et validé avec 48/48 tests unitaires réussis.
+- **PHASE 5.1:  (Frontend) :** Panneau de synthèse de l'analyse, validé visuellement.
+- **PHASE 5.2:  (Frontend) :** Composant de sélection de waypoint avec états de chargement/vide, validé visuellement.
+- **PHASE 5.3: Graphiques Analytiques Premium (Frontend) :** , ,  créés et validés visuellement.
+- **PHASE 5.4:  (Frontend) :** Popup enrichi pour les hotspots, validé visuellement.
+- **PHASE 5.5:  (Frontend) :** Panneau de liste de hotspots avec fonctionnalités de tri et de filtrage, validé visuellement.
 
 **Earlier issues found/mentioned but not fixed**
 - Aucun.
@@ -616,68 +67,73 @@ Aucun.
 
 
 **Key Technical Concepts**
-- **Architecture Modulaire Stricte:** Le principe directeur imposé par l'utilisateur. Chaque service est isolé, a une responsabilité unique, et est validé individuellement avant toute intégration.
-- **Orchestration de Services:** Des services de haut niveau (, ) composent des résultats complexes en appelant des services plus granulaires.
-- **Analyse Waypoint-Centric:** Toutes les nouvelles fonctionnalités sont conçues pour recalculer et afficher des données relatives à un point de référence géographique (waypoint) choisi par l'utilisateur.
-- **Conformité Réglementaire Programmatique:** L'intégration des heures légales de chasse directement dans la logique de scoring et d'analyse.
+- **Architecture Modulaire Stricte :** Chaque service backend et composant frontend est isolé, testé individuellement et communique via des interfaces/props définies.
+- **Orchestration de Services Backend :**  compose les résultats de services plus granulaires (, , etc.).
+- **Composants de Présentation (Dumb Components) :** Les composants React sont purement présentationnels, sans logique métier ni appels API, recevant toutes les données et callbacks via des props.
+- **Validation Séquentielle :** Le développement progresse par une séquence stricte : Proposition -> Validation utilisateur -> Implémentation -> Validation visuelle -> Passage à l'étape suivante.
 
 **key DB schema**
-- Aucune base de données n'est utilisée.
+- Aucune base de données n'est utilisée pour cette partie du projet.
 
 **changes in tech stack**
-- La bibliothèque  a été utilisée pour les calculs solaires dans .
+- Frontend :  pour les icônes,  pour les composants de base,  pour la base des graphiques.
 
 **All files of reference**
-*    (Nouveau)
-*    (Nouveau)
-*    (Nouveau répertoire et 10 fichiers)
-*    (Nouveau)
-*    (Nouveau)
-*    (Nouveau)
-*    (Nouveau)
-*    (Nouveau)
+*   
+*   
+*   
+*   
+*   
+*   
+*   
+*   
+*   
+*   
+*   
 
 **key api endpoints**
-- Les nouveaux services seront probablement exposés via un nouvel endpoint comme  qui n'a pas encore été créé.
+- Un nouvel endpoint (ex: ) doit être créé pour exposer le . Actuellement, le frontend fonctionne entièrement avec des données mockées.
 
 **Critical Info for New Agent**
-- **Langue :** La communication doit impérativement se faire en **Français**.
-- **Utilisateur (COPILOT MAÎTRE) :** Les directives de l'utilisateur et les principes d'architecture BIONIC V5 sont absolus et non négociables. Le non-respect entraînera un rejet du travail.
-- **Processus de Développement Séquentiel :** Chaque module doit être créé de manière isolée, testé unitairement, puis présenté à l'utilisateur pour validation explicite **avant** de passer au module suivant. Aucune intégration ni modification de fichiers existants sans approbation.
-- **Priorité Actuelle :** La seule tâche à accomplir est l'implémentation du service . Ne pas commencer le travail frontend avant que tout le backend soit validé.
+- **Langue :** La communication avec l'utilisateur (COPILOT MAÎTRE) doit impérativement se faire en **Français**.
+- **Processus de Développement Stricte :** Ne commencez AUCUNE nouvelle tâche (même pas la phase 5.7) avant d'avoir terminé et fait valider la phase 5.6 (). Le respect de la séquence Proposition -> Validation -> Implémentation est non-négociable.
+- **Architecture Non-Négociable :** Ne modifiez aucun fichier existant sans validation explicite. Maintenez l'isolation stricte des composants et des services.
+- **Priorité Actuelle :** La seule tâche à accomplir est de terminer l'implémentation du composant  et de le présenter pour validation.
 
 **documents and test reports created in this job**
-- Plusieurs fichiers de tests unitaires ont été créés dans .
+- 
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **LATEST:** User validates  and gives GO to start implementing  (Phase 4).
-2.  Agent presents  for validation.
-3.  User validates  and gives GO for  (Phase 3).
-4.  Agent presents  for validation.
-5.  User validates the 9-score architecture and gives GO for  (Phase 2).
-6.  Agent presents the 9-score architecture for validation.
-7.  User validates  and requests the creation of the 9-score canonical structure (Phase 1).
-8.  Agent presents  for validation.
-9.  User gives final GO to start implementation (Phase 0: ).
-10. Agent confirms understanding of all strict BIONIC V5 rules.
+- **LATEST (User):** Valide  et donne les exigences pour la PHASE 5.6:  (coloration dynamique et légende).
+- **Agent:** Présente  pour validation après avoir testé les filtres.
+- **User:** Valide  et donne les exigences pour .
+- **Agent:** Présente  pour validation.
+- **User:** Valide les trois graphiques premium et donne les exigences pour .
+- **Agent:** Présente les trois composants de graphiques premium pour validation.
+- **User:** Valide la proposition visuelle des graphiques et demande l'implémentation avec une échelle sur 10.
+- **Agent:** Propose une maquette visuelle pour les graphiques premium.
+- **User:** Valide  et donne les exigences pour les graphiques premium (PHASE 5.3).
+- **Agent:** Présente  pour validation.
 
 **Project Health Check:**
 - **Broken:** Rien.
 - **Mocked:**
-    - Le service  est toujours en mode inactif.
-    - Les 9 services de scoring canoniques ont une logique de calcul de base (retournent ) et attendent l'implémentation de la logique avancée dans les phases futures.
+    - L'ensemble du frontend fonctionne avec des données statiques définies dans . Aucun appel API n'est encore effectué.
+    - Le service  est en mode inactif.
+    - La logique de calcul des 9 services de scoring reste basique.
 
 **3rd Party Integrations**
-- **OpenStreetMap (via API Overpass):** Activement utilisée pour le cache géospatial.
-- **OpenWeatherMap:** Intégration backend en place, mais en mode inactif en attente d'une clé API.
-- **astral (Python library):** Nouvelle dépendance pour les calculs solaires.
+- **OpenStreetMap (via API Overpass):** Activement utilisée côté backend.
+- **OpenWeatherMap:** Intégration backend en place mais inactive.
+- **astral (Python library):** Utilisée pour les calculs solaires.
+- **shadcn/ui, lucide-react, recharts:** Bibliothèques utilisées pour le frontend.
 
 **Testing status**
-- **Testing agent used after significant changes:** YES, pour l'endpoint P1. Le nouveau workflow repose sur des tests unitaires (============================= test session starts ==============================
+- **Testing agent used after significant changes:** Non, le développement actuel se base sur des tests unitaires backend (============================= test session starts ==============================
 platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
 rootdir: /app
 plugins: anyio-4.12.0
-collected 1959 items / 61 errors
+collected 2007 items / 61 errors
 
 ==================================== ERRORS ====================================
 ______________ ERROR collecting backend/tests/test_auth_engine.py ______________
@@ -1217,12 +673,9 @@ ERROR sources/HUNTIQ-V4/backend/tests/test_unified_waypoints_api.py
 ERROR sources/HUNTIQ-V4/backend/tests/test_user_waypoints_api.py
 ERROR sources/HUNTIQ-V4/backend/tests/test_zone_favorites.py
 !!!!!!!!!!!!!!!!!!! Interrupted: 61 errors during collection !!!!!!!!!!!!!!!!!!!
-======================= 15 warnings, 61 errors in 1.14s ========================).
+======================= 15 warnings, 61 errors in 2.01s ========================) et une validation visuelle manuelle du frontend (screenshots).
 - **Troubleshoot agent used after agent stuck in loop:** NO
 - **Test files created:**
-    - 
-    - 
-    - 
     - 
 - **Known regressions:** Aucune.
 
@@ -1230,4 +683,4 @@ ERROR sources/HUNTIQ-V4/backend/tests/test_zone_favorites.py
 - N/A
 
 **What agent forgot to execute**
-- Rien. L'agent a suivi méticuleusement le plan séquentiel et les contraintes architecturales strictes imposées par l'utilisateur.</analysis>
+- Rien. L'agent a suivi méticuleusement le plan séquentiel et les contraintes architecturales strictes imposées par l'utilisateur. La création de l'endpoint API est la prochaine étape logique après la finalisation des composants UI, ce qui n'est pas un oubli mais une partie du plan.</analysis>
