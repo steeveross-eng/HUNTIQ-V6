@@ -198,6 +198,7 @@ const BionicAnalysisDemoPage = () => {
           {/* Section Tabs */}
           <div className="flex justify-center gap-2 flex-wrap">
             {[
+              { key: 'legend', label: 'Légende (5.6)' },
               { key: 'main', label: 'Principaux' },
               { key: 'charts', label: 'Graphiques' },
               { key: 'popups', label: 'Popups' },
