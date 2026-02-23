@@ -1070,6 +1070,8 @@ function App() {
                 <Route path="/admin-premium" element={<AdminPremiumPage />} />
                 {/* Marketing Calendar V2 */}
                 <Route path="/marketing-calendar" element={<MarketingCalendarPage />} />
+                {/* BIONIC V5 Demo Page */}
+                <Route path="/bionic-demo" element={<BionicAnalysisDemoPage />} />
               </Routes>
             </Suspense>
             <Footer />
