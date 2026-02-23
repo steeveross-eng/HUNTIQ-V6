@@ -218,6 +218,124 @@ const BionicAnalysisDemoPage = () => {
           </div>
         </div>
         
+        {/* Section: Légende Carte (PHASE 5.6) */}
+        {activeSection === 'legend' && (
+          <div className="space-y-6">
+            {/* Titre de section */}
+            <div 
+              className="p-4 rounded-lg text-center"
+              style={{ backgroundColor: BIONIC_COLORS.black.elevated }}
+            >
+              <h2 className="text-lg font-semibold text-white mb-1">
+                PHASE 5.6 - Coloration Dynamique + Légende
+              </h2>
+              <p className="text-sm text-gray-400">
+                Légende de la carte BIONIC avec échelle de scores, catégories de qualité, 
+                indicateurs légaux et distance waypoint-centric
+              </p>
+            </div>
+            
+            {/* Contrôle de démonstration */}
+            <div 
+              className="p-4 rounded-lg flex items-center justify-between"
+              style={{ backgroundColor: BIONIC_COLORS.gray[900] }}
+            >
+              <span className="text-sm text-gray-300">
+                Mode actuel: <span className="font-medium text-white">{isLegalPeriod ? 'Heures légales' : 'Hors heures'}</span>
+              </span>
+              <button
+                onClick={() => setIsLegalPeriod(!isLegalPeriod)}
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                style={{ 
+                  backgroundColor: isLegalPeriod ? BIONIC_COLORS.green.primary : BIONIC_COLORS.red.primary,
+                  color: 'white'
+                }}
+              >
+                Basculer {isLegalPeriod ? 'Hors heures' : 'Légal'}
+              </button>
+            </div>
+            
+            {/* Grille de démonstration */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Légende complète */}
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">
+                  Version complète
+                </p>
+                <MapLegend
+                  isLegal={isLegalPeriod}
+                  waypointName={MOCK_WAYPOINTS.find(wp => wp.id === selectedWaypointId)?.name}
+                  maxDistance={10}
+                  compact={false}
+                  showDistanceScale={true}
+                  showLegalIndicator={true}
+                  showWaypointInfo={true}
+                />
+              </div>
+              
+              {/* Légende compacte */}
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">
+                  Version compacte
+                </p>
+                <MapLegend
+                  isLegal={isLegalPeriod}
+                  waypointName={MOCK_WAYPOINTS.find(wp => wp.id === selectedWaypointId)?.name}
+                  maxDistance={10}
+                  compact={true}
+                  showDistanceScale={true}
+                  showLegalIndicator={true}
+                  showWaypointInfo={true}
+                />
+              </div>
+            </div>
+            
+            {/* Variantes additionnelles */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Sans distance */}
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">
+                  Sans échelle de distance
+                </p>
+                <MapLegend
+                  isLegal={isLegalPeriod}
+                  compact={true}
+                  showDistanceScale={false}
+                  showLegalIndicator={true}
+                  showWaypointInfo={false}
+                />
+              </div>
+              
+              {/* Sans légalité */}
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">
+                  Sans indicateur légal
+                </p>
+                <MapLegend
+                  isLegal={isLegalPeriod}
+                  compact={true}
+                  showDistanceScale={false}
+                  showLegalIndicator={false}
+                  showWaypointInfo={false}
+                />
+              </div>
+              
+              {/* Minimal */}
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">
+                  Version minimale
+                </p>
+                <MapLegend
+                  compact={true}
+                  showDistanceScale={false}
+                  showLegalIndicator={false}
+                  showWaypointInfo={false}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Section: Liste Hotspots */}
         {activeSection === 'list' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
