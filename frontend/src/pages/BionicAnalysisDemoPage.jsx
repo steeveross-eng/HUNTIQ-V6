@@ -1,13 +1,14 @@
 /**
  * BionicAnalysisDemoPage - Page de démonstration BIONIC V5
  * =========================================================
- * Phases 5.1, 5.2, 5.3, 5.4
+ * Phases 5.1, 5.2, 5.3, 5.4, 5.5
  */
 
 import React, { useState } from 'react';
 import HuntPlanAnalysisPanel from '@/components/bionic/HuntPlanAnalysisPanel';
 import WaypointSelector from '@/components/bionic/WaypointSelector';
 import EnrichedHotspotPopup from '@/components/bionic/EnrichedHotspotPopup';
+import HotspotListPanel from '@/components/bionic/HotspotListPanel';
 import { 
   ScoreRadarPanel, 
   OptimalWindowsTimeline, 
@@ -17,24 +18,8 @@ import { BIONIC_COLORS } from '@/config/bionic-colors';
 
 // Liste de waypoints de test
 const MOCK_WAYPOINTS = [
-  {
-    id: 'WP-001',
-    name: 'Zone Nord - Affût Principal',
-    type: 'hunting',
-    latitude: 46.8139,
-    longitude: -71.2080,
-    score: 85,
-    species: 'Cerf'
-  },
-  {
-    id: 'WP-002',
-    name: 'Caméra Trail #1',
-    type: 'camera',
-    latitude: 46.8250,
-    longitude: -71.1950,
-    score: 72,
-    species: 'Orignal'
-  }
+  { id: 'WP-001', name: 'Zone Nord - Affût Principal', type: 'hunting', latitude: 46.8139, longitude: -71.2080, score: 85, species: 'Cerf' },
+  { id: 'WP-002', name: 'Caméra Trail #1', type: 'camera', latitude: 46.8250, longitude: -71.1950, score: 72, species: 'Orignal' }
 ];
 
 // Données de scores pour les graphiques
@@ -50,15 +35,7 @@ const MOCK_SCORES = [
   { category: 'mobility', score: 42, trend: 'down' }
 ];
 
-// Fenêtres optimales
-const MOCK_WINDOWS = [
-  { period: 'dawn', start: '05:12', end: '07:42', quality: 'excellent', score: 92, is_legal: true },
-  { period: 'morning', start: '08:00', end: '11:30', quality: 'good', score: 75, is_legal: true },
-  { period: 'afternoon', start: '12:00', end: '17:00', quality: 'moderate', score: 55, is_legal: true },
-  { period: 'dusk', start: '18:30', end: '21:18', quality: 'excellent', score: 88, is_legal: true }
-];
-
-// Hotspots de test pour le popup
+// Hotspots de test complets
 const MOCK_HOTSPOTS = [
   {
     id: 'HS-001',
@@ -74,15 +51,10 @@ const MOCK_HOTSPOTS = [
     risks: ['Terrain légèrement accidenté'],
     pressureLevel: 'low',
     pressureScore: 78,
-    positiveFactors: [
-      'Excellente visibilité',
-      'Corridor de passage fréquenté',
-      'Source d\'eau à proximité'
-    ],
-    negativeFactors: [
-      'Accès difficile par temps humide'
-    ],
-    recommendation: 'Position idéale pour l\'aube. Arrivez 30 minutes avant le lever du soleil pour une installation silencieuse.'
+    isLegal: true,
+    positiveFactors: ['Excellente visibilité', 'Corridor de passage fréquenté'],
+    negativeFactors: ['Accès difficile par temps humide'],
+    recommendation: 'Position idéale pour l\'aube.'
   },
   {
     id: 'HS-002',
@@ -95,18 +67,13 @@ const MOCK_HOTSPOTS = [
     habitat: 'edge',
     habitatCoverage: 58,
     riskLevel: 'moderate',
-    risks: ['Zone fréquentée le week-end', 'Sentier de randonnée proche'],
+    risks: ['Zone fréquentée le week-end'],
     pressureLevel: 'moderate',
     pressureScore: 52,
-    positiveFactors: [
-      'Transition habitat favorable',
-      'Zone de gagnage identifiée'
-    ],
-    negativeFactors: [
-      'Pression de chasse modérée',
-      'Mobilité réduite en journée'
-    ],
-    recommendation: 'Privilégier les jours de semaine. Crépuscule recommandé pour cette zone.'
+    isLegal: true,
+    positiveFactors: ['Transition habitat favorable'],
+    negativeFactors: ['Pression de chasse modérée'],
+    recommendation: 'Privilégier les jours de semaine.'
   },
   {
     id: 'HS-003',
@@ -119,22 +86,74 @@ const MOCK_HOTSPOTS = [
     habitat: 'wetland',
     habitatCoverage: 45,
     riskLevel: 'high',
-    risks: ['Terrain instable', 'Accès limité', 'Zone inondable'],
+    risks: ['Terrain instable', 'Accès limité'],
     pressureLevel: 'high',
     pressureScore: 35,
-    positiveFactors: [
-      'Présence confirmée d\'orignal'
-    ],
-    negativeFactors: [
-      'Accès très difficile',
-      'Risque de sécurité élevé',
-      'Forte pression de chasse'
-    ],
-    recommendation: 'Zone déconseillée actuellement. Envisager comme alternative en période sèche uniquement.'
+    isLegal: true,
+    positiveFactors: ['Présence confirmée d\'orignal'],
+    negativeFactors: ['Accès très difficile', 'Risque de sécurité élevé'],
+    recommendation: 'Zone déconseillée actuellement.'
+  },
+  {
+    id: 'HS-004',
+    name: 'Hotspot Nord - Forêt Dense',
+    score: 78,
+    quality: 'favorable',
+    distance: 1.8,
+    direction: 'N',
+    bearing: 0,
+    habitat: 'forest',
+    habitatCoverage: 85,
+    riskLevel: 'low',
+    risks: [],
+    pressureLevel: 'low',
+    pressureScore: 82,
+    isLegal: true,
+    positiveFactors: ['Couvert forestier excellent', 'Faible pression'],
+    negativeFactors: ['Visibilité réduite'],
+    recommendation: 'Excellent pour l\'approche silencieuse.'
+  },
+  {
+    id: 'HS-005',
+    name: 'Hotspot Est - Zone Mixte',
+    score: 55,
+    quality: 'moderate',
+    distance: 3.2,
+    direction: 'E',
+    bearing: 90,
+    habitat: 'mixed',
+    habitatCoverage: 62,
+    riskLevel: 'moderate',
+    risks: ['Proximité route secondaire'],
+    pressureLevel: 'moderate',
+    pressureScore: 48,
+    isLegal: false,
+    positiveFactors: ['Diversité d\'habitats'],
+    negativeFactors: ['Bruit routier occasionnel'],
+    recommendation: 'À éviter aux heures de pointe.'
+  },
+  {
+    id: 'HS-006',
+    name: 'Hotspot Sud-Est - Clairière',
+    score: 91,
+    quality: 'favorable',
+    distance: 2.9,
+    direction: 'SE',
+    bearing: 135,
+    habitat: 'clearing',
+    habitatCoverage: 78,
+    riskLevel: 'low',
+    risks: [],
+    pressureLevel: 'low',
+    pressureScore: 88,
+    isLegal: true,
+    positiveFactors: ['Score exceptionnel', 'Conditions optimales'],
+    negativeFactors: [],
+    recommendation: 'Meilleur hotspot de la zone!'
   }
 ];
 
-// Contexte du waypoint (heures légales liées au waypoint sélectionné)
+// Contexte du waypoint
 const getWaypointContext = (waypointId) => {
   const waypoint = MOCK_WAYPOINTS.find(wp => wp.id === waypointId);
   return {
@@ -143,23 +162,18 @@ const getWaypointContext = (waypointId) => {
     legalStart: '05:12',
     legalEnd: '21:18',
     legalDuration: '16h06',
-    isCurrentlyLegal: true // Simulé - serait calculé dynamiquement en production
+    isCurrentlyLegal: true
   };
 };
 
 const BionicAnalysisDemoPage = () => {
   const [selectedWaypointId, setSelectedWaypointId] = useState('WP-001');
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeSection, setActiveSection] = useState('popups'); // 'main' | 'charts' | 'popups'
-  const [selectedHotspotIndex, setSelectedHotspotIndex] = useState(0);
+  const [selectedHotspotId, setSelectedHotspotId] = useState(null);
+  const [hoveredHotspot, setHoveredHotspot] = useState(null);
+  const [activeSection, setActiveSection] = useState('list'); // 'main' | 'charts' | 'popups' | 'list'
   
   const waypointContext = getWaypointContext(selectedWaypointId);
-  
-  const handleWaypointSelect = (waypointId) => {
-    setIsLoading(true);
-    setSelectedWaypointId(waypointId);
-    setTimeout(() => setIsLoading(false), 800);
-  };
+  const selectedHotspot = MOCK_HOTSPOTS.find(h => h.id === selectedHotspotId);
   
   return (
     <div 
@@ -176,40 +190,87 @@ const BionicAnalysisDemoPage = () => {
             BIONIC V5 - Demo Components
           </h1>
           <p className="text-gray-400 text-sm mb-4">
-            Phase 5.4: Popups Enrichis
+            Phase 5.5: Tri/Filtrage Intelligent
           </p>
           
           {/* Section Tabs */}
           <div className="flex justify-center gap-2 flex-wrap">
-            <button
-              onClick={() => setActiveSection('main')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeSection === 'main' ? 'text-white' : 'bg-gray-800 text-gray-400'
-              }`}
-              style={activeSection === 'main' ? { backgroundColor: BIONIC_COLORS.gold.primary } : {}}
-            >
-              Composants Principaux
-            </button>
-            <button
-              onClick={() => setActiveSection('charts')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeSection === 'charts' ? 'text-white' : 'bg-gray-800 text-gray-400'
-              }`}
-              style={activeSection === 'charts' ? { backgroundColor: BIONIC_COLORS.gold.primary } : {}}
-            >
-              Graphiques Premium
-            </button>
-            <button
-              onClick={() => setActiveSection('popups')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeSection === 'popups' ? 'text-white' : 'bg-gray-800 text-gray-400'
-              }`}
-              style={activeSection === 'popups' ? { backgroundColor: BIONIC_COLORS.gold.primary } : {}}
-            >
-              Popups Enrichis
-            </button>
+            {[
+              { key: 'main', label: 'Principaux' },
+              { key: 'charts', label: 'Graphiques' },
+              { key: 'popups', label: 'Popups' },
+              { key: 'list', label: 'Liste Hotspots' }
+            ].map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveSection(tab.key)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  activeSection === tab.key ? 'text-white' : 'bg-gray-800 text-gray-400'
+                }`}
+                style={activeSection === tab.key ? { backgroundColor: BIONIC_COLORS.gold.primary } : {}}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
+        
+        {/* Section: Liste Hotspots */}
+        {activeSection === 'list' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Liste avec tri/filtrage */}
+            <HotspotListPanel
+              hotspots={MOCK_HOTSPOTS}
+              selectedHotspotId={selectedHotspotId}
+              onSelectHotspot={(h) => setSelectedHotspotId(h.id)}
+              onHoverHotspot={setHoveredHotspot}
+            />
+            
+            {/* Popup du hotspot sélectionné */}
+            <div>
+              {selectedHotspot ? (
+                <EnrichedHotspotPopup
+                  hotspot={selectedHotspot}
+                  waypointContext={waypointContext}
+                  onClose={() => setSelectedHotspotId(null)}
+                  onAnalyze={(h) => alert(`Analyse de: ${h.name}`)}
+                />
+              ) : (
+                <div 
+                  className="rounded-lg p-8 text-center"
+                  style={{ backgroundColor: BIONIC_COLORS.black.elevated }}
+                >
+                  <div 
+                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                    style={{ backgroundColor: BIONIC_COLORS.gray[800] }}
+                  >
+                    <svg className="w-8 h-8" style={{ color: BIONIC_COLORS.gray[500] }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                  <p className="text-white font-medium mb-1">Aucun hotspot sélectionné</p>
+                  <p className="text-sm text-gray-500">
+                    Cliquez sur un hotspot dans la liste pour voir ses détails
+                  </p>
+                </div>
+              )}
+              
+              {/* Info survol */}
+              {hoveredHotspot && hoveredHotspot.id !== selectedHotspotId && (
+                <div 
+                  className="mt-4 p-3 rounded-lg"
+                  style={{ backgroundColor: BIONIC_COLORS.gray[900] }}
+                >
+                  <p className="text-xs text-gray-400">
+                    Survol: <span className="text-white">{hoveredHotspot.name}</span>
+                    {' '} - Score: <span style={{ color: getScoreColor(hoveredHotspot.score) }}>{Math.round(hoveredHotspot.score / 10)}/10</span>
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         
         {/* Section: Composants Principaux */}
         {activeSection === 'main' && (
@@ -217,7 +278,7 @@ const BionicAnalysisDemoPage = () => {
             <WaypointSelector
               waypoints={MOCK_WAYPOINTS}
               selectedWaypointId={selectedWaypointId}
-              onSelectWaypoint={handleWaypointSelect}
+              onSelectWaypoint={setSelectedWaypointId}
             />
             <HuntPlanAnalysisPanel
               waypointId={selectedWaypointId}
@@ -231,92 +292,50 @@ const BionicAnalysisDemoPage = () => {
                 recommendations: ['Période optimale: Aube'],
                 metadata: { calculation_time_ms: 142 }
               }}
-              isLoading={isLoading}
               onRefresh={() => {}}
             />
           </div>
         )}
         
-        {/* Section: Graphiques Premium */}
+        {/* Section: Graphiques */}
         {activeSection === 'charts' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <ScoreRadarPanel scores={MOCK_SCORES} globalScore={72} />
               <ScoreDistributionPanel scores={MOCK_SCORES} stats={{ median: 70, stdDev: 14.2, min: 42, max: 92 }} />
             </div>
-            <OptimalWindowsTimeline windows={MOCK_WINDOWS} legalStart="05:12" legalEnd="21:18" legalDuration="16h06" />
+            <OptimalWindowsTimeline windows={[
+              { period: 'dawn', start: '05:12', end: '07:42', quality: 'excellent', score: 92 },
+              { period: 'morning', start: '08:00', end: '11:30', quality: 'good', score: 75 },
+              { period: 'dusk', start: '18:30', end: '21:18', quality: 'excellent', score: 88 }
+            ]} legalStart="05:12" legalEnd="21:18" legalDuration="16h06" />
           </div>
         )}
         
-        {/* Section: Popups Enrichis */}
+        {/* Section: Popups */}
         {activeSection === 'popups' && (
-          <div className="space-y-6">
-            {/* Sélecteur de hotspot */}
-            <div className="flex justify-center gap-2 flex-wrap">
-              {MOCK_HOTSPOTS.map((hs, index) => (
-                <button
-                  key={hs.id}
-                  onClick={() => setSelectedHotspotIndex(index)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    selectedHotspotIndex === index ? 'text-white' : 'bg-gray-800 text-gray-400'
-                  }`}
-                  style={selectedHotspotIndex === index ? { 
-                    backgroundColor: hs.quality === 'favorable' ? BIONIC_COLORS.green.primary :
-                                     hs.quality === 'moderate' ? BIONIC_COLORS.gold.primary :
-                                     BIONIC_COLORS.red.primary
-                  } : {}}
-                >
-                  {hs.quality === 'favorable' ? 'Favorable' : 
-                   hs.quality === 'moderate' ? 'Modéré' : 'Défavorable'}
-                </button>
-              ))}
-            </div>
-            
-            {/* Affichage des 3 popups côte à côte */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {MOCK_HOTSPOTS.map((hotspot, index) => (
-                <div 
-                  key={hotspot.id}
-                  className={`transition-all duration-300 ${
-                    selectedHotspotIndex === index ? 'ring-2 ring-offset-2 ring-offset-black rounded-lg' : 'opacity-70'
-                  }`}
-                  style={{ 
-                    ringColor: hotspot.quality === 'favorable' ? BIONIC_COLORS.green.primary :
-                               hotspot.quality === 'moderate' ? BIONIC_COLORS.gold.primary :
-                               BIONIC_COLORS.red.primary
-                  }}
-                >
-                  <div className="text-center mb-2">
-                    <span className="text-xs text-gray-500">
-                      {hotspot.quality === 'favorable' ? 'Hotspot Favorable' : 
-                       hotspot.quality === 'moderate' ? 'Hotspot Modéré' : 'Hotspot Défavorable'}
-                    </span>
-                  </div>
-                  <EnrichedHotspotPopup
-                    hotspot={hotspot}
-                    waypointContext={waypointContext}
-                    onClose={() => {}}
-                    onAnalyze={(hs) => alert(`Analyse de: ${hs.name}`)}
-                  />
-                </div>
-              ))}
-            </div>
-            
-            {/* Info contextuelle */}
-            <div 
-              className="p-4 rounded-lg text-center"
-              style={{ backgroundColor: BIONIC_COLORS.gray[900] }}
-            >
-              <p className="text-sm text-gray-400">
-                Les heures légales affichées ({waypointContext.legalStart} - {waypointContext.legalEnd}) 
-                sont liées au waypoint: <span className="text-white font-medium">{waypointContext.waypointName}</span>
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {MOCK_HOTSPOTS.slice(0, 3).map(hotspot => (
+              <EnrichedHotspotPopup
+                key={hotspot.id}
+                hotspot={hotspot}
+                waypointContext={waypointContext}
+                onAnalyze={(h) => alert(`Analyse de: ${h.name}`)}
+              />
+            ))}
           </div>
         )}
       </div>
     </div>
   );
+};
+
+// Helper function
+const getScoreColor = (score) => {
+  if (score >= 80) return BIONIC_COLORS.green.primary;
+  if (score >= 60) return BIONIC_COLORS.gold.primary;
+  if (score >= 40) return BIONIC_COLORS.blue.light;
+  return BIONIC_COLORS.red.primary;
 };
 
 export default BionicAnalysisDemoPage;
