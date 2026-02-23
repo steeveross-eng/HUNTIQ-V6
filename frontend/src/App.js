@@ -65,6 +65,7 @@ const PaymentCancelPage = lazy(() => import("@/pages/PaymentCancelPage"));
 const AdminPremiumPage = lazy(() => import("@/pages/AdminPremiumPage"));
 const MarketingCalendarPage = lazy(() => import("@/pages/MarketingCalendarPage"));
 const HuntingLicensePage = lazy(() => import("@/pages/HuntingLicensePage"));
+const BionicAnalysisDemoPage = lazy(() => import("@/pages/BionicAnalysisDemoPage"));
 import { 
   ShoppingCart, FlaskConical, GitCompare, Star, DollarSign, ThumbsUp, Heart, Eye,
   Shield, MousePointer, TrendingUp, CheckCircle, ChevronRight, Menu, X, ArrowLeft,
