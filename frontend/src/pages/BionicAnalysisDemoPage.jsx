@@ -2,12 +2,17 @@
  * BionicAnalysisDemoPage - Page de démonstration BIONIC V5
  * =========================================================
  * Page temporaire pour tester les composants BIONIC V5.
- * À SUPPRIMER après validation.
+ * Phases 5.1, 5.2, 5.3
  */
 
 import React, { useState } from 'react';
 import HuntPlanAnalysisPanel from '@/components/bionic/HuntPlanAnalysisPanel';
 import WaypointSelector from '@/components/bionic/WaypointSelector';
+import { 
+  ScoreRadarPanel, 
+  OptimalWindowsTimeline, 
+  ScoreDistributionPanel 
+} from '@/components/bionic/charts';
 import { BIONIC_COLORS } from '@/config/bionic-colors';
 
 // Liste de waypoints de test
@@ -47,28 +52,31 @@ const MOCK_WAYPOINTS = [
     longitude: -71.2200,
     score: 91,
     species: 'Orignal'
-  },
-  {
-    id: 'WP-005',
-    name: 'Affût secondaire',
-    type: 'blind',
-    latitude: 46.8300,
-    longitude: -71.2400,
-    score: 55,
-    species: 'Ours'
-  },
-  {
-    id: 'WP-006',
-    name: 'Point GPS personnalisé',
-    type: 'custom',
-    latitude: 46.8050,
-    longitude: -71.1700,
-    score: 45,
-    species: 'Dindon'
   }
 ];
 
-// Données de test simulant WaypointAnalysisService
+// Données de scores pour les graphiques
+const MOCK_SCORES = [
+  { category: 'probability', score: 75, trend: 'up' },
+  { category: 'habitat', score: 92, trend: 'up' },
+  { category: 'pressure', score: 58, trend: 'down' },
+  { category: 'weather', score: 71 },
+  { category: 'behavior', score: 68 },
+  { category: 'multifactor', score: 65 },
+  { category: 'density', score: 79, trend: 'up' },
+  { category: 'risk', score: 84 },
+  { category: 'mobility', score: 42, trend: 'down' }
+];
+
+// Fenêtres optimales
+const MOCK_WINDOWS = [
+  { period: 'dawn', start: '05:12', end: '07:42', quality: 'excellent', score: 92, is_legal: true },
+  { period: 'morning', start: '08:00', end: '11:30', quality: 'good', score: 75, is_legal: true },
+  { period: 'afternoon', start: '12:00', end: '17:00', quality: 'moderate', score: 55, is_legal: true },
+  { period: 'dusk', start: '18:30', end: '21:18', quality: 'excellent', score: 88, is_legal: true }
+];
+
+// Données d'analyse
 const getAnalysisDataForWaypoint = (waypointId) => {
   const waypoint = MOCK_WAYPOINTS.find(wp => wp.id === waypointId);
   if (!waypoint) return null;
@@ -78,40 +86,24 @@ const getAnalysisDataForWaypoint = (waypointId) => {
   return {
     analysis_id: `WPA-${Date.now()}-0001`,
     calculated_at: new Date().toISOString(),
-    
-    // Scores principaux
     unified_score: baseScore,
     unified_level: baseScore >= 80 ? "good" : baseScore >= 60 ? "moderate" : "poor",
     fused_heatmap_score: baseScore - 5,
     wqs_score: baseScore + 3,
-    
-    // Légalité
     is_legal_period: true,
     legal_status: "legal",
     legal_window: {
-      date: "2025-06-15",
       legal_start: "05:12",
       legal_end: "21:18",
-      sunrise: "05:42",
-      sunset: "20:48",
       duration_hours: 16.1,
       duration_formatted: "16h06min"
     },
-    
-    // Breakdown des scores (9 catégories)
-    score_breakdown: [
-      { category: "probability", raw_value: baseScore + 2, weight: 0.15, level: "good" },
-      { category: "habitat", raw_value: baseScore + 8, weight: 0.12, level: "excellent" },
-      { category: "pressure", raw_value: baseScore - 15, weight: 0.10, level: "moderate" },
-      { category: "weather", raw_value: baseScore - 2, weight: 0.12, level: "good" },
-      { category: "behavior", raw_value: baseScore - 5, weight: 0.11, level: "good" },
-      { category: "multifactor", raw_value: baseScore - 8, weight: 0.10, level: "good" },
-      { category: "density", raw_value: baseScore + 5, weight: 0.10, level: "good" },
-      { category: "risk", raw_value: baseScore + 10, weight: 0.10, level: "excellent" },
-      { category: "mobility", raw_value: baseScore - 12, weight: 0.10, level: "moderate" }
-    ],
-    
-    // Facteurs
+    score_breakdown: MOCK_SCORES.map(s => ({
+      category: s.category,
+      raw_value: s.score + (baseScore - 70) / 2,
+      weight: 0.11,
+      level: "good"
+    })),
     insights: {
       positive_factors: [
         "Période légale de chasse",
@@ -119,19 +111,15 @@ const getAnalysisDataForWaypoint = (waypointId) => {
         "Faible niveau de risque"
       ],
       negative_factors: [
-        "Pression de chasse modérée dans le secteur",
-        "Mobilité animale réduite en milieu de journée"
+        "Pression de chasse modérée",
+        "Mobilité réduite en journée"
       ]
     },
-    
-    // Recommandations
     recommendations: [
       "Période optimale: Aube (05:12-07:42)",
       `Zone idéale pour ${waypoint.species}`,
-      `Score de ${baseScore} - Conditions ${baseScore >= 70 ? 'favorables' : 'acceptables'}`
+      `Score de ${baseScore} - Conditions favorables`
     ],
-    
-    // Métadonnées
     metadata: {
       calculation_time_ms: 142.5,
       version: "BIONIC-V5-ULTIME-WPA-1.0"
@@ -142,7 +130,7 @@ const getAnalysisDataForWaypoint = (waypointId) => {
 const BionicAnalysisDemoPage = () => {
   const [selectedWaypointId, setSelectedWaypointId] = useState('WP-001');
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('selector'); // 'selector' | 'panel'
+  const [activeSection, setActiveSection] = useState('charts'); // 'main' | 'charts'
   
   const selectedWaypoint = MOCK_WAYPOINTS.find(wp => wp.id === selectedWaypointId);
   const analysisData = selectedWaypointId ? getAnalysisDataForWaypoint(selectedWaypointId) : null;
@@ -150,7 +138,6 @@ const BionicAnalysisDemoPage = () => {
   const handleWaypointSelect = (waypointId) => {
     setIsLoading(true);
     setSelectedWaypointId(waypointId);
-    // Simuler un délai de chargement
     setTimeout(() => setIsLoading(false), 800);
   };
   
@@ -164,7 +151,7 @@ const BionicAnalysisDemoPage = () => {
       className="min-h-screen p-4 md:p-6"
       style={{ backgroundColor: BIONIC_COLORS.black.base }}
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
           <h1 
@@ -173,111 +160,86 @@ const BionicAnalysisDemoPage = () => {
           >
             BIONIC V5 - Demo Components
           </h1>
-          <p className="text-gray-400 text-sm">
-            Phase 5.1: HuntPlanAnalysisPanel | Phase 5.2: WaypointSelector
+          <p className="text-gray-400 text-sm mb-4">
+            Phase 5.3: Graphiques Analytiques Premium
           </p>
-        </div>
-        
-        {/* Tab Navigation (Mobile) */}
-        <div className="flex gap-2 mb-6 md:hidden">
-          <button
-            onClick={() => setActiveTab('selector')}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === 'selector' 
-                ? 'text-white' 
-                : 'bg-gray-800 text-gray-400'
-            }`}
-            style={activeTab === 'selector' ? { backgroundColor: BIONIC_COLORS.gold.primary } : {}}
-          >
-            Waypoints
-          </button>
-          <button
-            onClick={() => setActiveTab('panel')}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === 'panel' 
-                ? 'text-white' 
-                : 'bg-gray-800 text-gray-400'
-            }`}
-            style={activeTab === 'panel' ? { backgroundColor: BIONIC_COLORS.gold.primary } : {}}
-          >
-            Analyse
-          </button>
-        </div>
-        
-        {/* Main Content - Two Columns on Desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          {/* Column 1: WaypointSelector */}
-          <div className={`${activeTab === 'selector' ? 'block' : 'hidden'} md:block`}>
+          {/* Section Tabs */}
+          <div className="flex justify-center gap-2">
+            <button
+              onClick={() => setActiveSection('main')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeSection === 'main' 
+                  ? 'text-white' 
+                  : 'bg-gray-800 text-gray-400'
+              }`}
+              style={activeSection === 'main' ? { backgroundColor: BIONIC_COLORS.gold.primary } : {}}
+            >
+              Composants Principaux
+            </button>
+            <button
+              onClick={() => setActiveSection('charts')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeSection === 'charts' 
+                  ? 'text-white' 
+                  : 'bg-gray-800 text-gray-400'
+              }`}
+              style={activeSection === 'charts' ? { backgroundColor: BIONIC_COLORS.gold.primary } : {}}
+            >
+              Graphiques Premium
+            </button>
+          </div>
+        </div>
+        
+        {/* Section: Composants Principaux */}
+        {activeSection === 'main' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <WaypointSelector
               waypoints={MOCK_WAYPOINTS}
               selectedWaypointId={selectedWaypointId}
               onSelectWaypoint={handleWaypointSelect}
               isLoading={false}
             />
-          </div>
-          
-          {/* Column 2: HuntPlanAnalysisPanel */}
-          <div className={`${activeTab === 'panel' ? 'block' : 'hidden'} md:block`}>
             <HuntPlanAnalysisPanel
               waypointId={selectedWaypointId}
               waypointName={selectedWaypoint?.name}
               analysisData={analysisData}
               isLoading={isLoading}
               onRefresh={handleRefresh}
-              onWaypointChange={() => setActiveTab('selector')}
+              onWaypointChange={() => {}}
             />
           </div>
-          
-        </div>
+        )}
         
-        {/* States Demo Section */}
-        <div className="mt-8 pt-8 border-t border-gray-800">
-          <h2 className="text-lg font-medium text-white mb-4 text-center">
-            États spéciaux
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Empty WaypointSelector */}
-            <div>
-              <p className="text-gray-500 text-xs text-center mb-3">
-                WaypointSelector - État vide
-              </p>
-              <WaypointSelector
-                waypoints={[]}
-                selectedWaypointId={null}
-                onSelectWaypoint={() => {}}
+        {/* Section: Graphiques Premium */}
+        {activeSection === 'charts' && (
+          <div className="space-y-6">
+            {/* Row 1: Profil Analytique (full width) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ScoreRadarPanel
+                scores={MOCK_SCORES}
+                globalScore={72}
+              />
+              <ScoreDistributionPanel
+                scores={MOCK_SCORES}
+                stats={{
+                  median: 70,
+                  stdDev: 14.2,
+                  min: 42,
+                  max: 92
+                }}
               />
             </div>
             
-            {/* Loading WaypointSelector */}
-            <div>
-              <p className="text-gray-500 text-xs text-center mb-3">
-                WaypointSelector - Chargement
-              </p>
-              <WaypointSelector
-                waypoints={MOCK_WAYPOINTS}
-                selectedWaypointId={null}
-                onSelectWaypoint={() => {}}
-                isLoading={true}
-              />
-            </div>
-            
-            {/* HuntPlanAnalysisPanel - Empty */}
-            <div>
-              <p className="text-gray-500 text-xs text-center mb-3">
-                HuntPlanAnalysisPanel - Sans waypoint
-              </p>
-              <HuntPlanAnalysisPanel
-                waypointId={null}
-                waypointName={null}
-                analysisData={null}
-                isLoading={false}
-                onWaypointChange={() => {}}
-              />
-            </div>
+            {/* Row 2: Timeline (full width) */}
+            <OptimalWindowsTimeline
+              windows={MOCK_WINDOWS}
+              legalStart="05:12"
+              legalEnd="21:18"
+              legalDuration="16h06"
+            />
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
