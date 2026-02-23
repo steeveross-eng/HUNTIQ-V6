@@ -171,7 +171,8 @@ const BionicAnalysisDemoPage = () => {
   const [selectedWaypointId, setSelectedWaypointId] = useState('WP-001');
   const [selectedHotspotId, setSelectedHotspotId] = useState(null);
   const [hoveredHotspot, setHoveredHotspot] = useState(null);
-  const [activeSection, setActiveSection] = useState('list'); // 'main' | 'charts' | 'popups' | 'list'
+  const [activeSection, setActiveSection] = useState('legend'); // 'main' | 'charts' | 'popups' | 'list' | 'legend'
+  const [isLegalPeriod, setIsLegalPeriod] = useState(true); // Pour la démo de la légende
   
   const waypointContext = getWaypointContext(selectedWaypointId);
   const selectedHotspot = MOCK_HOTSPOTS.find(h => h.id === selectedHotspotId);
