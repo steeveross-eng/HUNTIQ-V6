@@ -1,7 +1,7 @@
 /**
  * BionicAnalysisDemoPage - Page de démonstration BIONIC V5
  * =========================================================
- * Phases 5.1, 5.2, 5.3, 5.4, 5.5
+ * Phases 5.1, 5.2, 5.3, 5.4, 5.5, 5.6
  */
 
 import React, { useState } from 'react';
@@ -9,6 +9,7 @@ import HuntPlanAnalysisPanel from '@/components/bionic/HuntPlanAnalysisPanel';
 import WaypointSelector from '@/components/bionic/WaypointSelector';
 import EnrichedHotspotPopup from '@/components/bionic/EnrichedHotspotPopup';
 import HotspotListPanel from '@/components/bionic/HotspotListPanel';
+import MapLegend from '@/components/bionic/MapLegend';
 import { 
   ScoreRadarPanel, 
   OptimalWindowsTimeline, 
