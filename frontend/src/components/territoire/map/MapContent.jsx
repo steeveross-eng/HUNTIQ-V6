@@ -17,6 +17,7 @@ import MovementCorridorsLayer from '@/components/territoire/MovementCorridorsLay
 import { ShootingZones, SessionHeatmap } from '@/modules/groupe';
 import CursorBionicLayer from '@/components/territoire/CursorBionicLayer';
 import BionicAntiDoublesGuard from '@/components/territoire/BionicAntiDoublesGuard';
+import { BionicZone2kmLayer } from '@/components/territoire/BionicZone2km';
 import { MapInteractionLayer } from '@/modules/map_interaction';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { PLACE_TYPES } from '@/config/placeTypes';
@@ -120,6 +121,16 @@ const MapContentInner = React.memo(({
     />
     {showCorridorsV1 && classificationToggles.corridorsReels && (
       <MovementCorridorsLayer species={selectedSpecies} showReal={true} showEstimated={true} timeOfDay={temporalHourMT} />
+    )}
+
+    {/* BIONIC Zone 2 km² — Carré unique centré sur le waypoint actif */}
+    {selectedWaypointForZones && (
+      <BionicZone2kmLayer 
+        waypoints={activeWaypoints}
+        selectedWaypoint={selectedWaypointForZones}
+        showForAll={false}
+        opacity={0.7}
+      />
     )}
 
     {/* P0 FIX: BBox Rectangle hidden by default — only show when Curseur BIONIC is active */}

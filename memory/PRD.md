@@ -3,6 +3,9 @@
 ## Problème original
 Application d'analyse de territoire de chasse intégrant un moteur géospatial (BIONIC Engine V7), une carte interactive (Leaflet/React-Leaflet), un scoring dynamique influencé par la météo en temps réel, et un système de validation automatisé (BCE).
 
+Repo GitHub: https://github.com/steeveross-eng/HUNTIQ-V5
+Branche: v6_autosave
+
 ## Utilisateur cible
 Chasseurs francophones du Québec, analystes de territoire.
 
@@ -25,39 +28,61 @@ Chasseurs francophones du Québec, analystes de territoire.
 - Cache backend 30min pour optimiser les appels OWM
 - Influence météo sur le scoring en temps réel
 
-### V8.2.2 — Améliorations UI/UX
-- Calque de vent directionnel (WindFlowLayer)
-- Exclusions masquées par défaut (mode debug)
-- Persistance contexte utilisateur (localStorage)
-
-### V8.3.A — Widget de Comparaison + Ajustements UX (10 mars 2026)
+### V8.3.A — Widget de Comparaison + Ajustements UX
 - Endpoint `/api/v1/compare/waypoints` (POST, 2-3 waypoints en parallèle)
-- Sélection multi-waypoints dans le panneau Waypoints (checkboxes, max 3)
+- Sélection multi-waypoints dans le panneau Waypoints
 - CompareWidget overlay modal avec affichage côte à côte
-- Sections : Scores, Zones, Corridors, Météo, Pression anthropique
-- Fermeture auto du panneau TYPE DE CARTE après sélection (Popover contrôlé)
-- Persistance du type de carte dans le contexte utilisateur
-- Effet vent +25% (densité particules 1000, longueur vecteurs +25%, opacité cap 0.30, vitesse animation inchangée)
-- Mode Particules auto-activé lors de l'ajout d'un waypoint
+
+### V6 — Session 11 Mars 2026 (NOUVELLES IMPLÉMENTATIONS)
+
+#### 1. Zone 2 km² (IMPLÉMENTÉ ✅)
+- Carré unique 2 km × 2 km centré sur le waypoint actif
+- Contour pointillé orangé BIONIC (#f5a623)
+- Sans remplissage (fillOpacity = 0)
+- Affiché en permanence pour le waypoint sélectionné
+- Composant: `/frontend/src/components/territoire/BionicZone2km.jsx`
+
+#### 2. Suppression lignes rouges (IMPLÉMENTÉ ✅)
+- StructureContrastLayer désactivé (return null)
+- Carte propre, zéro pollution visuelle
+- Fichier: `/frontend/src/components/territoire/StructureContrastLayer.jsx`
+
+#### 3. Corridors 10X + Classification WWF (IMPLÉMENTÉ ✅)
+- Service backend: `/backend/modules/bionic_engine_p0/services/corridor_10x.py`
+- Classification WWF: Macro-corridors (>5km), Biologiques (1-5km), Conservation (<1km)
+- Critères biologiques: connectivité, topographie, habitats, évitement
+- Bénéfices écologiques: échanges génétiques, adaptation climatique, fragmentation
+- Validation continuité automatique
 
 ## État actuel
-- **Stable** : Toutes les fonctionnalités livrées et testées
-- **BCE** : Aucune régression détectée
-- **Tests** : 100% backend (7/7 pytest) + 100% frontend (8/8 Playwright)
+- **Stable** : Zone 2km² et suppression lignes rouges déployées
+- **BCE** : Opérationnel avec 10 validateurs
+- **Tests** : À valider avec testing_agent
 
 ## Backlog prioritisé
 
-### P1 — Phase E : Décommission Carte Interactive
-- Auditer et supprimer les fichiers legacy
-- Nettoyer les composants frontend obsolètes
+### P1 — En cours
+- [ ] Corridors 10X: Intégration complète dans le pipeline V7
+- [ ] Optimisation pipeline zones (<0.5 sec)
+- [ ] Tests BCE Auto-Run complets
 
-### P2 — Fonctionnalités avancées
-- Vent animé (Canvas 2D dynamique)
-- Dashboard BCE (interface d'administration)
-- Enrichissement prédictif (hotspots, heatmaps)
+### P2 — Phase E
+- [ ] Audit fichiers legacy
+- [ ] Décommission composants obsolètes
+- [ ] Nettoyage architecture
+
+### P3 — V8.4
+- [ ] Vent animé Canvas 2D
+- [ ] Dashboard BCE (interface d'administration)
+- [ ] Enrichissement prédictif (hotspots, heatmaps)
 
 ## Intégrations tierces
 - OpenWeatherMap (clé API dans .env)
 - Overpass API (données géospatiales)
 - Leaflet.js / React-Leaflet (cartographie)
 - Shapely (géométrie backend)
+
+## Dates clés
+- 2026-03-11: Implémentation Zone 2km², Suppression lignes rouges, Corridors 10X
+- 2026-03-10: Widget Comparaison V8.3.A
+- 2026-02-24: PHASE C/D Knowledge Layer

@@ -6,6 +6,7 @@ Endpoint pour les corridors de déplacement réels vs estimés.
 - Réels (confirmés): basés sur structure terrain, relief, eau, couvert, connectivité → semi-statiques
 - Estimés (prévisionnels): basés sur vent, météo, pression, heure → dynamiques
 
+VERSION: 10X — Intégration Classification WWF et critères biologiques enrichis
 Norme BIONIC V5 ULTIME 300%: modularité absolue, zéro dépendance circulaire.
 """
 
@@ -16,6 +17,9 @@ from datetime import datetime, timezone
 import logging
 import math
 import random
+
+# Import du service 10X
+from ..services.corridor_10x import corridor_10x_service, WWFCorridorType
 
 logger = logging.getLogger("bionic_engine.movement_corridors")
 
@@ -62,11 +66,13 @@ class MovementCorridor(BaseModel):
 
 
 class MovementCorridorsResponse(BaseModel):
-    version: str = "movement_corridors_v1"
+    version: str = "movement_corridors_v1_10X"
     species: str
     real_corridors: List[MovementCorridor]
     estimated_corridors: List[MovementCorridor]
     metadata: Dict[str, Any]
+    # 10X: Métadonnées WWF enrichies
+    wwf_summary: Optional[Dict[str, Any]] = None
 
 
 # =============================================================================
