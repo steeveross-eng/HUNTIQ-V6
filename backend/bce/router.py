@@ -25,6 +25,14 @@ router = APIRouter(prefix="/api/bce", tags=["BCE"])
 @router.get("/status")
 async def bce_status():
     """Quick health check for the BCE module."""
+    # Essayer d'obtenir le statut Auto-Run V8
+    autorun_status = None
+    try:
+        from bce.bce_ruleset_v8 import bce_autorun_engine
+        autorun_status = bce_autorun_engine.get_status()
+    except ImportError:
+        pass
+    
     return {
         "status": "operational",
         "version": BCE_VERSION,
@@ -35,6 +43,22 @@ async def bce_status():
             "engine_isolation", "pipeline_order", "debug_layer_guard",
             "golden_state",
         ],
+        "v8_ruleset": {
+            "zones": [
+                "bce_zone_classification_valid",
+                "bce_zone_topographic_valid", 
+                "bce_zone_hydrology_valid",
+                "bce_zone_human_pressure_valid",
+            ],
+            "corridors": [
+                "bce_corridor_continuity_valid",
+                "bce_corridor_topography_valid",
+                "bce_corridor_wwf_classification_valid",
+                "bce_corridor_human_pressure_respected",
+                "bce_corridor_stopover_detection_valid",
+            ],
+        },
+        "auto_run": autorun_status,
     }
 
 

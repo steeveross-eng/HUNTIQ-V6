@@ -12,19 +12,18 @@ Application d'analyse de territoire de chasse avec moteur géospatial BIONIC Eng
 - **Moteur BIONIC:** V7 avec zones organiques, exclusions, corridors
 - **Base écologique V8:** 3 espèces × 4+ zones chacune
 - **Corridors 10X:** Classification WWF + algorithme A*
-- **BCE:** BIONIC Compliance Engine (validateurs écologiques)
+- **BCE Ruleset V8:** 9 règles (4 zones + 5 corridors) + Auto-Run
 - **Météo:** OpenWeatherMap avec cache 30min
 
 ### Frontend (React + Leaflet)
 - **Zone 2 km²:** Carré centré sur waypoint actif
+- **Corridors visuels:** Palette BIONIC, largeur variable, stopovers hachurés
 - **Panneau écologique:** Corridors actifs, légende WWF, zones par espèce
-- **Carte interactive:** Exclusions, zones organiques, corridors
+- **Auto-load territoire:** Chargement automatique des couches
 
-## Fonctionnalités implémentées
+## Fonctionnalités implémentées — Session 11 Mars 2026
 
-### Session 11 Mars 2026 — BIONIC V8
-
-#### 1. Base Écologique Complète ✅
+### 1. Base Écologique V8 ✅
 **Fichier:** `/backend/modules/bionic_engine_p0/knowledge/ecological_database_v8.py`
 
 Espèces couvertes:
@@ -32,92 +31,89 @@ Espèces couvertes:
 - **CHEVREUIL:** Alimentation, Repos, Rut, Corridor
 - **OURS NOIR:** Alimentation, Repos, Tanière, Corridor
 
-Pour chaque zone:
-- Habitat (types de forêt, couvert, sous-étage)
-- Topographie (pente, aspect, élévation)
-- Hydrologie (distance eau, types)
-- Pression humaine (distance routes, seuils)
-- Nourriture par saison
-- Critères algorithmiques V8-ready (NDVI, landcover, poids A*)
-- Règles BCE
-
-#### 2. Corridors 10X avec Classification WWF ✅
+### 2. Corridors 10X + Classification WWF ✅
 **Fichier:** `/backend/modules/bionic_engine_p0/services/corridor_10x.py`
 
-Classification WWF:
-- **Macro-corridors (> 5 km):** Connexion régionale
-- **Corridors biologiques (1-5 km):** Connexion écosystèmes
-- **Corridors de conservation (< 1 km):** Reliques fragmentées
+- Classification WWF: Macro (>5km), Biologique (1-5km), Conservation (<1km)
+- Algorithme A* avec coûts de terrain
+- Validation continuité automatique
 
-Algorithme A*:
-- Coûts de terrain par type (vallées, forêts, champs, urbain)
-- Pathfinding optimal avec heuristique
-- Lissage de trajectoire
+### 3. Style Visuel BIONIC Corridors ✅
+**Fichier:** `/frontend/src/components/territoire/CorridorsVisualLayer.jsx`
 
-#### 3. Validateurs BCE Écologiques ✅
-**Fichier:** `/backend/bce/validators/ecological_validators_v8.py`
+| Score | Couleur | Largeur | Label |
+|-------|---------|---------|-------|
+| 0-25% | Gris #D0D0D0 | 10m | Passage occasionnel |
+| 25-35% | Jaune #F7E45A | 18m | Faible utilisation |
+| 35-45% | Orange #F5A623 | 28m | Utilisation modérée |
+| 45-55% | Rouge #D0021B | 38m | Forte utilisation |
+| 55-100% | Rouge hachuré | 40m | Stopover (zone critique) |
 
-Validateurs:
+### 4. BCE Ruleset V8 Complet ✅
+**Fichier:** `/backend/bce/bce_ruleset_v8.py`
+
+**Règles Zones (4):**
 - `bce_zone_classification_valid`
+- `bce_zone_topographic_valid`
+- `bce_zone_hydrology_valid`
+- `bce_zone_human_pressure_valid`
+
+**Règles Corridors (5):**
 - `bce_corridor_continuity_valid`
-- `bce_wwf_classification_valid`
-- `bce_human_pressure_respected`
-- `bce_topographic_coherence_valid`
+- `bce_corridor_topography_valid`
+- `bce_corridor_wwf_classification_valid`
+- `bce_corridor_human_pressure_respected`
+- `bce_corridor_stopover_detection_valid`
 
-#### 4. API Écologique V8 ✅
-**Fichier:** `/backend/routes/ecological_router_v8.py`
+### 5. BCE Auto-Run ✅
+**Activation automatique à:**
+- Chargement de MON TERRITOIRE
+- Classification de zone
+- Génération de corridor
+- Détection de stopover
+- Mise à jour du pipeline V7/V8
 
-Endpoints:
-- `GET /api/v1/ecological/species`
-- `GET /api/v1/ecological/species/{species}/zones`
-- `GET /api/v1/ecological/species/{species}/zones/{zone_type}`
-- `POST /api/v1/ecological/validate`
-- `GET /api/v1/ecological/corridors/summary`
+**Statut:** `auto_run_enabled: true`
 
-#### 5. Zone 2 km² carrée ✅
-**Fichier:** `/frontend/src/components/territoire/BionicZone2km.jsx`
+### 6. Auto-Load Territoire ✅
+**Fichier:** `/frontend/src/hooks/useTerritoryAutoLoad.js`
+
+Charge automatiquement:
+- Zones écologiques pertinentes
+- Corridors 10X
+- Stopovers
+- Couches V7 nécessaires
+- Selon la dernière recherche utilisateur
+
+### 7. Zone 2 km² ✅
 - Carré 2km × 2km centré sur waypoint actif
 - Contour pointillé orangé (#f5a623)
 - Sans remplissage
 
-#### 6. Suppression lignes rouges ✅
-**Fichier:** `/frontend/src/components/territoire/StructureContrastLayer.jsx`
-- Return null — désactivation totale
+### 8. Suppression lignes rouges ✅
+- StructureContrastLayer désactivé
 
-#### 7. Panneau Écologique ✅
-**Fichier:** `/frontend/src/components/territoire/EcologicalPanel.jsx`
-- Indicateur "X corridors actifs détectés"
-- Légende WWF
-- Zones dominantes par espèce
-
-## Critères algorithmiques intégrés
-
-| Critère | Description |
-|---------|-------------|
-| NDVI | Seuils par saison (0.3-0.85) |
-| Landcover | Codes NLCD |
-| Pente | 0-60% selon zone |
-| Aspect | N, S, E, W préférés |
-| Distance eau | 0-2000m |
-| Distance routes | 50-800m |
-| Canopy cover | 20-95% |
-| Pression humaine | 0-0.4 |
-| Corridor cost | 1.0-5.0 (A*) |
+## Tests validés
+- API `/api/v1/ecological/species` → 3 espèces ✅
+- API `/api/v1/ecological/species/orignal/zones` → 4 zones complètes ✅
+- API `/api/v1/ecological/validate` → COMPLIANT/PARTIAL selon données ✅
+- API `/api/bce/status` → 9 règles V8 + Auto-Run activé ✅
 
 ## Backlog
 
-### P0 — Critique (Fait)
+### P0 — Terminé
 - [x] Base écologique 3 espèces
-- [x] Critères algorithmiques V8
 - [x] Corridors 10X + WWF
-- [x] Validateurs BCE
+- [x] Style visuel BIONIC
+- [x] BCE Ruleset V8 (9 règles)
+- [x] BCE Auto-Run
+- [x] Auto-load territoire
 - [x] Zone 2 km²
-- [x] API écologique
 
 ### P1 — En cours
-- [ ] Intégration corridors 10X dans pipeline V7
-- [ ] Affichage corridors sur carte
-- [ ] Fiches écologiques interactives frontend
+- [ ] Intégrer CorridorsVisualLayer dans la carte
+- [ ] Intégrer EcologicalPanel dans la page territoire
+- [ ] Afficher légende WWF dynamique
 
 ### P2 — Phase E
 - [ ] Audit fichiers legacy
@@ -128,15 +124,11 @@ Endpoints:
 - [ ] Heatmaps prédictives
 - [ ] Dashboard BCE admin
 
-## Sources scientifiques
-- MFFP-QC-2023
-- WWF-2020
-- Renecker-1987, Peek-1997 (Orignal)
-- VerCauteren-2003, Nixon-1991 (Chevreuil)
-- Rogers-1987, Pelton-2003 (Ours noir)
-- Beier-1998, Chetkiewicz-2006 (Corridors)
+## Note sur le merge GitHub
+Le merge de `conflict_110326_1207` → `v6_autosave` doit être fait manuellement via:
+- Bouton "Save to Github" dans Emergent
+- Ou commande: `git merge origin/conflict_110326_1207 --allow-unrelated-histories`
 
 ## Dates clés
-- **2026-03-11:** BIONIC V8 — Base écologique complète, Corridors 10X, Validateurs BCE
+- **2026-03-11:** BIONIC V8 complet — Base écologique, Corridors visuels, BCE Ruleset V8 + Auto-Run
 - **2026-03-10:** Widget Comparaison V8.3.A
-- **2026-02-24:** PHASE C/D Knowledge Layer
