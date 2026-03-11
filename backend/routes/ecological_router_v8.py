@@ -65,7 +65,7 @@ class ValidationRequest(BaseModel):
 async def get_species_list():
     """Liste toutes les espèces disponibles dans la base écologique."""
     try:
-        from ..modules.bionic_engine_p0.knowledge.ecological_database_v8 import ecological_database, Species
+        from modules.bionic_engine_p0.knowledge.ecological_database_v8 import ecological_database, Species
         
         species_list = [
             {
@@ -102,7 +102,7 @@ async def get_species_list():
 async def get_species_zones(species: str):
     """Récupère toutes les zones écologiques pour une espèce."""
     try:
-        from ..modules.bionic_engine_p0.knowledge.ecological_database_v8 import ecological_database, Species
+        from modules.bionic_engine_p0.knowledge.ecological_database_v8 import ecological_database, Species
         
         # Convertir le nom d'espèce
         species_enum = None
@@ -156,7 +156,7 @@ async def get_species_zones(species: str):
 async def get_specific_zone(species: str, zone_type: str):
     """Récupère une zone écologique spécifique."""
     try:
-        from ..modules.bionic_engine_p0.knowledge.ecological_database_v8 import ecological_database, Species, ZoneType
+        from modules.bionic_engine_p0.knowledge.ecological_database_v8 import ecological_database, Species, ZoneType
         
         # Convertir les enums
         species_enum = None
@@ -243,7 +243,7 @@ async def get_specific_zone(species: str, zone_type: str):
 async def validate_ecological_data(request: ValidationRequest):
     """Valide des données écologiques avec les validateurs BCE."""
     try:
-        from ..bce.validators.ecological_validators_v8 import validate_ecological_compliance
+        from bce.validators.ecological_validators_v8 import validate_ecological_compliance
         
         data = {
             "species": request.species,
