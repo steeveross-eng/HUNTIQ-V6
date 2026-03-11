@@ -25,6 +25,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
 import useBionicLayers from '@/hooks/useBionicLayers';
+import useBionicSession from '@/hooks/useBionicSession';
 import useBionicWeather from '@/hooks/useBionicWeather';
 import useBionicScoring from '@/hooks/useBionicScoring';
 import { useUserData } from '@/hooks/useUserData';
@@ -285,12 +286,21 @@ const MonTerritoireBionicPage = () => {
 
   // BIONIC V5 300% — CENTRAGE MAP UNE SEULE FOIS AU PREMIER MOUNT (P0)
   // V8.2.2: Priorité au contexte sauvegardé (position + zoom exacts)
+  // BCE-MAX x4.1: Utilise la session BIONIC persistante
   const initialCenterDoneRef = useRef(false);
   useEffect(() => {
     if (initialCenterDoneRef.current) return;
     if (!mapRef.current) return;
 
-    // Priorité 1: Contexte sauvegardé avec position exacte
+    // Priorité 0: Session BCE-MAX x4.1 (position exacte de la dernière session)
+    if (hasPreviousSession && savedPosition?.lat && savedPosition?.lng && savedPosition?.zoom) {
+      initialCenterDoneRef.current = true;
+      mapRef.current.setView([savedPosition.lat, savedPosition.lng], savedPosition.zoom);
+      console.log(`[BCE-MAX x4.1] Session restaurée: [${savedPosition.lat.toFixed(4)}, ${savedPosition.lng.toFixed(4)}] zoom ${savedPosition.zoom}`);
+      return;
+    }
+
+    // Priorité 1: Contexte sauvegardé avec position exacte (legacy)
     if (savedCtx?.lat != null && savedCtx?.lng != null && savedCtx?.zoom != null) {
       initialCenterDoneRef.current = true;
       mapRef.current.setView([savedCtx.lat, savedCtx.lng], savedCtx.zoom);
@@ -308,15 +318,16 @@ const MonTerritoireBionicPage = () => {
       console.log(`[BIONIC V5 CENTER] Centrage initial unique: [${lat}, ${lng}] zoom 14`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWaypointForZones?.id]);
+  }, [selectedWaypointForZones?.id, hasPreviousSession, savedPosition]);
 
-  // V8.2.2: Sauvegarde automatique du contexte utilisateur
+  // V8.2.2 + BCE-MAX x4.1: Sauvegarde automatique du contexte utilisateur
   // Déclenché par changement de position carte, zoom, layers, waypoint
   const contextSaveTimerRef = useRef(null);
   useEffect(() => {
     // Debounce: sauvegarder 500ms après le dernier changement
     if (contextSaveTimerRef.current) clearTimeout(contextSaveTimerRef.current);
     contextSaveTimerRef.current = setTimeout(() => {
+      // Legacy context save
       saveUserContext({
         lat: currentMapCenter.lat,
         lng: currentMapCenter.lng,
@@ -329,9 +340,14 @@ const MonTerritoireBionicPage = () => {
         windMode,
         ts: Date.now(),
       });
+      
+      // BCE-MAX x4.1: Sauvegarde position dans session
+      if (currentMapCenter.lat && currentMapCenter.lng && currentZoom) {
+        updatePosition(currentMapCenter.lat, currentMapCenter.lng, currentZoom);
+      }
     }, 500);
     return () => { if (contextSaveTimerRef.current) clearTimeout(contextSaveTimerRef.current); };
-  }, [currentMapCenter.lat, currentMapCenter.lng, currentZoom, selectedWaypointForZones?.id, activeTab, showCorridorsV1, showExclusionOverlay, showWindFlow, windMode]);
+  }, [currentMapCenter.lat, currentMapCenter.lng, currentZoom, selectedWaypointForZones?.id, activeTab, showCorridorsV1, showExclusionOverlay, showWindFlow, windMode, updatePosition]);
 
   
   // Notifications
@@ -426,8 +442,17 @@ const MonTerritoireBionicPage = () => {
   
   // ============================================
   // BIONIC V5 — Espèce sélectionnée + Exclusions terrain
+  // BCE-MAX x4.1: Restauration depuis session précédente
   // ============================================
-  const [selectedSpecies, setSelectedSpecies] = useState('tous');
+  const [selectedSpecies, setSelectedSpecies] = useState(() => savedSpecies || 'tous');
+  
+  // Synchroniser l'espèce avec la session
+  useEffect(() => {
+    if (selectedSpecies && selectedSpecies !== 'tous') {
+      updateSpecies(selectedSpecies);
+    }
+  }, [selectedSpecies, updateSpecies]);
+  
   // Les exclusions sont gérées 100% backend. Ces variables sont gardées pour compatibilité UI.
   const terrainExclusions = [];
   const isLoadingExclusions = false;
@@ -537,6 +562,21 @@ const MonTerritoireBionicPage = () => {
   const isPrivateDataVisible = !privacyMode; // Les waypoints, recherches, annotations sont visibles
   
   // ============================================
+  // BCE-MAX x4.1 — Session Persistence
+  const {
+    session: bionicSession,
+    position: savedPosition,
+    species: savedSpecies,
+    layers: savedLayers,
+    selectedWaypoint: savedWaypoint,
+    updatePosition,
+    updateSpecies,
+    updateLayers,
+    updateSelectedWaypoint,
+    hasPreviousSession,
+  } = useBionicSession();
+  
+  // ============================================
   // Hooks BIONIC
   const { 
     layersVisible, 
@@ -544,17 +584,30 @@ const MonTerritoireBionicPage = () => {
     showAllLayers, 
     hideAllLayers,
     activeCount,
-    allLayers
-  } = useBionicLayers({ 
+    allLayers,
+    restoreSession: restoreLayersSession,
+  } = useBionicLayers(savedLayers || { 
     habitats: true, 
     alimentation: true, 
     repos: true,
-    rut: true,  // BIONIC V8: Auto-load zones écologiques
-    trajets: true,  // BIONIC V8: Auto-load corridors
+    rut: true,
+    trajets: true,
     corridors: true,
     ensoleillement: true,
     peuplements: true,
-  }); // P0 FIX: Essential layers for auto-load
+    salines: true,
+    affuts: true,
+    pentes: true,
+    orientation: true,
+    altitude: true,
+  }); // BCE-MAX x4.1: TOUTES les couches essentielles activées
+  
+  // Synchroniser les couches avec la session
+  useEffect(() => {
+    if (layersVisible && Object.keys(layersVisible).length > 0) {
+      updateLayers(layersVisible);
+    }
+  }, [layersVisible, updateLayers]);
   
   const { 
     weather, 

@@ -33,6 +33,14 @@ async def bce_status():
     except ImportError:
         pass
     
+    # BCE-MAX x4.1 status
+    bce_max_status = None
+    try:
+        from bce.bce_max_4_1 import get_bce_max_status
+        bce_max_status = get_bce_max_status()
+    except ImportError:
+        pass
+    
     return {
         "status": "operational",
         "version": BCE_VERSION,
@@ -59,6 +67,7 @@ async def bce_status():
             ],
         },
         "auto_run": autorun_status,
+        "bce_max_4_1": bce_max_status,
     }
 
 

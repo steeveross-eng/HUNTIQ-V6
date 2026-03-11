@@ -15,7 +15,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://territory-analysis.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://ecological-zones.preview.emergentagent.com').rstrip('/')
 
 class TestWMSProxyCheck:
     """Test WMS proxy availability check endpoint"""

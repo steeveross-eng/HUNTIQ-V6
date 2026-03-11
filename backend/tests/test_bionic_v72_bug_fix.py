@@ -11,7 +11,7 @@ import os
 import time
 
 # Use REACT_APP_BACKEND_URL from environment (production URL)
-API_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://territory-analysis.preview.emergentagent.com").rstrip("/")
+API_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://ecological-zones.preview.emergentagent.com").rstrip("/")
 TIMEOUT = 120  # Overpass API can be slow
 
 # Quebec City center (urban, residential areas)

@@ -23,7 +23,7 @@ import os
 import io
 import tempfile
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://territory-analysis.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://ecological-zones.preview.emergentagent.com').rstrip('/')
 API_PREFIX = f"{BASE_URL}/api/v1/bionic"
 
 
