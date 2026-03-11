@@ -68,6 +68,172 @@ def _cache_key(bounds, species, layers, waypoint_center=None) -> str:
     return hashlib.md5(data.encode()).hexdigest()
 
 
+
+def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
+    """
+    BCE-MAX x4.1: Genere des corridors ecologiques entre zones fonctionnelles.
+    Connecte alimentation <-> repos, repos <-> rut, alimentation <-> rut, etc.
+    Retourne des corridors au format GeoJSON LineString avec classification WWF.
+    """
+    from modules.bionic_engine_p0.services.corridor_10x import corridor_10x_service
+
+    # Extraire les centroides de chaque zone par couche
+    # Raw zone format: {coordinates: [[lng,lat],...], centroid: {lat, lng}, area_m2, ...}
+    zone_centroids = {}
+    for layer_id, zones in zones_by_layer.items():
+        if layer_id in ("hydro", "pentes", "orientation", "ensoleillement", "altitude", "ndvi", "peuplements"):
+            continue  # On ne connecte que les zones fonctionnelles
+        for idx, z in enumerate(zones):
+            centroid = z.get("centroid", {})
+            lat = centroid.get("lat", 0)
+            lng = centroid.get("lng", 0)
+            if lat == 0 or lng == 0:
+                # Fallback: calcul depuis les coordonnees
+                coords = z.get("coordinates", [])
+                if len(coords) >= 3:
+                    lng = sum(c[0] for c in coords) / len(coords)
+                    lat = sum(c[1] for c in coords) / len(coords)
+                else:
+                    continue
+            zone_centroids.setdefault(layer_id, []).append({
+                "lat": lat, "lng": lng,
+                "zone_id": f"{layer_id}_{idx}",
+                "score": 50,
+            })
+    
+    logger.info(f"[Corridor 10X] Zone centroids by layer: { {k: len(v) for k, v in zone_centroids.items()} }")
+
+    # Paires de connexion prioritaires — toutes les combinaisons fonctionnelles
+    CONNECT_PAIRS = [
+        ("alimentation", "repos"),
+        ("alimentation", "rut"),
+        ("repos", "rut"),
+        ("habitats", "alimentation"),
+        ("habitats", "repos"),
+        ("salines", "repos"),
+        ("affuts", "habitats"),
+        ("trajets", "alimentation"),
+        ("affuts", "rut"),
+        ("affuts", "trajets"),
+        ("trajets", "rut"),
+        ("salines", "rut"),
+        ("salines", "affuts"),
+        ("habitats", "rut"),
+        ("habitats", "trajets"),
+        ("salines", "trajets"),
+        ("affuts", "repos"),
+        ("affuts", "alimentation"),
+    ]
+
+    corridors = []
+    corridor_id = 0
+    seen_pairs = set()
+
+    for from_layer, to_layer in CONNECT_PAIRS:
+        from_zones = zone_centroids.get(from_layer, [])
+        to_zones = zone_centroids.get(to_layer, [])
+        if not from_zones or not to_zones:
+            continue
+
+        for fz in from_zones[:3]:
+            best_tz = None
+            best_dist = float("inf")
+            for tz in to_zones:
+                dlat = (fz["lat"] - tz["lat"]) * METERS_PER_DEG_LAT
+                dlng = (fz["lng"] - tz["lng"]) * METERS_PER_DEG_LAT * math.cos(math.radians(fz["lat"]))
+                dist = math.sqrt(dlat ** 2 + dlng ** 2)
+                if dist < best_dist and dist > 50:
+                    pair_key = f"{fz['zone_id']}-{tz['zone_id']}"
+                    reverse_key = f"{tz['zone_id']}-{fz['zone_id']}"
+                    if pair_key not in seen_pairs and reverse_key not in seen_pairs:
+                        best_dist = dist
+                        best_tz = tz
+
+            if not best_tz or best_dist > 3000:
+                continue
+
+            pair_key = f"{fz['zone_id']}-{best_tz['zone_id']}"
+            seen_pairs.add(pair_key)
+
+            wwf_type = corridor_10x_service.classify_corridor_wwf(best_dist * 0.3)
+            connectivity = corridor_10x_service.calculate_connectivity_score(from_layer, to_layer)
+
+            n_points = max(5, int(best_dist / 50))
+            path_coords = []
+            for i in range(n_points + 1):
+                t = i / n_points
+                mid_lat = (fz["lat"] + best_tz["lat"]) / 2 + (0.0002 * math.sin(t * math.pi))
+                mid_lng = (fz["lng"] + best_tz["lng"]) / 2 + (0.0002 * math.cos(t * math.pi))
+                lat = (1 - t) ** 2 * fz["lat"] + 2 * (1 - t) * t * mid_lat + t ** 2 * best_tz["lat"]
+                lng = (1 - t) ** 2 * fz["lng"] + 2 * (1 - t) * t * mid_lng + t ** 2 * best_tz["lng"]
+                path_coords.append([round(lng, 6), round(lat, 6)])
+
+            score = round((connectivity * 0.4 + fz["score"] * 0.3 + best_tz["score"] * 0.3), 1)
+
+            wwf_colors = {
+                "macro_corridor": {"color": "#FF5722", "width": 5, "opacity": 0.9},
+                "biological_corridor": {"color": "#FF9800", "width": 3.5, "opacity": 0.85},
+                "conservation_corridor": {"color": "#FFC107", "width": 2.5, "opacity": 0.8},
+            }
+            style = wwf_colors.get(wwf_type.value, {"color": "#06B6D4", "width": 2.5, "opacity": 0.85})
+
+            corridor = {
+                "type": "Feature",
+                "id": f"corridor-10x-{corridor_id}",
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": path_coords,
+                },
+                "properties": {
+                    "source": "corridor_10x",
+                    "corridor_type": wwf_type.value,
+                    "from_zone_type": from_layer,
+                    "to_zone_type": to_layer,
+                    "from_zone_id": fz["zone_id"],
+                    "to_zone_id": best_tz["zone_id"],
+                    "distance_m": round(best_dist, 1),
+                    "confidence": min(1.0, score / 100),
+                    "sex": "both",
+                    "dem_enhanced": False,
+                    "in_perimeter": True,
+                    "style": {
+                        "color": style["color"],
+                        "width": style["width"],
+                        "opacity": style["opacity"],
+                        "dasharray": "none",
+                    },
+                    "scoring": {
+                        "score": score,
+                        "subscores": {
+                            "connectivity": round(connectivity, 1),
+                            "terrain": 65.0,
+                            "habitat": 70.0,
+                        },
+                        "justification": [
+                            f"Connecte {from_layer} -> {to_layer}",
+                            f"Distance: {round(best_dist)}m",
+                            f"Classification WWF: {wwf_type.value}",
+                        ],
+                    },
+                    "wwf_classification": {
+                        "type": wwf_type.value,
+                        "label": corridor_10x_service._get_wwf_label(wwf_type),
+                    },
+                },
+            }
+            corridors.append(corridor)
+            corridor_id += 1
+
+            if corridor_id >= 20:
+                break
+        if corridor_id >= 20:
+            break
+
+    logger.info(f"[Corridor 10X] Generated {len(corridors)} corridors for species={species}")
+    return corridors
+
+
+
 def _point_in_polygon(lat: float, lng: float, poly_coords: list) -> bool:
     inside = False
     n = len(poly_coords)
@@ -712,7 +878,7 @@ async def generate_organic_zones(
         )
     stats["t4_zone_count"] = t4_feature_count
 
-    # V7: Generate corridors and add metadata
+    # V8/10X: Generate corridors — ALWAYS (not just v7)
     corridors = []
     v7_metadata = {}
     if EXCLUSION_ENGINE_VERSION == "v7":
@@ -739,6 +905,13 @@ async def generate_organic_zones(
             v7_metadata = build_v7_response_metadata(v7_stats_by_layer, corridors, species)
         except Exception as e:
             logger.warning(f"V7 corridor generation failed: {e}")
+
+    # BCE-MAX x4.1: Fallback corridor generation for non-v7 engines
+    if not corridors and zones_by_layer:
+        try:
+            corridors = _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds)
+        except Exception as e:
+            logger.warning(f"Corridor 10X fallback failed: {e}")
 
     elapsed = round((time.time() - start) * 1000, 1)
 

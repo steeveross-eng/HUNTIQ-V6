@@ -90,64 +90,72 @@ import { getCurrentBiologicalSeason, getBiologicalSeason, mapToBackendSeason } f
 import { SplitViewContainer } from '@/components/territoire/map/SplitViewContainer';
 import { useSplitViewZones } from '@/hooks/useSplitViewZones';
 
-// Clé localStorage pour le dernier waypoint actif (P1.1)
+// Cle localStorage pour le dernier waypoint actif (legacy fallback)
 const LAST_WAYPOINT_KEY = 'bionic_last_active_waypoint_id';
-// V8.2.2: Clé pour le contexte utilisateur complet
-const USER_CONTEXT_KEY = 'bionic_user_context';
-
-// V8.2.2: Restauration du contexte utilisateur depuis localStorage
-function loadUserContext() {
-  try {
-    const raw = localStorage.getItem(USER_CONTEXT_KEY);
-    if (!raw) return null;
-    const ctx = JSON.parse(raw);
-    // Validation basique
-    if (!ctx || typeof ctx !== 'object') return null;
-    if (ctx.lat != null && (ctx.lat < -90 || ctx.lat > 90)) return null;
-    if (ctx.lng != null && (ctx.lng < -180 || ctx.lng > 180)) return null;
-    // Clamp zoom aux limites autorisées [3, 18]
-    if (ctx.zoom != null) ctx.zoom = Math.max(3, Math.min(18, ctx.zoom));
-    return ctx;
-  } catch { return null; }
-}
-
-function saveUserContext(ctx) {
-  try {
-    localStorage.setItem(USER_CONTEXT_KEY, JSON.stringify(ctx));
-  } catch { /* quota exceeded — ignore */ }
-}
 
 const MonTerritoireBionicPage = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   
-  // V8.2.2: Charger le contexte utilisateur UNE SEULE FOIS
-  const savedContextRef = useRef(loadUserContext());
-  const savedCtx = savedContextRef.current;
+  // ============================================
+  // BCE-MAX x4.1 — SESSION (SOURCE DE VERITE UNIQUE)
+  // DOIT etre le PREMIER hook pour fournir l'etat initial a tout le reste
+  // ============================================
+  const {
+    session: bionicSession,
+    position: savedPosition,
+    species: savedSpecies,
+    layers: savedLayers,
+    waypointId: savedWaypointId,
+    biologicalSeason: savedBiologicalSeason,
+    activeTab: savedActiveTab,
+    classificationToggles: savedClassificationToggles,
+    showCorridorsV1: savedShowCorridorsV1,
+    showExclusionOverlay: savedShowExclusionOverlay,
+    showWindFlow: savedShowWindFlow,
+    windMode: savedWindMode,
+    updatePosition,
+    updateSpecies,
+    updateLayers,
+    updateWaypointId,
+    updateBiologicalSeason,
+    updateActiveTab,
+    updateClassificationToggles,
+    updateVisualOptions,
+    hasPreviousSession,
+  } = useBionicSession();
   
   // BIONIC V5 300% — Ref directe vers l'instance Leaflet map
   const mapRef = useRef(null);
   
-  // Onglet actif — restauré depuis le contexte
-  const [activeTab, setActiveTab] = useState(savedCtx?.activeTab || 'carte');
+  // Onglet actif — restaure depuis la session BCE-MAX
+  const [activeTab, setActiveTab] = useState(savedActiveTab || 'carte');
   
-  // État de la carte — restauré depuis le contexte
+  // Etat de la carte — restaure depuis la session BCE-MAX
   const [mapCenter, setMapCenter] = useState(
-    savedCtx?.lat != null && savedCtx?.lng != null
-      ? [savedCtx.lat, savedCtx.lng]
+    savedPosition?.lat != null && savedPosition?.lng != null
+      ? [savedPosition.lat, savedPosition.lng]
       : [46.8139, -71.2080]
   );
-  const [mapZoom, setMapZoom] = useState(savedCtx?.zoom || 12);
-  const [currentZoom, setCurrentZoom] = useState(savedCtx?.zoom || 12);
+  const [mapZoom, setMapZoom] = useState(savedPosition?.zoom || 12);
+  const [currentZoom, setCurrentZoom] = useState(savedPosition?.zoom || 12);
   const [currentMapCenter, setCurrentMapCenter] = useState(
-    savedCtx?.lat != null
-      ? { lat: savedCtx.lat, lng: savedCtx.lng }
+    savedPosition?.lat != null
+      ? { lat: savedPosition.lat, lng: savedPosition.lng }
       : { lat: 46.8139, lng: -71.2080 }
   );
   const [currentMapBounds, setCurrentMapBounds] = useState(null);
   
-  // V8.1 — Saison biologique active
-  const [selectedBiologicalSeason, setSelectedBiologicalSeason] = useState(() => getCurrentBiologicalSeason().id);
+  // V8.1 — Saison biologique active (restauree depuis session BCE-MAX)
+  const [selectedBiologicalSeason, setSelectedBiologicalSeason] = useState(() => savedBiologicalSeason || getCurrentBiologicalSeason().id);
+  
+  // BCE-MAX: Sync saison biologique vers session
+  useEffect(() => {
+    if (selectedBiologicalSeason) {
+      updateBiologicalSeason(selectedBiologicalSeason);
+    }
+  }, [selectedBiologicalSeason, updateBiologicalSeason]);
+  
   // V8.1 — Split View
   // V8.2 FIX: Capture du centre/zoom RÉEL de la carte au moment d'activer le SplitView
   // mapCenter/mapZoom sont les valeurs INITIALES (Québec City par défaut)
@@ -188,10 +196,10 @@ const MonTerritoireBionicPage = () => {
   const [splitRightSeason, setSplitRightSeason] = useState('rut'); // Saison droite par défaut
   const [selectedZone, setSelectedZone] = useState(null);
   const [hoveredZone, setHoveredZone] = useState(null);
-  const [showCorridorsV1, setShowCorridorsV1] = useState(savedCtx?.showCorridorsV1 ?? false);
-  const [showExclusionOverlay, setShowExclusionOverlay] = useState(savedCtx?.showExclusionOverlay ?? false); // V8.2.3: OFF par défaut
-  const [showWindFlow, setShowWindFlow] = useState(savedCtx?.showWindFlow ?? false);
-  const [windMode, setWindMode] = useState(savedCtx?.windMode || 'arrows');
+  const [showCorridorsV1, setShowCorridorsV1] = useState(savedShowCorridorsV1 ?? false);
+  const [showExclusionOverlay, setShowExclusionOverlay] = useState(savedShowExclusionOverlay ?? false);
+  const [showWindFlow, setShowWindFlow] = useState(savedShowWindFlow ?? false);
+  const [windMode, setWindMode] = useState(savedWindMode || 'arrows');
   const [temporalHourMT, setTemporalHourMT] = useState(null);
   const [contextMenuMT, setContextMenuMT] = useState(null);
   
@@ -261,93 +269,77 @@ const MonTerritoireBionicPage = () => {
   // BIONIC V5 300% INVARIANT: Spatial Clipping 1km × 1km (doit être après useWaypointActions)
   const { analysisBbox, bboxBounds, clipZonesClient, snapshotData, isGeneratingSnapshot, generateSnapshot, ANALYSIS_BOX_SIZE_M } = useSpatialClipping(selectedWaypointForZones);
 
-  // BIONIC V5 300% — AUTO-SÉLECTION DU DERNIER WAYPOINT ACTIF (P1.1)
-  // V8.2.2: Priorité au contexte sauvegardé (waypointId), fallback sur LAST_WAYPOINT_KEY
+  // BIONIC V5 300% — AUTO-SELECTION DU DERNIER WAYPOINT ACTIF
+  // BCE-MAX x4.1: Priorite au waypointId de la session
   const autoSelectDoneRef = useRef(false);
   useLayoutEffect(() => {
     if (autoSelectDoneRef.current) return;
     if (!selectedWaypointForZones && activeWaypoints.length > 0) {
-      // Priorité 1: waypointId du contexte sauvegardé
-      const ctxId = savedCtx?.waypointId;
-      // Priorité 2: LAST_WAYPOINT_KEY (legacy)
-      const lastId = ctxId || localStorage.getItem(LAST_WAYPOINT_KEY);
+      const lastId = savedWaypointId || localStorage.getItem(LAST_WAYPOINT_KEY);
       const lastWp = lastId ? activeWaypoints.find(wp => wp.id === lastId) : null;
-      // Fallback: premier waypoint si le sauvegardé a été supprimé
       const target = lastWp || activeWaypoints[0];
       if (target && (target.lat || target.latitude)) {
-        const source = lastWp ? (ctxId ? 'contexte sauvegardé' : 'dernier utilisé') : 'premier actif (fallback)';
-        console.log(`[BIONIC CONTEXT] Auto-select: "${target.name}" (${source})`);
+        const source = lastWp ? 'session BCE-MAX' : 'premier actif (fallback)';
+        console.log(`[BCE-MAX x4.1] Auto-select: "${target.name}" (${source})`);
         autoSelectDoneRef.current = true;
         setSelectedWaypointForZones(target);
         localStorage.setItem(LAST_WAYPOINT_KEY, target.id);
+        updateWaypointId(target.id);
       }
     }
   }, [selectedWaypointForZones, activeWaypoints]);
 
-  // BIONIC V5 300% — CENTRAGE MAP UNE SEULE FOIS AU PREMIER MOUNT (P0)
-  // V8.2.2: Priorité au contexte sauvegardé (position + zoom exacts)
-  // BCE-MAX x4.1: Utilise la session BIONIC persistante
+  // BCE-MAX x4.1: CENTRAGE MAP depuis session persistante
   const initialCenterDoneRef = useRef(false);
   useEffect(() => {
     if (initialCenterDoneRef.current) return;
     if (!mapRef.current) return;
 
-    // Priorité 0: Session BCE-MAX x4.1 (position exacte de la dernière session)
+    // Priorite 0: Session BCE-MAX x4.1 (position exacte de la derniere session)
     if (hasPreviousSession && savedPosition?.lat && savedPosition?.lng && savedPosition?.zoom) {
       initialCenterDoneRef.current = true;
       mapRef.current.setView([savedPosition.lat, savedPosition.lng], savedPosition.zoom);
-      console.log(`[BCE-MAX x4.1] Session restaurée: [${savedPosition.lat.toFixed(4)}, ${savedPosition.lng.toFixed(4)}] zoom ${savedPosition.zoom}`);
+      console.log(`[BCE-MAX x4.1] Session restauree: [${savedPosition.lat.toFixed(4)}, ${savedPosition.lng.toFixed(4)}] zoom ${savedPosition.zoom}`);
       return;
     }
 
-    // Priorité 1: Contexte sauvegardé avec position exacte (legacy)
-    if (savedCtx?.lat != null && savedCtx?.lng != null && savedCtx?.zoom != null) {
-      initialCenterDoneRef.current = true;
-      mapRef.current.setView([savedCtx.lat, savedCtx.lng], savedCtx.zoom);
-      console.log(`[BIONIC CONTEXT] Restauration: [${savedCtx.lat.toFixed(4)}, ${savedCtx.lng.toFixed(4)}] zoom ${savedCtx.zoom}`);
-      return;
-    }
-
-    // Priorité 2: Waypoint sélectionné (centrage classique)
+    // Fallback: Waypoint selectionne (centrage classique)
     if (!selectedWaypointForZones) return;
     const lat = selectedWaypointForZones.lat || selectedWaypointForZones.latitude;
     const lng = selectedWaypointForZones.lng || selectedWaypointForZones.longitude;
     if (lat && lng) {
       initialCenterDoneRef.current = true;
       mapRef.current.setView([lat, lng], 14);
-      console.log(`[BIONIC V5 CENTER] Centrage initial unique: [${lat}, ${lng}] zoom 14`);
+      console.log(`[BCE-MAX x4.1] Centrage initial: [${lat}, ${lng}] zoom 14`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWaypointForZones?.id, hasPreviousSession, savedPosition]);
 
-  // V8.2.2 + BCE-MAX x4.1: Sauvegarde automatique du contexte utilisateur
-  // Déclenché par changement de position carte, zoom, layers, waypoint
+  // BCE-MAX x4.1: Sauvegarde automatique UNIFIEE du contexte utilisateur
   const contextSaveTimerRef = useRef(null);
   useEffect(() => {
-    // Debounce: sauvegarder 500ms après le dernier changement
     if (contextSaveTimerRef.current) clearTimeout(contextSaveTimerRef.current);
     contextSaveTimerRef.current = setTimeout(() => {
-      // Legacy context save
-      saveUserContext({
-        lat: currentMapCenter.lat,
-        lng: currentMapCenter.lng,
-        zoom: currentZoom,
-        waypointId: selectedWaypointForZones?.id || null,
-        activeTab,
+      // Position carte
+      if (currentMapCenter.lat && currentMapCenter.lng && currentZoom) {
+        updatePosition(currentMapCenter.lat, currentMapCenter.lng, currentZoom);
+      }
+      // Waypoint
+      if (selectedWaypointForZones?.id) {
+        updateWaypointId(selectedWaypointForZones.id);
+      }
+      // Onglet
+      updateActiveTab(activeTab);
+      // Options visuelles
+      updateVisualOptions({
         showCorridorsV1,
         showExclusionOverlay,
         showWindFlow,
         windMode,
-        ts: Date.now(),
       });
-      
-      // BCE-MAX x4.1: Sauvegarde position dans session
-      if (currentMapCenter.lat && currentMapCenter.lng && currentZoom) {
-        updatePosition(currentMapCenter.lat, currentMapCenter.lng, currentZoom);
-      }
     }, 500);
     return () => { if (contextSaveTimerRef.current) clearTimeout(contextSaveTimerRef.current); };
-  }, [currentMapCenter.lat, currentMapCenter.lng, currentZoom, selectedWaypointForZones?.id, activeTab, showCorridorsV1, showExclusionOverlay, showWindFlow, windMode, updatePosition]);
+  }, [currentMapCenter.lat, currentMapCenter.lng, currentZoom, selectedWaypointForZones?.id, activeTab, showCorridorsV1, showExclusionOverlay, showWindFlow, windMode, updatePosition, updateWaypointId, updateActiveTab, updateVisualOptions]);
 
   
   // Notifications
@@ -391,64 +383,49 @@ const MonTerritoireBionicPage = () => {
     attribution,
     isDarkOptimized,
     getZoneOpacityForCurrentMap
-  } = useMapType(MAP_TYPES.SATELLITE); // P0 FIX: Satellite par défaut (écoforestière couvre le fleuve)
-  
-  // V8.3.A: Persist mapType dans le contexte utilisateur (déclaré après useMapType)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const raw = localStorage.getItem(USER_CONTEXT_KEY);
-      if (raw) {
-        try {
-          const ctx = JSON.parse(raw);
-          ctx.mapType = mapType;
-          localStorage.setItem(USER_CONTEXT_KEY, JSON.stringify(ctx));
-        } catch { /* ignore */ }
-      }
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [mapType]);
+  } = useMapType(MAP_TYPES.SATELLITE);
   
   // Mode d'affichage des zones BIONIC
   const [zoneDisplayMode, setZoneDisplayMode] = useState('micro'); // 'micro' ou 'classic'
-  const [showCorridors, setShowCorridors] = useState(false); // P0 FIX: Corridors V7 désactivés par défaut (pollution visuelle)
+  const [showCorridors, setShowCorridors] = useState(true); // BCE-MAX: Corridors toujours visibles
   const [minPercentageFilter, setMinPercentageFilter] = useState(30);
   
-  // ============================================
-  // BIONIC V5 300% — CLASSIFICATION TOGGLES (RENDU UNIQUEMENT)
-  // Chaque toggle affiche/masque une famille de couches.
-  // Aucun recalcul déclenché. Zones figées en mémoire (STATE LOCKING).
-  // ============================================
-  const [classificationToggles, setClassificationToggles] = useState({
-    // STRUCTURE (statique)
-    relief: true,        // altitude, pentes, orientation, ensoleillement
-    hydro: true,         // hydro
-    foret: true,         // peuplements, ndvi
-    anthropique: true,   // StructureContrastLayer
-    // FONCTIONNEL (semi-statique)
-    dominantes: true,    // habitats, rut, repos, alimentation, salines, affuts, trajets, corridors
-    corridorsReels: true,// MovementCorridorsLayer V1
-    // CONDITIONS (dynamique)
-    meteo: true,         // widget météo
-    pression: true,      // ExclusionOverlayLayer
-    corridorsEstimes: true, // corridors estimés (BionicMicroZones)
-    // INSTANTANÉ (temps réel)
-    scoreHabitat: true,  // score global affiché
-    curseurBionic: true, // CursorBionicLayer
-    waypoints: true,     // Waypoints + Observations sur la carte
+  // BIONIC V5 300% — CLASSIFICATION TOGGLES (restaures depuis session BCE-MAX)
+  const [classificationToggles, setClassificationToggles] = useState(() => {
+    if (savedClassificationToggles && typeof savedClassificationToggles === 'object') {
+      return savedClassificationToggles;
+    }
+    return {
+      relief: true,
+      hydro: true,
+      foret: true,
+      anthropique: true,
+      dominantes: true,
+      corridorsReels: true,
+      meteo: true,
+      pression: true,
+      corridorsEstimes: true,
+      scoreHabitat: true,
+      curseurBionic: true,
+      waypoints: true,
+    };
   });
   const handleClassificationToggle = useCallback((key) => {
-    setClassificationToggles(prev => ({ ...prev, [key]: !prev[key] }));
-  }, []);
+    setClassificationToggles(prev => {
+      const updated = { ...prev, [key]: !prev[key] };
+      updateClassificationToggles(updated);
+      return updated;
+    });
+  }, [updateClassificationToggles]);
   
   // ============================================
-  // BIONIC V5 — Espèce sélectionnée + Exclusions terrain
-  // BCE-MAX x4.1: Restauration depuis session précédente
+  // BCE-MAX x4.1 — Espece selectionnee (restauree depuis session)
   // ============================================
   const [selectedSpecies, setSelectedSpecies] = useState(() => savedSpecies || 'tous');
   
-  // Synchroniser l'espèce avec la session
+  // Synchroniser l'espece avec la session
   useEffect(() => {
-    if (selectedSpecies && selectedSpecies !== 'tous') {
+    if (selectedSpecies) {
       updateSpecies(selectedSpecies);
     }
   }, [selectedSpecies, updateSpecies]);
@@ -562,22 +539,7 @@ const MonTerritoireBionicPage = () => {
   const isPrivateDataVisible = !privacyMode; // Les waypoints, recherches, annotations sont visibles
   
   // ============================================
-  // BCE-MAX x4.1 — Session Persistence
-  const {
-    session: bionicSession,
-    position: savedPosition,
-    species: savedSpecies,
-    layers: savedLayers,
-    selectedWaypoint: savedWaypoint,
-    updatePosition,
-    updateSpecies,
-    updateLayers,
-    updateSelectedWaypoint,
-    hasPreviousSession,
-  } = useBionicSession();
-  
-  // ============================================
-  // Hooks BIONIC
+  // Hooks BIONIC — couches (initialisees depuis session BCE-MAX)
   const { 
     layersVisible, 
     toggleLayer, 
@@ -585,24 +547,9 @@ const MonTerritoireBionicPage = () => {
     hideAllLayers,
     activeCount,
     allLayers,
-    restoreSession: restoreLayersSession,
-  } = useBionicLayers(savedLayers || { 
-    habitats: true, 
-    alimentation: true, 
-    repos: true,
-    rut: true,
-    trajets: true,
-    corridors: true,
-    ensoleillement: true,
-    peuplements: true,
-    salines: true,
-    affuts: true,
-    pentes: true,
-    orientation: true,
-    altitude: true,
-  }); // BCE-MAX x4.1: TOUTES les couches essentielles activées
+  } = useBionicLayers(savedLayers);
   
-  // Synchroniser les couches avec la session
+  // Synchroniser les couches avec la session BCE-MAX
   useEffect(() => {
     if (layersVisible && Object.keys(layersVisible).length > 0) {
       updateLayers(layersVisible);

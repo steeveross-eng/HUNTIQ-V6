@@ -1,229 +1,167 @@
 /**
- * useBionicSession Hook — BIONIC V8 + BCE-MAX x4.1
- * Persistance complète de la session utilisateur.
+ * useBionicSession Hook — BCE-MAX x4.1 — SOURCE DE VERITE UNIQUE
+ * 
+ * ANTI-REGRESSION: Ce hook est la SEULE source de persistance de session.
+ * Aucun autre hook, aucun autre composant ne doit utiliser localStorage
+ * pour la persistance de session BIONIC.
  * 
  * Restaure automatiquement:
  * - Position (lat, lng, zoom)
- * - Type de gibier (espèce sélectionnée)
- * - Couches actives
- * - Waypoint sélectionné
- * - Contexte complet de la session précédente
- * 
- * BCE-MAX x4.1 COMPLIANCE:
- * - Aucune perte de contexte
- * - Restauration automatique au chargement
- * - Persistance immédiate des changements
+ * - Espece selectionnee
+ * - Toutes les couches actives
+ * - Waypoint selectionne (ID)
+ * - Classification toggles
+ * - Saison biologique
+ * - Onglet actif
+ * - Options visuelles (corridors, vent, exclusions)
  */
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 
-// Clé de stockage pour la session complète
-const FULL_SESSION_KEY = 'bionic_full_session_v8';
+const SESSION_KEY = 'bionic_session_bce_max_v4';
+const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
 
 /**
- * Structure de la session BIONIC
- * @typedef {Object} BionicSession
- * @property {Object} position - { lat, lng, zoom }
- * @property {string} species - Espèce sélectionnée (orignal, chevreuil, ours_noir)
- * @property {Object} layers - État des couches {layerId: boolean}
- * @property {Object} selectedWaypoint - Waypoint sélectionné
- * @property {Array} waypoints - Liste des waypoints
- * @property {string} season - Saison biologique
- * @property {number} timestamp - Timestamp de sauvegarde
+ * Charge la session complete depuis localStorage
  */
-
-/**
- * Charge la session complète depuis localStorage
- * @returns {BionicSession|null}
- */
-function loadFullSession() {
+function loadSession() {
   try {
-    const saved = localStorage.getItem(FULL_SESSION_KEY);
-    if (saved) {
-      const session = JSON.parse(saved);
-      // Vérifier validité (max 30 jours)
-      const maxAge = 30 * 24 * 60 * 60 * 1000;
-      if (session.timestamp && Date.now() - session.timestamp < maxAge) {
-        console.log('[BCE-MAX x4.1] Session complète restaurée:', {
-          position: session.position,
-          species: session.species,
-          layersCount: session.layers ? Object.keys(session.layers).filter(k => session.layers[k]).length : 0,
-          waypoint: session.selectedWaypoint?.name,
-        });
-        return session;
-      }
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    if (!session || typeof session !== 'object') return null;
+    if (session.timestamp && Date.now() - session.timestamp > MAX_AGE_MS) return null;
+    // Validation basique
+    if (session.position) {
+      if (session.position.lat < -90 || session.position.lat > 90) return null;
+      if (session.position.lng < -180 || session.position.lng > 180) return null;
+      session.position.zoom = Math.max(3, Math.min(18, session.position.zoom || 13));
     }
+    console.log('[BCE-MAX x4.1] Session restauree:', {
+      position: session.position,
+      species: session.species,
+      layersCount: session.layers ? Object.keys(session.layers).filter(k => session.layers[k]).length : 0,
+      waypointId: session.waypointId,
+    });
+    return session;
   } catch (e) {
     console.warn('[BCE-MAX x4.1] Erreur chargement session:', e);
+    return null;
   }
-  return null;
 }
 
 /**
- * Sauvegarde la session complète
- * @param {BionicSession} session
+ * Sauvegarde la session dans localStorage
  */
-function saveFullSession(session) {
+function saveSession(session) {
   try {
-    localStorage.setItem(FULL_SESSION_KEY, JSON.stringify({
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
       ...session,
       timestamp: Date.now(),
       version: 'bce_max_4.1',
     }));
   } catch (e) {
-    console.warn('[BCE-MAX x4.1] Erreur sauvegarde session:', e);
+    console.warn('[BCE-MAX x4.1] Erreur sauvegarde:', e);
   }
 }
 
 /**
- * Hook de gestion de session BIONIC complète
+ * Hook principal — source de verite unique pour la session BIONIC
  */
 const useBionicSession = () => {
-  // Charger la session précédente au montage
-  const previousSession = useMemo(() => loadFullSession(), []);
-  const isInitializedRef = useRef(false);
-  
-  // État de la session courante
+  const previousSession = useMemo(() => loadSession(), []);
+  const isInitRef = useRef(false);
+  const saveTimerRef = useRef(null);
+
   const [session, setSession] = useState(() => ({
-    position: previousSession?.position || { lat: 46.8, lng: -71.2, zoom: 13 },
-    species: previousSession?.species || 'orignal',
-    layers: previousSession?.layers || {},
-    selectedWaypoint: previousSession?.selectedWaypoint || null,
-    waypoints: previousSession?.waypoints || [],
-    season: previousSession?.season || 'automne',
+    position: previousSession?.position || { lat: 46.8139, lng: -71.2080, zoom: 13 },
+    species: previousSession?.species || 'tous',
+    layers: previousSession?.layers || null, // null = use defaults
+    waypointId: previousSession?.waypointId || null,
+    biologicalSeason: previousSession?.biologicalSeason || null,
+    activeTab: previousSession?.activeTab || 'carte',
+    classificationToggles: previousSession?.classificationToggles || null,
+    showCorridorsV1: previousSession?.showCorridorsV1 ?? false,
+    showExclusionOverlay: previousSession?.showExclusionOverlay ?? false,
+    showWindFlow: previousSession?.showWindFlow ?? false,
+    windMode: previousSession?.windMode || 'arrows',
     timestamp: previousSession?.timestamp || Date.now(),
   }));
-  
-  // Sauvegarder automatiquement quand la session change
+
+  // Sauvegarde debounced (300ms) quand la session change
   useEffect(() => {
-    if (isInitializedRef.current) {
-      saveFullSession(session);
-    } else {
-      isInitializedRef.current = true;
+    if (!isInitRef.current) {
+      isInitRef.current = true;
+      return;
     }
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveSession(session);
+    }, 300);
+    return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [session]);
-  
-  /**
-   * Met à jour la position de la carte
-   */
+
   const updatePosition = useCallback((lat, lng, zoom) => {
-    setSession(prev => ({
-      ...prev,
-      position: { lat, lng, zoom },
-    }));
+    setSession(prev => ({ ...prev, position: { lat, lng, zoom } }));
   }, []);
-  
-  /**
-   * Met à jour l'espèce sélectionnée
-   */
+
   const updateSpecies = useCallback((species) => {
-    setSession(prev => ({
-      ...prev,
-      species,
-    }));
+    setSession(prev => ({ ...prev, species }));
   }, []);
-  
-  /**
-   * Met à jour les couches visibles
-   */
+
   const updateLayers = useCallback((layers) => {
-    setSession(prev => ({
-      ...prev,
-      layers,
-    }));
+    setSession(prev => ({ ...prev, layers }));
   }, []);
-  
-  /**
-   * Met à jour le waypoint sélectionné
-   */
-  const updateSelectedWaypoint = useCallback((waypoint) => {
-    setSession(prev => ({
-      ...prev,
-      selectedWaypoint: waypoint,
-    }));
+
+  const updateWaypointId = useCallback((waypointId) => {
+    setSession(prev => ({ ...prev, waypointId }));
   }, []);
-  
-  /**
-   * Met à jour la liste des waypoints
-   */
-  const updateWaypoints = useCallback((waypoints) => {
-    setSession(prev => ({
-      ...prev,
-      waypoints,
-    }));
+
+  const updateBiologicalSeason = useCallback((biologicalSeason) => {
+    setSession(prev => ({ ...prev, biologicalSeason }));
   }, []);
-  
-  /**
-   * Met à jour la saison
-   */
-  const updateSeason = useCallback((season) => {
-    setSession(prev => ({
-      ...prev,
-      season,
-    }));
+
+  const updateActiveTab = useCallback((activeTab) => {
+    setSession(prev => ({ ...prev, activeTab }));
   }, []);
-  
-  /**
-   * Réinitialise la session
-   */
-  const resetSession = useCallback(() => {
-    const newSession = {
-      position: { lat: 46.8, lng: -71.2, zoom: 13 },
-      species: 'orignal',
-      layers: {},
-      selectedWaypoint: null,
-      waypoints: [],
-      season: 'automne',
-      timestamp: Date.now(),
-    };
-    setSession(newSession);
-    saveFullSession(newSession);
+
+  const updateClassificationToggles = useCallback((classificationToggles) => {
+    setSession(prev => ({ ...prev, classificationToggles }));
   }, []);
-  
-  /**
-   * Vérifie si une session précédente existe
-   */
+
+  const updateVisualOptions = useCallback((opts) => {
+    setSession(prev => ({ ...prev, ...opts }));
+  }, []);
+
   const hasPreviousSession = useMemo(() => !!previousSession, [previousSession]);
-  
-  /**
-   * Restaure explicitement la session précédente
-   */
-  const restorePreviousSession = useCallback(() => {
-    const prev = loadFullSession();
-    if (prev) {
-      setSession(prev);
-      return true;
-    }
-    return false;
-  }, []);
-  
+
   return {
-    // Session courante
     session,
-    
     // Accesseurs rapides
     position: session.position,
     species: session.species,
     layers: session.layers,
-    selectedWaypoint: session.selectedWaypoint,
-    waypoints: session.waypoints,
-    season: session.season,
-    
+    waypointId: session.waypointId,
+    biologicalSeason: session.biologicalSeason,
+    activeTab: session.activeTab,
+    classificationToggles: session.classificationToggles,
+    showCorridorsV1: session.showCorridorsV1,
+    showExclusionOverlay: session.showExclusionOverlay,
+    showWindFlow: session.showWindFlow,
+    windMode: session.windMode,
     // Actions
     updatePosition,
     updateSpecies,
     updateLayers,
-    updateSelectedWaypoint,
-    updateWaypoints,
-    updateSeason,
-    resetSession,
-    restorePreviousSession,
-    
-    // État
+    updateWaypointId,
+    updateBiologicalSeason,
+    updateActiveTab,
+    updateClassificationToggles,
+    updateVisualOptions,
+    // Etat
     hasPreviousSession,
     previousSession,
   };
 };
 
 export default useBionicSession;
-export { loadFullSession, saveFullSession };
