@@ -1,95 +1,85 @@
-# BIONIC HUNT V8 — Product Requirements Document
+# BIONIC HUNT V8 — PRD (Product Requirements Document)
 
-## Problème original
-Application d'analyse de territoire de chasse avec moteur géospatial BIONIC Engine, base écologique complète pour 3 espèces (Orignal, Chevreuil, Ours Noir), et système de validation automatisé BCE.
+## Original Problem Statement
+Build a sophisticated ecological analysis tool for hunting (BIONIC HUNT), continuing development from the GitHub repo `steeveross-eng/HUNTIQ-V5` (branch `v6_autosave`). The tool integrates ecological knowledge, terrain analysis, and wildlife behavior modeling for Quebec-based hunting.
 
-**Repo GitHub:** https://github.com/steeveross-eng/HUNTIQ-V5  
-**Branche:** v6_autosave
+## Core Requirements
+1. **2km² Zone**: Permanent spatial reference box centered on active waypoint
+2. **V8 Ecological Knowledge Base**: In-memory database for Moose, Deer, Bear with habitats, behaviors, algorithmic criteria
+3. **Corridors 10X**: Advanced displacement corridors with WWF classification, connecting functional zones
+4. **BCE-MAX x4.1**: Military-grade compliance engine — ANTI-REGRESSION, ANTI-DEPLOYMENT, ANTI-BYPASS
+5. **Full Session Persistence**: Complete auto-restore of position, zoom, species, layers, waypoint, context
+6. **Performance**: Zone loading < 0.5s via caching
+7. **UI/UX**: Clean right panel, EcologicalPanel integration, no visual clutter
 
-## Corrections critiques — 11 Mars 2026
+## Tech Stack
+- **Frontend**: React, Leaflet.js, TailwindCSS, Shadcn/UI
+- **Backend**: FastAPI (Python)
+- **Database**: MongoDB
+- **Maps**: Leaflet with satellite/topographic tiles
 
-### RÉGRESSION #1: Auto-load couches ✅ CORRIGÉE
-- **Problème**: Les zones ne s'affichaient pas automatiquement au chargement
-- **Cause**: `layersVisible` avait la plupart des couches à `false` par défaut
-- **Solution**: Activé par défaut: `habitats`, `alimentation`, `repos`, `rut`, `trajets`, `corridors`, `ensoleillement`, `peuplements`
+## What's Been Implemented
 
-### RÉGRESSION #2: Zones hors carré 2km² ✅ CORRIGÉE
-- **Problème**: Les zones débordaient du carré 2km²
-- **Causes**: 
-  1. `ANALYSIS_BOX_SIZE_M` était à 3000m au lieu de 2000m
-  2. Format GeoJSON [lng,lat] vs Leaflet [lat,lng] non géré
-- **Solutions**:
-  1. Unifié la taille à 2000m dans `useSpatialClipping.js`
-  2. Ajouté normalisation des coordonnées dans `clipZones()`
+### Completed (as of March 11, 2026)
+- [x] Project setup from GitHub (v6_autosave branch)
+- [x] 2km² square zone component (BionicZone2km.jsx)
+- [x] V8 ecological knowledge base + API endpoints
+- [x] Zone clipping to 2km² box (useSpatialClipping.js)
+- [x] Auto-load zones on page load (useZoneOrchestrator)
+- [x] Removal of StructureContrastLayer "red lines"
+- [x] **P0: Full Session Persistence (BCE-MAX x4.1)**
+  - Unified `useBionicSession.js` as SINGLE source of truth
+  - Removed duplicate localStorage from `useBionicLayers.js`
+  - Removed legacy `USER_CONTEXT_KEY` system
+  - Saves/restores: position, zoom, species, ALL layers, waypointId, classificationToggles, biologicalSeason, visual options
+  - Debounced save (300ms), 30-day TTL, validation on load
+- [x] **P1: Corridors 10X Integration (Backend + Frontend)**
+  - `_generate_corridors_10x()` in zone_engine_core_v2.py
+  - Connects functional zones (alimentation, repos, rut, affuts, trajets, etc.)
+  - Bezier curve interpolation for natural paths
+  - WWF classification (macro, biological, conservation corridors)
+  - Color/width/opacity styling per corridor type
+  - Intra-layer fallback when single zone type exists
+  - Frontend rendering via BionicMicroZones + V7CorridorLine
+  - CorridorStatsPanel displays corridor statistics
 
-### Autres correctifs
-- Support `lat/latitude` et `lng/longitude` dans `useZoneOrchestrator.js`
-- Support des deux formats dans `useSpatialClipping.js`
+### Testing Status
+- Testing agent iteration 3: All major tests PASS
+- Session persistence: PASS (save + restore all fields)
+- Corridors generation: PASS
+- Corridors display: PASS
+- Auto-load zones: PASS
+- 13 layers active by default: PASS
+- 2km box visible: PASS
 
-## Audit de la fenêtre MON TERRITOIRE
+## P0/P1/P2 Feature Backlog
 
-### Structure actuelle du panneau de droite
+### P2 — API Bug Fixes
+- Weather API returns 500 (OWM_API_KEY missing) — non-blocking
+- `/api/v1/ecological/species/orignal/zones/alimentation` returns 500
 
-| Composant | Description | Statut |
-|-----------|-------------|--------|
-| Compteur Zoom | Niveau de zoom | ✅ Conserver |
-| Compteur Zones | Nb zones + source V7 | ✅ Conserver |
-| Pipeline Version | Badge V7 + Météo V8.2.1 | ✅ Conserver |
-| RejectionDiagnosticsPanel | Diagnostics rejets | ✅ Conserver |
-| WeatherInfluencePanel | Impact météo | ✅ Conserver |
-| CorridorStatsPanel | Stats corridors | ✅ À améliorer |
-| Waypoint Cible | Info + actions export | ✅ Conserver |
+### P3 — Right Panel Audit & Refactor
+- AUDIT_COMPLET.md created, waiting user validation
+- Integrate EcologicalKnowledgePanel.jsx into panel
 
-### Proposition de réorganisation (à valider)
+### P4 — Phase E: Legacy Decommission
+- Identify and remove unused legacy files
+- Pending user approval of file list
 
-```
-┌─ SCORE GLOBAL V8 ─────────────────────┐
-│ ██████████████ 75/100 COMPLIANT ✓     │
-└───────────────────────────────────────┘
-┌─ SCORES ÉCOLOGIQUES V8 ───────────────┐
-│ Habitat 80% | Alimentation 72%        │
-│ Repos 88% | Rut 65% | Corridors 78%   │
-└───────────────────────────────────────┘
-┌─ CORRIDORS 10X ───────────────────────┐
-│ ● 12 corridors actifs détectés        │
-│ Légende WWF: Macro|Biologique|Cons.   │
-└───────────────────────────────────────┘
-┌─ ZONES PAR ESPÈCE ────────────────────┐
-│ 🦌 Orignal: Alimentation (78%)        │
-│ 🦌 Chevreuil: Repos (72%)             │
-│ 🐻 Ours noir: Alimentation (65%)      │
-└───────────────────────────────────────┘
-┌─ BCE AUTO-RUN ────────────────────────┐
-│ ● COMPLIANT 100%                      │
-│ ✓ zone_classification                 │
-│ ✓ corridor_continuity                 │
-│ ✓ wwf_classification                  │
-└───────────────────────────────────────┘
-```
+### P5 — Future Features
+- Wind Animation (V8.4) — Canvas 2D layer
+- BCE-MAX backend validation endpoints
+- Corridor DEM enhancement (SRTM elevation data)
 
-### Phase E — Décommission (à planifier)
-- `TerritoryAnalysisModule.jsx` — V5 obsolète
-- `TerritoryAnalysisPanel.jsx` — V5 obsolète
-- Scores legacy (Salines, Affûts) — à évaluer
+## Key Architecture Files
+- `frontend/src/hooks/useBionicSession.js` — Session persistence (BCE-MAX x4.1)
+- `frontend/src/hooks/useBionicLayers.js` — Layer state management
+- `frontend/src/hooks/useZoneOrchestrator.js` — Zone loading pipeline
+- `frontend/src/pages/MonTerritoireBionicPage.jsx` — Main page
+- `backend/modules/bionic_engine_p0/services/zone_engine_core_v2.py` — Zone + corridor generation
+- `backend/modules/bionic_engine_p0/services/corridor_10x.py` — Corridor 10X service
 
-## Fonctionnalités implémentées
-
-### BIONIC V8
-- ✅ Base écologique 3 espèces × 4+ zones
-- ✅ Corridors 10X + Classification WWF
-- ✅ Style visuel BIONIC (palette, largeur variable)
-- ✅ BCE Ruleset V8 (9 règles)
-- ✅ BCE Auto-Run activé
-- ✅ Auto-load territoire fonctionnel
-- ✅ Zone 2km² carrée centrée
-- ✅ Clipping strict des zones
-
-## Tests validés
-- Auto-load couches au chargement ✅
-- Zones dans le carré 2km² ✅
-- BCE opérationnel (9 règles) ✅
-- API écologique fonctionnelle ✅
-
-## Dates clés
-- **2026-03-11 PM**: Corrections régressions critiques, Audit MON TERRITOIRE
-- **2026-03-11 AM**: BIONIC V8 — Base écologique, Corridors 10X, BCE V8
+## Key API Endpoints
+- `POST /api/v1/bionic/organic-zones` — Generate zones + corridors
+- `GET /api/v8/ecological-knowledge/{species}` — V8 ecological data
+- `GET /api/v1/bce/status-v8` — BCE status

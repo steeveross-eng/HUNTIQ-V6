@@ -158,70 +158,10 @@ def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
             wwf_type = corridor_10x_service.classify_corridor_wwf(best_dist * 0.3)
             connectivity = corridor_10x_service.calculate_connectivity_score(from_layer, to_layer)
 
-            n_points = max(5, int(best_dist / 50))
-            path_coords = []
-            for i in range(n_points + 1):
-                t = i / n_points
-                mid_lat = (fz["lat"] + best_tz["lat"]) / 2 + (0.0002 * math.sin(t * math.pi))
-                mid_lng = (fz["lng"] + best_tz["lng"]) / 2 + (0.0002 * math.cos(t * math.pi))
-                lat = (1 - t) ** 2 * fz["lat"] + 2 * (1 - t) * t * mid_lat + t ** 2 * best_tz["lat"]
-                lng = (1 - t) ** 2 * fz["lng"] + 2 * (1 - t) * t * mid_lng + t ** 2 * best_tz["lng"]
-                path_coords.append([round(lng, 6), round(lat, 6)])
-
-            score = round((connectivity * 0.4 + fz["score"] * 0.3 + best_tz["score"] * 0.3), 1)
-
-            wwf_colors = {
-                "macro_corridor": {"color": "#FF5722", "width": 5, "opacity": 0.9},
-                "biological_corridor": {"color": "#FF9800", "width": 3.5, "opacity": 0.85},
-                "conservation_corridor": {"color": "#FFC107", "width": 2.5, "opacity": 0.8},
-            }
-            style = wwf_colors.get(wwf_type.value, {"color": "#06B6D4", "width": 2.5, "opacity": 0.85})
-
-            corridor = {
-                "type": "Feature",
-                "id": f"corridor-10x-{corridor_id}",
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": path_coords,
-                },
-                "properties": {
-                    "source": "corridor_10x",
-                    "corridor_type": wwf_type.value,
-                    "from_zone_type": from_layer,
-                    "to_zone_type": to_layer,
-                    "from_zone_id": fz["zone_id"],
-                    "to_zone_id": best_tz["zone_id"],
-                    "distance_m": round(best_dist, 1),
-                    "confidence": min(1.0, score / 100),
-                    "sex": "both",
-                    "dem_enhanced": False,
-                    "in_perimeter": True,
-                    "style": {
-                        "color": style["color"],
-                        "width": style["width"],
-                        "opacity": style["opacity"],
-                        "dasharray": "none",
-                    },
-                    "scoring": {
-                        "score": score,
-                        "subscores": {
-                            "connectivity": round(connectivity, 1),
-                            "terrain": 65.0,
-                            "habitat": 70.0,
-                        },
-                        "justification": [
-                            f"Connecte {from_layer} -> {to_layer}",
-                            f"Distance: {round(best_dist)}m",
-                            f"Classification WWF: {wwf_type.value}",
-                        ],
-                    },
-                    "wwf_classification": {
-                        "type": wwf_type.value,
-                        "label": corridor_10x_service._get_wwf_label(wwf_type),
-                    },
-                },
-            }
-            corridors.append(corridor)
+            corridors.append(_build_corridor_feature(
+                corridor_id, fz, best_tz, from_layer, to_layer, best_dist,
+                wwf_type, connectivity, corridor_10x_service
+            ))
             corridor_id += 1
 
             if corridor_id >= 20:
@@ -229,8 +169,79 @@ def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
         if corridor_id >= 20:
             break
 
+    # Fallback: intra-layer corridors when cross-layer failed
+    if not corridors and zone_centroids:
+        for layer_id, centroids in zone_centroids.items():
+            if len(centroids) < 2:
+                continue
+            for i in range(len(centroids)):
+                for j in range(i + 1, min(len(centroids), i + 3)):
+                    fz, tz = centroids[i], centroids[j]
+                    dlat = (fz["lat"] - tz["lat"]) * METERS_PER_DEG_LAT
+                    dlng = (fz["lng"] - tz["lng"]) * METERS_PER_DEG_LAT * math.cos(math.radians(fz["lat"]))
+                    dist = math.sqrt(dlat ** 2 + dlng ** 2)
+                    if 50 < dist < 3000:
+                        wwf_type = corridor_10x_service.classify_corridor_wwf(dist * 0.3)
+                        corridors.append(_build_corridor_feature(
+                            corridor_id, fz, tz, layer_id, layer_id, dist,
+                            wwf_type, 50, corridor_10x_service
+                        ))
+                        corridor_id += 1
+                if corridor_id >= 10:
+                    break
+            if corridor_id >= 10:
+                break
+
     logger.info(f"[Corridor 10X] Generated {len(corridors)} corridors for species={species}")
     return corridors
+
+
+def _build_corridor_feature(corridor_id, fz, tz, from_layer, to_layer, dist, wwf_type, connectivity, service):
+    """Build a single corridor GeoJSON Feature."""
+    n_points = max(5, int(dist / 50))
+    path_coords = []
+    for i in range(n_points + 1):
+        t = i / n_points
+        mid_lat = (fz["lat"] + tz["lat"]) / 2 + (0.0002 * math.sin(t * math.pi))
+        mid_lng = (fz["lng"] + tz["lng"]) / 2 + (0.0002 * math.cos(t * math.pi))
+        lat = (1 - t) ** 2 * fz["lat"] + 2 * (1 - t) * t * mid_lat + t ** 2 * tz["lat"]
+        lng = (1 - t) ** 2 * fz["lng"] + 2 * (1 - t) * t * mid_lng + t ** 2 * tz["lng"]
+        path_coords.append([round(lng, 6), round(lat, 6)])
+
+    score = round((connectivity * 0.4 + fz["score"] * 0.3 + tz["score"] * 0.3), 1)
+    wwf_colors = {
+        "macro_corridor": {"color": "#FF5722", "width": 5, "opacity": 0.9},
+        "biological_corridor": {"color": "#FF9800", "width": 3.5, "opacity": 0.85},
+        "conservation_corridor": {"color": "#FFC107", "width": 2.5, "opacity": 0.8},
+    }
+    style = wwf_colors.get(wwf_type.value, {"color": "#06B6D4", "width": 2.5, "opacity": 0.85})
+
+    return {
+        "type": "Feature",
+        "id": f"corridor-10x-{corridor_id}",
+        "geometry": {"type": "LineString", "coordinates": path_coords},
+        "properties": {
+            "source": "corridor_10x",
+            "corridor_type": wwf_type.value,
+            "from_zone_type": from_layer,
+            "to_zone_type": to_layer,
+            "from_zone_id": fz["zone_id"],
+            "to_zone_id": tz["zone_id"],
+            "distance_m": round(dist, 1),
+            "confidence": min(1.0, score / 100),
+            "sex": "both",
+            "dem_enhanced": False,
+            "in_perimeter": True,
+            "style": {"color": style["color"], "width": style["width"], "opacity": style["opacity"], "dasharray": "none"},
+            "scoring": {
+                "score": score,
+                "subscores": {"connectivity": round(connectivity, 1), "terrain": 65.0, "habitat": 70.0},
+                "justification": [f"Connecte {from_layer} -> {to_layer}", f"Distance: {round(dist)}m", f"Classification WWF: {wwf_type.value}"],
+            },
+            "wwf_classification": {"type": wwf_type.value, "label": service._get_wwf_label(wwf_type)},
+        },
+    }
+
 
 
 
