@@ -81,3 +81,7 @@ android-sdk/ temp_huntiq/.git/objects/pack/pack-bce827b4082f5e7ad5b715eb7aa6ff1c
 frontend/node_modules/.cache/default-development/0.pack
 temp_huntiq/.git/objects/pack/pack-bce827b4082f5e7ad5b715eb7aa6ff1c6528cf67.pack
 frontend/node_modules/.cache/default-development/2.pack
+-e 
+# Environment files
+*.env
+*.env.*
