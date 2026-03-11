@@ -325,6 +325,14 @@ try:
 except Exception as e:
     logger.warning(f"ML Engine not loaded: {e}")
 
+# 21b. Register Ecological V8 router (Base écologique complète)
+try:
+    from routes.ecological_router_v8 import router as ecological_v8_router
+    app.include_router(ecological_v8_router)
+    logger.info("✓ Ecological V8 registered (/api/v1/ecological)")
+except Exception as e:
+    logger.warning(f"Ecological V8 not loaded: {e}")
+
 # 22. Register DEM Engine router (Real Data — OpenTopography)
 try:
     from modules.bionic_engine_p0.routers.dem_router import router as dem_router

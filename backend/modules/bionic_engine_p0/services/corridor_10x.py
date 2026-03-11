@@ -1,8 +1,8 @@
 """
-BIONIC V7 — Corridors 10X avec Classification WWF
+BIONIC V8 — Corridors 10X avec Classification WWF + Base Écologique
 Service de génération de corridors biologiquement réalistes.
 
-VERSION: 10X — Critères biologiques, topographiques et écologiques enrichis
+VERSION: 10X V8-READY — Intégration base écologique complète
 Réf: INSTRUCTION OFFICIELLE — CORRIDORS 10X + CLASSIFICATION WWF
 
 Classification WWF:
@@ -16,6 +16,11 @@ Critères biologiques 10X:
   - Habitats: lisières forêt-agriculture, forêts matures, zones semi-ouvertes
   - Évitement: zones ouvertes, perturbations humaines, obstacles physiques
 
+Algorithme A*:
+  - Coût faible: vallées, coulées, bandes boisées
+  - Coût moyen: forêts mixtes continues
+  - Coût élevé: champs ouverts, zones urbaines, routes
+
 Bénéfices écologiques:
   - Déplacement naturel du gibier
   - Recherche alimentaire
@@ -24,7 +29,9 @@ Bénéfices écologiques:
 """
 
 import logging
-from typing import Dict, List, Any, Optional, Tuple
+import math
+import heapq
+from typing import Dict, List, Any, Optional, Tuple, Set
 from enum import Enum
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -442,5 +449,285 @@ class Corridor10XService:
         return labels.get(wwf_type, "Corridor")
 
 
-# Instance singleton
+# =====================================================================
+# ALGORITHME A* POUR CORRIDORS ÉCOLOGIQUES
+# =====================================================================
+
+# Coûts de traversée par type de terrain (A*)
+TERRAIN_COSTS = {
+    # Coût faible — terrain préféré
+    "valley": 1.0,
+    "coulee": 1.0,
+    "ravine": 1.2,
+    "drainage": 1.1,
+    "wooded_strip": 1.0,
+    "hedgerow": 1.1,
+    "riparian": 1.0,
+    "forest_edge": 1.2,
+    
+    # Coût moyen — terrain acceptable
+    "mixed_forest": 1.5,
+    "mature_forest": 1.4,
+    "conifer_forest": 1.6,
+    "deciduous_forest": 1.5,
+    "plateau": 1.8,
+    "gentle_ridge": 1.7,
+    "saddle": 1.3,
+    
+    # Coût élevé — terrain à éviter
+    "open_field": 3.0,
+    "agriculture": 2.5,
+    "clearcut": 4.0,
+    "urban_edge": 5.0,
+    "road_crossing": 4.5,
+    "steep_slope": 3.5,
+    "dense_thicket": 2.8,
+    
+    # Coût prohibitif — obstacles
+    "urban": 10.0,
+    "water_body": 8.0,
+    "cliff": 15.0,
+    "highway": 12.0,
+}
+
+
+class AStarNode:
+    """Noeud pour l'algorithme A*"""
+    def __init__(self, position: Tuple[float, float], g_cost: float = 0, h_cost: float = 0, parent=None):
+        self.position = position
+        self.g_cost = g_cost  # Coût depuis le départ
+        self.h_cost = h_cost  # Heuristique (distance estimée à l'arrivée)
+        self.f_cost = g_cost + h_cost
+        self.parent = parent
+    
+    def __lt__(self, other):
+        return self.f_cost < other.f_cost
+    
+    def __eq__(self, other):
+        if isinstance(other, AStarNode):
+            return self.position == other.position
+        return False
+    
+    def __hash__(self):
+        return hash(self.position)
+
+
+class CorridorPathfinder:
+    """
+    Algorithme A* pour trouver des corridors écologiques optimaux.
+    Intègre les coûts de terrain et les critères biologiques.
+    """
+    
+    def __init__(self, grid_resolution: float = 100.0):
+        """
+        Args:
+            grid_resolution: Résolution de la grille en mètres
+        """
+        self.grid_resolution = grid_resolution
+        self.logger = logging.getLogger("bionic_engine.corridor_pathfinder")
+    
+    def _heuristic(self, pos1: Tuple[float, float], pos2: Tuple[float, float]) -> float:
+        """Calcule la distance euclidienne entre deux points (heuristique)."""
+        METERS_PER_DEG = 111320.0
+        lat_diff = (pos2[0] - pos1[0]) * METERS_PER_DEG
+        lng_diff = (pos2[1] - pos1[1]) * METERS_PER_DEG * math.cos(math.radians((pos1[0] + pos2[0]) / 2))
+        return math.sqrt(lat_diff**2 + lng_diff**2)
+    
+    def _get_terrain_cost(self, position: Tuple[float, float], terrain_data: Dict[str, Any]) -> float:
+        """
+        Récupère le coût de terrain pour une position.
+        
+        Args:
+            position: (lat, lng)
+            terrain_data: Données de terrain indexées par position
+            
+        Returns:
+            Coût de traversée
+        """
+        # Clé de position simplifiée
+        key = f"{position[0]:.4f},{position[1]:.4f}"
+        
+        terrain_info = terrain_data.get(key, {})
+        terrain_type = terrain_info.get("type", "mixed_forest")
+        
+        base_cost = TERRAIN_COSTS.get(terrain_type, 2.0)
+        
+        # Modificateurs additionnels
+        slope = terrain_info.get("slope", 5)
+        if slope > 30:
+            base_cost *= 1.5
+        elif slope > 20:
+            base_cost *= 1.2
+        
+        human_pressure = terrain_info.get("human_pressure", 0)
+        base_cost *= (1 + human_pressure)
+        
+        return base_cost
+    
+    def _get_neighbors(self, node: AStarNode, bounds: Tuple[float, float, float, float]) -> List[Tuple[float, float]]:
+        """
+        Génère les voisins d'un noeud dans la grille.
+        
+        Args:
+            node: Noeud courant
+            bounds: (min_lat, min_lng, max_lat, max_lng)
+            
+        Returns:
+            Liste des positions voisines valides
+        """
+        METERS_PER_DEG = 111320.0
+        step_lat = self.grid_resolution / METERS_PER_DEG
+        step_lng = self.grid_resolution / (METERS_PER_DEG * math.cos(math.radians(node.position[0])))
+        
+        directions = [
+            (step_lat, 0),      # N
+            (-step_lat, 0),     # S
+            (0, step_lng),      # E
+            (0, -step_lng),     # W
+            (step_lat, step_lng),    # NE
+            (step_lat, -step_lng),   # NW
+            (-step_lat, step_lng),   # SE
+            (-step_lat, -step_lng),  # SW
+        ]
+        
+        neighbors = []
+        for dlat, dlng in directions:
+            new_lat = node.position[0] + dlat
+            new_lng = node.position[1] + dlng
+            
+            # Vérification des bornes
+            if bounds[0] <= new_lat <= bounds[2] and bounds[1] <= new_lng <= bounds[3]:
+                neighbors.append((new_lat, new_lng))
+        
+        return neighbors
+    
+    def find_corridor_path(
+        self,
+        start: Tuple[float, float],
+        end: Tuple[float, float],
+        terrain_data: Dict[str, Any],
+        max_iterations: int = 5000,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Trouve le chemin optimal entre deux points avec A*.
+        
+        Args:
+            start: Point de départ (lat, lng)
+            end: Point d'arrivée (lat, lng)
+            terrain_data: Données de terrain
+            max_iterations: Nombre maximum d'itérations
+            
+        Returns:
+            Dict avec le chemin et les métadonnées, ou None si aucun chemin
+        """
+        # Calcul des bornes avec marge
+        margin = 0.02  # ~2km de marge
+        bounds = (
+            min(start[0], end[0]) - margin,
+            min(start[1], end[1]) - margin,
+            max(start[0], end[0]) + margin,
+            max(start[1], end[1]) + margin,
+        )
+        
+        # Initialisation
+        start_node = AStarNode(start, 0, self._heuristic(start, end))
+        
+        open_set: List[AStarNode] = [start_node]
+        closed_set: Set[Tuple[float, float]] = set()
+        
+        iterations = 0
+        
+        while open_set and iterations < max_iterations:
+            iterations += 1
+            
+            # Récupérer le noeud avec le plus petit f_cost
+            current = heapq.heappop(open_set)
+            
+            # Vérifier si on est arrivé (tolérance ~50m)
+            if self._heuristic(current.position, end) < 50:
+                # Reconstruire le chemin
+                path = []
+                total_cost = current.g_cost
+                node = current
+                while node:
+                    path.append({"lat": node.position[0], "lng": node.position[1]})
+                    node = node.parent
+                path.reverse()
+                
+                return {
+                    "path": path,
+                    "total_cost": total_cost,
+                    "iterations": iterations,
+                    "length_m": self._heuristic(start, end),
+                    "efficiency": self._heuristic(start, end) / max(total_cost, 1),
+                }
+            
+            closed_set.add(current.position)
+            
+            # Explorer les voisins
+            for neighbor_pos in self._get_neighbors(current, bounds):
+                if neighbor_pos in closed_set:
+                    continue
+                
+                # Calculer le coût
+                terrain_cost = self._get_terrain_cost(neighbor_pos, terrain_data)
+                move_cost = self._heuristic(current.position, neighbor_pos) * terrain_cost
+                g_cost = current.g_cost + move_cost
+                h_cost = self._heuristic(neighbor_pos, end)
+                
+                neighbor_node = AStarNode(neighbor_pos, g_cost, h_cost, current)
+                
+                # Vérifier si ce voisin est déjà dans open_set avec un meilleur coût
+                skip = False
+                for i, open_node in enumerate(open_set):
+                    if open_node.position == neighbor_pos:
+                        if open_node.g_cost <= g_cost:
+                            skip = True
+                        else:
+                            open_set.pop(i)
+                            heapq.heapify(open_set)
+                        break
+                
+                if not skip:
+                    heapq.heappush(open_set, neighbor_node)
+        
+        self.logger.warning(f"A* failed to find path after {iterations} iterations")
+        return None
+    
+    def smooth_path(self, path: List[Dict[str, float]], smoothing_factor: float = 0.3) -> List[Dict[str, float]]:
+        """
+        Lisse un chemin pour éliminer les angles aigus.
+        
+        Args:
+            path: Liste de points [{lat, lng}, ...]
+            smoothing_factor: Facteur de lissage (0-1)
+            
+        Returns:
+            Chemin lissé
+        """
+        if len(path) < 3:
+            return path
+        
+        smoothed = [path[0]]  # Premier point fixe
+        
+        for i in range(1, len(path) - 1):
+            prev = path[i - 1]
+            curr = path[i]
+            next_pt = path[i + 1]
+            
+            # Moyenne pondérée
+            new_lat = curr["lat"] * (1 - smoothing_factor) + (prev["lat"] + next_pt["lat"]) / 2 * smoothing_factor
+            new_lng = curr["lng"] * (1 - smoothing_factor) + (prev["lng"] + next_pt["lng"]) / 2 * smoothing_factor
+            
+            smoothed.append({"lat": new_lat, "lng": new_lng})
+        
+        smoothed.append(path[-1])  # Dernier point fixe
+        
+        return smoothed
+
+
+# Instance singleton pathfinder
+corridor_pathfinder = CorridorPathfinder(grid_resolution=100.0)
+
+# Instance singleton service
 corridor_10x_service = Corridor10XService()

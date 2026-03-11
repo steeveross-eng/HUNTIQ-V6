@@ -1,302 +1,430 @@
 #!/usr/bin/env python3
 """
-BIONIC HUNT V6 Backend API Testing
-==================================
+BIONIC V8 - Ecological System Backend Test Suite
+===============================================
+Testing all BIONIC V8 ecological features as specified:
+- API GET /api/v1/ecological/species returns 3 species
+- API GET /api/v1/ecological/species/orignal/zones returns zones
+- API GET /api/v1/ecological/corridors/summary returns WWF summary
+- BCE status operational
+- All ecological APIs functional
 
-Tests specific to BIONIC HUNT application:
-- BCE API status endpoint
-- Zone 2km² backend support
-- Corridor 10X with WWF classification
-- Territory map loading APIs
-
-Version: V6 BIONIC
+VERSION: 8.0.0 — Backend testing for ecological system
 """
 
 import requests
 import sys
 import json
 from datetime import datetime
-from typing import Dict, List, Any
+from typing import Dict, Any, List, Optional
 
-class BionicAPITester:
-    def __init__(self, base_url="https://huntiq-v5-dev.preview.emergentagent.com"):
-        self.base_url = base_url
-        self.token = None
+class BionicV8EcologicalTester:
+    def __init__(self, base_url: str = "https://huntiq-v5-dev.preview.emergentagent.com"):
+        self.base_url = base_url.rstrip('/')
+        self.session = requests.Session()
+        self.session.headers.update({
+            'Content-Type': 'application/json',
+            'User-Agent': 'BIONIC-V8-Test-Suite/1.0'
+        })
         self.tests_run = 0
         self.tests_passed = 0
-        self.failed_tests = []
-        self.session = requests.Session()
-        self.session.headers.update({'Content-Type': 'application/json'})
+        self.detailed_results = []
 
-    def log_result(self, test_name: str, success: bool, status_code: int = None, error: str = None):
-        """Log test result"""
+    def log_test(self, name: str, passed: bool, details: Dict[str, Any] = None):
+        """Log test result with details"""
         self.tests_run += 1
-        if success:
+        if passed:
             self.tests_passed += 1
-            print(f"✅ {test_name} - PASSED")
+            print(f"✅ {name}")
         else:
-            self.failed_tests.append({
-                "test": test_name,
-                "status_code": status_code,
-                "error": error
+            print(f"❌ {name}")
+        
+        if details:
+            print(f"   Details: {details}")
+        
+        self.detailed_results.append({
+            "test_name": name,
+            "passed": passed,
+            "details": details or {},
+            "timestamp": datetime.now().isoformat()
+        })
+
+    def test_basic_connectivity(self) -> bool:
+        """Test basic API connectivity"""
+        try:
+            response = self.session.get(f"{self.base_url}/api/health", timeout=10)
+            health_data = response.json()
+            
+            passed = response.status_code == 200 and health_data.get("status") == "healthy"
+            self.log_test("Basic API Connectivity", passed, {
+                "status_code": response.status_code,
+                "health_status": health_data.get("status")
             })
-            print(f"❌ {test_name} - FAILED (Status: {status_code}, Error: {error})")
-
-    def test_api_endpoint(self, name: str, endpoint: str, method: str = "GET", 
-                         data: Dict = None, expected_status: int = 200) -> tuple:
-        """Test a single API endpoint"""
-        url = f"{self.base_url}/api/{endpoint}"
-        
-        try:
-            if method == "GET":
-                response = self.session.get(url, timeout=10)
-            elif method == "POST":
-                response = self.session.post(url, json=data, timeout=10)
-            elif method == "PUT":
-                response = self.session.put(url, json=data, timeout=10)
-            elif method == "DELETE":
-                response = self.session.delete(url, timeout=10)
-            
-            success = response.status_code == expected_status
-            self.log_result(name, success, response.status_code, 
-                          None if success else response.text[:200])
-            
-            return success, response.json() if success and response.content else {}
-            
-        except requests.exceptions.RequestException as e:
-            self.log_result(name, False, None, str(e))
-            return False, {}
-        except json.JSONDecodeError as e:
-            self.log_result(name, False, response.status_code, f"JSON decode error: {str(e)}")
-            return False, {}
-
-    def test_health_check(self):
-        """Test basic health check"""
-        print("\n🔍 Testing Backend Health Check...")
-        
-        try:
-            response = self.session.get(f"{self.base_url}/", timeout=5)
-            success = response.status_code in [200, 404]  # 404 is OK for root
-            self.log_result("Backend Health Check", success, response.status_code)
-            return success
+            return passed
         except Exception as e:
-            self.log_result("Backend Health Check", False, None, str(e))
+            self.log_test("Basic API Connectivity", False, {"error": str(e)})
             return False
 
-    def test_bce_api_status(self):
-        """Test BCE API status endpoint - Key feature from review request"""
-        print("\n🔍 Testing BCE API Status Endpoint...")
-        success, response = self.test_api_endpoint(
-            "BCE API Status", 
-            "bce/status", 
-            expected_status=200
-        )
-        
-        if success:
-            # Check if response contains expected BCE status information
-            status = response.get('status', '')
-            if status:
-                print(f"✅ BCE API Status: {status}")
-            else:
-                print("⚠️  BCE API response missing status field")
-                
-        return success
-
-    def test_territory_map_apis(self):
-        """Test territory map loading APIs"""
-        print("\n🔍 Testing Territory Map Loading APIs...")
-        
-        results = []
-        
-        # Test territories endpoint
-        success1, _ = self.test_api_endpoint(
-            "Territories API", 
-            "territories/",
-            expected_status=200
-        )
-        results.append(success1)
-        
-        # Test map data endpoint (if exists)
-        success2, _ = self.test_api_endpoint(
-            "Map Data API", 
-            "map/data",
-            expected_status=200
-        )
-        results.append(success2)
-        
-        # Test bionic zones endpoint (if exists)
-        success3, _ = self.test_api_endpoint(
-            "Bionic Zones API", 
-            "bionic/zones",
-            expected_status=200
-        )
-        results.append(success3)
-        
-        return any(results)  # At least one should work
-
-    def test_corridor_10x_apis(self):
-        """Test Corridor 10X with WWF classification APIs"""
-        print("\n🔍 Testing Corridor 10X with WWF Classification...")
-        
-        results = []
-        
-        # Test corridors endpoint
-        success1, response1 = self.test_api_endpoint(
-            "Corridors API", 
-            "corridors/",
-            expected_status=200
-        )
-        results.append(success1)
-        
-        if success1:
-            corridors = response1.get('corridors', [])
-            print(f"✅ Found {len(corridors)} corridors")
+    def test_ecological_species_list(self) -> bool:
+        """Test GET /api/v1/ecological/species returns 3 species"""
+        try:
+            response = self.session.get(f"{self.base_url}/api/v1/ecological/species", timeout=10)
             
-            # Check for WWF classification in corridors
-            wwf_classified = 0
-            for corridor in corridors[:3]:  # Check first 3
-                if 'wwf_classification' in corridor:
-                    wwf_classified += 1
-                    wwf_type = corridor['wwf_classification'].get('type', '')
-                    print(f"✅ Corridor WWF Type: {wwf_type}")
+            if response.status_code != 200:
+                self.log_test("Ecological Species List API", False, {
+                    "status_code": response.status_code,
+                    "error": response.text
+                })
+                return False
             
-            if wwf_classified > 0:
-                print(f"✅ WWF Classification found in {wwf_classified} corridors")
-            else:
-                print("⚠️  No WWF classification found in corridors")
+            data = response.json()
+            species_list = data.get("species", [])
+            species_count = len(species_list)
+            
+            # Check for exactly 3 species
+            expected_species = ["orignal", "chevreuil", "ours_noir"]
+            found_species = [sp.get("id") for sp in species_list]
+            
+            passed = (
+                species_count == 3 and 
+                all(sp in found_species for sp in expected_species)
+            )
+            
+            self.log_test("Ecological Species List (3 species)", passed, {
+                "status_code": response.status_code,
+                "species_count": species_count,
+                "expected": expected_species,
+                "found": found_species,
+                "version": data.get("version")
+            })
+            
+            return passed
+            
+        except Exception as e:
+            self.log_test("Ecological Species List API", False, {"error": str(e)})
+            return False
+
+    def test_orignal_zones_api(self) -> bool:
+        """Test GET /api/v1/ecological/species/orignal/zones returns zones"""
+        try:
+            response = self.session.get(f"{self.base_url}/api/v1/ecological/species/orignal/zones", timeout=10)
+            
+            if response.status_code != 200:
+                self.log_test("Orignal Zones API", False, {
+                    "status_code": response.status_code,
+                    "error": response.text
+                })
+                return False
+            
+            data = response.json()
+            zones = data.get("zones", {})
+            zones_count = len(zones)
+            
+            # Check for required zone types
+            expected_zones = ["alimentation", "repos", "rut", "corridor"]
+            found_zones = list(zones.keys())
+            
+            # Validate zone structure
+            has_valid_structure = True
+            for zone_name, zone_data in zones.items():
+                required_fields = ["description", "functional_role", "habitat", "criteria"]
+                if not all(field in zone_data for field in required_fields):
+                    has_valid_structure = False
+                    break
+            
+            passed = (
+                zones_count >= 4 and
+                all(zone in found_zones for zone in expected_zones) and
+                has_valid_structure
+            )
+            
+            self.log_test("Orignal Zones API", passed, {
+                "status_code": response.status_code,
+                "zones_count": zones_count,
+                "expected_zones": expected_zones,
+                "found_zones": found_zones,
+                "has_valid_structure": has_valid_structure
+            })
+            
+            return passed
+            
+        except Exception as e:
+            self.log_test("Orignal Zones API", False, {"error": str(e)})
+            return False
+
+    def test_corridors_summary_api(self) -> bool:
+        """Test GET /api/v1/ecological/corridors/summary returns WWF summary"""
+        try:
+            response = self.session.get(f"{self.base_url}/api/v1/ecological/corridors/summary", timeout=10)
+            
+            if response.status_code != 200:
+                self.log_test("Corridors Summary WWF API", False, {
+                    "status_code": response.status_code,
+                    "error": response.text
+                })
+                return False
+            
+            data = response.json()
+            summary = data.get("summary", {})
+            by_species = data.get("by_species", {})
+            wwf_legend = data.get("wwf_legend", {})
+            
+            # Check WWF corridor types
+            expected_wwf_types = ["macro_corridors", "biological_corridors", "conservation_corridors"]
+            wwf_counts_valid = all(wwf_type in summary for wwf_type in expected_wwf_types)
+            
+            # Check species data
+            expected_species = ["orignal", "chevreuil", "ours_noir"]
+            species_data_valid = all(sp in by_species for sp in expected_species)
+            
+            # Check WWF legend structure
+            expected_legend_keys = ["macro_corridor", "biological_corridor", "conservation_corridor"]
+            legend_valid = all(key in wwf_legend for key in expected_legend_keys)
+            
+            passed = (
+                wwf_counts_valid and 
+                species_data_valid and 
+                legend_valid and
+                summary.get("total_corridors", 0) > 0
+            )
+            
+            self.log_test("Corridors Summary WWF API", passed, {
+                "status_code": response.status_code,
+                "total_corridors": summary.get("total_corridors", 0),
+                "wwf_counts_valid": wwf_counts_valid,
+                "species_data_valid": species_data_valid,
+                "legend_valid": legend_valid,
+                "wwf_types_found": list(summary.keys())
+            })
+            
+            return passed
+            
+        except Exception as e:
+            self.log_test("Corridors Summary WWF API", False, {"error": str(e)})
+            return False
+
+    def test_bce_status(self) -> bool:
+        """Test BCE status operational"""
+        try:
+            response = self.session.get(f"{self.base_url}/api/bce/status", timeout=10)
+            
+            if response.status_code != 200:
+                self.log_test("BCE Status API", False, {
+                    "status_code": response.status_code,
+                    "error": response.text
+                })
+                return False
+            
+            data = response.json()
+            status = data.get("status", "")
+            
+            # BCE should be operational
+            passed = status.lower() in ["operational", "active", "healthy"]
+            
+            self.log_test("BCE Status Operational", passed, {
+                "status_code": response.status_code,
+                "bce_status": status,
+                "expected": "operational/active/healthy"
+            })
+            
+            return passed
+            
+        except Exception as e:
+            self.log_test("BCE Status API", False, {"error": str(e)})
+            return False
+
+    def test_ecological_validation_api(self) -> bool:
+        """Test POST /api/v1/ecological/validate works correctly"""
+        try:
+            test_data = {
+                "species": "orignal",
+                "zone_type": "alimentation",
+                "season": "automne",
+                "ndvi": 0.6,
+                "slope": 10,
+                "distance_to_water": 300,
+                "human_pressure": 0.2
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/api/v1/ecological/validate",
+                json=test_data,
+                timeout=10
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Ecological Validation API", False, {
+                    "status_code": response.status_code,
+                    "error": response.text
+                })
+                return False
+            
+            data = response.json()
+            
+            # Check validation result structure
+            expected_fields = ["global_status", "global_score", "validators_run", "results"]
+            has_valid_structure = all(field in data for field in expected_fields)
+            
+            passed = (
+                has_valid_structure and
+                data.get("validators_run", 0) > 0 and
+                isinstance(data.get("results", []), list)
+            )
+            
+            self.log_test("Ecological Validation API", passed, {
+                "status_code": response.status_code,
+                "global_status": data.get("global_status"),
+                "validators_run": data.get("validators_run", 0),
+                "has_valid_structure": has_valid_structure
+            })
+            
+            return passed
+            
+        except Exception as e:
+            self.log_test("Ecological Validation API", False, {"error": str(e)})
+            return False
+
+    def test_specific_zone_api(self) -> bool:
+        """Test GET /api/v1/ecological/species/orignal/zones/alimentation"""
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/v1/ecological/species/orignal/zones/alimentation",
+                timeout=10
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Specific Zone API", False, {
+                    "status_code": response.status_code,
+                    "error": response.text
+                })
+                return False
+            
+            data = response.json()
+            zone_data = data.get("data", {})
+            
+            # Check for comprehensive ecological data
+            expected_sections = [
+                "description", "functional_role", "habitat", "topography", 
+                "hydrology", "human_pressure", "food_sources", "criteria"
+            ]
+            
+            has_complete_data = all(section in zone_data for section in expected_sections)
+            
+            # Check NDVI criteria
+            criteria = zone_data.get("criteria", {})
+            has_ndvi_criteria = all(
+                key in criteria for key in ["ndvi_min", "ndvi_max", "ndvi_optimal"]
+            )
+            
+            passed = (
+                data.get("species") == "orignal" and
+                data.get("zone_type") == "alimentation" and
+                has_complete_data and
+                has_ndvi_criteria
+            )
+            
+            self.log_test("Specific Zone API (Orignal Alimentation)", passed, {
+                "status_code": response.status_code,
+                "species": data.get("species"),
+                "zone_type": data.get("zone_type"),
+                "has_complete_data": has_complete_data,
+                "has_ndvi_criteria": has_ndvi_criteria,
+                "found_sections": list(zone_data.keys())
+            })
+            
+            return passed
+            
+        except Exception as e:
+            self.log_test("Specific Zone API", False, {"error": str(e)})
+            return False
+
+    def run_comprehensive_test(self) -> Dict[str, Any]:
+        """Run all BIONIC V8 ecological tests"""
+        print("=" * 70)
+        print("BIONIC V8 - Ecological System Backend Test Suite")
+        print("=" * 70)
+        print(f"Testing against: {self.base_url}")
+        print("=" * 70)
         
-        # Test corridor classification endpoint
-        test_corridor_data = {
-            "width_m": 2500,
-            "positions": [
-                {"lat": 45.5, "lng": -73.6},
-                {"lat": 45.51, "lng": -73.59}
-            ],
-            "fromZoneType": "alimentation",
-            "toZoneType": "repos"
+        # Core connectivity test
+        if not self.test_basic_connectivity():
+            print("❌ Basic connectivity failed. Aborting further tests.")
+            return self.generate_report()
+        
+        # BIONIC V8 Ecological Feature Tests
+        print("\n🧪 BIONIC V8 Ecological API Tests:")
+        self.test_ecological_species_list()
+        self.test_orignal_zones_api()
+        self.test_corridors_summary_api()
+        self.test_bce_status()
+        self.test_ecological_validation_api()
+        self.test_specific_zone_api()
+        
+        return self.generate_report()
+
+    def generate_report(self) -> Dict[str, Any]:
+        """Generate test report"""
+        success_rate = (self.tests_passed / self.tests_run * 100) if self.tests_run > 0 else 0
+        
+        print("\n" + "=" * 70)
+        print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed ({success_rate:.1f}%)")
+        print("=" * 70)
+        
+        # Categorize results
+        failed_tests = [r for r in self.detailed_results if not r["passed"]]
+        critical_failures = []
+        minor_failures = []
+        
+        for test in failed_tests:
+            if "API" in test["test_name"] and any(
+                keyword in test["test_name"].lower() 
+                for keyword in ["species", "corridors", "bce"]
+            ):
+                critical_failures.append(test)
+            else:
+                minor_failures.append(test)
+        
+        report = {
+            "summary": f"BIONIC V8 ecological testing completed: {self.tests_passed}/{self.tests_run} tests passed",
+            "success_rate": success_rate,
+            "tests_run": self.tests_run,
+            "tests_passed": self.tests_passed,
+            "critical_failures": critical_failures,
+            "minor_failures": minor_failures,
+            "all_results": self.detailed_results,
+            "base_url": self.base_url,
+            "timestamp": datetime.now().isoformat()
         }
         
-        success2, response2 = self.test_api_endpoint(
-            "Corridor Classification API", 
-            "corridors/classify",
-            method="POST",
-            data=test_corridor_data,
-            expected_status=200
-        )
-        results.append(success2)
-        
-        if success2:
-            wwf_type = response2.get('wwf_classification', {}).get('type', '')
-            if wwf_type:
-                print(f"✅ Corridor classified as: {wwf_type}")
-            else:
-                print("⚠️  Corridor classification missing WWF type")
-        
-        return any(results)
+        return report
 
-    def test_waypoint_zone_apis(self):
-        """Test waypoint and zone related APIs for 2km² zones"""
-        print("\n🔍 Testing Waypoint & Zone APIs for 2km² Feature...")
-        
-        results = []
-        
-        # Test waypoints API
-        success1, response1 = self.test_api_endpoint(
-            "Waypoints API", 
-            "waypoints/",
-            expected_status=200
-        )
-        results.append(success1)
-        
-        if success1:
-            waypoints = response1.get('waypoints', [])
-            print(f"✅ Found {len(waypoints)} waypoints")
-        
-        # Test zones calculation API (for 2km² zones)
-        test_waypoint = {
-            "lat": 45.5,
-            "lng": -73.6,
-            "name": "Test Waypoint"
-        }
-        
-        success2, response2 = self.test_api_endpoint(
-            "Zone Calculation API", 
-            "zones/calculate",
-            method="POST",
-            data={"waypoint": test_waypoint, "size_km": 2},
-            expected_status=200
-        )
-        results.append(success2)
-        
-        if success2:
-            zone_bounds = response2.get('bounds', [])
-            if len(zone_bounds) == 2:
-                print(f"✅ Zone bounds calculated correctly")
-            else:
-                print("⚠️  Zone bounds format incorrect")
-        
-        return any(results)
-
-    def run_all_tests(self):
-        """Run all BIONIC HUNT V6 tests"""
-        print("=" * 80)
-        print("BIONIC HUNT V6 Backend API Testing")
-        print("=" * 80)
-        print(f"Base URL: {self.base_url}")
-        print(f"Test Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        
-        # Run all test suites
-        health_ok = self.test_health_check()
-        bce_ok = self.test_bce_api_status()
-        territory_ok = self.test_territory_map_apis()
-        corridor_ok = self.test_corridor_10x_apis()
-        zone_ok = self.test_waypoint_zone_apis()
-        
-        # Print summary
-        print("\n" + "=" * 80)
-        print("TEST SUMMARY")
-        print("=" * 80)
-        print(f"Total Tests: {self.tests_run}")
-        print(f"Passed: {self.tests_passed}")
-        print(f"Failed: {len(self.failed_tests)}")
-        print(f"Success Rate: {(self.tests_passed/self.tests_run*100):.1f}%")
-        
-        if self.failed_tests:
-            print("\n❌ FAILED TESTS:")
-            for test in self.failed_tests:
-                print(f"  - {test['test']}: {test['error']}")
-        
-        # Overall assessment
-        critical_tests_passed = health_ok and bce_ok
-        
-        if critical_tests_passed:
-            print("\n✅ CRITICAL BIONIC SYSTEMS: OPERATIONAL")
-        else:
-            print("\n❌ CRITICAL BIONIC SYSTEMS: ISSUES DETECTED")
-            
-        return {
-            "total_tests": self.tests_run,
-            "passed_tests": self.tests_passed,
-            "failed_tests": self.failed_tests,
-            "success_rate": self.tests_passed/self.tests_run*100 if self.tests_run > 0 else 0,
-            "critical_systems_ok": critical_tests_passed,
-            "health_check": health_ok,
-            "bce_status": bce_ok,
-            "territory_apis": territory_ok,
-            "corridor_10x": corridor_ok,
-            "zone_apis": zone_ok
-        }
 
 def main():
     """Main test execution"""
-    tester = BionicAPITester()
-    results = tester.run_all_tests()
+    import os
     
-    # Return appropriate exit code
-    if results["critical_systems_ok"]:
+    # Get backend URL from environment
+    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://huntiq-v5-dev.preview.emergentagent.com')
+    
+    print(f"🔍 Initializing BIONIC V8 Ecological Test Suite...")
+    print(f"🌐 Backend URL: {backend_url}")
+    
+    tester = BionicV8EcologicalTester(backend_url)
+    report = tester.run_comprehensive_test()
+    
+    # Determine exit code
+    if report["success_rate"] >= 80:
+        print(f"✅ Test suite PASSED - Success rate: {report['success_rate']:.1f}%")
+        return 0
+    elif len(report["critical_failures"]) == 0:
+        print(f"⚠️  Test suite PARTIAL - Success rate: {report['success_rate']:.1f}%")
+        print("   Critical APIs working, some minor issues detected")
         return 0
     else:
+        print(f"❌ Test suite FAILED - Success rate: {report['success_rate']:.1f}%")
+        print("   Critical ecological APIs not working properly")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())
