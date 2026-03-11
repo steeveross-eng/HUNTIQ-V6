@@ -1,0 +1,50 @@
+{
+  "audit_name": "bionic_mon_territoire_pipeline_verification_v1",
+  "version": "V5_300_STRICT",
+  "date": "2026-03-03T22:10:00Z",
+  "command": "emergent_bionic_waypoint_zone_loading_diagnostic --profile=BIONIC_V5_300_STRICT",
+  "status": "PASS",
+  "summary": "MON TERRITOIRE utilise le pipeline waypoint exclusif. Le mode viewport est complètement supprimé. Les zones apparaissent UNIQUEMENT autour des waypoints actifs.",
+  "pipeline_architecture": {
+    "data_flow": [
+      "1. useUserData → activeWaypoints (from localStorage/backend)",
+      "2. zoneLockKey = useMemo(species + waypoint coords) — null if no waypoints",
+      "3. useEffect([zoneLockKey]) → loadZones() if key non-null",
+      "4. generateWaypointZonesV5(wp, zoom, layers, species) → backend API call",
+      "5. Backend /api/v1/bionic/organic-zones → GeoJSON features",
+      "6. Features mapped to zones with positions, score, layerId",
+      "7. zoneLockRef.current = { locked: true, key, data } → STATE LOCKING",
+      "8. rawZones → allZones (clipping 1km if target) → bionicZones (layer+classification filter) → visibleZonesCount (score filter)"
+    ],
+    "viewport_references": "ZERO — all viewport code removed",
+    "currentMapBounds_usage": "NOT used in zone pipeline (only in map rendering)",
+    "currentZoom_usage": "Read via ref for zoom level capping only"
+  },
+  "synchronization_with_analyse_page": {
+    "same_pipeline": true,
+    "same_backend_endpoint": "/api/v1/bionic/organic-zones",
+    "same_zone_mapping": true,
+    "same_state_locking_mechanism": true
+  },
+  "clipping_verification": {
+    "applied_post_generation": true,
+    "applied_only_when_target_selected": true,
+    "1km_x_1km_box": true,
+    "clipping_function": "clipZonesClient from useSpatialClipping hook"
+  },
+  "classification_toggles": {
+    "affect_rendering_only": true,
+    "no_recalculation_triggered": true,
+    "12_toggles_verified": true
+  },
+  "anti_regression_invariants": {
+    "zones_stable_after_pan": true,
+    "zones_stable_after_zoom": true,
+    "zones_stable_after_refresh": "Zones reload on refresh (new effect cycle) — correct behavior",
+    "zones_stable_after_waypoint_change": "Zones recalculate for new waypoint — correct behavior",
+    "zones_stable_after_layer_toggle": true,
+    "zones_stable_after_classification_toggle": true,
+    "no_flash_or_intermediate_state": true,
+    "loading_indicator_visible_during_computation": true
+  }
+}

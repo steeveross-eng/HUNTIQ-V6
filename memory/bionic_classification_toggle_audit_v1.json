@@ -1,0 +1,140 @@
+{
+  "audit_name": "bionic_classification_toggle_audit_v1",
+  "version": "V5_300_STRICT",
+  "date": "2026-03-03T15:50:00Z",
+  "command": "emergent_bionic_classification_toggle_and_visibility_fix --profile=BIONIC_V5_300_STRICT",
+  "status": "PASS",
+  "summary": "Tous les 12 toggles Classification sont fonctionnels et connectés au pipeline de rendu. Aucun recalcul déclenché. Zones structurelles figées en mémoire.",
+  "classification_families": {
+    "STRUCTURE": {
+      "status": "PASS",
+      "toggles": {
+        "relief": {
+          "label": "Relief / Altitude",
+          "connected_layers": ["altitude", "pentes", "orientation", "ensoleillement"],
+          "default_state": "ON",
+          "toggle_action": "Affiche/masque les zones de couches relief dans bionicZones filter",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        },
+        "hydro": {
+          "label": "Hydrographie",
+          "connected_layers": ["hydro"],
+          "default_state": "ON",
+          "toggle_action": "Affiche/masque les zones hydrographiques dans bionicZones filter",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        },
+        "foret": {
+          "label": "Type de forêt",
+          "connected_layers": ["peuplements", "ndvi"],
+          "default_state": "ON",
+          "toggle_action": "Affiche/masque les zones forestières dans bionicZones filter",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        },
+        "anthropique": {
+          "label": "Zones anthropiques",
+          "connected_component": "StructureContrastLayer",
+          "default_state": "ON",
+          "toggle_action": "Active/désactive StructureContrastLayer enabled prop",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        }
+      }
+    },
+    "FONCTIONNEL": {
+      "status": "PASS",
+      "toggles": {
+        "dominantes": {
+          "label": "Zones dominantes (alimentation, repos, rut)",
+          "connected_layers": ["habitats", "rut", "repos", "alimentation", "salines", "affuts", "trajets", "corridors"],
+          "default_state": "ON",
+          "toggle_action": "Affiche/masque les zones fonctionnelles dans bionicZones filter",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        },
+        "corridorsReels": {
+          "label": "Corridors réels",
+          "connected_component": "MovementCorridorsLayer",
+          "default_state": "ON",
+          "toggle_action": "Active/désactive MovementCorridorsLayer rendu",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        }
+      }
+    },
+    "CONDITIONS": {
+      "status": "PASS",
+      "toggles": {
+        "meteo": {
+          "label": "Vent, Météo, Thermique",
+          "connected_component": "Weather/Dynamic engine visibility",
+          "default_state": "ON",
+          "toggle_action": "Contrôle la visibilité du widget météo",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        },
+        "pression": {
+          "label": "Pression humaine",
+          "connected_component": "ExclusionOverlayLayer",
+          "default_state": "ON",
+          "toggle_action": "Active/désactive ExclusionOverlayLayer enabled prop",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        },
+        "corridorsEstimes": {
+          "label": "Corridors estimés",
+          "connected_prop": "showCorridors on BionicMicroZones",
+          "default_state": "ON",
+          "toggle_action": "Active/désactive les corridors estimés dans BionicMicroZones",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        }
+      }
+    },
+    "INSTANTANE": {
+      "status": "PASS",
+      "toggles": {
+        "scoreHabitat": {
+          "label": "Score habitat (0-100%)",
+          "connected_component": "Score display header",
+          "default_state": "ON",
+          "toggle_action": "Contrôle la visibilité du score habitat",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        },
+        "curseurBionic": {
+          "label": "Curseur BIONIC",
+          "connected_component": "CursorBionicLayer",
+          "default_state": "ON",
+          "toggle_action": "Active/désactive CursorBionicLayer rendu",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        },
+        "waypoints": {
+          "label": "Waypoints / Observations",
+          "connected_elements": ["Waypoint Markers", "Saved Places Markers"],
+          "default_state": "ON",
+          "toggle_action": "Affiche/masque les waypoints et lieux sur la carte",
+          "recalculation_triggered": false,
+          "zones_remain_in_memory": true
+        }
+      }
+    }
+  },
+  "invariants_verified": {
+    "no_recalculation_on_toggle": true,
+    "zones_frozen_in_zoneLockRef": true,
+    "classification_acts_on_render_only": true,
+    "no_cross_connection_between_families": true,
+    "all_toggles_default_ON": true,
+    "strikethrough_visual_feedback_on_OFF": true
+  },
+  "test_evidence": {
+    "testing_agent_report": "/app/test_reports/iteration_112.json",
+    "all_12_toggles_verified": true,
+    "zones_visible_count": 23,
+    "success_rate": "100%"
+  }
+}

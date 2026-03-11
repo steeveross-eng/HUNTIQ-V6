@@ -1,0 +1,298 @@
+{
+  "version": "BIONIC_V5_FULL_LAYER_FREEZE_BASELINE",
+  "date": "2026-03-07",
+  "section": "S4_DATA_FREEZE",
+  "reference_bounds": {
+    "south": 46.795,
+    "west": -71.227,
+    "north": 46.833,
+    "east": -71.189
+  },
+  "reference_species": "moose",
+  "reference_resolution": 80,
+  "generation_stats": {
+    "total_zones": 32,
+    "layers_processed": 15,
+    "rejected_exclusion": 35,
+    "exclusions_count": 1611,
+    "penalties_applied": 32
+  },
+  "zones_by_layer": {
+    "rut": 3,
+    "repos": 2,
+    "alimentation": 4,
+    "corridors": 4,
+    "habitats": 3,
+    "peuplements": 2,
+    "ndvi": 2,
+    "pentes": 5,
+    "affuts": 2,
+    "trajets": 4,
+    "ensoleillement": 1
+  },
+  "zone_summaries": [
+    {
+      "layer_id": "rut",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1562,
+      "vertices": 217,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "rut",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.2461,
+      "vertices": 209,
+      "penalty_factor": 0.154
+    },
+    {
+      "layer_id": "rut",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1039,
+      "vertices": 241,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "repos",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1011,
+      "vertices": 217,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "repos",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.171,
+      "vertices": 209,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "alimentation",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1902,
+      "vertices": 217,
+      "penalty_factor": 0.325
+    },
+    {
+      "layer_id": "alimentation",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.169,
+      "vertices": 217,
+      "penalty_factor": 0.218
+    },
+    {
+      "layer_id": "alimentation",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1318,
+      "vertices": 249,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "alimentation",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1602,
+      "vertices": 217,
+      "penalty_factor": 0.546
+    },
+    {
+      "layer_id": "corridors",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.2199,
+      "vertices": 209,
+      "penalty_factor": 0.328
+    },
+    {
+      "layer_id": "corridors",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1436,
+      "vertices": 249,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "corridors",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1228,
+      "vertices": 217,
+      "penalty_factor": 0.523
+    },
+    {
+      "layer_id": "corridors",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.2231,
+      "vertices": 217,
+      "penalty_factor": 0.551
+    },
+    {
+      "layer_id": "habitats",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.2323,
+      "vertices": 209,
+      "penalty_factor": 0.242
+    },
+    {
+      "layer_id": "habitats",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1556,
+      "vertices": 249,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "habitats",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.276,
+      "vertices": 217,
+      "penalty_factor": 0.255
+    },
+    {
+      "layer_id": "peuplements",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.2191,
+      "vertices": 217,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "peuplements",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.3746,
+      "vertices": 209,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "ndvi",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1115,
+      "vertices": 249,
+      "penalty_factor": 0.398
+    },
+    {
+      "layer_id": "ndvi",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.3763,
+      "vertices": 209,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "pentes",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.3126,
+      "vertices": 209,
+      "penalty_factor": 0.278
+    },
+    {
+      "layer_id": "pentes",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1117,
+      "vertices": 201,
+      "penalty_factor": 0.468
+    },
+    {
+      "layer_id": "pentes",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.3448,
+      "vertices": 209,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "pentes",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1285,
+      "vertices": 241,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "pentes",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1446,
+      "vertices": 233,
+      "penalty_factor": 0.237
+    },
+    {
+      "layer_id": "affuts",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1439,
+      "vertices": 209,
+      "penalty_factor": 0.52
+    },
+    {
+      "layer_id": "affuts",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1333,
+      "vertices": 217,
+      "penalty_factor": 0.213
+    },
+    {
+      "layer_id": "trajets",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1594,
+      "vertices": 209,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "trajets",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1789,
+      "vertices": 233,
+      "penalty_factor": 0.15
+    },
+    {
+      "layer_id": "trajets",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.2108,
+      "vertices": 217,
+      "penalty_factor": 0.237
+    },
+    {
+      "layer_id": "trajets",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.1518,
+      "vertices": 233,
+      "penalty_factor": 0.237
+    },
+    {
+      "layer_id": "ensoleillement",
+      "score": 40,
+      "area_m2": 25000.0,
+      "compactness": 0.3987,
+      "vertices": 217,
+      "penalty_factor": 0.15
+    }
+  ],
+  "regression_thresholds": {
+    "min_total_zones": 18,
+    "min_layers_with_zones": 8,
+    "max_rejected_exclusion_pct": 60,
+    "note": "Waypoint results (46.81, -71.21) are reference only. Waypoint itself is NOT frozen.",
+    "_note_r1": "Seuil ajuste apres R1 (seed grille 0.02deg). Variance +-3 zones normale."
+  }
+}

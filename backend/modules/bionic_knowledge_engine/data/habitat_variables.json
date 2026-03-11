@@ -1,0 +1,317 @@
+{
+  "variables": [
+    {
+      "id": "temperature",
+      "name": "Temperature",
+      "name_fr": "Température",
+      "category": "climate",
+      "unit": "°C",
+      "data_type": "float",
+      "value_range": {"min": -50, "max": 45},
+      "data_sources": ["open_meteo", "environment_canada"],
+      "update_frequency": "realtime",
+      "scoring_method": "species_specific",
+      "description": "Température de l'air ambiant",
+      "species_weights": {
+        "moose": 0.9,
+        "deer": 0.6,
+        "bear": 0.5
+      }
+    },
+    {
+      "id": "wind_speed",
+      "name": "Wind Speed",
+      "name_fr": "Vitesse du vent",
+      "category": "climate",
+      "unit": "km/h",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 150},
+      "data_sources": ["open_meteo"],
+      "update_frequency": "realtime",
+      "scoring_method": "linear_inverse",
+      "description": "Vitesse du vent",
+      "species_weights": {
+        "moose": 0.6,
+        "deer": 0.7,
+        "bear": 0.4
+      }
+    },
+    {
+      "id": "precipitation",
+      "name": "Precipitation",
+      "name_fr": "Précipitation",
+      "category": "climate",
+      "unit": "mm/h",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 100},
+      "data_sources": ["open_meteo"],
+      "update_frequency": "hourly",
+      "scoring_method": "threshold",
+      "description": "Quantité de précipitation",
+      "species_weights": {
+        "moose": 0.5,
+        "deer": 0.6,
+        "bear": 0.5
+      }
+    },
+    {
+      "id": "barometric_pressure",
+      "name": "Barometric Pressure",
+      "name_fr": "Pression barométrique",
+      "category": "climate",
+      "unit": "hPa",
+      "data_type": "float",
+      "value_range": {"min": 950, "max": 1050},
+      "data_sources": ["open_meteo"],
+      "update_frequency": "hourly",
+      "scoring_method": "trend",
+      "description": "Pression atmosphérique (tendance importante)",
+      "species_weights": {
+        "moose": 0.4,
+        "deer": 0.8,
+        "bear": 0.3
+      }
+    },
+    {
+      "id": "elevation",
+      "name": "Elevation",
+      "name_fr": "Élévation",
+      "category": "terrain",
+      "unit": "m",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 1500},
+      "data_sources": ["open_elevation", "srtm"],
+      "update_frequency": "static",
+      "scoring_method": "species_optimal",
+      "description": "Altitude au-dessus du niveau de la mer",
+      "species_weights": {
+        "moose": 0.5,
+        "deer": 0.4,
+        "bear": 0.4
+      }
+    },
+    {
+      "id": "slope",
+      "name": "Slope",
+      "name_fr": "Pente",
+      "category": "terrain",
+      "unit": "degrees",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 90},
+      "data_sources": ["dem_derived"],
+      "update_frequency": "static",
+      "scoring_method": "species_optimal",
+      "description": "Inclinaison du terrain",
+      "species_weights": {
+        "moose": 0.3,
+        "deer": 0.4,
+        "bear": 0.3
+      }
+    },
+    {
+      "id": "aspect",
+      "name": "Aspect",
+      "name_fr": "Orientation",
+      "category": "terrain",
+      "unit": "degrees",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 360},
+      "data_sources": ["dem_derived"],
+      "update_frequency": "static",
+      "scoring_method": "seasonal",
+      "description": "Orientation de la pente (0=Nord, 180=Sud)",
+      "species_weights": {
+        "moose": 0.4,
+        "deer": 0.5,
+        "bear": 0.3
+      }
+    },
+    {
+      "id": "ndvi",
+      "name": "NDVI",
+      "name_fr": "Indice de végétation",
+      "category": "vegetation",
+      "unit": "index",
+      "data_type": "float",
+      "value_range": {"min": -1, "max": 1},
+      "data_sources": ["nasa_modis", "sentinel2"],
+      "update_frequency": "weekly",
+      "scoring_method": "linear",
+      "description": "Indice de végétation normalisé (densité végétale)",
+      "species_weights": {
+        "moose": 0.7,
+        "deer": 0.6,
+        "bear": 0.7
+      }
+    },
+    {
+      "id": "canopy_cover",
+      "name": "Canopy Cover",
+      "name_fr": "Couvert forestier",
+      "category": "vegetation",
+      "unit": "%",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 100},
+      "data_sources": ["satellite", "lidar"],
+      "update_frequency": "seasonal",
+      "scoring_method": "species_optimal",
+      "description": "Pourcentage de couverture forestière",
+      "species_weights": {
+        "moose": 0.8,
+        "deer": 0.7,
+        "bear": 0.6
+      }
+    },
+    {
+      "id": "water_proximity",
+      "name": "Water Proximity",
+      "name_fr": "Proximité eau",
+      "category": "hydrology",
+      "unit": "m",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 5000},
+      "data_sources": ["osm", "hydro_quebec", "nhn"],
+      "update_frequency": "static",
+      "scoring_method": "exponential_decay",
+      "description": "Distance au point d'eau le plus proche",
+      "species_weights": {
+        "moose": 0.9,
+        "deer": 0.5,
+        "bear": 0.6
+      }
+    },
+    {
+      "id": "wetland_proximity",
+      "name": "Wetland Proximity",
+      "name_fr": "Proximité milieu humide",
+      "category": "hydrology",
+      "unit": "m",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 5000},
+      "data_sources": ["cic", "ramsar"],
+      "update_frequency": "static",
+      "scoring_method": "exponential_decay",
+      "description": "Distance au milieu humide le plus proche",
+      "species_weights": {
+        "moose": 0.95,
+        "deer": 0.4,
+        "bear": 0.5
+      }
+    },
+    {
+      "id": "road_distance",
+      "name": "Road Distance",
+      "name_fr": "Distance route",
+      "category": "human_impact",
+      "unit": "m",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 10000},
+      "data_sources": ["osm", "mtq"],
+      "update_frequency": "static",
+      "scoring_method": "linear",
+      "description": "Distance à la route la plus proche",
+      "species_weights": {
+        "moose": 0.7,
+        "deer": 0.6,
+        "bear": 0.5
+      }
+    },
+    {
+      "id": "building_distance",
+      "name": "Building Distance",
+      "name_fr": "Distance bâtiment",
+      "category": "human_impact",
+      "unit": "m",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 20000},
+      "data_sources": ["osm", "cadastre"],
+      "update_frequency": "static",
+      "scoring_method": "linear",
+      "description": "Distance au bâtiment le plus proche",
+      "species_weights": {
+        "moose": 0.6,
+        "deer": 0.5,
+        "bear": 0.7,
+        "elk": 0.6
+      }
+    },
+    {
+      "id": "edge_density",
+      "name": "Edge Density",
+      "name_fr": "Densité de lisières",
+      "category": "vegetation",
+      "unit": "m/ha",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 500},
+      "data_sources": ["satellite", "lidar", "forest_inventory"],
+      "update_frequency": "annual",
+      "scoring_method": "species_optimal",
+      "description": "Densité des transitions forêt-ouverture (écotones)",
+      "species_weights": {
+        "moose": 0.85,
+        "deer": 0.9,
+        "bear": 0.6,
+        "elk": 0.95
+      }
+    },
+    {
+      "id": "human_pressure_index",
+      "name": "Human Pressure Index",
+      "name_fr": "Indice de pression humaine",
+      "category": "human_impact",
+      "unit": "index",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 1},
+      "data_sources": ["statistics_canada", "osm", "strava_heatmap"],
+      "update_frequency": "monthly",
+      "scoring_method": "linear_inverse",
+      "description": "Indice composite de perturbation humaine (routes, sentiers, bâtiments, activité)",
+      "species_weights": {
+        "moose": 0.75,
+        "deer": 0.6,
+        "bear": 0.85,
+        "elk": 0.7
+      }
+    },
+    {
+      "id": "canopy_density",
+      "name": "Canopy Density",
+      "name_fr": "Densité de canopée",
+      "category": "vegetation",
+      "unit": "%",
+      "data_type": "float",
+      "value_range": {"min": 0, "max": 100},
+      "data_sources": ["lidar", "sentinel2"],
+      "update_frequency": "seasonal",
+      "scoring_method": "species_optimal",
+      "description": "Densité de la couverture arborée (différent du couvert forestier)",
+      "species_weights": {
+        "moose": 0.7,
+        "deer": 0.65,
+        "bear": 0.6,
+        "elk": 0.4
+      }
+    },
+    {
+      "id": "slope_aspect",
+      "name": "Slope Aspect",
+      "name_fr": "Exposition de la pente",
+      "category": "terrain",
+      "unit": "cardinal",
+      "data_type": "categorical",
+      "value_range": {"categories": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]},
+      "data_sources": ["dem_derived", "srtm"],
+      "update_frequency": "static",
+      "scoring_method": "seasonal_cardinal",
+      "description": "Orientation cardinale de la pente (impact thermique saisonnier)",
+      "species_weights": {
+        "moose": 0.5,
+        "deer": 0.6,
+        "bear": 0.4,
+        "elk": 0.55
+      }
+    }
+  ],
+  "version": "1.1.0",
+  "last_updated": "2024-02-17"
+}

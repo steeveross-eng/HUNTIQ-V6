@@ -1,0 +1,3 @@
+"""
+BIONIC ENGINE Tests Init
+"""

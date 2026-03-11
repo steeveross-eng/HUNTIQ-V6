@@ -1,0 +1,47 @@
+{
+  "version": "BIONIC_V5_FULL_LAYER_FREEZE_BASELINE",
+  "date": "2026-03-07",
+  "section": "S1_VISUAL_FREEZE",
+
+  "bionic_zone_palette": {
+    "rut":            {"color": "#FF4D6D", "label": "Zone de rut",            "category": "behavioral"},
+    "repos":          {"color": "#8B5CF6", "label": "Zone de repos",          "category": "behavioral"},
+    "alimentation":   {"color": "#22C55E", "label": "Zone d'alimentation",    "category": "behavioral"},
+    "corridors":      {"color": "#06B6D4", "label": "Corridor faunique",      "category": "behavioral"},
+    "habitats":       {"color": "#10B981", "label": "Habitat optimal",        "category": "environmental"},
+    "ensoleillement": {"color": "#FCD34D", "label": "Ensoleillement",         "category": "environmental"},
+    "orientation":    {"color": "#2196F3", "label": "Orientation",            "category": "environmental"},
+    "hydro":          {"color": "#3B82F6", "label": "Hydrographie",           "category": "environmental"},
+    "peuplements":    {"color": "#15803D", "label": "Peuplements forestiers",  "category": "environmental"},
+    "ndvi":           {"color": "#66BB6A", "label": "NDVI / Densite vegetale","category": "environmental"},
+    "pentes":         {"color": "#FF7043", "label": "Pentes",                 "category": "environmental"},
+    "salines":        {"color": "#FFFF00", "label": "Saline potentielle",     "category": "strategic"},
+    "affuts":         {"color": "#F5A623", "label": "Affut potentiel",        "category": "strategic"},
+    "trajets":        {"color": "#FF9800", "label": "Trajets de chasse",      "category": "strategic"},
+    "altitude":       {"color": "#78909C", "label": "Altitude relative",      "category": "environmental"}
+  },
+
+  "anthropique_v5_palette": {
+    "road_major":     {"color": "#B71C1C", "weight": 2.5, "opacity": 0.85, "dashArray": null},
+    "road_secondary": {"color": "#D84315", "weight": 2.0, "opacity": 0.8, "dashArray": null},
+    "trail":          {"color": "#6D4C41", "weight": 1.5, "opacity": 0.7, "dashArray": "6 4"},
+    "infra_line":     {"color": "#546E7A", "weight": 2.0, "opacity": 0.7, "dashArray": "4 6"},
+    "urban_fill":     {"color": "#EF5350", "fillOpacity": 0.12, "strokeWeight": 1.2, "strokeOpacity": 0.6},
+    "infra_fill":     {"color": "#546E7A", "fillOpacity": 0.10, "strokeWeight": 1.0, "strokeOpacity": 0.5}
+  },
+
+  "exclusion_overlay_styles": {
+    "water":          {"color": "#2196F3", "fillOpacity": 0.0, "strokeOpacity": 0.0, "visible": false},
+    "wetland":        {"color": "#2196F3", "fillOpacity": 0.0, "strokeOpacity": 0.0, "visible": false},
+    "urban":          {"color": "#F44336", "fillOpacity": 0.15, "strokeOpacity": 0.75, "visible": true},
+    "roads":          {"color": "#FF9800", "fillOpacity": 0.12, "strokeOpacity": 0.70, "visible": true},
+    "infrastructure": {"color": "#9E9E9E", "fillOpacity": 0.12, "strokeOpacity": 0.70, "visible": true}
+  },
+
+  "rendering_constraints": {
+    "MAX_LINES": 200,
+    "MAX_POLYGONS": 80,
+    "MAX_AREA_M2": 1000000,
+    "METERS_PER_DEG": 111320
+  }
+}

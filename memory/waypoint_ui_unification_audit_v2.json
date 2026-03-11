@@ -1,0 +1,81 @@
+{
+  "audit_id": "waypoint_ui_unification_audit_v2",
+  "profile": "BIONIC_V5_300_STRICT",
+  "date": "2026-03-03T03:15:00Z",
+  "status": "COMPLETED",
+
+  "executive_summary": {
+    "popup_suppression": "COMPLETE",
+    "unified_panel_coherence": "VERIFIED",
+    "regression_count": 0,
+    "bionic_compliance": "PASS"
+  },
+
+  "popup_suppression": {
+    "mon_territoire": {
+      "waypoint_markers": "Aucune Popup — clic appelle selectWaypointAsTarget(wp) → panneau unifie",
+      "lieux_markers": "Popup conservee (entite differente des waypoints, intentionnel)",
+      "status": "CONFORME"
+    },
+    "carte_interactive": {
+      "waypoint_markers": "Aucune Popup — clic appelle setSelectedWaypoint(wp)",
+      "WaypointMiniCard": "SUPPRIMEE — remplacee par un indicateur compact non intrusif (nom + coords)",
+      "actions_migrees": "Bouton Analyser (Target) ajoute dans le panneau lateral, a cote de Supprimer (Trash2)",
+      "status": "CONFORME"
+    },
+    "divergence_inter_vues": "ZERO — Comportement waypoint identique entre Mon Territoire et Carte Interactive"
+  },
+
+  "unified_panel": {
+    "component": "WaypointUnifiedPanel.jsx",
+    "location": "Panneau lateral — source de verite unique",
+    "sections": {
+      "nom_waypoint": "PRESENT (h3 text-lg)",
+      "coordonnees": "PRESENT (font-mono, precision 6 decimales)",
+      "bouton_analyser": "PRESENT (bg-[#f5a623])",
+      "bouton_effacer": "PRESENT (bg-red-500)",
+      "bouton_centrer": "PRESENT (bg-blue-500)",
+      "bouton_partager": "PRESENT (bg-purple-500)",
+      "exclusions_dynamiques": "PRESENT (scores LIVE, facteurs temporels/pression/saison)",
+      "couches_activees": "PRESENT (badges teal-500)",
+      "historique": "PLACEHOLDER (V2)",
+      "notes_terrain": "PLACEHOLDER (V2)",
+      "photos": "PLACEHOLDER (V2)",
+      "mode_equipe": "PLACEHOLDER (V2)"
+    }
+  },
+
+  "contextual_logic": {
+    "no_waypoint_selected": "Etat neutre — Search icon + message 'Selectionnez un waypoint'",
+    "one_waypoint_selected": "Panneau de details complets avec toutes les actions",
+    "multiple_waypoints": "Liste scrollable + selection dans le panneau gauche",
+    "status": "CONFORME"
+  },
+
+  "ergonomics": {
+    "panel_animation": "transition-all duration-300 (collapse/expand)",
+    "no_map_overlay": "Aucune fenetre ne masque la carte (panneau lateral hors zone carte)",
+    "viewport_anchor": "Fix iter_104 intact — aucun recentrage intempestif lors de la selection",
+    "status": "CONFORME"
+  },
+
+  "anti_regression_tests": {
+    "panel_opens_correct_waypoint": "PASS — selectedWaypoint.id matche le waypoint clique",
+    "no_popup_on_waypoint_click": "PASS — Popup import present mais non utilise sur les waypoint Markers",
+    "viewport_anchored": "PASS — MapController V2 sans setView parasite (fix iter_104)",
+    "all_actions_from_panel": "PASS — Analyser, Effacer, Centrer, Partager, Toggle actif depuis panneau unique",
+    "carte_interactive_aligned": "PASS — WaypointMiniCard supprimee, bouton Analyser ajoute au panneau lateral"
+  },
+
+  "code_cleanup": {
+    "WaypointMiniCard_file": "CONSERVE (fichier existe mais import supprime de WaypointMap.jsx)",
+    "recommendation": "Supprimer /app/frontend/src/components/territoire/WaypointMiniCard.jsx a terme si aucun autre module ne l'importe"
+  },
+
+  "bionic_v5_300_compliance": {
+    "popup_suppression": "PASS",
+    "unified_panel": "PASS",
+    "zero_regression": "PASS",
+    "inter_view_coherence": "PASS"
+  }
+}

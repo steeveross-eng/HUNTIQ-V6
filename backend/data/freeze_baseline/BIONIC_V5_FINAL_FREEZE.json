@@ -1,0 +1,111 @@
+{
+  "certification": "BIONIC_V5_FINAL_FREEZE",
+  "created": "2026-03-07T05:00:00Z",
+  "certified_by": "COPILOT MAITRE",
+  "status": "SEALED",
+
+  "git_branch": "bionic_v5_final_freeze",
+  "git_policy": "PROTECTED — ecriture directe interdite",
+
+  "description": "Version finale certifiee de BIONIC V5. Scelle le visuel, la science, les comportements, les donnees de reference et les modules fonctionnels. Toute modification future se fera dans BIONIC V6+.",
+
+  "predecessor": "BIONIC_V5_FULL_LAYER_FREEZE_BASELINE",
+  "successor": "BIONIC_V6_LAB",
+
+  "sealed_sections": {
+    "S1_VISUAL": {
+      "status": "SEALED",
+      "artifacts": ["style_dump.json", "layer_dump.json"],
+      "palette_layers": 15,
+      "anthropique_v5": true,
+      "hydro_fix_invisible": true
+    },
+    "S2_FUNCTIONAL": {
+      "status": "SEALED",
+      "artifacts": ["geometry_dump.json"],
+      "api_endpoints_frozen": [
+        "POST /api/v1/bionic/organic-zones",
+        "POST /api/v1/bionic/terrain/terrain-data"
+      ],
+      "internal_functions_frozen": [
+        "_is_zone_excluded",
+        "_parse_overpass",
+        "_polygon_area_m2",
+        "_assemble_rings",
+        "generate_layer_raster",
+        "extract_organic_zones",
+        "calculate_zone_penalty",
+        "zone_to_geojson_feature"
+      ]
+    },
+    "S3_SCIENTIFIC": {
+      "status": "SEALED",
+      "artifacts": ["science_baseline.json"],
+      "layer_params_count": 15,
+      "species_count": 5,
+      "penalty_matrix_layers": 5,
+      "proximity_bands": {"close": 200, "medium": 500, "far": 1000}
+    },
+    "S4_DATA": {
+      "status": "SEALED",
+      "artifacts": ["data_reference.json", "exclusion_data_reference.json"],
+      "reference_zones": 32,
+      "reference_layers": 11,
+      "exclusion_zones_total": 328,
+      "oversized_filtered": 16,
+      "wetlands_reclassified": 5,
+      "waypoint_frozen": false,
+      "note": "Seuls les resultats du waypoint (46.81, -71.21) servent de reference. Le waypoint lui-meme reste libre."
+    },
+    "S5_BEHAVIORAL": {
+      "status": "SEALED",
+      "artifacts": ["behavior_snapshot.json"],
+      "pipeline_steps": 5,
+      "exclusion_rules": {
+        "deep_water_only": ["lake", "reservoir"],
+        "pond_min_area_m2": 2000,
+        "never_exclude": ["wetland", "stream", "ditch", "micro_water"],
+        "track_ignored": true,
+        "filtered_out_skipped": true
+      }
+    },
+    "S6_TESTS": {
+      "status": "ACTIVE",
+      "test_file": "tests/freeze/test_freeze_regression.py",
+      "total_tests": 28,
+      "last_run_result": "28/28 PASSED",
+      "last_run_date": "2026-03-07",
+      "coverage": ["visual", "functional", "scientific", "data", "behavioral", "performance"]
+    }
+  },
+
+  "frozen_files": {
+    "backend": [
+      "modules/bionic_engine_p0/services/zone_engine_core_v2.py",
+      "modules/bionic_engine_p0/services/behavioral_rasterizer.py",
+      "modules/bionic_engine_p0/services/zone_penalty_engine.py",
+      "modules/bionic_engine_p0/services/zone_visual_layer_v2.py",
+      "modules/bionic_engine_p0/services/organic_contour_generator.py",
+      "modules/bionic_engine_p0/services/organic_zone_generator_v2.py",
+      "modules/bionic_engine_p0/routers/terrain_data_router.py",
+      "modules/bionic_engine_p0/routers/organic_zones_router.py",
+      "modules/bionic_engine_p0/config/exclusions_config_v1.json"
+    ],
+    "frontend": [
+      "src/components/territoire/ExclusionOverlayLayer.jsx",
+      "src/components/territoire/StructureContrastLayer.jsx",
+      "src/components/territoire/BionicMicroZones.jsx",
+      "src/components/territoire/HydrographyOverlayLayer.jsx",
+      "src/components/territoire/HydroPaneAttenuator.jsx",
+      "src/components/territoire/TerritoryShell.jsx",
+      "src/components/territoire/BionicAntiDoublesGuard.jsx"
+    ]
+  },
+
+  "evolution_policy": {
+    "v5_modifications": "INTERDIT sauf correctif critique avec validation COPILOT MAITRE + 28/28 tests verts",
+    "v6_scope": "Optimisations majeures, reecritures, ameliorations x300%",
+    "v6_branch": "BIONIC_V6_LAB",
+    "v6_constraints": "Les tests de non-regression V5 doivent rester verts en V6"
+  }
+}

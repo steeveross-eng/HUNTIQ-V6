@@ -1,0 +1,143 @@
+{
+  "report_id": "BIONIC-ERROR-REPRO-001",
+  "report_type": "BUG_REPRODUCTION",
+  "phase": "PHASE_1_REPRODUCTION",
+  "timestamp": "2026-02-19T18:32:00+00:00",
+  "investigator": "E1-AGENT",
+  "status": "BUG_REPRODUCED",
+  
+  "error_signature": {
+    "type": "TypeError",
+    "message": "object of type 'int' has no len()",
+    "severity": "CRITICAL",
+    "impact": "API returns 500 error when corrupted data exists in database"
+  },
+  
+  "reproduction_steps": [
+    {
+      "step": 1,
+      "action": "Inject corrupted data into MongoDB",
+      "code": "db.user_contexts.update_one({'user_id': 'test'}, {'$set': {'pages_visited': 42}})",
+      "expected": "pages_visited should be a list like ['page1', 'page2']",
+      "actual": "pages_visited is an integer (42)"
+    },
+    {
+      "step": 2,
+      "action": "Call API endpoint that uses UserContext",
+      "code": "GET /api/bionic-engine/context/{user_id}",
+      "expected": "Return user context",
+      "actual": "Returns context but dataclass accepts integer without validation"
+    },
+    {
+      "step": 3,
+      "action": "Trigger code path that calls len() on field",
+      "code": "_check_profile_complete() calls len(context.pages_visited)",
+      "expected": "Return length of list",
+      "actual": "TypeError: object of type 'int' has no len()"
+    }
+  ],
+  
+  "affected_files": [
+    {
+      "file": "/app/backend/modules/user_context.py",
+      "lines": [296, 298],
+      "code_fragment": "if len(context.pages_visited) >= 5:",
+      "issue": "No type validation before calling len()"
+    },
+    {
+      "file": "/app/backend/modules/hunter_score.py",
+      "lines": [131, 132, 137, 141, 147],
+      "code_fragment": "breakdown.tools_score = min(15, len(tools_used) * 3)",
+      "issue": "Uses .get() with default [] but calls len() on result which could be non-list from DB"
+    },
+    {
+      "file": "/app/backend/modules/score_preparation.py",
+      "lines": [103, 143, 184, 208, 233, 258],
+      "code_fragment": "len([i for i in checklist.get('items', []) if i.get('is_completed')])",
+      "issue": "Assumes items is always iterable"
+    },
+    {
+      "file": "/app/backend/modules/chasseur_jumeau.py",
+      "lines": [205],
+      "code_fragment": "user_tools = len(user_context.get('tools_used', []))",
+      "issue": "tools_used from DB could be non-list type"
+    }
+  ],
+  
+  "root_cause_analysis": {
+    "primary_cause": "DATA_TYPE_CORRUPTION",
+    "description": "MongoDB documents contain fields with incorrect types (integers instead of lists)",
+    "secondary_cause": "MISSING_TYPE_VALIDATION",
+    "description_secondary": "Python dataclasses accept any type without runtime validation"
+  },
+  
+  "data_corruption_scenarios": [
+    {
+      "scenario": "Manual DB modification",
+      "likelihood": "LOW",
+      "description": "Admin directly modifies MongoDB document with wrong type"
+    },
+    {
+      "scenario": "Migration error",
+      "likelihood": "MEDIUM", 
+      "description": "Data migration script converts lists to counts"
+    },
+    {
+      "scenario": "Concurrent write conflict",
+      "likelihood": "MEDIUM",
+      "description": "Race condition during upsert operations"
+    },
+    {
+      "scenario": "API input bypass",
+      "likelihood": "LOW",
+      "description": "Direct MongoDB access bypassing Pydantic validation"
+    }
+  ],
+  
+  "endpoints_tested": {
+    "total": 34,
+    "passed": 34,
+    "failed_with_corrupted_data": 0,
+    "note": "Standard API tests pass because Pydantic validates input. Error only occurs when DB contains corrupted data."
+  },
+  
+  "test_payloads": {
+    "corrupted_user_context": {
+      "user_id": "typeerror-user-001",
+      "pages_visited": 42,
+      "tools_used": 10,
+      "gibier_principal": "orignal"
+    }
+  },
+  
+  "stack_trace": {
+    "captured": true,
+    "trace": "Traceback (most recent call last):\n  File \"user_context.py\", line 296, in _check_profile_complete\n    if len(context.pages_visited) >= 5:\nTypeError: object of type 'int' has no len()"
+  },
+  
+  "api_behavior_analysis": {
+    "normal_flow": "API returns 200 with valid data",
+    "corrupted_data_flow": "Dataclass accepts corrupted data, error occurs on len() call",
+    "protection_level": "PARTIAL - Pydantic protects input but not DB reads"
+  },
+  
+  "mode_staging_validation": {
+    "status": "MAINTAINED",
+    "internal_only": true,
+    "external_flows": false,
+    "note": "Investigation conducted entirely within staging environment"
+  },
+  
+  "recommendations_for_phase_2": [
+    "Add type validation in UserContext dataclass __post_init__",
+    "Add defensive isinstance() checks before len() calls",
+    "Create DB integrity check script",
+    "Consider using Pydantic models for DB reads as well as writes"
+  ],
+  
+  "next_actions": {
+    "phase_2": "ISOLATE - Identify all code paths that could trigger this error",
+    "phase_3": "AUDIT - Document all data structures expected by BIONIC modules",
+    "phase_4": "AUDIT DEPS - Map internal dependencies between modules"
+  }
+}

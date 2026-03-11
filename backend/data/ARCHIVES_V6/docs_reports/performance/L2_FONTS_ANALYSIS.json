@@ -1,0 +1,183 @@
+{
+  "report_id": "L2_FONTS_ANALYSIS",
+  "generated_at": "2026-02-19T22:10:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "phase": "L2",
+  "category": "Performance - Fonts",
+
+  "executive_summary": {
+    "fonts_provider": "Google Fonts",
+    "fonts_count": 3,
+    "total_weights": 12,
+    "estimated_total_size": "350-450KB",
+    "preconnect_configured": false,
+    "preload_configured": false,
+    "font_display_swap": true,
+    "optimization_status": "NEEDS_IMPROVEMENT"
+  },
+
+  "current_configuration": {
+    "import_method": "CSS @import url()",
+    "import_location": "/app/frontend/src/index.css or App.css",
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap",
+    "blocking_render": true,
+    "display_swap": true
+  },
+
+  "fonts_breakdown": [
+    {
+      "family": "Barlow Condensed",
+      "weights": [400, 500, 600, 700, 900],
+      "weights_count": 5,
+      "usage": "Headings (h1-h6), navigation",
+      "estimated_size": "~150KB",
+      "essential_weights": [600, 700],
+      "removable_weights": [400, 500, 900],
+      "optimization_potential": "~90KB"
+    },
+    {
+      "family": "Inter",
+      "weights": [400, 500, 600, 700],
+      "weights_count": 4,
+      "usage": "Body text, UI elements",
+      "estimated_size": "~150KB",
+      "essential_weights": [400, 500, 600],
+      "removable_weights": [700],
+      "optimization_potential": "~40KB"
+    },
+    {
+      "family": "JetBrains Mono",
+      "weights": [400, 500, 600],
+      "weights_count": 3,
+      "usage": "Data, code, monospace content",
+      "estimated_size": "~100KB",
+      "essential_weights": [400],
+      "removable_weights": [500, 600],
+      "optimization_potential": "~60KB"
+    }
+  ],
+
+  "impact_analysis": {
+    "fcp_impact": {
+      "current_delay": "~200-400ms",
+      "cause": "CSS blocking render while fonts load",
+      "solution": "Preconnect + preload critical fonts"
+    },
+    "lcp_impact": {
+      "affected": true,
+      "cause": "Text with web fonts is LCP element on some pages",
+      "solution": "font-display: swap + preload"
+    },
+    "cls_impact": {
+      "affected": true,
+      "cause": "Font swap can cause layout shift",
+      "solution": "Use font-display: optional or size-adjust"
+    }
+  },
+
+  "missing_optimizations": [
+    {
+      "id": "FONT-OPT-001",
+      "optimization": "Preconnect to Google Fonts domains",
+      "current": "NOT CONFIGURED",
+      "fix": "<link rel='preconnect' href='https://fonts.googleapis.com'>\n<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>",
+      "location": "/app/frontend/public/index.html <head>",
+      "impact": "~100-200ms improvement"
+    },
+    {
+      "id": "FONT-OPT-002",
+      "optimization": "Preload critical font files",
+      "current": "NOT CONFIGURED",
+      "fix": "<link rel='preload' as='font' type='font/woff2' href='...' crossorigin>",
+      "impact": "~50-100ms improvement"
+    },
+    {
+      "id": "FONT-OPT-003",
+      "optimization": "Reduce font weights",
+      "current": "12 weights loaded",
+      "target": "6-7 weights",
+      "fix": "Update Google Fonts URL to include only essential weights",
+      "impact": "~150KB reduction"
+    },
+    {
+      "id": "FONT-OPT-004",
+      "optimization": "Self-host fonts",
+      "current": "Google Fonts CDN",
+      "alternative": "Download and serve from same origin",
+      "impact": "Eliminate DNS lookup, more control"
+    }
+  ],
+
+  "index_html_additions": {
+    "preconnect": [
+      "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">",
+      "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>"
+    ],
+    "preload_example": "<link rel=\"preload\" as=\"style\" href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap\">",
+    "placement": "Early in <head>, before other stylesheets"
+  },
+
+  "optimized_fonts_url": {
+    "current": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap",
+    "optimized": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap",
+    "weight_reduction": "12 → 6 weights",
+    "size_reduction": "~190KB saved"
+  },
+
+  "recommendations": {
+    "P0_critical": [
+      {
+        "id": "FONT-001",
+        "action": "Ajouter preconnect pour Google Fonts",
+        "implementation": "Ajouter les deux balises link preconnect dans index.html",
+        "impact": "Réduction ~100-200ms",
+        "effort": "LOW"
+      }
+    ],
+    "P1_high": [
+      {
+        "id": "FONT-002",
+        "action": "Réduire les weights de fonts à l'essentiel",
+        "implementation": "Modifier l'URL Google Fonts",
+        "impact": "Réduction ~150-190KB",
+        "effort": "LOW"
+      },
+      {
+        "id": "FONT-003",
+        "action": "Ajouter preload pour les fonts critiques",
+        "implementation": "Ajouter link preload pour Inter 400/500",
+        "impact": "Amélioration FCP",
+        "effort": "LOW"
+      }
+    ],
+    "P2_medium": [
+      {
+        "id": "FONT-004",
+        "action": "Envisager l'auto-hébergement des fonts",
+        "implementation": "Télécharger fonts, servir localement",
+        "impact": "Élimination dépendance externe",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "FONT-005",
+        "action": "Implémenter font subsetting",
+        "implementation": "Générer des fonts avec uniquement les caractères utilisés",
+        "impact": "Réduction ~30-50%",
+        "effort": "HIGH"
+      }
+    ]
+  },
+
+  "expected_gains": {
+    "after_p0": {
+      "fcp_improvement": "~150ms",
+      "lighthouse_performance": "+2-3 points"
+    },
+    "after_p1": {
+      "size_reduction": "~190KB",
+      "additional_fcp": "~50ms",
+      "lighthouse_performance": "+2 points"
+    }
+  }
+}

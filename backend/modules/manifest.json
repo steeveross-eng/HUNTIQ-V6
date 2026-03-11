@@ -1,0 +1,200 @@
+{
+  "architecture_version": "3.0.0",
+  "created_at": "2026-02-09",
+  "updated_at": "2026-02-09",
+  "total_modules": 26,
+  "total_data_layers": 5,
+  "modules": {
+    "core": [
+      {
+        "name": "weather_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Weather data processing and forecasting"
+      },
+      {
+        "name": "scoring_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Multi-factor scoring system"
+      },
+      {
+        "name": "strategy_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Hunting strategy recommendations"
+      },
+      {
+        "name": "geospatial_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Geospatial data processing"
+      },
+      {
+        "name": "wms_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "WMS proxy and caching"
+      },
+      {
+        "name": "ai_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "AI/ML integration layer"
+      },
+      {
+        "name": "nutrition_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Nutritional analysis for attractants"
+      }
+    ],
+    "business": [
+      {
+        "name": "marketplace_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "E-commerce and marketplace"
+      },
+      {
+        "name": "user_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "User management and authentication"
+      },
+      {
+        "name": "admin_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Administration panel"
+      },
+      {
+        "name": "territory_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Territory management"
+      },
+      {
+        "name": "tracking_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "GPS and activity tracking"
+      },
+      {
+        "name": "notification_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Push and email notifications"
+      },
+      {
+        "name": "networking_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Social networking features"
+      },
+      {
+        "name": "referral_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Referral and affiliate system"
+      }
+    ],
+    "advanced": [
+      {
+        "name": "ecoforestry_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Ecoforestry analysis and classification"
+      },
+      {
+        "name": "advanced_geospatial_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Advanced geospatial analysis"
+      },
+      {
+        "name": "engine_3d",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "3D terrain and visualization"
+      },
+      {
+        "name": "wildlife_behavior_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Wildlife behavior prediction"
+      },
+      {
+        "name": "weather_fauna_simulation_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Weather-fauna simulation"
+      },
+      {
+        "name": "adaptive_strategy_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Real-time adaptive strategies"
+      },
+      {
+        "name": "recommendation_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Personalized recommendations"
+      },
+      {
+        "name": "progression_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "User progression and gamification"
+      },
+      {
+        "name": "collaborative_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Collaborative features"
+      },
+      {
+        "name": "plugins_engine",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Plugin and extension system"
+      }
+    ],
+    "special": [
+      {
+        "name": "live_heading_view",
+        "version": "v1",
+        "status": "scaffold",
+        "description": "Live immersive heading view"
+      }
+    ]
+  },
+  "data_layers": [
+    {
+      "name": "ecoforestry_layers",
+      "status": "scaffold",
+      "description": "Ecoforestry data layers"
+    },
+    {
+      "name": "advanced_geospatial_layers",
+      "status": "scaffold",
+      "description": "Advanced geospatial data layers"
+    },
+    {
+      "name": "layers_3d",
+      "status": "scaffold",
+      "description": "3D visualization layers"
+    },
+    {
+      "name": "behavioral_layers",
+      "status": "scaffold",
+      "description": "Wildlife behavioral layers"
+    },
+    {
+      "name": "simulation_layers",
+      "status": "scaffold",
+      "description": "Simulation data layers"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "audit_id": "ecoforest_stability_audit_v1",
+  "profile": "BIONIC_V5_300_STRICT",
+  "date": "2026-03-03T03:15:00Z",
+  "status": "COMPLETED",
+
+  "executive_summary": {
+    "verdict": "STABILISEE",
+    "confidence": "HAUTE",
+    "flash_count": 0,
+    "disappearance_count": 0,
+    "partial_reload_count": 0,
+    "zoom_pan_stability": "PARFAITE"
+  },
+
+  "tile_locking_system": {
+    "status": "IMPLEMENTED",
+    "mechanism": "opacity 0→target avec eventHandlers loading/load/tileerror",
+    "components_protected": ["EcoforestryWMSLayer", "EcoforestryLayers (overlay principal)"],
+    "loading_counter": "useRef pour tracker les tuiles en cours de chargement, opacity=0 tant que counter > 0",
+    "transition_css": "ecoforestry-tile-locked { transition: opacity 300ms ease-in-out }",
+    "guarantee": "Aucune tuile visible tant que 100% du viewport n'est pas pret"
+  },
+
+  "persistent_tile_cache": {
+    "status": "IMPLEMENTED",
+    "keepBuffer": 8,
+    "updateWhenZooming": false,
+    "updateWhenIdle": true,
+    "effect": "Les tuiles hors viewport sont conservees en memoire. Aucun rechargement lors du zoom/pan.",
+    "backend_cache": {
+      "max_entries": 500,
+      "ttl_hours": 1,
+      "speedup": "14.9x (3.4s miss → 0.2s hit)"
+    }
+  },
+
+  "style_stabilization": {
+    "status": "IMPLEMENTED",
+    "useMemo_targets": [
+      "wmsParams dans EcoforestryWMSLayer",
+      "overlayParams dans EcoforestryLayers",
+      "proxyUrl dans EcoforestryLayers",
+      "tileEvents dans EcoforestryWMSLayer",
+      "overlayTileEvents dans EcoforestryLayers"
+    ],
+    "react_memo_targets": ["EcoforestryWMSLayer", "EcoforestryLayers"],
+    "guarantee": "Aucun re-rendu intempestif cause par la recreation d'objets de style"
+  },
+
+  "api_synchronization": {
+    "status": "IMPLEMENTED",
+    "independence": "La couche ecoforestiere est independante du parametre layers=... des controles BIONIC",
+    "toggle_behavior": "Les ON/OFF de couches individuelles controlent uniquement le prop visible de chaque EcoforestryWMSLayer — aucun rechargement du fond WMS principal",
+    "layer_isolation": "Chaque couche eco a son propre useMemo(params) — le toggle d'une couche n'affecte pas les autres"
+  },
+
+  "mffp_401_analysis": {
+    "status": "ANALYSED",
+    "service": "servicescarto.mffp.gouv.qc.ca",
+    "http_status": 401,
+    "impact": "FAIBLE — Le service MFFP n'est pas utilise comme source primaire. NFIS-QC (source primaire) est fonctionnel et stable.",
+    "recommendation": "Le service MFFP retourne 401 Unauthorized. Ce service gouvernemental requiert une authentification specifique. Il est present dans le registry comme source secondaire mais n'est pas utilise dans le rendu actuel. Aucune action requise sauf si l'acces authentifie devient disponible."
+  },
+
+  "polling_optimization": {
+    "status": "IMPLEMENTED",
+    "fixes": [
+      "statusRef/retryCountRef pour eviter les closures stales dans setInterval",
+      "Verification conditionnelle avant setStatus() pour eviter les re-renders inutiles",
+      "Arret automatique du polling des que le service est confirme AVAILABLE"
+    ]
+  },
+
+  "bionic_v5_300_compliance": {
+    "zero_flash": "PASS",
+    "zero_disappearance": "PASS",
+    "zero_partial_reload": "PASS",
+    "zoom_pan_stability": "PASS",
+    "style_determinism": "PASS"
+  }
+}

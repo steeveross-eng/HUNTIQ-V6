@@ -1,0 +1,217 @@
+{
+  "$schema": "https://huntiq.ca/schemas/bionic-hotspot-v1.json",
+  "contract_id": "hotspot_schema_v1",
+  "contract_version": "1.0.0",
+  "module_name": "map_hotspots",
+  "phase": "P1-HOTSPOTS",
+  "status": "ACTIVE",
+  "created_at": "2025-12-21",
+  "author": "BIONIC Engine Team",
+  "approved_by": "COPILOT MAITRE",
+  "description": "Schema pour les hotspots cartographiques BIONIC V5 ULTIME x2",
+
+  "hotspot_types": {
+    "enum": [
+      "activity_peak",
+      "feeding_zone",
+      "rut_zone",
+      "thermal_refuge",
+      "water_source",
+      "predation_risk",
+      "snow_impact",
+      "human_avoidance",
+      "mineral_site",
+      "composite_optimal"
+    ],
+    "descriptions": {
+      "activity_peak": "Pics d'activite predits par timeline BM",
+      "feeding_zone": "Zones d'alimentation basees sur cycles digestifs",
+      "rut_zone": "Zones de rut basees sur facteur hormonal",
+      "thermal_refuge": "Refuges thermiques selon stress thermique",
+      "water_source": "Points d'eau selon stress hydrique",
+      "predation_risk": "Zones a risque predation",
+      "snow_impact": "Zones impact neige/ravages",
+      "human_avoidance": "Zones evitement humain",
+      "mineral_site": "Sites mineraux/salines",
+      "composite_optimal": "Zones optimales combinees"
+    }
+  },
+
+  "time_ranges": {
+    "enum": ["24h", "72h", "7d"],
+    "descriptions": {
+      "24h": "Hotspots pour les prochaines 24 heures",
+      "72h": "Hotspots pour les prochaines 72 heures",
+      "7d": "Hotspots pour les 7 prochains jours"
+    }
+  },
+
+  "visual_spec": {
+    "stroke_width_px": {"min": 1, "max": 2, "default": 1.5},
+    "fill_opacity": {"const": 0, "description": "TOUJOURS 0 - Centre transparent"},
+    "contour_algorithm": "marching_squares_chaikin",
+    "simplification": "douglas_peucker_5m",
+    "effects": {
+      "glow": false,
+      "shadow": false,
+      "halo": false
+    }
+  },
+
+  "color_palette": {
+    "activity_peak": "#FFD700",
+    "feeding_zone": "#4CAF50",
+    "rut_zone": "#E91E63",
+    "thermal_refuge": "#00BCD4",
+    "water_source": "#2196F3",
+    "predation_risk": "#F44336",
+    "snow_impact": "#ECEFF1",
+    "human_avoidance": "#9E9E9E",
+    "mineral_site": "#FFC107",
+    "composite_optimal": "#FFD700"
+  },
+
+  "request_schema": {
+    "type": "object",
+    "required": ["bounds", "species"],
+    "properties": {
+      "bounds": {
+        "type": "object",
+        "required": ["north", "south", "east", "west"],
+        "properties": {
+          "north": {"type": "number", "minimum": -90, "maximum": 90},
+          "south": {"type": "number", "minimum": -90, "maximum": 90},
+          "east": {"type": "number", "minimum": -180, "maximum": 180},
+          "west": {"type": "number", "minimum": -180, "maximum": 180}
+        }
+      },
+      "species": {
+        "type": "array",
+        "items": {"type": "string", "enum": ["moose", "deer", "bear", "wild_turkey", "elk"]}
+      },
+      "time_range": {
+        "type": "string",
+        "enum": ["24h", "72h", "7d"],
+        "default": "24h"
+      },
+      "hotspot_types": {
+        "type": "array",
+        "items": {"$ref": "#/hotspot_types/enum"},
+        "default": ["activity_peak", "feeding_zone", "rut_zone"]
+      },
+      "datetime_start": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "min_score_threshold": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "default": 70
+      },
+      "include_waypoints": {
+        "type": "boolean",
+        "default": false
+      },
+      "user_waypoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "string"},
+            "latitude": {"type": "number"},
+            "longitude": {"type": "number"}
+          }
+        }
+      }
+    }
+  },
+
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "success": {"type": "boolean"},
+      "hotspots": {
+        "type": "array",
+        "items": {"$ref": "#/hotspot_object"}
+      },
+      "statistics": {
+        "type": "object",
+        "properties": {
+          "total_hotspots": {"type": "integer"},
+          "by_type": {"type": "object"},
+          "avg_score": {"type": "number"},
+          "coverage_km2": {"type": "number"}
+        }
+      },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "calculation_time_ms": {"type": "number"},
+          "grid_resolution": {"type": "integer"},
+          "contour_algorithm": {"type": "string"}
+        }
+      }
+    }
+  },
+
+  "hotspot_object": {
+    "type": "object",
+    "required": ["id", "type", "geometry", "score", "style", "metadata"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^HS-[A-Z0-9]{8}$"
+      },
+      "type": {
+        "$ref": "#/hotspot_types/enum"
+      },
+      "geometry": {
+        "type": "object",
+        "properties": {
+          "type": {"const": "Polygon"},
+          "coordinates": {"type": "array"}
+        }
+      },
+      "score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+      },
+      "confidence": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "time_validity": {
+        "type": "object",
+        "properties": {
+          "start": {"type": "string", "format": "date-time"},
+          "end": {"type": "string", "format": "date-time"},
+          "optimal_hours": {"type": "array", "items": {"type": "integer"}}
+        }
+      },
+      "species": {
+        "type": "array",
+        "items": {"type": "string"}
+      },
+      "style": {
+        "type": "object",
+        "properties": {
+          "stroke_color": {"type": "string"},
+          "stroke_width": {"type": "number", "default": 1.5},
+          "fill_opacity": {"const": 0}
+        }
+      },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "source_factor": {"type": "string"},
+          "factor_score": {"type": "number"},
+          "dominant_behavior": {"type": "string"},
+          "generated_at": {"type": "string", "format": "date-time"}
+        }
+      }
+    }
+  }
+}

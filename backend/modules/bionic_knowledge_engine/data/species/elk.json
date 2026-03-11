@@ -1,0 +1,86 @@
+{
+  "species_id": "elk",
+  "scientific_name": "Cervus canadensis",
+  "common_name_fr": "Wapiti",
+  "common_name_en": "Elk",
+  "category": "cervidae",
+  "description_fr": "Grand cervidé réintroduit au Québec, principalement présent dans la réserve faunique La Vérendrye et certaines zones du sud de la province.",
+  "weight_range_kg": {
+    "male_min": 320,
+    "male_max": 500,
+    "female_min": 225,
+    "female_max": 295
+  },
+  "home_range_km2": {
+    "male_summer": 40,
+    "male_winter": 20,
+    "female_summer": 25,
+    "female_winter": 15
+  },
+  "temperature_range": {
+    "optimal_min": -10,
+    "optimal_max": 20,
+    "tolerance_min": -35,
+    "tolerance_max": 30,
+    "activity_threshold": 25
+  },
+  "elevation_range_m": {
+    "min": 100,
+    "max": 2000,
+    "optimal": 500
+  },
+  "activity_patterns": [
+    {"period": "dawn", "activity_level": 0.95, "feeding_probability": 0.85, "movement_probability": 0.8},
+    {"period": "morning", "activity_level": 0.5, "feeding_probability": 0.4, "movement_probability": 0.35},
+    {"period": "midday", "activity_level": 0.25, "feeding_probability": 0.15, "movement_probability": 0.15},
+    {"period": "afternoon", "activity_level": 0.45, "feeding_probability": 0.35, "movement_probability": 0.3},
+    {"period": "dusk", "activity_level": 0.95, "feeding_probability": 0.85, "movement_probability": 0.8},
+    {"period": "night", "activity_level": 0.35, "feeding_probability": 0.25, "movement_probability": 0.2}
+  ],
+  "habitat_preferences": [
+    {"habitat_type": "meadow", "preference_score": 0.95, "notes": "Pâturage principal"},
+    {"habitat_type": "forest_edge", "preference_score": 0.9, "notes": "Transition forêt-prairie"},
+    {"habitat_type": "mixed_forest", "preference_score": 0.75, "notes": "Couvert hivernal"},
+    {"habitat_type": "alpine_meadow", "preference_score": 0.7, "notes": "Zones montagneuses"},
+    {"habitat_type": "riparian", "preference_score": 0.65, "notes": "Zones riveraines"}
+  ],
+  "food_sources": [
+    {"name": "grasses", "name_fr": "Graminées", "category": "graze", "availability_months": [5,6,7,8,9,10], "preference_score": 0.95},
+    {"name": "forbs", "name_fr": "Herbacées", "category": "graze", "availability_months": [5,6,7,8,9], "preference_score": 0.9},
+    {"name": "shrubs", "name_fr": "Arbustes", "category": "browse", "availability_months": [4,5,6,7,8,9,10,11], "preference_score": 0.7},
+    {"name": "bark", "name_fr": "Écorce", "category": "browse", "availability_months": [12,1,2,3], "preference_score": 0.5},
+    {"name": "aspen", "name_fr": "Tremble", "category": "browse", "availability_months": [5,6,7,8,9], "preference_score": 0.8}
+  ],
+  "rut_info": {
+    "peak_start_date": "09-15",
+    "peak_end_date": "10-15",
+    "bugling_intensity_peak": "09-25",
+    "activity_multiplier": 2.0,
+    "vocal_behaviors": ["bugling", "barking", "chuckling"],
+    "calling_effective": true
+  },
+  "hunting_seasons_quebec": [
+    {
+      "period_name": "Saison régulière",
+      "start_month": 10,
+      "start_day": 1,
+      "end_month": 10,
+      "end_day": 31,
+      "weapon_types": ["rifle", "bow"],
+      "zones": ["zone_10", "zone_12"]
+    }
+  ],
+  "behavior_notes": [
+    "Forme des harems pendant le rut (1 mâle dominant + 10-30 femelles)",
+    "Bugling caractéristique audible à plusieurs km",
+    "Grégaire - troupeaux de 10 à plusieurs centaines",
+    "Migration saisonnière entre pâturages d'été et d'hiver",
+    "Mâles perdent leurs bois entre mars et avril",
+    "Moins tolérant au stress thermique que l'orignal"
+  ],
+  "conservation_status": "reintroduced",
+  "population_quebec_estimate": 800,
+  "data_quality_score": 0.75,
+  "last_updated": "2024-02-17",
+  "sources": ["mffp_quebec", "wildlife_society_na", "sepaq"]
+}

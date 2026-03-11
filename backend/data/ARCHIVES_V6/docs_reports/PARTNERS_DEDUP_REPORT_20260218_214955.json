@@ -1,0 +1,5929 @@
+{
+  "generated_at": "2026-02-18T21:49:55.627167+00:00",
+  "statistics": {
+    "total_raw": 1898,
+    "exact_duplicates_removed": 1178,
+    "fuzzy_duplicates_removed": 4,
+    "total_after_dedup": 716
+  },
+  "duplicates_log": [
+    {
+      "type": "exact_url",
+      "partner": "Buck Trophée (Pronature)",
+      "reason": "URL en double: https://www.pronature.ca"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Excalibur Crossbow",
+      "reason": "Nom en double: Excalibur Crossbow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Canada Ammo (CanAm)",
+      "reason": "Nom en double: Canada Ammo (CanAm)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stoeger Canada",
+      "reason": "Nom en double: Stoeger Canada"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Beretta Canada",
+      "reason": "Nom en double: Beretta Canada"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Browning Canada",
+      "reason": "Nom en double: Browning Canada"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold Optics",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Vortex Optics Canada",
+      "reason": "URL en double: https://www.vortexcanada.net"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spypoint",
+      "reason": "Nom en double: Spypoint"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos Hunting",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hornady",
+      "reason": "URL en double: https://www.hornady.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Federal Premium",
+      "reason": "URL en double: https://www.federalpremium.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Nosler",
+      "reason": "URL en double: https://www.nosler.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Remington (Canada)",
+      "reason": "Nom en double: Remington (Canada)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Winchester (Canada)",
+      "reason": "Nom en double: Winchester (Canada)"
+    },
+    {
+      "type": "exact_url",
+      "partner": "King's Camo",
+      "reason": "URL en double: https://www.kingscamo.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Buck Expert",
+      "reason": "Nom en double: Buck Expert"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ProXpédition",
+      "reason": "Nom en double: ProXpédition"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Meunerie Soucy",
+      "reason": "Nom en double: Meunerie Soucy"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Tire-Buck",
+      "reason": "Nom en double: Tire-Buck"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Buck Trophée (Pronature)",
+      "reason": "URL en double: https://www.pronature.ca"
+    },
+    {
+      "type": "exact_url",
+      "partner": "BB2 (Big & J)",
+      "reason": "URL en double: https://www.bigandj.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos (Donkey Juice)",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Evolved Habitats",
+      "reason": "URL en double: https://www.evolved.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Wildlife Research Center",
+      "reason": "Nom en double: Wildlife Research Center"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Under Armour Hunt",
+      "reason": "Nom en double: Under Armour Hunt"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Browning Apparel",
+      "reason": "URL en double: https://www.browning.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "King's Camo",
+      "reason": "URL en double: https://www.kingscamo.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Irish Setter (Boots)",
+      "reason": "URL en double: https://www.irishsetterboots.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LaCrosse Footwear",
+      "reason": "Nom en double: LaCrosse Footwear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Canada Goose",
+      "reason": "Nom en double: Canada Goose"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arc'teryx",
+      "reason": "Nom en double: Arc'teryx"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kodiak Boots",
+      "reason": "Nom en double: Kodiak Boots"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Moose Knuckles",
+      "reason": "Nom en double: Moose Knuckles"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bushline Outdoors",
+      "reason": "Nom en double: Bushline Outdoors"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Beretta Apparel",
+      "reason": "URL en double: https://www.beretta.com/en-ca"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Remington Apparel",
+      "reason": "URL en double: https://www.remington.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Browning",
+      "reason": "URL en double: https://www.browning.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Beretta",
+      "reason": "URL en double: https://www.beretta.com/en-ca"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Winchester",
+      "reason": "URL en double: https://winchester.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Remington",
+      "reason": "URL en double: https://www.remington.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Christensen Arms",
+      "reason": "Nom en double: Christensen Arms"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Federal Premium",
+      "reason": "URL en double: https://www.federalpremium.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hornady",
+      "reason": "URL en double: https://www.hornady.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Nosler",
+      "reason": "URL en double: https://www.nosler.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Winchester Ammo",
+      "reason": "URL en double: https://winchester.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Remington Ammo",
+      "reason": "URL en double: https://www.remington.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Ravin Crossbows",
+      "reason": "Nom en double: Ravin Crossbows"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TenPoint Crossbows",
+      "reason": "Nom en double: TenPoint Crossbows"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Excalibur Crossbow",
+      "reason": "Nom en double: Excalibur Crossbow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bear Archery",
+      "reason": "Nom en double: Bear Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hoyt Archery",
+      "reason": "Nom en double: Hoyt Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mathews Archery",
+      "reason": "Nom en double: Mathews Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Easton Archery",
+      "reason": "Nom en double: Easton Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carbon Express",
+      "reason": "Nom en double: Carbon Express"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stoeger Canada",
+      "reason": "Nom en double: Stoeger Canada"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Excalibur Crossbow",
+      "reason": "Nom en double: Excalibur Crossbow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TradeEx Canada",
+      "reason": "Nom en double: TradeEx Canada"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Al Flaherty’s (Wholesale)",
+      "reason": "URL en double: https://www.alflahertys.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Ellwood Epps (Wholesale)",
+      "reason": "URL en double: https://www.ellwoodepps.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Italian Sporting Goods",
+      "reason": "Nom en double: Italian Sporting Goods"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Canada Ammo (CanAm)",
+      "reason": "Nom en double: Canada Ammo (CanAm)"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Latulippe (Wholesale)",
+      "reason": "URL en double: https://www.latulippe.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SAIL (Wholesale)",
+      "reason": "URL en double: https://www.sail.ca"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Pronature (Wholesale)",
+      "reason": "URL en double: https://www.pronature.ca"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GoHunt Canada (via partenaires)",
+      "reason": "URL en double: https://www.gohunt.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Canada (Outdoor)",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Vortex Canada",
+      "reason": "URL en double: https://www.vortexcanada.net"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Bushnell Canada",
+      "reason": "URL en double: https://www.bushnell.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold Canada (via Korth)",
+      "reason": "URL en double: https://www.korthgroup.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spypoint",
+      "reason": "Nom en double: Spypoint"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Wildlife Research Center (CA)",
+      "reason": "URL en double: https://www.wildlife.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Code Blue (CA)",
+      "reason": "URL en double: https://www.codebluescents.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Big & J (CA)",
+      "reason": "URL en double: https://www.bigandj.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Antler King (CA)",
+      "reason": "URL en double: https://antlerking.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Redmond Hunt (CA)",
+      "reason": "URL en double: https://redmondhunt.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Outdoor Edge",
+      "reason": "URL en double: https://www.outdooredge.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos (Calls)",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Illusion Systems",
+      "reason": "Nom en double: Illusion Systems"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Precision",
+      "reason": "Nom en double: Spartan Precision"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Allen Company",
+      "reason": "URL en double: https://byallen.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ALPS OutdoorZ",
+      "reason": "Nom en double: ALPS OutdoorZ"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Badlands Gear",
+      "reason": "Nom en double: Badlands Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Spypoint Accessories",
+      "reason": "URL en double: https://www.spypoint.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Outdoor",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "OnX Hunt Gear",
+      "reason": "URL en double: https://www.onxmaps.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GoHunt Gear",
+      "reason": "URL en double: https://www.gohunt.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Gerber Vital",
+      "reason": "URL en double: https://www.gerbergear.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Wildgame Innovations Gear",
+      "reason": "URL en double: https://www.wildgameinnovations.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Outdoor",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Alpha/TT Series",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Xero",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spypoint",
+      "reason": "Nom en double: Spypoint"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Bushnell Trail Cameras",
+      "reason": "URL en double: https://www.bushnell.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Wildgame Innovations Cameras",
+      "reason": "URL en double: https://www.wildgameinnovations.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Exodus Outdoor Gear",
+      "reason": "URL en double: https://exodusoutdoorgear.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SPYPOINT LINK Series",
+      "reason": "URL en double: https://www.spypoint.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "OnX Hunt",
+      "reason": "URL en double: https://www.onxmaps.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GoHunt Maps",
+      "reason": "URL en double: https://www.gohunt.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Forge",
+      "reason": "Nom en double: Spartan Forge"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold RX Series",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "InReach (Garmin)",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Black Diamond Lighting",
+      "reason": "URL en double: https://www.blackdiamondequipment.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Petzl Lighting",
+      "reason": "URL en double: https://www.petzl.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Fenix/Instinct",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MB Traps (Minnesota Brand)",
+      "reason": "URL en double: https://www.minntrapprod.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Canada Goose Traps (Belisle)",
+      "reason": "URL en double: https://www.belisletraps.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Tim Caven Lures",
+      "reason": "URL en double: https://www.minntrapprod.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "MSR (Mountain Safety Research)",
+      "reason": "Nom en double: MSR (Mountain Safety Research)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Jetboil",
+      "reason": "Nom en double: Jetboil"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stanley",
+      "reason": "Nom en double: Stanley"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Yeti",
+      "reason": "Nom en double: Yeti"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Igloo",
+      "reason": "Nom en double: Igloo"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hydro Flask",
+      "reason": "Nom en double: Hydro Flask"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Outdoor",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Suunto",
+      "reason": "Nom en double: Suunto"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Black Diamond",
+      "reason": "Nom en double: Black Diamond"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Petzl",
+      "reason": "Nom en double: Petzl"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Anker Power Outdoors",
+      "reason": "Nom en double: Anker Power Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Outdoor Research",
+      "reason": "Nom en double: Outdoor Research"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arc'teryx",
+      "reason": "Nom en double: Arc'teryx"
+    },
+    {
+      "type": "exact_url",
+      "partner": "The North Face",
+      "reason": "URL en double: https://www.thenorthface.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Patagonia",
+      "reason": "URL en double: https://www.patagonia.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Columbia",
+      "reason": "URL en double: https://www.columbiasportswear.ca"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leatherman",
+      "reason": "Nom en double: Leatherman"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gerber Gear",
+      "reason": "Nom en double: Gerber Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cold Steel",
+      "reason": "Nom en double: Cold Steel"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Tuff Gear",
+      "reason": "Nom en double: Work Tuff Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Apache Tracks (Can-Am)",
+      "reason": "URL en double: https://can-am.brp.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kimpex",
+      "reason": "Nom en double: Kimpex"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kolpin",
+      "reason": "URL en double: https://www.kolpin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Alpha/TT Series",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Sport PRO",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Tri-Tronics (Garmin)",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Carhartt Pet",
+      "reason": "URL en double: https://www.carhartt.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Irish Setter Dog Gear",
+      "reason": "URL en double: https://www.irishsetterboots.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Banded Dog Gear",
+      "reason": "URL en double: https://banded.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Drake Waterfowl Dog Gear",
+      "reason": "URL en double: https://www.drakewaterfowl.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Vortex Optics",
+      "reason": "URL en double: https://www.vortexoptics.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bushnell",
+      "reason": "Nom en double: Bushnell"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sig Sauer Electro-Optics",
+      "reason": "URL en double: https://www.sigsauer.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "ATN Corp",
+      "reason": "URL en double: https://www.atncorp.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Pulsar",
+      "reason": "URL en double: https://www.pulsar-nv.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "FLIR Outdoor",
+      "reason": "Nom en double: FLIR Outdoor"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carson Optics",
+      "reason": "Nom en double: Carson Optics"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Banded",
+      "reason": "Nom en double: Banded"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GHG (Greenhead Gear)",
+      "reason": "URL en double: https://www.averyoutdoors.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Drake Waterfowl",
+      "reason": "Nom en double: Drake Waterfowl"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Browning Waterfowl",
+      "reason": "URL en double: https://www.browning.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sitka Waterfowl",
+      "reason": "URL en double: https://www.sitkagear.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kuiu Waterfowl",
+      "reason": "URL en double: https://www.kuiu.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "MomArsh",
+      "reason": "Nom en double: MomArsh"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Buck Expert",
+      "reason": "Nom en double: Buck Expert"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ProXpédition",
+      "reason": "Nom en double: ProXpédition"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Meunerie Soucy",
+      "reason": "Nom en double: Meunerie Soucy"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Tire-Buck",
+      "reason": "Nom en double: Tire-Buck"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Code Blue",
+      "reason": "Nom en double: Code Blue"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Tinks",
+      "reason": "Nom en double: Tinks"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Conquest Scents",
+      "reason": "Nom en double: Conquest Scents"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Wildlife Research Center",
+      "reason": "Nom en double: Wildlife Research Center"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Northwoods Bear Products",
+      "reason": "Nom en double: Northwoods Bear Products"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big & J",
+      "reason": "Nom en double: Big & J"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Antler King",
+      "reason": "Nom en double: Antler King"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Whitetail Institute",
+      "reason": "Nom en double: Whitetail Institute"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Redmond Hunt",
+      "reason": "Nom en double: Redmond Hunt"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Black Widow Deer Lures",
+      "reason": "Nom en double: Black Widow Deer Lures"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Smokey’s Deer Lures",
+      "reason": "Nom en double: Smokey’s Deer Lures"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Moose Madness",
+      "reason": "Nom en double: Moose Madness"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Backwoods Attraction",
+      "reason": "Nom en double: Backwoods Attraction"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Evolved Habitats",
+      "reason": "URL en double: https://www.evolved.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Boarmasters",
+      "reason": "Nom en double: Boarmasters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "MDT (Modular Driven Technologies)",
+      "reason": "Nom en double: MDT (Modular Driven Technologies)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TriggerTech",
+      "reason": "Nom en double: TriggerTech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Christensen Arms",
+      "reason": "Nom en double: Christensen Arms"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bergara",
+      "reason": "Nom en double: Bergara"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kahles",
+      "reason": "Nom en double: Kahles"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold Mark Series",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Vortex Razor HD",
+      "reason": "URL en double: https://www.vortexoptics.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Precision",
+      "reason": "Nom en double: Spartan Precision"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Lapua",
+      "reason": "Nom en double: Lapua"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Cabela’s Meat Processing",
+      "reason": "URL en double: https://www.cabelas.ca"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Bass Pro Meat Processing",
+      "reason": "URL en double: https://www.basspro.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Outdoor Edge",
+      "reason": "URL en double: https://www.outdooredge.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Havalon",
+      "reason": "URL en double: https://www.havalon.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Gerber Vital",
+      "reason": "URL en double: https://www.gerbergear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Knives of Alaska",
+      "reason": "Nom en double: Knives of Alaska"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Sharp",
+      "reason": "Nom en double: Work Sharp"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Caribou Gear",
+      "reason": "Nom en double: Caribou Gear"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Allen Company",
+      "reason": "URL en double: https://byallen.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Game Winner",
+      "reason": "Nom en double: Game Winner"
+    },
+    {
+      "type": "exact_name",
+      "partner": "FieldTorq",
+      "reason": "Nom en double: FieldTorq"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Tuff Gear",
+      "reason": "Nom en double: Work Tuff Gear"
+    },
+    {
+      "type": "exact_url",
+      "partner": "LEM MaxVac",
+      "reason": "URL en double: https://www.lemproducts.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Weston Pro Series",
+      "reason": "URL en double: https://westonbrands.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos Hunting",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Zink Calls",
+      "reason": "Nom en double: Zink Calls"
+    },
+    {
+      "type": "exact_name",
+      "partner": "HS Strut (Hunter Specialties)",
+      "reason": "Nom en double: HS Strut (Hunter Specialties)"
+    },
+    {
+      "type": "exact_url",
+      "partner": "FOXPRO Turkey",
+      "reason": "URL en double: https://www.gofoxpro.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Avian-X Turkey",
+      "reason": "URL en double: https://www.avian-x.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Quaker Boy",
+      "reason": "Nom en double: Quaker Boy"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Nomad Turkey",
+      "reason": "URL en double: https://nomadoutdoor.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Longbeard XR (Winchester)",
+      "reason": "URL en double: https://winchester.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hevi-Shot Turkey",
+      "reason": "URL en double: https://www.hevishot.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Browning Turkey",
+      "reason": "URL en double: https://www.browning.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Patternmaster",
+      "reason": "Nom en double: Patternmaster"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "First Lite",
+      "reason": "Nom en double: First Lite"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Realtree",
+      "reason": "Nom en double: Realtree"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mossy Oak",
+      "reason": "Nom en double: Mossy Oak"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TrueTimber",
+      "reason": "Nom en double: TrueTimber"
+    },
+    {
+      "type": "exact_url",
+      "partner": "King’s Camo",
+      "reason": "URL en double: https://www.kingscamo.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bushline Outdoors",
+      "reason": "Nom en double: Bushline Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Under Armour Hunt",
+      "reason": "Nom en double: Under Armour Hunt"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Browning Apparel",
+      "reason": "URL en double: https://www.browning.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nomad Outdoor",
+      "reason": "Nom en double: Nomad Outdoor"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Drake Waterfowl",
+      "reason": "Nom en double: Drake Waterfowl"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Banded",
+      "reason": "Nom en double: Banded"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Helly Hansen",
+      "reason": "Nom en double: Helly Hansen"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Arc’teryx",
+      "reason": "URL en double: https://arcteryx.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Patagonia",
+      "reason": "URL en double: https://www.patagonia.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "The North Face",
+      "reason": "URL en double: https://www.thenorthface.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Columbia PHG",
+      "reason": "URL en double: https://www.columbiasportswear.ca"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carinthia",
+      "reason": "Nom en double: Carinthia"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Snugpak",
+      "reason": "Nom en double: Snugpak"
+    },
+    {
+      "type": "exact_name",
+      "partner": "5.11 Tactical",
+      "reason": "Nom en double: 5.11 Tactical"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Condor Outdoor",
+      "reason": "Nom en double: Condor Outdoor"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Buck Expert",
+      "reason": "Nom en double: Buck Expert"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ProXpédition",
+      "reason": "Nom en double: ProXpédition"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big & J",
+      "reason": "Nom en double: Big & J"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Browning",
+      "reason": "URL en double: https://www.browning.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Savage Arms",
+      "reason": "Nom en double: Savage Arms"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Vortex Optics",
+      "reason": "URL en double: https://www.vortexoptics.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Swarovski Optik",
+      "reason": "Nom en double: Swarovski Optik"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gerber Gear",
+      "reason": "Nom en double: Gerber Gear"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Outdoor Edge",
+      "reason": "URL en double: https://www.outdooredge.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ALPS OutdoorZ",
+      "reason": "Nom en double: ALPS OutdoorZ"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "First Lite",
+      "reason": "Nom en double: First Lite"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Polaris",
+      "reason": "Nom en double: Polaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Can-Am (BRP)",
+      "reason": "Nom en double: Can-Am (BRP)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Rambo Bikes",
+      "reason": "Nom en double: Rambo Bikes"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Alpha",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SportDOG",
+      "reason": "URL en double: https://www.sportdog.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Banded",
+      "reason": "Nom en double: Banded"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Avian-X",
+      "reason": "Nom en double: Avian-X"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "WoodHaven",
+      "reason": "URL en double: https://woodhavencustomcalls.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Polaris Snow",
+      "reason": "URL en double: https://www.polaris.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MDT",
+      "reason": "URL en double: https://mdttac.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Nightforce",
+      "reason": "URL en double: https://www.nightforceoptics.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Weston Brands",
+      "reason": "Nom en double: Weston Brands"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LEM Products",
+      "reason": "Nom en double: LEM Products"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Pourvoiries Québec",
+      "reason": "URL en double: https://www.pourvoiries.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Newfoundland & Labrador Outfitters",
+      "reason": "URL en double: https://nloa.ca"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Canadian Hunting Outfitters Hub",
+      "reason": "URL en double: https://huntingguidesandoutfitters.ca"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Traditions Firearms",
+      "reason": "Nom en double: Traditions Firearms"
+    },
+    {
+      "type": "exact_url",
+      "partner": "CVA (Connecticut Valley Arms)",
+      "reason": "URL en double: https://cva.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Pedersoli",
+      "reason": "Nom en double: Pedersoli"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Lyman Black Powder",
+      "reason": "URL en double: https://www.lymanproducts.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Thompson/Center (T/C)",
+      "reason": "Nom en double: Thompson/Center (T/C)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carinthia",
+      "reason": "Nom en double: Carinthia"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Snugpak",
+      "reason": "Nom en double: Snugpak"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nemo Equipment",
+      "reason": "Nom en double: Nemo Equipment"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big Agnes",
+      "reason": "Nom en double: Big Agnes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Helinox",
+      "reason": "Nom en double: Helinox"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Anker Power Outdoors",
+      "reason": "Nom en double: Anker Power Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Black Diamond",
+      "reason": "Nom en double: Black Diamond"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Petzl",
+      "reason": "Nom en double: Petzl"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Suunto",
+      "reason": "Nom en double: Suunto"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Outdoor",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Fenix/Instinct",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "OnX Hunt",
+      "reason": "URL en double: https://www.onxmaps.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GoHunt Maps",
+      "reason": "URL en double: https://www.gohunt.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "BaseMap",
+      "reason": "Nom en double: BaseMap"
+    },
+    {
+      "type": "exact_name",
+      "partner": "HuntStand",
+      "reason": "Nom en double: HuntStand"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Forge",
+      "reason": "Nom en double: Spartan Forge"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gaia GPS",
+      "reason": "Nom en double: Gaia GPS"
+    },
+    {
+      "type": "exact_name",
+      "partner": "CalTopo",
+      "reason": "Nom en double: CalTopo"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Windy API",
+      "reason": "Nom en double: Windy API"
+    },
+    {
+      "type": "exact_name",
+      "partner": "OpenWeather API",
+      "reason": "Nom en double: OpenWeather API"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Weather Underground API",
+      "reason": "Nom en double: Weather Underground API"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Iridium GO",
+      "reason": "Nom en double: Iridium GO"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_url",
+      "partner": "InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Adventure Medical Kits",
+      "reason": "Nom en double: Adventure Medical Kits"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SOL (Survive Outdoors Longer)",
+      "reason": "URL en double: https://www.surviveoutdoorslonger.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_name",
+      "partner": "MSA Safety",
+      "reason": "Nom en double: MSA Safety"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Game Sled",
+      "reason": "Nom en double: Game Sled"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Otter Outdoors",
+      "reason": "Nom en double: Otter Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Shappell",
+      "reason": "Nom en double: Shappell"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Marathon Trailers",
+      "reason": "Nom en double: Marathon Trailers"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Karavan Trailers",
+      "reason": "Nom en double: Karavan Trailers"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Aluma Trailers",
+      "reason": "Nom en double: Aluma Trailers"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Warn Industries",
+      "reason": "Nom en double: Warn Industries"
+    },
+    {
+      "type": "exact_name",
+      "partner": "KFI Products",
+      "reason": "Nom en double: KFI Products"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kolpin Outdoors",
+      "reason": "Nom en double: Kolpin Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SuperATV",
+      "reason": "Nom en double: SuperATV"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Midland Radios",
+      "reason": "Nom en double: Midland Radios"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Motorola Talkabout",
+      "reason": "Nom en double: Motorola Talkabout"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Iridium GO",
+      "reason": "Nom en double: Iridium GO"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Anker Power Outdoors",
+      "reason": "Nom en double: Anker Power Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Beavertail Boats",
+      "reason": "URL en double: https://www.beavertail.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MomArsh Boats",
+      "reason": "URL en double: https://momarsh.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Swarovski Optik",
+      "reason": "Nom en double: Swarovski Optik"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Zeiss Sports Optics",
+      "reason": "Nom en double: Zeiss Sports Optics"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leica Sport Optics",
+      "reason": "Nom en double: Leica Sport Optics"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Blaser",
+      "reason": "Nom en double: Blaser"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Accuracy International",
+      "reason": "Nom en double: Accuracy International"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Proof Research",
+      "reason": "Nom en double: Proof Research"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Christensen Arms",
+      "reason": "Nom en double: Christensen Arms"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arc’teryx LEAF",
+      "reason": "Nom en double: Arc’teryx LEAF"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carinthia",
+      "reason": "Nom en double: Carinthia"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nightforce Optics",
+      "reason": "Nom en double: Nightforce Optics"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Zero Compromise Optics",
+      "reason": "Nom en double: Zero Compromise Optics"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Precision",
+      "reason": "Nom en double: Spartan Precision"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MDT",
+      "reason": "URL en double: https://mdttac.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TriggerTech",
+      "reason": "Nom en double: TriggerTech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "PGW Defence",
+      "reason": "Nom en double: PGW Defence"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Xero",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "InfiRay Outdoor",
+      "reason": "Nom en double: InfiRay Outdoor"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ProXpédition",
+      "reason": "Nom en double: ProXpédition"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Buck Expert",
+      "reason": "Nom en double: Buck Expert"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Meunerie Soucy",
+      "reason": "Nom en double: Meunerie Soucy"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Buck Trophée (Pronature)",
+      "reason": "URL en double: https://www.pronature.ca"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Tire-Buck",
+      "reason": "Nom en double: Tire-Buck"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Arc’teryx",
+      "reason": "URL en double: https://arcteryx.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MDT",
+      "reason": "URL en double: https://mdttac.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TriggerTech",
+      "reason": "Nom en double: TriggerTech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "PGW Defence",
+      "reason": "Nom en double: PGW Defence"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Excalibur Crossbow",
+      "reason": "Nom en double: Excalibur Crossbow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spypoint",
+      "reason": "Nom en double: Spypoint"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kimpex",
+      "reason": "Nom en double: Kimpex"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Can-Am (BRP)",
+      "reason": "Nom en double: Can-Am (BRP)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Ski-Doo (BRP)",
+      "reason": "Nom en double: Ski-Doo (BRP)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Princecraft",
+      "reason": "Nom en double: Princecraft"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Esquif Canoes",
+      "reason": "Nom en double: Esquif Canoes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Marathon Trailers",
+      "reason": "Nom en double: Marathon Trailers"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Game Sled",
+      "reason": "Nom en double: Game Sled"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Distribution Plein Air",
+      "reason": "Nom en double: Distribution Plein Air"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Latulippe",
+      "reason": "Nom en double: Latulippe"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SAIL",
+      "reason": "Nom en double: SAIL"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Pronature",
+      "reason": "Nom en double: Pronature"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "First Lite",
+      "reason": "Nom en double: First Lite"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ProXpédition",
+      "reason": "Nom en double: ProXpédition"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Buck Expert",
+      "reason": "Nom en double: Buck Expert"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spypoint",
+      "reason": "Nom en double: Spypoint"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Outdoor",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MDT",
+      "reason": "URL en double: https://mdttac.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TriggerTech",
+      "reason": "Nom en double: TriggerTech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Excalibur Crossbow",
+      "reason": "Nom en double: Excalibur Crossbow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Can-Am (BRP)",
+      "reason": "Nom en double: Can-Am (BRP)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Ski-Doo (BRP)",
+      "reason": "Nom en double: Ski-Doo (BRP)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Polaris",
+      "reason": "Nom en double: Polaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Rambo Bikes",
+      "reason": "Nom en double: Rambo Bikes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Avian-X",
+      "reason": "Nom en double: Avian-X"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Banded",
+      "reason": "Nom en double: Banded"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos Hunting",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Vortex Optics",
+      "reason": "URL en double: https://www.vortexoptics.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Weston Brands",
+      "reason": "Nom en double: Weston Brands"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LEM Products",
+      "reason": "Nom en double: LEM Products"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Latulippe",
+      "reason": "Nom en double: Latulippe"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SAIL",
+      "reason": "Nom en double: SAIL"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Pronature",
+      "reason": "Nom en double: Pronature"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Company/Media",
+      "reason": "URL en double: Website"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MeatEater Media",
+      "reason": "URL en double: https://www.themeateater.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "The Hunting Public",
+      "reason": "Nom en double: The Hunting Public"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Seek One",
+      "reason": "Nom en double: Seek One"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Remi Warren Podcast",
+      "reason": "URL en double: https://www.remiwarren.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Canada Hunts",
+      "reason": "Nom en double: Canada Hunts"
+    },
+    {
+      "type": "exact_url",
+      "partner": "HuntStand Media",
+      "reason": "URL en double: https://www.huntstand.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GoHunt Insider",
+      "reason": "URL en double: https://www.gohunt.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "East Meets West Hunt",
+      "reason": "URL en double: https://www.eastmeetswesthunt.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "FOXPRO",
+      "reason": "Nom en double: FOXPRO"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos (Predator)",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Johnny Stewart",
+      "reason": "URL en double: https://www.hunterspec.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Mojo Outdoors (Predator)",
+      "reason": "URL en double: https://mojooutdoors.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Red O’Hearn Lures",
+      "reason": "Nom en double: Red O’Hearn Lures"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Milligan Brand",
+      "reason": "Nom en double: Milligan Brand"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kaatz Bros",
+      "reason": "URL en double: https://www.kaatzbros.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bridger Traps",
+      "reason": "Nom en double: Bridger Traps"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MB Traps",
+      "reason": "URL en double: https://www.minntrapprod.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Belisle",
+      "reason": "URL en double: https://www.belisletraps.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "No-BS Traps",
+      "reason": "Nom en double: No-BS Traps"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cadex Defence",
+      "reason": "Nom en double: Cadex Defence"
+    },
+    {
+      "type": "exact_name",
+      "partner": "PGW Defence",
+      "reason": "Nom en double: PGW Defence"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Accuracy International",
+      "reason": "Nom en double: Accuracy International"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Magpul",
+      "reason": "Nom en double: Magpul"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Trijicon",
+      "reason": "Nom en double: Trijicon"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold Mark Series",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Nightforce ATACR",
+      "reason": "URL en double: https://www.nightforceoptics.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MDT",
+      "reason": "URL en double: https://mdttac.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TriggerTech",
+      "reason": "Nom en double: TriggerTech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "5.11 Tactical",
+      "reason": "Nom en double: 5.11 Tactical"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Condor Outdoor",
+      "reason": "Nom en double: Condor Outdoor"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arc’teryx LEAF",
+      "reason": "Nom en double: Arc’teryx LEAF"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carinthia",
+      "reason": "Nom en double: Carinthia"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Snugpak",
+      "reason": "Nom en double: Snugpak"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nemo Equipment",
+      "reason": "Nom en double: Nemo Equipment"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big Agnes",
+      "reason": "Nom en double: Big Agnes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Helinox",
+      "reason": "Nom en double: Helinox"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Anker Power Outdoors",
+      "reason": "Nom en double: Anker Power Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Tuff Gear",
+      "reason": "Nom en double: Work Tuff Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cold Steel",
+      "reason": "Nom en double: Cold Steel"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leatherman",
+      "reason": "Nom en double: Leatherman"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Adventure Medical Kits",
+      "reason": "Nom en double: Adventure Medical Kits"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SOL (Survive Outdoors Longer)",
+      "reason": "URL en double: https://www.surviveoutdoorslonger.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Survive Outdoors Longer (SOL)",
+      "reason": "Nom en double: Survive Outdoors Longer (SOL)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Adventure Medical Kits",
+      "reason": "Nom en double: Adventure Medical Kits"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Katadyn",
+      "reason": "Nom en double: Katadyn"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LifeStraw",
+      "reason": "Nom en double: LifeStraw"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Anker Power Outdoors",
+      "reason": "Nom en double: Anker Power Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "EcoFlow",
+      "reason": "Nom en double: EcoFlow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Jackery",
+      "reason": "Nom en double: Jackery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gränsfors Bruk",
+      "reason": "Nom en double: Gränsfors Bruk"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hultafors",
+      "reason": "Nom en double: Hultafors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cold Steel",
+      "reason": "Nom en double: Cold Steel"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Tuff Gear",
+      "reason": "Nom en double: Work Tuff Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leatherman",
+      "reason": "Nom en double: Leatherman"
+    },
+    {
+      "type": "exact_name",
+      "partner": "UST (Ultimate Survival Technologies)",
+      "reason": "Nom en double: UST (Ultimate Survival Technologies)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arctic Oven",
+      "reason": "Nom en double: Arctic Oven"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Seek Outside",
+      "reason": "Nom en double: Seek Outside"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Marine",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Old Town Canoe",
+      "reason": "Nom en double: Old Town Canoe"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Esquif Canoes",
+      "reason": "Nom en double: Esquif Canoes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Pelican International",
+      "reason": "Nom en double: Pelican International"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Tracker Boats",
+      "reason": "Nom en double: Tracker Boats"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Princecraft",
+      "reason": "Nom en double: Princecraft"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bridger Traps",
+      "reason": "Nom en double: Bridger Traps"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MB Traps (Minnesota Brand)",
+      "reason": "URL en double: https://www.minntrapprod.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Duke Traps",
+      "reason": "Nom en double: Duke Traps"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Belisle",
+      "reason": "URL en double: https://www.belisletraps.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "No-BS Traps",
+      "reason": "Nom en double: No-BS Traps"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Alaska Trap Company",
+      "reason": "Nom en double: Alaska Trap Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kaatz Bros",
+      "reason": "URL en double: https://www.kaatzbros.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Lenon Lures",
+      "reason": "Nom en double: Lenon Lures"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Milligan Brand",
+      "reason": "Nom en double: Milligan Brand"
+    },
+    {
+      "type": "exact_name",
+      "partner": "F&T Fur Harvester’s",
+      "reason": "Nom en double: F&T Fur Harvester’s"
+    },
+    {
+      "type": "exact_name",
+      "partner": "PCS Outdoors",
+      "reason": "Nom en double: PCS Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hoosier Trapper Supply",
+      "reason": "Nom en double: Hoosier Trapper Supply"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Snare Shop",
+      "reason": "Nom en double: Snare Shop"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Fur Harvesters Auction",
+      "reason": "Nom en double: Fur Harvesters Auction"
+    },
+    {
+      "type": "exact_url",
+      "partner": "FTGQ",
+      "reason": "URL en double: https://www.ftgq.qc.ca"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "First Lite",
+      "reason": "Nom en double: First Lite"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Outdoor",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Xero",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Vortex Optics",
+      "reason": "URL en double: https://www.vortexoptics.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Nightforce",
+      "reason": "URL en double: https://www.nightforceoptics.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Christensen Arms",
+      "reason": "Nom en double: Christensen Arms"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Weatherby",
+      "reason": "Nom en double: Weatherby"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Bergara USA",
+      "reason": "URL en double: https://www.bergarausa.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Proof Research",
+      "reason": "Nom en double: Proof Research"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Spartan Precision USA",
+      "reason": "URL en double: https://javelinbipod.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ALPS OutdoorZ",
+      "reason": "Nom en double: ALPS OutdoorZ"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos Hunting",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "FOXPRO",
+      "reason": "Nom en double: FOXPRO"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Avian-X",
+      "reason": "Nom en double: Avian-X"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Banded",
+      "reason": "Nom en double: Banded"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mojo Outdoors",
+      "reason": "Nom en double: Mojo Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Drake Waterfowl",
+      "reason": "Nom en double: Drake Waterfowl"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Rambo Bikes",
+      "reason": "Nom en double: Rambo Bikes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bakcou",
+      "reason": "Nom en double: Bakcou"
+    },
+    {
+      "type": "exact_name",
+      "partner": "QuietKat",
+      "reason": "Nom en double: QuietKat"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Polaris",
+      "reason": "Nom en double: Polaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arctic Cat",
+      "reason": "Nom en double: Arctic Cat"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Tracker Off Road",
+      "reason": "Nom en double: Tracker Off Road"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Old Town Canoe",
+      "reason": "Nom en double: Old Town Canoe"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Humminbird",
+      "reason": "Nom en double: Humminbird"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Lowrance",
+      "reason": "Nom en double: Lowrance"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Simrad",
+      "reason": "Nom en double: Simrad"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MeatEater",
+      "reason": "URL en double: https://www.themeateater.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "The Hunting Public",
+      "reason": "Nom en double: The Hunting Public"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Seek One",
+      "reason": "Nom en double: Seek One"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Remi Warren",
+      "reason": "Nom en double: Remi Warren"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hushin",
+      "reason": "Nom en double: Hushin"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Eastmans’ Hunting",
+      "reason": "URL en double: https://www.eastmans.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GoHunt",
+      "reason": "URL en double: https://www.gohunt.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "HuntStand",
+      "reason": "Nom en double: HuntStand"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nomad Outdoor",
+      "reason": "Nom en double: Nomad Outdoor"
+    },
+    {
+      "type": "exact_url",
+      "partner": "King’s Camo",
+      "reason": "URL en double: https://www.kingscamo.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TrueTimber",
+      "reason": "Nom en double: TrueTimber"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mossy Oak",
+      "reason": "Nom en double: Mossy Oak"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Realtree",
+      "reason": "Nom en double: Realtree"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Drury Outdoors",
+      "reason": "Nom en double: Drury Outdoors"
+    },
+    {
+      "type": "exact_url",
+      "partner": "WoodHaven Calls",
+      "reason": "URL en double: https://woodhavencustomcalls.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Zink Calls",
+      "reason": "Nom en double: Zink Calls"
+    },
+    {
+      "type": "exact_name",
+      "partner": "FlexTone",
+      "reason": "Nom en double: FlexTone"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hevi-Shot",
+      "reason": "Nom en double: Hevi-Shot"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kent Cartridge",
+      "reason": "Nom en double: Kent Cartridge"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Boss Shotshells",
+      "reason": "Nom en double: Boss Shotshells"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Patternmaster",
+      "reason": "Nom en double: Patternmaster"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Moose Utility Division",
+      "reason": "Nom en double: Moose Utility Division"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SuperATV",
+      "reason": "Nom en double: SuperATV"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kolpin Outdoors",
+      "reason": "Nom en double: Kolpin Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Great Day Inc.",
+      "reason": "Nom en double: Great Day Inc."
+    },
+    {
+      "type": "exact_name",
+      "partner": "Otter Outdoors",
+      "reason": "Nom en double: Otter Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Shappell",
+      "reason": "Nom en double: Shappell"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big Agnes",
+      "reason": "Nom en double: Big Agnes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nemo Equipment",
+      "reason": "Nom en double: Nemo Equipment"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Jetboil",
+      "reason": "Nom en double: Jetboil"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stanley",
+      "reason": "Nom en double: Stanley"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Yeti",
+      "reason": "Nom en double: Yeti"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hydro Flask",
+      "reason": "Nom en double: Hydro Flask"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Sharp",
+      "reason": "Nom en double: Work Sharp"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gerber Gear",
+      "reason": "Nom en double: Gerber Gear"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Outdoor Edge",
+      "reason": "URL en double: https://www.outdooredge.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Havalon",
+      "reason": "URL en double: https://www.havalon.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Knives of Alaska",
+      "reason": "Nom en double: Knives of Alaska"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leatherman",
+      "reason": "Nom en double: Leatherman"
+    },
+    {
+      "type": "exact_url",
+      "partner": "UST Gear",
+      "reason": "URL en double: https://ustgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Adventure Medical Kits",
+      "reason": "Nom en double: Adventure Medical Kits"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SOL",
+      "reason": "URL en double: https://www.surviveoutdoorslonger.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Anker Outdoors",
+      "reason": "URL en double: https://www.anker.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Jackery",
+      "reason": "Nom en double: Jackery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "EcoFlow",
+      "reason": "Nom en double: EcoFlow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Black Diamond",
+      "reason": "Nom en double: Black Diamond"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Petzl USA",
+      "reason": "URL en double: https://www.petzl.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Suunto USA",
+      "reason": "URL en double: https://www.suunto.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "BaseMap",
+      "reason": "Nom en double: BaseMap"
+    },
+    {
+      "type": "exact_name",
+      "partner": "HuntStand",
+      "reason": "Nom en double: HuntStand"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Forge",
+      "reason": "Nom en double: Spartan Forge"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gaia GPS",
+      "reason": "Nom en double: Gaia GPS"
+    },
+    {
+      "type": "exact_name",
+      "partner": "CalTopo",
+      "reason": "Nom en double: CalTopo"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Windy",
+      "reason": "URL en double: https://www.windy.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "OpenWeather",
+      "reason": "URL en double: https://openweathermap.org"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Weather Underground",
+      "reason": "URL en double: https://www.wunderground.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Motorola Talkabout",
+      "reason": "Nom en double: Motorola Talkabout"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Midland Radios",
+      "reason": "Nom en double: Midland Radios"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Schrade",
+      "reason": "URL en double: https://www.schrade.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cold Steel",
+      "reason": "Nom en double: Cold Steel"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Work Tuff Gear USA",
+      "reason": "URL en double: https://worktuffgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carver Calls",
+      "reason": "Nom en double: Carver Calls"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ICOtec",
+      "reason": "Nom en double: ICOtec"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Lucky Duck Predator",
+      "reason": "Nom en double: Lucky Duck Predator"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Johnny Stewart",
+      "reason": "URL en double: https://www.hunterspec.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Mojo Predator",
+      "reason": "URL en double: https://mojooutdoors.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "AllPredatorCalls",
+      "reason": "Nom en double: AllPredatorCalls"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bridger Traps",
+      "reason": "Nom en double: Bridger Traps"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MB Traps",
+      "reason": "URL en double: https://www.minntrapprod.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Duke Traps",
+      "reason": "Nom en double: Duke Traps"
+    },
+    {
+      "type": "exact_name",
+      "partner": "No-BS Traps",
+      "reason": "Nom en double: No-BS Traps"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kaatz Bros",
+      "reason": "URL en double: https://www.kaatzbros.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Lenon Lures",
+      "reason": "Nom en double: Lenon Lures"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Milligan Brand",
+      "reason": "Nom en double: Milligan Brand"
+    },
+    {
+      "type": "exact_name",
+      "partner": "F&T Fur Harvester’s",
+      "reason": "Nom en double: F&T Fur Harvester’s"
+    },
+    {
+      "type": "exact_name",
+      "partner": "PCS Outdoors",
+      "reason": "Nom en double: PCS Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hoosier Trapper Supply",
+      "reason": "Nom en double: Hoosier Trapper Supply"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Snare Shop",
+      "reason": "Nom en double: Snare Shop"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Northwoods Bear Products",
+      "reason": "Nom en double: Northwoods Bear Products"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Backwoods Attraction",
+      "reason": "Nom en double: Backwoods Attraction"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Evolved Habitats",
+      "reason": "URL en double: https://www.evolved.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Whitetail Institute",
+      "reason": "Nom en double: Whitetail Institute"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Redmond Hunt USA",
+      "reason": "URL en double: https://redmondhunt.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Black Widow Deer Lures",
+      "reason": "Nom en double: Black Widow Deer Lures"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Smokey’s Deer Lures",
+      "reason": "Nom en double: Smokey’s Deer Lures"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Boarmasters",
+      "reason": "Nom en double: Boarmasters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "FieldTorq",
+      "reason": "Nom en double: FieldTorq"
+    },
+    {
+      "type": "exact_name",
+      "partner": "MEAT! Your Maker",
+      "reason": "Nom en double: MEAT! Your Maker"
+    },
+    {
+      "type": "exact_url",
+      "partner": "LEM Products USA",
+      "reason": "URL en double: https://www.lemproducts.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Weston Brands USA",
+      "reason": "URL en double: https://westonbrands.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "VacMaster USA",
+      "reason": "URL en double: https://www.vacmasterfresh.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Butcher Packer",
+      "reason": "Nom en double: Butcher Packer"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ALPS OutdoorZ",
+      "reason": "Nom en double: ALPS OutdoorZ"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Eberlestock USA",
+      "reason": "URL en double: https://eberlestock.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Mystery Ranch USA",
+      "reason": "URL en double: https://www.mysteryranch.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Caribou Gear USA",
+      "reason": "URL en double: https://www.caribougear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Game Winner",
+      "reason": "Nom en double: Game Winner"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Allen Company USA",
+      "reason": "URL en double: https://byallen.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Real Avid USA",
+      "reason": "URL en double: https://www.realavid.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Tipton USA",
+      "reason": "URL en double: https://www.tiptoncleaning.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hoppe’s USA",
+      "reason": "URL en double: https://www.hoppes.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Otis Technology USA",
+      "reason": "URL en double: https://otistec.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Magpul USA",
+      "reason": "URL en double: https://magpul.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Geissele Automatics",
+      "reason": "Nom en double: Geissele Automatics"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Daniel Defense",
+      "reason": "Nom en double: Daniel Defense"
+    },
+    {
+      "type": "exact_name",
+      "partner": "BCM (Bravo Company)",
+      "reason": "Nom en double: BCM (Bravo Company)"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Aimpoint USA",
+      "reason": "URL en double: https://www.aimpoint.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "EOTech USA",
+      "reason": "URL en double: https://www.eotechinc.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Holosun USA",
+      "reason": "URL en double: https://holosun.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Team Wendy",
+      "reason": "Nom en double: Team Wendy"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Ops-Core",
+      "reason": "Nom en double: Ops-Core"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Condor Outdoor USA",
+      "reason": "URL en double: https://condoroutdoor.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "5.11 Tactical USA",
+      "reason": "URL en double: https://www.511tactical.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Arctic Oven USA",
+      "reason": "URL en double: https://arcticoventents.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Seek Outside USA",
+      "reason": "URL en double: https://seekoutside.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kifaru USA",
+      "reason": "URL en double: https://kifaru.net"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Gränsfors Bruk USA",
+      "reason": "URL en double: https://www.gransforsbruk.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hultafors USA",
+      "reason": "URL en double: https://www.hultafors.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "UST USA",
+      "reason": "URL en double: https://ustgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Princeton Tec",
+      "reason": "Nom en double: Princeton Tec"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Orion Safety",
+      "reason": "Nom en double: Orion Safety"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Counter Assault USA",
+      "reason": "URL en double: https://www.counterassault.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "UDAP USA",
+      "reason": "URL en double: https://www.udap.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SABRE USA",
+      "reason": "URL en double: https://www.sabrered.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Old Town Fishing",
+      "reason": "URL en double: https://oldtowncanoe.johnsonoutdoors.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Field & Stream USA",
+      "reason": "URL en double: https://www.fieldandstream.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Outdoor Life USA",
+      "reason": "URL en double: https://www.outdoorlife.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Petersen’s Hunting USA",
+      "reason": "URL en double: https://www.petersenshunting.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "North American Whitetail USA",
+      "reason": "URL en double: https://www.northamericanwhitetail.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Bowhunter Magazine USA",
+      "reason": "URL en double: https://www.bowhunter.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "East Meets West Hunt",
+      "reason": "URL en double: https://www.eastmeetswesthunt.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "MeatEater Podcast",
+      "reason": "Nom en double: MeatEater Podcast"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Remi Warren Podcast",
+      "reason": "URL en double: https://www.remiwarren.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Seek One Media",
+      "reason": "URL en double: https://www.youtube.com/seekone"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hushin Media",
+      "reason": "URL en double: https://www.youtube.com/hushin"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mountain Project",
+      "reason": "Nom en double: Mountain Project"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Beau Martonik",
+      "reason": "Nom en double: Beau Martonik"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Clay Hayes",
+      "reason": "Nom en double: Clay Hayes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Joe Rogan (Hunting)",
+      "reason": "Nom en double: Joe Rogan (Hunting)"
+    },
+    {
+      "type": "exact_url",
+      "partner": "April Vokey USA",
+      "reason": "URL en double: https://www.aprilvokey.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Jim Shockey USA",
+      "reason": "URL en double: https://jimshockey.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Blaser",
+      "reason": "Nom en double: Blaser"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mauser",
+      "reason": "Nom en double: Mauser"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Steyr Arms",
+      "reason": "Nom en double: Steyr Arms"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Tikka",
+      "reason": "Nom en double: Tikka"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sako",
+      "reason": "Nom en double: Sako"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Anschutz",
+      "reason": "Nom en double: Anschutz"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Beretta",
+      "reason": "Nom en double: Beretta"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Benelli",
+      "reason": "Nom en double: Benelli"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Franchi",
+      "reason": "Nom en double: Franchi"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Pedersoli",
+      "reason": "Nom en double: Pedersoli"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Zeiss Optics",
+      "reason": "URL en double: https://www.zeiss.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Swarovski Optik",
+      "reason": "Nom en double: Swarovski Optik"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kahles",
+      "reason": "Nom en double: Kahles"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Schmidt & Bender",
+      "reason": "Nom en double: Schmidt & Bender"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Meopta",
+      "reason": "Nom en double: Meopta"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gränsfors Bruk",
+      "reason": "Nom en double: Gränsfors Bruk"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hultafors",
+      "reason": "Nom en double: Hultafors"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Norma Ammunition",
+      "reason": "URL en double: https://norma-ammunition.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "InfiRay Outdoor EU",
+      "reason": "URL en double: https://www.infirayoutdoor.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Pulsar",
+      "reason": "URL en double: https://www.pulsar-nv.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold Australia",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin AU/NZ",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sea to Summit AU",
+      "reason": "URL en double: https://seatosummit.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Heym Express",
+      "reason": "URL en double: https://www.heym.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Chapuis Armes",
+      "reason": "Nom en double: Chapuis Armes"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Blaser Safari",
+      "reason": "URL en double: https://www.blaser.de"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Barnes TSX",
+      "reason": "URL en double: https://www.barnesbullets.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Norma Oryx",
+      "reason": "URL en double: https://norma-ammunition.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Federal Premium Safari",
+      "reason": "URL en double: https://www.federalpremium.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hornady DGX/DGS",
+      "reason": "URL en double: https://www.hornady.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leica Magnus Safari",
+      "reason": "URL en double: https://leica-camera.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Swarovski Z8i",
+      "reason": "URL en double: https://www.swarovskioptik.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Zeiss Victory HT",
+      "reason": "URL en double: https://www.zeiss.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kifaru International",
+      "reason": "URL en double: https://kifaru.net"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gränsfors Bruk",
+      "reason": "Nom en double: Gränsfors Bruk"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hultafors",
+      "reason": "Nom en double: Hultafors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Tuff Gear",
+      "reason": "Nom en double: Work Tuff Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cold Steel",
+      "reason": "Nom en double: Cold Steel"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Opinel Outdoor",
+      "reason": "Nom en double: Opinel Outdoor"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leatherman",
+      "reason": "Nom en double: Leatherman"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carinthia",
+      "reason": "Nom en double: Carinthia"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Snugpak",
+      "reason": "Nom en double: Snugpak"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arctic Oven",
+      "reason": "Nom en double: Arctic Oven"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Seek Outside",
+      "reason": "Nom en double: Seek Outside"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kifaru",
+      "reason": "Nom en double: Kifaru"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bushcraft Canada",
+      "reason": "Nom en double: Bushcraft Canada"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arc’teryx LEAF",
+      "reason": "Nom en double: Arc’teryx LEAF"
+    },
+    {
+      "type": "exact_name",
+      "partner": "5.11 Tactical",
+      "reason": "Nom en double: 5.11 Tactical"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Condor Outdoor",
+      "reason": "Nom en double: Condor Outdoor"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Helikon-Tex",
+      "reason": "Nom en double: Helikon-Tex"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Carinthia Defence",
+      "reason": "URL en double: https://www.carinthia.eu"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Snugpak Military",
+      "reason": "URL en double: https://snugpak.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Team Wendy",
+      "reason": "Nom en double: Team Wendy"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Ops-Core",
+      "reason": "Nom en double: Ops-Core"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Tactix",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Suunto Military",
+      "reason": "URL en double: https://www.suunto.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Trijicon",
+      "reason": "Nom en double: Trijicon"
+    },
+    {
+      "type": "exact_name",
+      "partner": "EOTech",
+      "reason": "Nom en double: EOTech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Aimpoint",
+      "reason": "Nom en double: Aimpoint"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Nightforce ATACR",
+      "reason": "URL en double: https://www.nightforceoptics.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold Mark Series",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Magpul",
+      "reason": "Nom en double: Magpul"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Geissele Automatics",
+      "reason": "Nom en double: Geissele Automatics"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Daniel Defense",
+      "reason": "Nom en double: Daniel Defense"
+    },
+    {
+      "type": "exact_name",
+      "partner": "BCM (Bravo Company)",
+      "reason": "Nom en double: BCM (Bravo Company)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "PGW Defence",
+      "reason": "Nom en double: PGW Defence"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cadex Defence",
+      "reason": "Nom en double: Cadex Defence"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MDT",
+      "reason": "URL en double: https://mdttac.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TriggerTech",
+      "reason": "Nom en double: TriggerTech"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Princeton Tec",
+      "reason": "Nom en double: Princeton Tec"
+    },
+    {
+      "type": "exact_name",
+      "partner": "MSA Safety",
+      "reason": "Nom en double: MSA Safety"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Orion Safety",
+      "reason": "Nom en double: Orion Safety"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SOL (Survive Outdoors Longer)",
+      "reason": "URL en double: https://www.surviveoutdoorslonger.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Adventure Medical Kits",
+      "reason": "Nom en double: Adventure Medical Kits"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mathews Archery",
+      "reason": "Nom en double: Mathews Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hoyt Archery",
+      "reason": "Nom en double: Hoyt Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bear Archery",
+      "reason": "Nom en double: Bear Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Excalibur Crossbow",
+      "reason": "Nom en double: Excalibur Crossbow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TenPoint Crossbows",
+      "reason": "Nom en double: TenPoint Crossbows"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Ravin Crossbows",
+      "reason": "Nom en double: Ravin Crossbows"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Easton Archery",
+      "reason": "Nom en double: Easton Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "FOXPRO X-Series",
+      "reason": "URL en double: https://www.gofoxpro.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Lucky Duck Super Predator",
+      "reason": "URL en double: https://luckyduck.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "ICOtec Night Stalker",
+      "reason": "URL en double: https://icotec.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Convergent Bullet HP",
+      "reason": "URL en double: https://convergenthunting.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carver Calls",
+      "reason": "Nom en double: Carver Calls"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Dan Thompson Calls",
+      "reason": "Nom en double: Dan Thompson Calls"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Alaska Trap Company",
+      "reason": "Nom en double: Alaska Trap Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MB-750 Wolf Trap",
+      "reason": "URL en double: https://www.minntrapprod.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "No-BS Wolf Traps",
+      "reason": "URL en double: https://www.nobstools.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Belisle Wolf",
+      "reason": "URL en double: https://www.belisletraps.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Milligan Brand",
+      "reason": "Nom en double: Milligan Brand"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kaatz Bros",
+      "reason": "URL en double: https://www.kaatzbros.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Lenon Lures Wolf",
+      "reason": "URL en double: https://www.lenonlures.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Northwoods Bear Products",
+      "reason": "Nom en double: Northwoods Bear Products"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Alpha 300i",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin TT15X",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arctic Oven",
+      "reason": "Nom en double: Arctic Oven"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kifaru",
+      "reason": "Nom en double: Kifaru"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Schnee’s Boots",
+      "reason": "URL en double: https://schnees.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LaCrosse Footwear",
+      "reason": "Nom en double: LaCrosse Footwear"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Irish Setter Elk Tracker",
+      "reason": "URL en double: https://www.irishsetterboots.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carinthia",
+      "reason": "Nom en double: Carinthia"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Snugpak",
+      "reason": "Nom en double: Snugpak"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nemo Equipment",
+      "reason": "Nom en double: Nemo Equipment"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big Agnes",
+      "reason": "Nom en double: Big Agnes"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Anker Outdoors",
+      "reason": "URL en double: https://www.anker.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gränsfors Bruk",
+      "reason": "Nom en double: Gränsfors Bruk"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hultafors",
+      "reason": "Nom en double: Hultafors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "First Lite",
+      "reason": "Nom en double: First Lite"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Seek Outside",
+      "reason": "Nom en double: Seek Outside"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kifaru",
+      "reason": "Nom en double: Kifaru"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nemo Equipment",
+      "reason": "Nom en double: Nemo Equipment"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big Agnes",
+      "reason": "Nom en double: Big Agnes"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Suunto",
+      "reason": "Nom en double: Suunto"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Anker Power Outdoors",
+      "reason": "Nom en double: Anker Power Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Jetboil",
+      "reason": "Nom en double: Jetboil"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Primus",
+      "reason": "Nom en double: Primus"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Katadyn",
+      "reason": "Nom en double: Katadyn"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LifeStraw",
+      "reason": "Nom en double: LifeStraw"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kenetrek Boots",
+      "reason": "Nom en double: Kenetrek Boots"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Schnee’s Boots",
+      "reason": "URL en double: https://schnees.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Black Diamond",
+      "reason": "Nom en double: Black Diamond"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Petzl",
+      "reason": "Nom en double: Petzl"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leatherman",
+      "reason": "Nom en double: Leatherman"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Tuff Gear",
+      "reason": "Nom en double: Work Tuff Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kenetrek Canada",
+      "reason": "URL en double: https://kenetrek.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Stone Glacier Canada",
+      "reason": "URL en double: https://www.stoneglacier.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kuiu Canada",
+      "reason": "URL en double: https://www.kuiu.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sitka Gear Canada",
+      "reason": "URL en double: https://www.sitkagear.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Arc’teryx",
+      "reason": "URL en double: https://arcteryx.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Weatherby Canada",
+      "reason": "URL en double: https://weatherby.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold Canada",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "PGW Defence",
+      "reason": "Nom en double: PGW Defence"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cadex Defence",
+      "reason": "Nom en double: Cadex Defence"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MDT",
+      "reason": "URL en double: https://mdttac.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TriggerTech",
+      "reason": "Nom en double: TriggerTech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "BC Guide Outfitters",
+      "reason": "Nom en double: BC Guide Outfitters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Alberta Professional Outfitters Society",
+      "reason": "Nom en double: Alberta Professional Outfitters Society"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Northwest Territories Outfitters",
+      "reason": "URL en double: https://nwtoutfitters.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kenai Chest Holsters Canada",
+      "reason": "URL en double: https://gunfightersinc.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach Canada",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium Canada",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Goal Zero Canada",
+      "reason": "URL en double: https://www.goalzero.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Barney’s Sports Chalet (Canada import)",
+      "reason": "URL en double: https://barneyssports.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Alaska Guide Creations (Canada)",
+      "reason": "URL en double: https://alaskaguidecreations.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Texas Trophy Hunters",
+      "reason": "Nom en double: Texas Trophy Hunters"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SOE Hunts",
+      "reason": "URL en double: https://soehunts.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "LaCrosse Footwear South",
+      "reason": "URL en double: https://www.lacrossefootwear.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Academy Sports + Outdoors",
+      "reason": "URL en double: https://www.academy.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Bass Pro Shops South",
+      "reason": "URL en double: https://www.basspro.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Osceola Turkey Outfitters",
+      "reason": "Nom en double: Osceola Turkey Outfitters"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos South",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mississippi Flyway Outfitters",
+      "reason": "Nom en double: Mississippi Flyway Outfitters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arkansas Duck Masters",
+      "reason": "Nom en double: Arkansas Duck Masters"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Big & J South",
+      "reason": "URL en double: https://www.bigandj.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Antler King South",
+      "reason": "URL en double: https://antlerking.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Whitetail Institute South",
+      "reason": "URL en double: https://whitetailinstitute.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Boarmasters South",
+      "reason": "URL en double: https://boarmasters.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin South",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "QuietKat South",
+      "reason": "URL en double: https://quietkat.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Polaris South",
+      "reason": "URL en double: https://www.polaris.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Can-Am South",
+      "reason": "URL en double: https://can-am.brp.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Tracker Boats South",
+      "reason": "URL en double: https://www.trackerboats.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Old Town South",
+      "reason": "URL en double: https://oldtowncanoe.johnsonoutdoors.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Simms Fishing South",
+      "reason": "URL en double: https://www.simmsfishing.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Company/Artisan",
+      "reason": "URL en double: Website"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Bear Archery Traditional",
+      "reason": "URL en double: https://beararchery.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Condor Tool & Knife",
+      "reason": "Nom en double: Condor Tool & Knife"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cold Steel",
+      "reason": "Nom en double: Cold Steel"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gränsfors Bruk",
+      "reason": "Nom en double: Gränsfors Bruk"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hultafors",
+      "reason": "Nom en double: Hultafors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Opinel Outdoor",
+      "reason": "Nom en double: Opinel Outdoor"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Coalcracker Bushcraft",
+      "reason": "Nom en double: Coalcracker Bushcraft"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Pathfinder School",
+      "reason": "Nom en double: Pathfinder School"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hidden Woodsmen",
+      "reason": "Nom en double: Hidden Woodsmen"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MDT",
+      "reason": "URL en double: https://mdttac.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cadex Defence",
+      "reason": "Nom en double: Cadex Defence"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Accuracy International",
+      "reason": "Nom en double: Accuracy International"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Impact Precision",
+      "reason": "Nom en double: Impact Precision"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Defiance Machine",
+      "reason": "Nom en double: Defiance Machine"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Terminus Actions",
+      "reason": "Nom en double: Terminus Actions"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Proof Research",
+      "reason": "Nom en double: Proof Research"
+    },
+    {
+      "type": "exact_name",
+      "partner": "TriggerTech",
+      "reason": "Nom en double: TriggerTech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Area 419",
+      "reason": "Nom en double: Area 419"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Zero Compromise Optics",
+      "reason": "Nom en double: Zero Compromise Optics"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Nightforce ATACR",
+      "reason": "URL en double: https://www.nightforceoptics.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kahles K525i",
+      "reason": "URL en double: https://www.kahles.at"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Schmidt & Bender PM II",
+      "reason": "URL en double: https://www.schmidtundbender.de"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold Mark 5HD",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Berger Bullets",
+      "reason": "Nom en double: Berger Bullets"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Lapua",
+      "reason": "Nom en double: Lapua"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Peterson Cartridge",
+      "reason": "Nom en double: Peterson Cartridge"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Atlas Bipods",
+      "reason": "Nom en double: Atlas Bipods"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Blaser Safari",
+      "reason": "URL en double: https://www.blaser.de"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Heym Express",
+      "reason": "URL en double: https://www.heym.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Chapuis Armes",
+      "reason": "Nom en double: Chapuis Armes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Krieghoff",
+      "reason": "Nom en double: Krieghoff"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sako 85 Safari",
+      "reason": "URL en double: https://www.sako.fi"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Mauser M98",
+      "reason": "URL en double: https://www.mauser.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hornady DGX/DGS",
+      "reason": "URL en double: https://www.hornady.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Federal Premium Safari",
+      "reason": "URL en double: https://www.federalpremium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Swift A-Frame",
+      "reason": "Nom en double: Swift A-Frame"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Barnes TSX",
+      "reason": "URL en double: https://www.barnesbullets.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leica Magnus Safari",
+      "reason": "URL en double: https://leica-camera.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Swarovski Z8i",
+      "reason": "URL en double: https://www.swarovskioptik.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Zeiss Victory HT",
+      "reason": "URL en double: https://www.zeiss.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kifaru International",
+      "reason": "URL en double: https://kifaru.net"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Frontier Safaris",
+      "reason": "Nom en double: Frontier Safaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "John X Safaris",
+      "reason": "Nom en double: John X Safaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Thormählen & Cochran",
+      "reason": "Nom en double: Thormählen & Cochran"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Chifuti Safaris",
+      "reason": "Nom en double: Chifuti Safaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Game Trackers Africa",
+      "reason": "Nom en double: Game Trackers Africa"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Limcroma Safaris",
+      "reason": "Nom en double: Limcroma Safaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kalahari Oryx Hunting",
+      "reason": "Nom en double: Kalahari Oryx Hunting"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "First Lite",
+      "reason": "Nom en double: First Lite"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kenetrek Boots",
+      "reason": "Nom en double: Kenetrek Boots"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Schnee’s Boots",
+      "reason": "URL en double: https://schnees.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LaCrosse Footwear",
+      "reason": "Nom en double: LaCrosse Footwear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Barney’s Sports Chalet",
+      "reason": "Nom en double: Barney’s Sports Chalet"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kifaru",
+      "reason": "Nom en double: Kifaru"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Seek Outside",
+      "reason": "Nom en double: Seek Outside"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arctic Oven",
+      "reason": "Nom en double: Arctic Oven"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nemo Equipment",
+      "reason": "Nom en double: Nemo Equipment"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big Agnes",
+      "reason": "Nom en double: Big Agnes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Black Diamond",
+      "reason": "Nom en double: Black Diamond"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Petzl",
+      "reason": "Nom en double: Petzl"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Anker Power Outdoors",
+      "reason": "Nom en double: Anker Power Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gränsfors Bruk",
+      "reason": "Nom en double: Gränsfors Bruk"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hultafors",
+      "reason": "Nom en double: Hultafors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leatherman",
+      "reason": "Nom en double: Leatherman"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Tuff Gear",
+      "reason": "Nom en double: Work Tuff Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Alaska Guide Creations",
+      "reason": "Nom en double: Alaska Guide Creations"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kenai Chest Holsters",
+      "reason": "Nom en double: Kenai Chest Holsters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Suunto",
+      "reason": "Nom en double: Suunto"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gaia GPS",
+      "reason": "Nom en double: Gaia GPS"
+    },
+    {
+      "type": "exact_name",
+      "partner": "CalTopo",
+      "reason": "Nom en double: CalTopo"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Weston Brands",
+      "reason": "Nom en double: Weston Brands"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LEM Products",
+      "reason": "Nom en double: LEM Products"
+    },
+    {
+      "type": "exact_name",
+      "partner": "MEAT! Your Maker",
+      "reason": "Nom en double: MEAT! Your Maker"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Cabela’s Meat Processing",
+      "reason": "URL en double: https://www.cabelas.ca"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Bass Pro Meat Processing",
+      "reason": "URL en double: https://www.basspro.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "FoodSaver",
+      "reason": "Nom en double: FoodSaver"
+    },
+    {
+      "type": "exact_name",
+      "partner": "VacMaster",
+      "reason": "Nom en double: VacMaster"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Butcher Packer",
+      "reason": "Nom en double: Butcher Packer"
+    },
+    {
+      "type": "exact_name",
+      "partner": "FieldTorq",
+      "reason": "Nom en double: FieldTorq"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Outdoor Edge",
+      "reason": "URL en double: https://www.outdooredge.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Havalon",
+      "reason": "URL en double: https://www.havalon.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Knives of Alaska",
+      "reason": "Nom en double: Knives of Alaska"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Work Sharp",
+      "reason": "Nom en double: Work Sharp"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Caribou Gear",
+      "reason": "Nom en double: Caribou Gear"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Allen Company",
+      "reason": "URL en double: https://byallen.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Game Winner",
+      "reason": "Nom en double: Game Winner"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Weatherby Mark V Dangerous Game",
+      "reason": "URL en double: https://weatherby.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sako 85 Brown Bear",
+      "reason": "URL en double: https://www.sako.fi"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Blaser R8 Safari",
+      "reason": "URL en double: https://www.blaser.de"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Heym Express",
+      "reason": "URL en double: https://www.heym.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Chapuis Armes",
+      "reason": "Nom en double: Chapuis Armes"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hornady DGX/DGS",
+      "reason": "URL en double: https://www.hornady.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Federal Premium Safari",
+      "reason": "URL en double: https://www.federalpremium.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Barnes TSX",
+      "reason": "URL en double: https://www.barnesbullets.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Swift A-Frame",
+      "reason": "Nom en double: Swift A-Frame"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leica Magnus Safari",
+      "reason": "URL en double: https://leica-camera.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Swarovski Z8i",
+      "reason": "URL en double: https://www.swarovskioptik.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Zeiss Victory HT",
+      "reason": "URL en double: https://www.zeiss.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kenai Chest Holsters",
+      "reason": "Nom en double: Kenai Chest Holsters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Alaska Guide Creations",
+      "reason": "Nom en double: Alaska Guide Creations"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Counter Assault",
+      "reason": "Nom en double: Counter Assault"
+    },
+    {
+      "type": "exact_name",
+      "partner": "UDAP",
+      "reason": "Nom en double: UDAP"
+    },
+    {
+      "type": "exact_url",
+      "partner": "SABRE Frontiersman",
+      "reason": "URL en double: https://www.sabrered.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kenetrek Boots",
+      "reason": "Nom en double: Kenetrek Boots"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Schnee’s Boots",
+      "reason": "URL en double: https://schnees.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LaCrosse Footwear",
+      "reason": "Nom en double: LaCrosse Footwear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kifaru",
+      "reason": "Nom en double: Kifaru"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Barney’s Sports Chalet",
+      "reason": "Nom en double: Barney’s Sports Chalet"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Seek Outside",
+      "reason": "Nom en double: Seek Outside"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arctic Oven",
+      "reason": "Nom en double: Arctic Oven"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nemo Equipment",
+      "reason": "Nom en double: Nemo Equipment"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big Agnes",
+      "reason": "Nom en double: Big Agnes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gränsfors Bruk",
+      "reason": "Nom en double: Gränsfors Bruk"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hultafors",
+      "reason": "Nom en double: Hultafors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Alaska Wilderness Charters",
+      "reason": "Nom en double: Alaska Wilderness Charters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Alaska Trophy Adventures",
+      "reason": "Nom en double: Alaska Trophy Adventures"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arctic Red River Outfitters",
+      "reason": "Nom en double: Arctic Red River Outfitters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Yukon Big Game Outfitters",
+      "reason": "Nom en double: Yukon Big Game Outfitters"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Midnight Sun Outfitting",
+      "reason": "Nom en double: Midnight Sun Outfitting"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "5.11 Tactical",
+      "reason": "Nom en double: 5.11 Tactical"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Crye Precision",
+      "reason": "Nom en double: Crye Precision"
+    },
+    {
+      "type": "exact_name",
+      "partner": "UF PRO",
+      "reason": "Nom en double: UF PRO"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Helikon-Tex",
+      "reason": "Nom en double: Helikon-Tex"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Carinthia Tropen",
+      "reason": "URL en double: https://www.carinthia.eu"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Snugpak Jungle Bag",
+      "reason": "URL en double: https://snugpak.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Leatherman",
+      "reason": "Nom en double: Leatherman"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Cold Steel",
+      "reason": "Nom en double: Cold Steel"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Condor Tool & Knife",
+      "reason": "Nom en double: Condor Tool & Knife"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Katadyn",
+      "reason": "Nom en double: Katadyn"
+    },
+    {
+      "type": "exact_name",
+      "partner": "LifeStraw",
+      "reason": "Nom en double: LifeStraw"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sea to Summit",
+      "reason": "Nom en double: Sea to Summit"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Seek One",
+      "reason": "Nom en double: Seek One"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mathews Archery",
+      "reason": "Nom en double: Mathews Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hoyt Archery",
+      "reason": "Nom en double: Hoyt Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bowtech",
+      "reason": "Nom en double: Bowtech"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Elite Archery",
+      "reason": "Nom en double: Elite Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Excalibur Crossbow",
+      "reason": "Nom en double: Excalibur Crossbow"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Ravin Crossbows",
+      "reason": "Nom en double: Ravin Crossbows"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Easton Archery",
+      "reason": "Nom en double: Easton Archery"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Black Eagle Arrows",
+      "reason": "Nom en double: Black Eagle Arrows"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Xero A1i",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spypoint",
+      "reason": "Nom en double: Spypoint"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Tactacam Reveal",
+      "reason": "Nom en double: Tactacam Reveal"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Primos",
+      "reason": "URL en double: https://www.primos.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Code Blue",
+      "reason": "Nom en double: Code Blue"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Wildlife Research Center",
+      "reason": "Nom en double: Wildlife Research Center"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Millennium Treestands",
+      "reason": "Nom en double: Millennium Treestands"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hawk Hunting",
+      "reason": "Nom en double: Hawk Hunting"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Pulsar",
+      "reason": "URL en double: https://www.pulsar-nv.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "InfiRay Outdoor",
+      "reason": "Nom en double: InfiRay Outdoor"
+    },
+    {
+      "type": "exact_url",
+      "partner": "ATN Corp",
+      "reason": "URL en double: https://www.atncorp.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Trijicon IR-Hunter",
+      "reason": "URL en double: https://www.trijicon.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "FLIR",
+      "reason": "URL en double: https://www.flir.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Steiner Optics",
+      "reason": "Nom en double: Steiner Optics"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Xero",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Forge",
+      "reason": "Nom en double: Spartan Forge"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Princeton Tec",
+      "reason": "Nom en double: Princeton Tec"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Arctic Oven",
+      "reason": "Nom en double: Arctic Oven"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Carinthia",
+      "reason": "Nom en double: Carinthia"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Snugpak",
+      "reason": "Nom en double: Snugpak"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Helly Hansen",
+      "reason": "Nom en double: Helly Hansen"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Gränsfors Bruk",
+      "reason": "Nom en double: Gränsfors Bruk"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hultafors",
+      "reason": "Nom en double: Hultafors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Silky Saws",
+      "reason": "Nom en double: Silky Saws"
+    },
+    {
+      "type": "exact_url",
+      "partner": "MSR",
+      "reason": "URL en double: https://www.msrgear.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nemo Equipment",
+      "reason": "Nom en double: Nemo Equipment"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Big Agnes",
+      "reason": "Nom en double: Big Agnes"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kenetrek Boots",
+      "reason": "Nom en double: Kenetrek Boots"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SpotX",
+      "reason": "Nom en double: SpotX"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sitka Gear Blizzard",
+      "reason": "URL en double: https://www.sitkagear.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kuiu Proximity",
+      "reason": "URL en double: https://www.kuiu.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Barney’s Sports Chalet",
+      "reason": "Nom en double: Barney’s Sports Chalet"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Blaser R8 Safari",
+      "reason": "URL en double: https://www.blaser.de"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Heym Express",
+      "reason": "URL en double: https://www.heym.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Chapuis Armes",
+      "reason": "Nom en double: Chapuis Armes"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Krieghoff Classic",
+      "reason": "URL en double: https://www.krieghoff.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sako 85 Safari",
+      "reason": "URL en double: https://www.sako.fi"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Mauser M98",
+      "reason": "URL en double: https://www.mauser.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Hornady DGX/DGS",
+      "reason": "URL en double: https://www.hornady.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Federal Premium Safari",
+      "reason": "URL en double: https://www.federalpremium.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Barnes TSX",
+      "reason": "URL en double: https://www.barnesbullets.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Swift A-Frame",
+      "reason": "Nom en double: Swift A-Frame"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leica Magnus Safari",
+      "reason": "URL en double: https://leica-camera.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Swarovski Z8i",
+      "reason": "URL en double: https://www.swarovskioptik.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Zeiss Victory HT",
+      "reason": "URL en double: https://www.zeiss.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Kifaru International",
+      "reason": "URL en double: https://kifaru.net"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Frontier Safaris",
+      "reason": "Nom en double: Frontier Safaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "John X Safaris",
+      "reason": "Nom en double: John X Safaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Limcroma Safaris",
+      "reason": "Nom en double: Limcroma Safaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Thormählen & Cochran",
+      "reason": "Nom en double: Thormählen & Cochran"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kalahari Oryx Hunting",
+      "reason": "Nom en double: Kalahari Oryx Hunting"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Game Trackers Africa",
+      "reason": "Nom en double: Game Trackers Africa"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Chifuti Safaris",
+      "reason": "Nom en double: Chifuti Safaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Bushman Clothing",
+      "reason": "Nom en double: Bushman Clothing"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Frontier Gear Africa",
+      "reason": "Nom en double: Frontier Gear Africa"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Weatherby",
+      "reason": "Nom en double: Weatherby"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Browning X-Bolt",
+      "reason": "URL en double: https://www.browning.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Sako 85",
+      "reason": "URL en double: https://www.sako.fi"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Tikka T3x",
+      "reason": "URL en double: https://www.tikka.fi"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Christensen Arms",
+      "reason": "Nom en double: Christensen Arms"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Proof Research",
+      "reason": "Nom en double: Proof Research"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Leupold VX Series",
+      "reason": "URL en double: https://www.leupold.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Zeiss V4/V6",
+      "reason": "URL en double: https://www.zeiss.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Swarovski Z5/Z6",
+      "reason": "URL en double: https://www.swarovskioptik.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Xero",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Precision",
+      "reason": "Nom en double: Spartan Precision"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kenetrek Boots",
+      "reason": "Nom en double: Kenetrek Boots"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Schnee’s Boots",
+      "reason": "URL en double: https://schnees.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Stone Glacier",
+      "reason": "Nom en double: Stone Glacier"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kuiu",
+      "reason": "Nom en double: Kuiu"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Sitka Gear",
+      "reason": "Nom en double: Sitka Gear"
+    },
+    {
+      "type": "exact_name",
+      "partner": "First Lite",
+      "reason": "Nom en double: First Lite"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin InReach",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Iridium",
+      "reason": "URL en double: https://www.iridium.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "ARB 4x4",
+      "reason": "Nom en double: ARB 4x4"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Warn Industries",
+      "reason": "Nom en double: Warn Industries"
+    },
+    {
+      "type": "exact_name",
+      "partner": "SuperATV",
+      "reason": "Nom en double: SuperATV"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Kolpin Outdoors",
+      "reason": "Nom en double: Kolpin Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Can-Am (BRP)",
+      "reason": "Nom en double: Can-Am (BRP)"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Polaris",
+      "reason": "Nom en double: Polaris"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Goal Zero",
+      "reason": "Nom en double: Goal Zero"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "FLIR",
+      "reason": "URL en double: https://www.flir.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "InfiRay",
+      "reason": "URL en double: https://www.infirayoutdoor.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Spartan Forge",
+      "reason": "Nom en double: Spartan Forge"
+    },
+    {
+      "type": "exact_url",
+      "partner": "HuntStand Pro Whitetail",
+      "reason": "URL en double: https://www.huntstand.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "OnX Hunt Elite",
+      "reason": "URL en double: https://www.onxmaps.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GoHunt Maps",
+      "reason": "URL en double: https://www.gohunt.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Alpha",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Xero",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "InfiRay",
+      "reason": "URL en double: https://www.infirayoutdoor.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Pulsar Merger",
+      "reason": "URL en double: https://www.pulsar-nv.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "FLIR",
+      "reason": "URL en double: https://www.flir.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_url",
+      "partner": "GoHunt Training",
+      "reason": "URL en double: https://www.gohunt.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Under Armour Hunt",
+      "reason": "Nom en double: Under Armour Hunt"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Salomon",
+      "reason": "URL en double: https://www.salomon.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Garmin Fenix",
+      "reason": "URL en double: https://www.garmin.com"
+    },
+    {
+      "type": "exact_url",
+      "partner": "Suunto Vertical",
+      "reason": "URL en double: https://www.suunto.com"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hydro Flask",
+      "reason": "Nom en double: Hydro Flask"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "CamelBak",
+      "reason": "Nom en double: CamelBak"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Platypus",
+      "reason": "Nom en double: Platypus"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Hydro Flask",
+      "reason": "Nom en double: Hydro Flask"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Nalgene",
+      "reason": "Nom en double: Nalgene"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Company",
+      "reason": "Nom en double: Company"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Drake Waterfowl",
+      "reason": "Nom en double: Drake Waterfowl"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Banded",
+      "reason": "Nom en double: Banded"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Avian-X",
+      "reason": "Nom en double: Avian-X"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Mojo Outdoors",
+      "reason": "Nom en double: Mojo Outdoors"
+    },
+    {
+      "type": "exact_name",
+      "partner": "Grundéns",
+      "reason": "Nom en double: Grundéns"
+    },
+    {
+      "type": "fuzzy",
+      "partner": "GoHunt (Canada)",
+      "similar_to": "OnX Hunt (Canada)",
+      "similarity": 88,
+      "reason": "Similaire à OnX Hunt (Canada) (88%)"
+    },
+    {
+      "type": "fuzzy",
+      "partner": "BC Trappers Association",
+      "similar_to": "Alberta Trappers Association",
+      "similarity": 86,
+      "reason": "Similaire à Alberta Trappers Association (86%)"
+    },
+    {
+      "type": "fuzzy",
+      "partner": "Darton Archery",
+      "similar_to": "Easton Archery",
+      "similarity": 86,
+      "reason": "Similaire à Easton Archery (86%)"
+    },
+    {
+      "type": "fuzzy",
+      "partner": "Simms Fishing",
+      "similar_to": "Simms Fishing USA",
+      "similarity": 87,
+      "reason": "Similaire à Simms Fishing USA (87%)"
+    }
+  ]
+}

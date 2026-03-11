@@ -1,0 +1,38 @@
+{
+  "version": "BIONIC_V5_FULL_LAYER_FREEZE_BASELINE",
+  "date": "2026-03-07",
+  "section": "S1_LAYER_FREEZE",
+
+  "leaflet_z_index_hierarchy": {
+    "tilePane":      {"z": 200, "content": "Couches scientifiques (NDVI, pente, etc.)"},
+    "hydroPane":     {"z": 350, "content": "Hydrographie WMS (NFIS-QC.hydro)"},
+    "overlayPane":   {"z": 400, "content": "Zones BIONIC"},
+    "structurePane": {"z": "between shell and cells", "content": "Anthropique V5 (routes, urbain)"},
+    "exclusionPane": {"z": "overlay", "content": "Exclusions (eau=INVISIBLE, urbain, routes, infra)"}
+  },
+
+  "rendering_layer_order": [
+    "1. Base tiles (OpenStreetMap / satellite)",
+    "2. EcoforestryLayers (WMS NFIS)",
+    "3. NdviOverlayLayer (raster)",
+    "4. HydrographyOverlayLayer (WMS hydroPane z=350)",
+    "5. ExclusionOverlayLayer (eau=invisible, urbain/routes/infra visibles)",
+    "6. StructureContrastLayer (Anthropique V5 — routes + polygones)",
+    "7. TerritoryShell (contour territoire)",
+    "8. BionicMicroZones (zones BIONIC overlayPane z=400)",
+    "9. MovementCorridorsLayer",
+    "10. WindFlowLayer",
+    "11. CursorBionicLayer",
+    "12. Waypoint markers"
+  ],
+
+  "frozen_components": [
+    "ExclusionOverlayLayer.jsx",
+    "StructureContrastLayer.jsx",
+    "BionicMicroZones.jsx",
+    "HydrographyOverlayLayer.jsx",
+    "HydroPaneAttenuator.jsx",
+    "TerritoryShell.jsx",
+    "BionicAntiDoublesGuard.jsx"
+  ]
+}

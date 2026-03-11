@@ -1,0 +1,62 @@
+{
+    "version": "BIONIC_V5_ULTIME_300",
+    "description": "Template officiel des cles API pour les phases G+ et H",
+    "keys": {
+        "sentinel2_ndvi": {
+            "env_var": "SENTINEL2_CLIENT_ID",
+            "provider": "ESA Copernicus Data Space (Sentinel Hub)",
+            "url": "https://dataspace.copernicus.eu/",
+            "oauth_token_url": "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token",
+            "stac_url": "https://stac.dataspace.copernicus.eu/v1",
+            "required_for": ["PHASE_G_REAL_DATA", "MON_TERRITOIRE"],
+            "status": "configured",
+            "fallback": "internal_synthetic"
+        },
+        "elevation_dem": {
+            "env_var": "OPENTOPOGRAPHY_API_KEY",
+            "provider": "OpenTopography (SRTM/ALOS)",
+            "url": "https://opentopography.org/",
+            "required_for": ["PHASE_G_REAL_DATA", "TCVE_REAL"],
+            "status": "configured",
+            "fallback": "internal_synthetic"
+        },
+        "weather_realtime": {
+            "env_var": "NONE_REQUIRED",
+            "provider": "Open-Meteo (gratuit)",
+            "url": "https://open-meteo.com/",
+            "required_for": ["WSE_WIV_REAL", "TFE_REAL"],
+            "status": "configured",
+            "fallback": "internal_synthetic"
+        },
+        "thermal_flow": {
+            "env_var": "THERMAL_API_KEY",
+            "provider": "MODIS LST / Landsat",
+            "url": "https://lpdaac.usgs.gov/",
+            "required_for": ["TFE_REAL"],
+            "status": "not_configured",
+            "fallback": "internal_synthetic"
+        },
+        "ml_cloud": {
+            "env_var": "ML_CLOUD_API_KEY",
+            "provider": "Optional (internal or cloud)",
+            "url": null,
+            "required_for": ["PHASE_H_ML"],
+            "status": "not_configured",
+            "fallback": "internal_sklearn"
+        },
+        "storage_export": {
+            "env_var": "STORAGE_API_KEY",
+            "provider": "Optional (S3 / GCS)",
+            "url": null,
+            "required_for": ["REPORT_EXPORT"],
+            "status": "not_configured",
+            "fallback": "local_filesystem"
+        }
+    },
+    "validation_rules": {
+        "pipeline_internal": "No keys required - all 10 modules work on synthetic data",
+        "phase_g_real": "sentinel2_ndvi + elevation_dem + weather_realtime required",
+        "phase_h_ml": "ml_cloud optional - sklearn fallback available",
+        "strict_mode": "If strict_mode=true, missing keys block startup"
+    }
+}

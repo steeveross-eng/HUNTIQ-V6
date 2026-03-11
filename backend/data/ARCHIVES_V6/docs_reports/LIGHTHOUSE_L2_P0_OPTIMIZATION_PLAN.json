@@ -1,0 +1,358 @@
+{
+  "report_id": "LIGHTHOUSE_L2_P0_OPTIMIZATION_PLAN",
+  "generated_at": "2026-02-19T22:25:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "phase": "L2",
+  "reference_documents": [
+    "/app/docs/reports/performance/L2_JS_CSS_ANALYSIS.json",
+    "/app/docs/reports/performance/L2_IMAGES_ANALYSIS.json",
+    "/app/docs/reports/performance/L2_FONTS_ANALYSIS.json",
+    "/app/docs/reports/performance/L2_CRITICAL_PATH.json",
+    "/app/docs/reports/performance/L2_CORE_WEB_VITALS_IMPACT.json",
+    "/app/docs/specs/BIONIC_V5_OFFICIAL.json"
+  ],
+
+  "executive_summary": {
+    "current_score": 79.0,
+    "milestone_88_5": "L2 Phase completion",
+    "milestone_95": "L2 + L3 completion",
+    "milestone_99": "L2 + L3 + L4 completion",
+    "milestone_99_9": "All phases + polish",
+    "total_optimizations": 32,
+    "critical_optimizations": 12,
+    "high_priority": 10,
+    "medium_priority": 6,
+    "low_priority": 4
+  },
+
+  "current_baseline": {
+    "performance": 47.0,
+    "accessibility": 80.8,
+    "best_practices": 96.0,
+    "seo": 92.0,
+    "global": 79.0
+  },
+
+  "bionic_v5_compliance": {
+    "staging_mode": true,
+    "internal_only": true,
+    "external_flows": false,
+    "no_code_changes_in_this_report": true,
+    "modular_architecture_respected": true
+  },
+
+  "path_to_88_5": {
+    "target": 88.5,
+    "current": 79.0,
+    "gap": 9.5,
+    "estimated_performance_after": 72,
+    "estimated_accessibility_after": 90,
+    "actions": [
+      {
+        "id": "L2-001",
+        "priority": "P0",
+        "category": "Images",
+        "action": "Compresser les logos de 1.6MB à <100KB",
+        "files": [
+          "/app/frontend/public/logos/logo-chasse-bionic-fr.png",
+          "/app/frontend/public/logos/logo-bionic-hunt-en.png"
+        ],
+        "expected_gain": "+8 Performance",
+        "effort": "LOW",
+        "implementation": "TinyPNG ou ImageOptim + conversion WebP"
+      },
+      {
+        "id": "L2-002",
+        "priority": "P0",
+        "category": "Images",
+        "action": "Ajouter loading='lazy' à 71 images",
+        "files": "15 fichiers JSX identifiés",
+        "expected_gain": "+5 Performance",
+        "effort": "LOW",
+        "implementation": "Ajouter attribut loading='lazy' à chaque <img>"
+      },
+      {
+        "id": "L2-003",
+        "priority": "P0",
+        "category": "Fonts",
+        "action": "Ajouter preconnect Google Fonts",
+        "file": "/app/frontend/public/index.html",
+        "expected_gain": "+2 Performance",
+        "effort": "LOW",
+        "implementation": "Ajouter <link rel='preconnect'> pour fonts.googleapis.com et fonts.gstatic.com"
+      },
+      {
+        "id": "L2-004",
+        "priority": "P0",
+        "category": "Scripts",
+        "action": "Ajouter defer à emergent-main.js",
+        "file": "/app/frontend/public/index.html",
+        "expected_gain": "+2 Performance",
+        "effort": "LOW",
+        "implementation": "Modifier <script> pour ajouter defer"
+      },
+      {
+        "id": "L2-005",
+        "priority": "P0",
+        "category": "Images",
+        "action": "Précharger hero image",
+        "file": "/app/frontend/public/index.html",
+        "expected_gain": "+3 Performance",
+        "effort": "LOW",
+        "implementation": "<link rel='preload' as='image' href='...' fetchpriority='high'>"
+      },
+      {
+        "id": "L2-006",
+        "priority": "P0",
+        "category": "Accessibility",
+        "action": "Ajouter aria-label aux boutons icônes",
+        "files": "Multiple composants",
+        "expected_gain": "+8 Accessibility",
+        "effort": "MEDIUM",
+        "implementation": "Audit et ajout aria-label"
+      }
+    ],
+    "validation_criteria": [
+      "Lighthouse Performance > 65",
+      "Lighthouse Accessibility > 88",
+      "LCP < 3.0s",
+      "Logo images < 200KB total"
+    ]
+  },
+
+  "path_to_95": {
+    "target": 95.0,
+    "estimated_after_88_5": 88.5,
+    "gap": 6.5,
+    "actions": [
+      {
+        "id": "L2-007",
+        "priority": "P1",
+        "category": "CSS",
+        "action": "Extraire et inliner CSS critique (~15KB)",
+        "expected_gain": "+4 Performance",
+        "effort": "MEDIUM",
+        "implementation": "Utiliser critters webpack plugin ou script manuel"
+      },
+      {
+        "id": "L2-008",
+        "priority": "P1",
+        "category": "Fonts",
+        "action": "Réduire weights de fonts (12→6)",
+        "expected_gain": "+2 Performance",
+        "effort": "LOW",
+        "implementation": "Modifier URL Google Fonts"
+      },
+      {
+        "id": "L2-009",
+        "priority": "P1",
+        "category": "JavaScript",
+        "action": "Lazy load composants lourds (>1000 lignes)",
+        "files": [
+          "TerritoryMap.jsx (5127 lignes)",
+          "LandsRental.jsx (1951 lignes)",
+          "HuntMarketplace.jsx (1462 lignes)",
+          "BionicAnalyzer.jsx (1092 lignes)"
+        ],
+        "expected_gain": "+5 Performance",
+        "effort": "MEDIUM",
+        "implementation": "React.lazy() + Suspense"
+      },
+      {
+        "id": "L2-010",
+        "priority": "P1",
+        "category": "Accessibility",
+        "action": "Corriger contrastes couleurs insuffisants",
+        "expected_gain": "+5 Accessibility",
+        "effort": "MEDIUM",
+        "implementation": "Audit WebAIM + ajustement CSS variables"
+      },
+      {
+        "id": "L2-011",
+        "priority": "P1",
+        "category": "Accessibility",
+        "action": "Corriger hiérarchie des titres",
+        "expected_gain": "+3 Accessibility",
+        "effort": "MEDIUM",
+        "implementation": "Restructurer h1→h2→h3"
+      },
+      {
+        "id": "L2-012",
+        "priority": "P1",
+        "category": "Images",
+        "action": "Ajouter width/height à toutes les images",
+        "expected_gain": "+2 CLS",
+        "effort": "MEDIUM",
+        "implementation": "Audit et ajout attributs"
+      }
+    ],
+    "validation_criteria": [
+      "Lighthouse Performance > 80",
+      "Lighthouse Accessibility > 95",
+      "LCP < 2.5s",
+      "TBT < 350ms"
+    ]
+  },
+
+  "path_to_99": {
+    "target": 99.0,
+    "estimated_after_95": 95.0,
+    "gap": 4.0,
+    "actions": [
+      {
+        "id": "L3-001",
+        "priority": "P1",
+        "category": "SEO",
+        "action": "Implémenter JSON-LD structured data",
+        "expected_gain": "+4 SEO",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "L3-002",
+        "priority": "P1",
+        "category": "SEO",
+        "action": "Meta descriptions uniques par page",
+        "expected_gain": "+2 SEO",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "L3-003",
+        "priority": "P1",
+        "category": "Best Practices",
+        "action": "Éliminer erreurs console",
+        "expected_gain": "+2 Best Practices",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "L4-001",
+        "priority": "P2",
+        "category": "Performance",
+        "action": "Implémenter Service Worker caching",
+        "expected_gain": "+3 Performance",
+        "effort": "HIGH"
+      },
+      {
+        "id": "L4-002",
+        "priority": "P2",
+        "category": "Performance",
+        "action": "Optimisation fine bundles (bundle analyzer)",
+        "expected_gain": "+2 Performance",
+        "effort": "HIGH"
+      }
+    ],
+    "validation_criteria": [
+      "Lighthouse Performance > 92",
+      "Lighthouse Accessibility > 98",
+      "Lighthouse SEO > 98",
+      "Lighthouse Best Practices > 98",
+      "LCP < 2.0s",
+      "TBT < 200ms"
+    ]
+  },
+
+  "path_to_99_9": {
+    "target": 99.9,
+    "estimated_after_99": 99.0,
+    "gap": 0.9,
+    "actions": [
+      {
+        "id": "L5-001",
+        "priority": "P2",
+        "category": "Performance",
+        "action": "HTTP/3 QUIC optimization",
+        "expected_gain": "+0.2",
+        "effort": "HIGH"
+      },
+      {
+        "id": "L5-002",
+        "priority": "P2",
+        "category": "Performance",
+        "action": "Brotli compression fine-tuning",
+        "expected_gain": "+0.2",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "L5-003",
+        "priority": "P2",
+        "category": "Performance",
+        "action": "Font subsetting aggressive",
+        "expected_gain": "+0.2",
+        "effort": "HIGH"
+      },
+      {
+        "id": "L5-004",
+        "priority": "P2",
+        "category": "All",
+        "action": "Zero regression audit complet",
+        "expected_gain": "+0.3",
+        "effort": "MEDIUM"
+      }
+    ],
+    "validation_criteria": [
+      "Lighthouse Performance >= 95",
+      "Lighthouse Accessibility >= 99",
+      "Lighthouse SEO >= 99",
+      "Lighthouse Best Practices >= 99",
+      "Global Average >= 99.0"
+    ],
+    "note": "99.9% nécessite une optimisation quasi-parfaite et peut ne pas être atteignable sur toutes les pages"
+  },
+
+  "implementation_sequence": {
+    "phase_1": {
+      "name": "Quick Wins (L2 P0)",
+      "actions": ["L2-001", "L2-002", "L2-003", "L2-004", "L2-005"],
+      "expected_score": 85,
+      "effort": "LOW",
+      "dependency": "None"
+    },
+    "phase_2": {
+      "name": "Accessibility (L2 P0)",
+      "actions": ["L2-006"],
+      "expected_score": 88.5,
+      "effort": "MEDIUM",
+      "dependency": "Phase 1"
+    },
+    "phase_3": {
+      "name": "Deep Optimization (L2-L3 P1)",
+      "actions": ["L2-007", "L2-008", "L2-009", "L2-010", "L2-011", "L2-012"],
+      "expected_score": 95,
+      "effort": "MEDIUM",
+      "dependency": "Phase 2"
+    },
+    "phase_4": {
+      "name": "Polish (L4-L5 P2)",
+      "actions": ["L3-001", "L3-002", "L3-003", "L4-001", "L4-002", "L5-001", "L5-002", "L5-003", "L5-004"],
+      "expected_score": 99.0,
+      "effort": "HIGH",
+      "dependency": "Phase 3"
+    }
+  },
+
+  "risks_and_mitigations": [
+    {
+      "risk": "Lazy loading breaks component rendering",
+      "probability": "LOW",
+      "mitigation": "Test chaque composant après implémentation"
+    },
+    {
+      "risk": "Critical CSS extraction trop agressive",
+      "probability": "MEDIUM",
+      "mitigation": "Vérifier visuellement above-the-fold"
+    },
+    {
+      "risk": "Régression d'accessibilité lors des optimisations performance",
+      "probability": "LOW",
+      "mitigation": "Toujours tester accessibilité après changements"
+    }
+  ],
+
+  "summary": {
+    "total_optimizations": 21,
+    "path": "79.0 → 85 (Quick Wins) → 88.5 (Accessibility) → 95 (Deep Opt) → 99.0 (Polish)",
+    "blocking_for_go_live": true,
+    "blocking_for_bionic_ultimate": true,
+    "next_step": "Exécution des actions L2-001 à L2-006 (Quick Wins + Accessibility)"
+  }
+}

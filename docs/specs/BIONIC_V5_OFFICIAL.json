@@ -1,0 +1,557 @@
+{
+  "document_id": "BIONIC_V5_OFFICIAL",
+  "version": "5.9.0",
+  "generated_at": "2026-02-19T21:30:00Z",
+  "classification": "INTERNAL - STAGING MODE",
+  "status": "ACTIVE",
+
+  "meta": {
+    "title": "BIONIC V5 - Spécification Technique Officielle",
+    "subtitle": "Plateforme de Chasse Intelligente du Québec",
+    "codename": "HUNTIQ-V5",
+    "owner": "COPILOT MAÎTRE",
+    "mode": "STAGING",
+    "internal_only": true,
+    "external_flows": false
+  },
+
+  "requirements": {
+    "functional": {
+      "FR-001": {
+        "id": "FR-001",
+        "category": "Core Platform",
+        "title": "Plateforme de Chasse Intelligente",
+        "description": "Application full-stack permettant l'analyse, la comparaison et l'optimisation des territoires de chasse au Québec",
+        "priority": "P0",
+        "status": "IMPLEMENTED"
+      },
+      "FR-002": {
+        "id": "FR-002",
+        "category": "BIONIC Knowledge Layer",
+        "title": "Couche de Connaissances Scientifiques",
+        "description": "Base de données de 5 espèces (cerf, orignal, ours, dindon sauvage, wapiti), 17 variables d'habitat, 11 sources scientifiques, modèles saisonniers",
+        "priority": "P0",
+        "status": "IMPLEMENTED"
+      },
+      "FR-003": {
+        "id": "FR-003",
+        "category": "Territory Intelligence",
+        "title": "Intelligence Territoriale",
+        "description": "Analyse de territoire avec couches BIONIC, IQHO, Satellite, données géospatiales avancées",
+        "priority": "P0",
+        "status": "IMPLEMENTED"
+      },
+      "FR-004": {
+        "id": "FR-004",
+        "category": "Next Step Engine",
+        "title": "Moteur d'Étapes Suivantes",
+        "description": "10 modules: User Context, Hunter Score, Permis Checklist, Next Steps, Setup Builder, Pourvoirie Finder, Liste Épicerie, Chasseur Jumeau, Plan Saison, Score Préparation",
+        "priority": "P0",
+        "status": "IMPLEMENTED"
+      },
+      "FR-005": {
+        "id": "FR-005",
+        "category": "SEO Engine V5",
+        "title": "Moteur SEO Automatisé",
+        "description": "41 endpoints API, 9 clusters SEO, 104 fournisseurs, génération automatique de contenu via GPT-5.2",
+        "priority": "P1",
+        "status": "IMPLEMENTED"
+      },
+      "FR-006": {
+        "id": "FR-006",
+        "category": "E-Commerce",
+        "title": "Plateforme E-Commerce",
+        "description": "Catalogue produits, panier, commandes, paiements, système d'affiliation",
+        "priority": "P1",
+        "status": "IMPLEMENTED"
+      },
+      "FR-007": {
+        "id": "FR-007",
+        "category": "Marketing Automation",
+        "title": "Automatisation Marketing",
+        "description": "Contact Engine, Trigger Engine, Master Switch, Messaging Engine V2, Affiliate Ads Engine, Ad Spaces Engine",
+        "priority": "P1",
+        "status": "IMPLEMENTED_LOCKED"
+      },
+      "FR-008": {
+        "id": "FR-008",
+        "category": "User Management",
+        "title": "Gestion des Utilisateurs",
+        "description": "Authentification JWT + Google OAuth, rôles, progression, onboarding, freemium/premium",
+        "priority": "P0",
+        "status": "IMPLEMENTED"
+      },
+      "FR-009": {
+        "id": "FR-009",
+        "category": "Geospatial",
+        "title": "Services Géospatiaux",
+        "description": "Cartographie interactive, WMS layers, waypoints, scoring géospatial, hotspots",
+        "priority": "P0",
+        "status": "IMPLEMENTED"
+      },
+      "FR-010": {
+        "id": "FR-010",
+        "category": "Analytics",
+        "title": "Analytics et Tracking",
+        "description": "Hunting trips analytics, events tracking, funnels, heatmaps, tableaux de bord",
+        "priority": "P1",
+        "status": "IMPLEMENTED"
+      }
+    },
+
+    "technical": {
+      "TR-001": {
+        "id": "TR-001",
+        "category": "Architecture",
+        "title": "Architecture Full-Stack",
+        "spec": {
+          "frontend": "React 18.x + TailwindCSS + Shadcn/UI",
+          "backend": "FastAPI (Python 3.11+)",
+          "database": "MongoDB 7.x",
+          "authentication": "JWT + Google OAuth",
+          "hosting": "Kubernetes Container"
+        },
+        "status": "COMPLIANT"
+      },
+      "TR-002": {
+        "id": "TR-002",
+        "category": "API Standards",
+        "title": "Standards API REST",
+        "spec": {
+          "prefix": "/api",
+          "versioning": "/api/v1/",
+          "format": "JSON",
+          "authentication": "Bearer Token",
+          "error_handling": "RFC 7807 Problem Details"
+        },
+        "status": "COMPLIANT"
+      },
+      "TR-003": {
+        "id": "TR-003",
+        "category": "Database",
+        "title": "Standards Base de Données",
+        "spec": {
+          "engine": "MongoDB",
+          "validation": "JSON Schema (validationLevel=strict)",
+          "objectid_handling": "Exclude _id from responses or serialize",
+          "datetime": "datetime.now(timezone.utc)",
+          "indexes": "Required for high-frequency queries"
+        },
+        "status": "COMPLIANT"
+      },
+      "TR-004": {
+        "id": "TR-004",
+        "category": "Security",
+        "title": "Standards de Sécurité",
+        "spec": {
+          "https": "REQUIRED",
+          "cors": "Configured for allowed origins",
+          "rate_limiting": "Implemented per endpoint",
+          "input_validation": "Pydantic models",
+          "secrets": "Environment variables only",
+          "no_hardcoded_credentials": true
+        },
+        "status": "COMPLIANT"
+      },
+      "TR-005": {
+        "id": "TR-005",
+        "category": "Frontend Standards",
+        "title": "Standards Frontend",
+        "spec": {
+          "components": "Shadcn/UI from /app/frontend/src/components/ui/",
+          "state_management": "React Context + Local State",
+          "api_calls": "REACT_APP_BACKEND_URL from .env",
+          "styling": "TailwindCSS + CSS Variables",
+          "icons": "Lucide React",
+          "data_testid": "Required on all interactive elements"
+        },
+        "status": "COMPLIANT"
+      }
+    },
+
+    "architecture_modulaire": {
+      "AM-001": {
+        "id": "AM-001",
+        "title": "Principe LEGO",
+        "description": "Architecture strictement modulaire - chaque fonctionnalité est un module indépendant",
+        "rules": [
+          "Un module = un domaine métier",
+          "Pas de couplage fort entre modules",
+          "Communication via API REST uniquement",
+          "Chaque module a son propre router FastAPI",
+          "Frontend: un dossier par module"
+        ],
+        "status": "COMPLIANT"
+      },
+      "AM-002": {
+        "id": "AM-002",
+        "title": "Structure Backend Module",
+        "spec": {
+          "location": "/app/backend/modules/{module_name}/",
+          "required_files": ["__init__.py", "router.py", "models.py", "services.py"],
+          "optional_files": ["schemas.py", "utils.py", "exceptions.py"],
+          "versioning": "v1/ subdirectory for versioned APIs"
+        },
+        "status": "COMPLIANT"
+      },
+      "AM-003": {
+        "id": "AM-003",
+        "title": "Structure Frontend Module",
+        "spec": {
+          "location": "/app/frontend/src/modules/{module_name}/",
+          "required_folders": ["components/"],
+          "optional_folders": ["hooks/", "services/", "utils/", "data/"],
+          "naming": "PascalCase for components, camelCase for utils"
+        },
+        "status": "COMPLIANT"
+      },
+      "AM-004": {
+        "id": "AM-004",
+        "title": "Structure Admin UI",
+        "spec": {
+          "location": "/app/frontend/src/ui/administration/admin_{feature}/",
+          "main_component": "Admin{Feature}.jsx or index.jsx",
+          "integration": "Via AdminPremiumPage.jsx tabs"
+        },
+        "status": "COMPLIANT"
+      }
+    },
+
+    "security": {
+      "SEC-001": {
+        "id": "SEC-001",
+        "title": "Authentication",
+        "spec": {
+          "method": "JWT Bearer Token",
+          "expiry": "24h access, 7d refresh",
+          "storage": "httpOnly cookies preferred",
+          "oauth": "Google OAuth2 integration"
+        },
+        "status": "COMPLIANT"
+      },
+      "SEC-002": {
+        "id": "SEC-002",
+        "title": "Authorization",
+        "spec": {
+          "rbac": "Role-Based Access Control",
+          "roles": ["user", "premium", "admin", "super_admin"],
+          "endpoint_protection": "Dependency injection guards"
+        },
+        "status": "COMPLIANT"
+      },
+      "SEC-003": {
+        "id": "SEC-003",
+        "title": "Data Protection",
+        "spec": {
+          "pii_handling": "Encrypted at rest",
+          "gdpr_compliance": "Data deletion on request",
+          "audit_logging": "All admin actions logged"
+        },
+        "status": "COMPLIANT"
+      },
+      "SEC-004": {
+        "id": "SEC-004",
+        "title": "STAGING Mode Security",
+        "spec": {
+          "internal_only": true,
+          "external_flows": false,
+          "marketing_locked": true,
+          "indexation_blocked": true,
+          "external_api_calls": "Blocked except LLM"
+        },
+        "status": "ACTIVE"
+      }
+    },
+
+    "performance": {
+      "PERF-001": {
+        "id": "PERF-001",
+        "title": "Lighthouse Targets",
+        "targets": {
+          "performance": 95,
+          "accessibility": 99,
+          "best_practices": 99,
+          "seo": 99,
+          "global_minimum": 99.0,
+          "global_aspirational": 99.9
+        },
+        "current": {
+          "performance": 47.0,
+          "accessibility": 80.8,
+          "best_practices": 96.0,
+          "seo": 92.0,
+          "global": 79.0
+        },
+        "status": "OPTIMIZATION_REQUIRED"
+      },
+      "PERF-002": {
+        "id": "PERF-002",
+        "title": "Core Web Vitals",
+        "targets": {
+          "LCP": "<2.5s",
+          "FID": "<100ms",
+          "CLS": "<0.1",
+          "TBT": "<200ms",
+          "FCP": "<1.8s"
+        },
+        "status": "OPTIMIZATION_REQUIRED"
+      },
+      "PERF-003": {
+        "id": "PERF-003",
+        "title": "API Performance",
+        "targets": {
+          "response_time_p50": "<100ms",
+          "response_time_p95": "<500ms",
+          "response_time_p99": "<1000ms",
+          "availability": "99.9%"
+        },
+        "status": "TO_BE_MEASURED"
+      },
+      "PERF-004": {
+        "id": "PERF-004",
+        "title": "Asset Optimization",
+        "requirements": [
+          "JavaScript minification and tree-shaking",
+          "CSS minification and purging",
+          "Image optimization (WebP, lazy loading)",
+          "Font optimization (preload, subset)",
+          "Gzip/Brotli compression",
+          "Code splitting per route"
+        ],
+        "status": "OPTIMIZATION_REQUIRED"
+      }
+    },
+
+    "compliance_staging": {
+      "STG-001": {
+        "id": "STG-001",
+        "title": "INTERNAL_ONLY Mode",
+        "spec": {
+          "value": true,
+          "description": "Toutes les opérations sont internes uniquement",
+          "external_api_calls": "Bloqués sauf emergentintegrations (LLM)",
+          "indexation": "Bloquée (robots.txt disallow all en production)",
+          "analytics_external": "Désactivé"
+        },
+        "status": "ACTIVE"
+      },
+      "STG-002": {
+        "id": "STG-002",
+        "title": "EXTERNAL_FLOWS Mode",
+        "spec": {
+          "value": false,
+          "description": "Aucun flux externe autorisé",
+          "email_sending": "Bloqué",
+          "sms_sending": "Bloqué",
+          "payment_processing": "Test mode only",
+          "social_posting": "Bloqué"
+        },
+        "status": "ACTIVE"
+      },
+      "STG-003": {
+        "id": "STG-003",
+        "title": "Marketing Locks",
+        "spec": {
+          "global_master_switch": "OFF",
+          "affiliate_ads": "LOCKED",
+          "trigger_engine": "LOCKED",
+          "contact_engine": "LOCKED",
+          "messaging_engine": "LOCKED"
+        },
+        "status": "ACTIVE"
+      }
+    },
+
+    "sla_kpi": {
+      "SLA-001": {
+        "id": "SLA-001",
+        "title": "Availability SLA",
+        "target": "99.9%",
+        "measurement": "Monthly uptime",
+        "status": "TO_BE_MEASURED"
+      },
+      "SLA-002": {
+        "id": "SLA-002",
+        "title": "Response Time SLA",
+        "targets": {
+          "api_p95": "<500ms",
+          "page_load": "<3s",
+          "time_to_interactive": "<5s"
+        },
+        "status": "TO_BE_MEASURED"
+      },
+      "KPI-001": {
+        "id": "KPI-001",
+        "title": "Quality KPIs",
+        "targets": {
+          "test_coverage": ">80%",
+          "code_quality_score": ">85",
+          "security_vulnerabilities": 0,
+          "accessibility_score": ">95"
+        },
+        "status": "PARTIAL"
+      },
+      "KPI-002": {
+        "id": "KPI-002",
+        "title": "SEO KPIs",
+        "targets": {
+          "lighthouse_seo": ">99",
+          "crawlable_pages": "100%",
+          "structured_data": "All pages",
+          "mobile_friendly": "100%"
+        },
+        "status": "OPTIMIZATION_REQUIRED"
+      }
+    },
+
+    "validation_matrices": {
+      "L1": {
+        "phase": "L1",
+        "name": "Audit Lighthouse Initial",
+        "criteria": [
+          "6 pages auditées (desktop)",
+          "Scores baseline établis",
+          "Goulots d'étranglement identifiés",
+          "Plan d'optimisation généré"
+        ],
+        "status": "COMPLETED",
+        "score": "79.0/99.0"
+      },
+      "L2": {
+        "phase": "L2",
+        "name": "Performance Critique",
+        "criteria": [
+          "JavaScript minifié",
+          "Code splitting activé",
+          "Lazy loading images",
+          "Bundle < 500KB initial",
+          "Score Performance > 70"
+        ],
+        "status": "PENDING",
+        "target_score": 70
+      },
+      "L3": {
+        "phase": "L3",
+        "name": "Accessibilité",
+        "criteria": [
+          "Tous les boutons ont aria-label",
+          "Contraste WCAG AA",
+          "Hiérarchie titres correcte",
+          "Focus visible",
+          "Score Accessibility > 95"
+        ],
+        "status": "PENDING",
+        "target_score": 95
+      },
+      "L4": {
+        "phase": "L4",
+        "name": "Core Web Vitals",
+        "criteria": [
+          "LCP < 2.5s",
+          "CLS < 0.1",
+          "TBT < 200ms",
+          "Preload critical assets",
+          "Score Performance > 90"
+        ],
+        "status": "PENDING",
+        "target_score": 90
+      },
+      "L5": {
+        "phase": "L5",
+        "name": "SEO Polish",
+        "criteria": [
+          "Structured data (JSON-LD)",
+          "Meta descriptions uniques",
+          "Canonical URLs",
+          "Open Graph tags",
+          "Score SEO > 98"
+        ],
+        "status": "PENDING",
+        "target_score": 98
+      }
+    },
+
+    "bionic_ultimate_compatibility": {
+      "BU-001": {
+        "id": "BU-001",
+        "title": "Prerequisites for BIONIC Ultimate",
+        "requirements": [
+          "Score Lighthouse Global >= 99.0",
+          "Tous les tests d'intégration passent",
+          "Zero erreurs console",
+          "Zero vulnérabilités critiques",
+          "Documentation API complète",
+          "STAGING validation complète"
+        ],
+        "status": "IN_PROGRESS"
+      },
+      "BU-002": {
+        "id": "BU-002",
+        "title": "BIONIC Ultimate Features",
+        "planned_features": [
+          "Ultimate Territory Intelligence Engine",
+          "Advanced Predictive Analytics",
+          "Real-time Collaboration",
+          "AI-Powered Recommendations",
+          "Multi-platform Sync"
+        ],
+        "dependencies": ["V5 Score >= 99.0", "GO LIVE Approval"]
+      }
+    },
+
+    "non_regression_rules": {
+      "NR-001": {
+        "id": "NR-001",
+        "title": "Code Quality Rules",
+        "rules": [
+          "Lint errors: 0 allowed",
+          "TypeScript strict mode (if applicable)",
+          "No console.log in production",
+          "No hardcoded secrets",
+          "All API responses use Pydantic models"
+        ]
+      },
+      "NR-002": {
+        "id": "NR-002",
+        "title": "Performance Rules",
+        "rules": [
+          "No regression > 5 points on any Lighthouse category",
+          "Bundle size increase < 10% per release",
+          "API response time regression < 100ms"
+        ]
+      },
+      "NR-003": {
+        "id": "NR-003",
+        "title": "Accessibility Rules",
+        "rules": [
+          "No new WCAG violations",
+          "All images have alt attributes",
+          "All forms have labels",
+          "Keyboard navigation functional"
+        ]
+      }
+    }
+  },
+
+  "module_inventory": {
+    "backend_modules_count": 77,
+    "frontend_modules_count": 35,
+    "admin_ui_modules_count": 35,
+    "total_endpoints": "400+",
+    "total_components": "200+"
+  },
+
+  "current_state_summary": {
+    "version": "5.9.0",
+    "lighthouse_score": 79.0,
+    "staging_mode": "ACTIVE",
+    "marketing_locked": true,
+    "tests_passing": "PARTIAL",
+    "known_issues": [
+      "Performance: 48 points below target",
+      "Accessibility: 18 points below target",
+      "JavaScript non-minifié en preview",
+      "Images lazy loading non implémenté uniformément"
+    ]
+  }
+}

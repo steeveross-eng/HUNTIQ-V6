@@ -1,0 +1,186 @@
+{
+    "registry_version": "BIONIC_V5_ULTIME_300_R1",
+    "last_updated": "2026-03-01T12:00:00Z",
+    "audit_status": "COMPLETE",
+    "total_credentials": 12,
+    "active_credentials": 9,
+    "inactive_credentials": 3,
+    "credentials": {
+        "infrastructure": {
+            "MONGO_URL": {
+                "role": "Base de donnees principale MongoDB",
+                "module": "ALL",
+                "status": "active",
+                "type": "connection_string",
+                "env_file": "backend/.env",
+                "validated": true,
+                "notes": "Connexion locale, pas de rotation requise"
+            },
+            "DB_NAME": {
+                "role": "Nom de la base de donnees",
+                "module": "ALL",
+                "status": "active",
+                "type": "string",
+                "env_file": "backend/.env",
+                "validated": true
+            },
+            "CORS_ORIGINS": {
+                "role": "Origines CORS autorisees",
+                "module": "SERVER",
+                "status": "active",
+                "type": "url_list",
+                "env_file": "backend/.env",
+                "validated": true
+            }
+        },
+        "authentication": {
+            "JWT_SECRET_KEY": {
+                "role": "Secret pour signature des tokens JWT",
+                "module": "AUTH",
+                "status": "active",
+                "type": "secret",
+                "env_file": "backend/.env",
+                "validated": true,
+                "rotation": "recommandee tous les 90 jours"
+            },
+            "JWT_ALGORITHM": {
+                "role": "Algorithme JWT (HS256)",
+                "module": "AUTH",
+                "status": "active",
+                "type": "config",
+                "env_file": "backend/.env",
+                "validated": true
+            },
+            "ACCESS_TOKEN_EXPIRE_MINUTES": {
+                "role": "Duree de vie des tokens d'acces",
+                "module": "AUTH",
+                "status": "active",
+                "type": "config",
+                "env_file": "backend/.env",
+                "validated": true
+            }
+        },
+        "external_apis_active": {
+            "OPENTOPOGRAPHY_API_KEY": {
+                "role": "Donnees d'elevation DEM (SRTM/ALOS)",
+                "module": "DEM_SHADOW, TCVE_REAL",
+                "status": "active",
+                "type": "api_key",
+                "provider": "OpenTopography",
+                "url": "https://opentopography.org/",
+                "env_file": "backend/.env",
+                "validated": true,
+                "rate_limit": "50 appels/24h",
+                "cache": "dem_cache (MongoDB, TTL 90j)",
+                "notes": "Quota souvent epuise, cache MongoDB actif"
+            },
+            "SENTINEL2_CLIENT_ID": {
+                "role": "OAuth2 Client ID pour Copernicus Data Space",
+                "module": "NDVI_SHADOW",
+                "status": "active",
+                "type": "oauth2_client_id",
+                "provider": "ESA Copernicus Data Space (Sentinel Hub)",
+                "url": "https://dataspace.copernicus.eu/",
+                "env_file": "backend/.env",
+                "validated": true,
+                "token_url": "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token",
+                "cache": "ndvi_cache (MongoDB, TTL 30j)",
+                "notes": "Compte Steeve Ross, OAuth2 client_credentials"
+            },
+            "SENTINEL2_CLIENT_SECRET": {
+                "role": "OAuth2 Client Secret pour Copernicus Data Space",
+                "module": "NDVI_SHADOW",
+                "status": "active",
+                "type": "oauth2_client_secret",
+                "provider": "ESA Copernicus Data Space (Sentinel Hub)",
+                "env_file": "backend/.env",
+                "validated": true,
+                "notes": "Paire avec SENTINEL2_CLIENT_ID"
+            }
+        },
+        "external_apis_free": {
+            "WEATHER_REALTIME": {
+                "role": "Donnees meteo en temps reel",
+                "module": "WEATHER_SHADOW, WINDFIELD, TFE_REAL",
+                "status": "active",
+                "type": "no_key_required",
+                "provider": "Open-Meteo",
+                "url": "https://open-meteo.com/",
+                "validated": true,
+                "cache": "weather_cache (MongoDB, TTL 6h)",
+                "notes": "API gratuite, aucune cle requise"
+            }
+        },
+        "external_apis_inactive": {
+            "THERMAL_API_KEY": {
+                "role": "Donnees thermiques MODIS LST / Landsat",
+                "module": "TFE_REAL",
+                "status": "not_configured",
+                "type": "api_key",
+                "provider": "MODIS LST / Landsat",
+                "fallback": "internal_synthetic",
+                "notes": "En attente d'activation future"
+            },
+            "ML_CLOUD_API_KEY": {
+                "role": "Service ML Cloud externe",
+                "module": "PHASE_H_ML",
+                "status": "not_configured",
+                "type": "api_key",
+                "provider": "Optionnel (strategie Ultra Minimum Cost adoptee)",
+                "fallback": "internal_sklearn",
+                "notes": "Strategie locale adoptee, cle cloud optionnelle"
+            },
+            "STORAGE_API_KEY": {
+                "role": "Stockage cloud pour export de rapports",
+                "module": "REPORT_EXPORT",
+                "status": "not_configured",
+                "type": "api_key",
+                "provider": "Optionnel (S3 / GCS)",
+                "fallback": "local_filesystem",
+                "notes": "En attente d'activation future"
+            }
+        },
+        "other": {
+            "STRIPE_API_KEY": {
+                "role": "Paiements Stripe",
+                "module": "SHOP",
+                "status": "active",
+                "type": "api_key",
+                "provider": "Stripe",
+                "env_file": "backend/.env",
+                "validated": true
+            },
+            "EMERGENT_LLM_KEY": {
+                "role": "Cle universelle LLM Emergent",
+                "module": "LLM_SERVICES",
+                "status": "active",
+                "type": "api_key",
+                "provider": "Emergent Labs",
+                "env_file": "backend/.env",
+                "validated": true
+            },
+            "OWM_API_KEY": {
+                "role": "OpenWeatherMap (legacy, remplace par Open-Meteo)",
+                "module": "WEATHER_LEGACY",
+                "status": "active",
+                "type": "api_key",
+                "provider": "OpenWeatherMap",
+                "env_file": "backend/.env",
+                "validated": true,
+                "notes": "Legacy — Open-Meteo est le service principal"
+            }
+        }
+    },
+    "caches_mongodb": {
+        "dem_cache": {"ttl": "90 jours", "status": "active"},
+        "weather_cache": {"ttl": "6 heures", "status": "active"},
+        "ndvi_cache": {"ttl": "30 jours", "status": "active"}
+    },
+    "validation_summary": {
+        "all_active_keys_validated": true,
+        "all_fallbacks_available": true,
+        "pipeline_internal_operational": true,
+        "shadow_mode_safe": true,
+        "zero_impact_on_production": true
+    }
+}

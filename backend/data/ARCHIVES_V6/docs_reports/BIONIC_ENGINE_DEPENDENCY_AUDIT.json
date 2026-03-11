@@ -1,0 +1,256 @@
+{
+  "report_id": "BIONIC-DEPENDENCY-AUDIT-001",
+  "report_type": "DEPENDENCY_AUDIT",
+  "phase": "PHASE_4_DEPENDENCY_AUDIT",
+  "timestamp": "2026-02-19T19:10:00+00:00",
+  "investigator": "E1-AGENT",
+  "status": "AUDIT_COMPLETE",
+  
+  "summary": {
+    "total_modules_analyzed": 15,
+    "modules_with_mongodb_access": 10,
+    "modules_with_len_calls": 5,
+    "modules_without_isinstance_protection": 5,
+    "circular_dependencies": 0,
+    "orphan_modules": 0,
+    "critical_vulnerability_points": 18
+  },
+  
+  "dependency_graph": {
+    "bionic_engine_router": {
+      "imports": [
+        "modules.user_context",
+        "modules.hunter_score",
+        "modules.permis_checklist",
+        "modules.next_step_engine",
+        "modules.setup_builder",
+        "modules.pourvoirie_finder",
+        "modules.liste_epicerie",
+        "modules.chasseur_jumeau",
+        "modules.plan_saison",
+        "modules.score_preparation"
+      ],
+      "role": "API_GATEWAY",
+      "critical": true
+    },
+    "user_context": {
+      "imports": ["motor.motor_asyncio", "dataclasses", "pydantic"],
+      "imported_by": ["bionic_engine_router"],
+      "mongodb_collections": ["user_contexts"],
+      "role": "DATA_LAYER",
+      "critical": true
+    },
+    "hunter_score": {
+      "imports": ["motor.motor_asyncio", "dataclasses", "pydantic"],
+      "imported_by": ["bionic_engine_router"],
+      "mongodb_collections": ["user_contexts", "hunter_scores"],
+      "consumes": ["user_contexts.pages_visited", "user_contexts.tools_used"],
+      "role": "SCORING_ENGINE",
+      "critical": true
+    },
+    "score_preparation": {
+      "imports": ["motor.motor_asyncio", "dataclasses"],
+      "imported_by": ["bionic_engine_router"],
+      "mongodb_collections": ["user_contexts", "permis_checklists", "cart_items", "preparation_scores"],
+      "consumes": ["user_contexts.pages_visited"],
+      "role": "SCORING_ENGINE",
+      "critical": true
+    },
+    "chasseur_jumeau": {
+      "imports": ["motor.motor_asyncio", "dataclasses", "random"],
+      "imported_by": ["bionic_engine_router"],
+      "mongodb_collections": ["user_contexts", "chasseur_jumeau_searches", "cart_items"],
+      "consumes": ["user_contexts.tools_used"],
+      "role": "MATCHING_ENGINE",
+      "critical": true
+    },
+    "next_step_engine": {
+      "imports": ["motor.motor_asyncio", "dataclasses", "pydantic", "enum"],
+      "imported_by": ["bionic_engine_router"],
+      "mongodb_collections": ["user_contexts"],
+      "consumes": ["user_contexts.pages_visited"],
+      "role": "RECOMMENDATION_ENGINE",
+      "critical": true
+    }
+  },
+  
+  "critical_data_flow": {
+    "pages_visited": {
+      "defined_in": "user_context.py:58",
+      "type_definition": "List[str]",
+      "written_by": ["user_context.update_context()"],
+      "read_by": [
+        {"module": "user_context", "method": "_check_profile_complete", "line": 296, "operation": "len()"},
+        {"module": "hunter_score", "method": "calculate_score", "line": 136, "operation": "context.get() + len()"},
+        {"module": "score_preparation", "method": "calculate_score", "line": 143, "operation": "list comprehension"},
+        {"module": "score_preparation", "method": "calculate_score", "line": 258, "operation": "list comprehension"},
+        {"module": "next_step_engine", "method": "get_next_steps", "line": 346, "operation": "context.get()"}
+      ]
+    },
+    "tools_used": {
+      "defined_in": "user_context.py:59",
+      "type_definition": "List[str]",
+      "written_by": ["user_context.update_context()"],
+      "read_by": [
+        {"module": "user_context", "method": "_check_profile_complete", "line": 298, "operation": "len()"},
+        {"module": "hunter_score", "method": "calculate_score", "line": 130, "operation": "context.get() + len()"},
+        {"module": "chasseur_jumeau", "method": "find_similar", "line": 205, "operation": "context.get() + len()"}
+      ]
+    }
+  },
+  
+  "vulnerability_analysis": {
+    "unprotected_len_calls": [
+      {"file": "user_context.py", "line": 296, "code": "len(context.pages_visited)", "severity": "CRITICAL"},
+      {"file": "user_context.py", "line": 298, "code": "len(context.tools_used)", "severity": "CRITICAL"},
+      {"file": "hunter_score.py", "line": 131, "code": "len(tools_used)", "severity": "HIGH"},
+      {"file": "hunter_score.py", "line": 132, "code": "len(tools_used)", "severity": "HIGH"},
+      {"file": "hunter_score.py", "line": 137, "code": "len(pages_visited)", "severity": "HIGH"},
+      {"file": "hunter_score.py", "line": 141, "code": "len(pourvoiries)", "severity": "MEDIUM"},
+      {"file": "hunter_score.py", "line": 147, "code": "len(setups)", "severity": "MEDIUM"},
+      {"file": "score_preparation.py", "line": 103, "code": "len([i for i in checklist.get('items', [])])", "severity": "HIGH"},
+      {"file": "score_preparation.py", "line": 143, "code": "len([p for p in context.get('pages_visited', [])])", "severity": "HIGH"},
+      {"file": "score_preparation.py", "line": 184, "code": "len(cart_items)", "severity": "MEDIUM"},
+      {"file": "score_preparation.py", "line": 208, "code": "len([p for p in purchases])", "severity": "MEDIUM"},
+      {"file": "score_preparation.py", "line": 210, "code": "len(formations)", "severity": "MEDIUM"},
+      {"file": "score_preparation.py", "line": 233, "code": "len([p for p in purchases])", "severity": "MEDIUM"},
+      {"file": "score_preparation.py", "line": 235, "code": "len(hotspots)", "severity": "MEDIUM"},
+      {"file": "score_preparation.py", "line": 258, "code": "len([p for p in context.get('pages_visited', [])])", "severity": "HIGH"},
+      {"file": "chasseur_jumeau.py", "line": 205, "code": "len(user_context.get('tools_used', []))", "severity": "HIGH"},
+      {"file": "chasseur_jumeau.py", "line": 251, "code": "len(profiles_with_scores)", "severity": "LOW"},
+      {"file": "chasseur_jumeau.py", "line": 302, "code": "len(response.similar_profiles)", "severity": "LOW"}
+    ],
+    "total_critical": 2,
+    "total_high": 7,
+    "total_medium": 6,
+    "total_low": 3
+  },
+  
+  "get_default_misconception": {
+    "issue": "context.get('field', []) does NOT protect against wrong types",
+    "explanation": "The default value [] is only returned if the key is ABSENT. If the key EXISTS with value 42 (int), .get() returns 42, not []",
+    "affected_modules": ["hunter_score", "score_preparation", "chasseur_jumeau", "next_step_engine"],
+    "example": {
+      "code": "pages = context.get('pages_visited', [])",
+      "input": {"pages_visited": 42},
+      "expected": "[] (default)",
+      "actual": "42 (existing value)",
+      "result": "TypeError on len(pages)"
+    }
+  },
+  
+  "circular_dependencies": {
+    "status": "NONE_FOUND",
+    "analysis": "All modules import only from standard library, motor, pydantic, dataclasses - no cross-module imports"
+  },
+  
+  "orphan_modules": {
+    "status": "NONE_FOUND",
+    "all_modules_used": true
+  },
+  
+  "mongodb_access_without_validation": {
+    "modules": [
+      {"module": "chasseur_jumeau.py", "mongodb_ops": 3, "validation_checks": 0, "risk": "HIGH"},
+      {"module": "plan_saison.py", "mongodb_ops": "unknown", "validation_checks": 0, "risk": "HIGH"},
+      {"module": "score_preparation.py", "mongodb_ops": 4, "validation_checks": 0, "risk": "HIGH"},
+      {"module": "hunter_score.py", "mongodb_ops": 2, "validation_checks": 1, "risk": "MEDIUM"},
+      {"module": "user_context.py", "mongodb_ops": 4, "validation_checks": 2, "risk": "MEDIUM"}
+    ]
+  },
+  
+  "error_propagation_chain": {
+    "source": "MongoDB document with corrupted type",
+    "step_1": {
+      "location": "user_context.get_context()",
+      "action": "db.user_contexts.find_one()",
+      "result": "Document with pages_visited=42 (int)"
+    },
+    "step_2": {
+      "location": "user_context.get_context()",
+      "action": "UserContext(**doc)",
+      "result": "Dataclass accepts int without validation"
+    },
+    "step_3": {
+      "location": "user_context.update_context()",
+      "action": "_check_profile_complete(context)",
+      "result": "Method is called with corrupted context"
+    },
+    "step_4": {
+      "location": "user_context._check_profile_complete()",
+      "action": "len(context.pages_visited)",
+      "result": "TypeError: object of type 'int' has no len()"
+    },
+    "step_5": {
+      "location": "API",
+      "action": "Exception bubbles up",
+      "result": "HTTP 500 Internal Server Error"
+    },
+    "affected_endpoints": [
+      "POST /api/bionic-engine/context/update",
+      "POST /api/bionic-engine/context/set-gibier",
+      "GET /api/bionic-engine/score/hunter/{user_id}",
+      "GET /api/bionic-engine/score/preparation/{user_id}",
+      "GET /api/bionic-engine/chasseur-jumeau/{user_id}"
+    ]
+  },
+  
+  "bionic_knowledge_engine_dependencies": {
+    "internal_modules": [
+      "knowledge_service → knowledge_sources",
+      "knowledge_service → knowledge_rules",
+      "knowledge_service → knowledge_seasonal_models",
+      "knowledge_service → knowledge_validation_pipeline"
+    ],
+    "status": "WELL_ISOLATED",
+    "no_dependency_on_corrupted_fields": true
+  },
+  
+  "data_layers_dependencies": {
+    "layers": ["ecoforestry", "behavioral", "simulation", "3d", "advanced_geospatial"],
+    "status": "ISOLATED",
+    "no_dependency_on_corrupted_fields": true
+  },
+  
+  "recommendations": [
+    {
+      "priority": "P0",
+      "action": "Add isinstance() check before ALL len() calls on MongoDB data",
+      "files": ["user_context.py", "hunter_score.py", "score_preparation.py", "chasseur_jumeau.py"],
+      "example": "if isinstance(context.pages_visited, list) and len(context.pages_visited) >= 5:"
+    },
+    {
+      "priority": "P0",
+      "action": "Add __post_init__ validation in UserContext dataclass",
+      "file": "user_context.py",
+      "example": "def __post_init__(self): self.pages_visited = self.pages_visited if isinstance(self.pages_visited, list) else []"
+    },
+    {
+      "priority": "P1",
+      "action": "Replace .get('field', []) pattern with safe_get() helper",
+      "description": "Create helper that validates type: safe_get(dict, key, list) → returns [] if not list"
+    },
+    {
+      "priority": "P1",
+      "action": "Add MongoDB schema validation",
+      "collection": "user_contexts",
+      "validator": {"$jsonSchema": {"properties": {"pages_visited": {"bsonType": "array"}}}}
+    },
+    {
+      "priority": "P2",
+      "action": "Create integration tests for type corruption scenarios"
+    }
+  ],
+  
+  "mode_staging_validation": {
+    "status": "MAINTAINED",
+    "internal_only": true,
+    "external_flows": false,
+    "code_modified": false,
+    "db_modified": false
+  },
+  
+  "next_phase": {
+    "phase_5": "SECURITY_VALIDATION - Confirm investigation does not compromise staging security"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "audit_type": "MODULARITE V3",
+  "standard": "BIONIC V5 300%",
+  "date": "2026-03-04",
+  "version": "3.0",
+  "status": "CERTIFIED",
+  "modules": [
+    {"name": "useZoneOrchestrator", "role": "Coordination", "stale_closure_guard": "zoneSourceRef", "delegates_all_computation": true},
+    {"name": "useZonePreview V2", "role": "Génération organique (5 morphologies + Chaikin)", "pure_computation": true, "zero_external_calls": true},
+    {"name": "useZoneCache", "role": "Cache IndexedDB + validation", "pure_storage": true, "zero_external_calls": true},
+    {"name": "BionicZoneService", "role": "API backend", "backend_only": true}
+  ],
+  "auto_selection": {
+    "module": "MonTerritoireBionicPage.jsx",
+    "mechanism": "useEffect + hasAutoSelected ref",
+    "trigger": "activeWaypoints loads from localStorage",
+    "guard": "Runs once (hasAutoSelected.current = true after first selection)"
+  },
+  "cross_module_coupling": "ZERO",
+  "verdict": "CERTIFIED — Isolation totale. Zéro lien croisé. Auto-sélection avec garde."
+}

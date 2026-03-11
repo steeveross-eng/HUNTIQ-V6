@@ -1,0 +1,432 @@
+{
+  "report_id": "SEO-VAL-001",
+  "report_type": "TECHNICAL_SEO_AUDIT",
+  "timestamp": "2026-02-19T20:00:00+00:00",
+  "investigator": "E1-AGENT",
+  "status": "AUDIT_COMPLETE",
+  "site_url": "https://territory-analysis.preview.emergentagent.com",
+  
+  "summary": {
+    "overall_score": 72,
+    "critical_issues": 3,
+    "high_priority_issues": 5,
+    "medium_priority_issues": 8,
+    "low_priority_issues": 4,
+    "passed_checks": 18
+  },
+  
+  "1_html_structure": {
+    "status": "PARTIAL",
+    "score": 75,
+    "checks": {
+      "title_tag": {
+        "status": "PASS",
+        "value": "Chasse Bionic TM | Bionic Hunt TM",
+        "length": 34,
+        "recommendation": "Longueur OK (30-60 caractères)"
+      },
+      "meta_description": {
+        "status": "PASS",
+        "value": "HUNTIQ - Application de chasse intelligente avec prévisions de succès et waypoints",
+        "length": 82,
+        "recommendation": "Longueur OK (50-160 caractères)"
+      },
+      "h1_per_page": {
+        "status": "WARNING",
+        "count_pages_with_h1": 16,
+        "total_pages": 21,
+        "issue": "Certaines pages ont plusieurs H1 ou H1 manquant",
+        "examples": [
+          "PaymentSuccessPage.jsx: 3 balises H1",
+          "BionicHomePage.jsx: H1 non trouvé"
+        ]
+      },
+      "h2_h3_hierarchy": {
+        "status": "PASS",
+        "note": "Hiérarchie généralement respectée"
+      },
+      "semantic_tags": {
+        "status": "PASS",
+        "count": 79,
+        "tags_found": ["main", "header", "footer", "nav", "section", "article"]
+      },
+      "images_alt_attribute": {
+        "status": "FAIL",
+        "images_without_alt": 20,
+        "images_with_alt": 24,
+        "coverage": "55%",
+        "priority": "HIGH",
+        "files_affected": [
+          "CartWidget.jsx",
+          "BrandIdentityAdmin.jsx",
+          "ContentDepot.jsx",
+          "ProductDiscoveryAdmin.jsx",
+          "PropertyGallery.jsx",
+          "ProductCard.jsx",
+          "DynamicReferralWidget.jsx",
+          "SpeciesIcon.jsx"
+        ]
+      }
+    }
+  },
+  
+  "2_seo_tags": {
+    "status": "GOOD",
+    "score": 85,
+    "checks": {
+      "canonical": {
+        "status": "PASS",
+        "implementation": "Dynamic via SEOHead.jsx",
+        "note": "Canonical URL générée dynamiquement par page"
+      },
+      "robots_meta": {
+        "status": "WARNING",
+        "implementation": "Non trouvé dans index.html",
+        "note": "Ajouter <meta name='robots' content='index, follow'>"
+      },
+      "hreflang": {
+        "status": "NOT_APPLICABLE",
+        "note": "Site uniquement en français (fr_CA)"
+      },
+      "opengraph": {
+        "status": "PASS",
+        "tags_implemented": [
+          "og:title",
+          "og:description",
+          "og:type",
+          "og:url",
+          "og:image",
+          "og:site_name",
+          "og:locale"
+        ],
+        "implementation": "SEOHead.jsx"
+      },
+      "twitter_cards": {
+        "status": "PASS",
+        "tags_implemented": [
+          "twitter:card",
+          "twitter:title",
+          "twitter:description",
+          "twitter:image"
+        ],
+        "implementation": "SEOHead.jsx"
+      },
+      "json_ld_schema": {
+        "status": "PASS",
+        "type": "WebSite",
+        "implementation": "SEOHead.jsx",
+        "includes_search_action": true
+      }
+    }
+  },
+  
+  "3_indexability": {
+    "status": "FAIL",
+    "score": 40,
+    "checks": {
+      "robots_txt": {
+        "status": "FAIL",
+        "priority": "CRITICAL",
+        "issue": "Fichier robots.txt NON TROUVÉ",
+        "recommendation": "Créer /app/frontend/public/robots.txt"
+      },
+      "sitemap_xml": {
+        "status": "FAIL",
+        "priority": "CRITICAL",
+        "issue": "Fichier sitemap.xml NON TROUVÉ",
+        "recommendation": "Créer /app/frontend/public/sitemap.xml ou API dynamique"
+      },
+      "noindex_nofollow": {
+        "status": "PASS",
+        "note": "Aucune page marquée noindex détectée"
+      },
+      "internal_links": {
+        "status": "WARNING",
+        "note": "Navigation SPA, vérifier que les liens internes sont crawlables"
+      },
+      "navigation_depth": {
+        "status": "PASS",
+        "max_depth": 3,
+        "note": "Profondeur de navigation acceptable"
+      }
+    }
+  },
+  
+  "4_performance_core_web_vitals": {
+    "status": "PARTIAL",
+    "score": 70,
+    "checks": {
+      "lazy_loading": {
+        "status": "PARTIAL",
+        "occurrences": 14,
+        "note": "React.lazy et Suspense utilisés, mais pas sur toutes les images"
+      },
+      "script_loading": {
+        "status": "WARNING",
+        "blocking_scripts": 1,
+        "script": "emergent-main.js (synchrone)",
+        "recommendation": "Ajouter async ou defer"
+      },
+      "bundle_size": {
+        "status": "WARNING",
+        "main_files": [
+          {"file": "App.js", "size": "50KB"},
+          {"file": "MonTerritoireBionicPage.jsx", "size": "110KB"}
+        ],
+        "recommendation": "Considérer le code splitting pour les gros fichiers"
+      },
+      "compression": {
+        "status": "UNKNOWN",
+        "note": "Vérifier configuration serveur (GZIP/Brotli)"
+      },
+      "cache_control": {
+        "status": "UNKNOWN",
+        "note": "Vérifier headers HTTP Cache-Control"
+      },
+      "image_optimization": {
+        "status": "WARNING",
+        "note": "Pas d'utilisation de next/image ou format WebP automatique"
+      }
+    }
+  },
+  
+  "5_accessibility": {
+    "status": "PARTIAL",
+    "score": 65,
+    "checks": {
+      "form_labels": {
+        "status": "WARNING",
+        "form_elements": 59,
+        "labels_aria": 36,
+        "coverage": "61%",
+        "recommendation": "Ajouter aria-label ou htmlFor à tous les inputs"
+      },
+      "aria_roles": {
+        "status": "PARTIAL",
+        "occurrences": 42,
+        "note": "ARIA présent mais couverture incomplète"
+      },
+      "keyboard_navigation": {
+        "status": "PARTIAL",
+        "occurrences": 15,
+        "recommendation": "Ajouter tabIndex et onKeyDown sur tous les éléments interactifs"
+      },
+      "color_contrast": {
+        "status": "UNKNOWN",
+        "note": "Nécessite test visuel ou audit automatisé (Lighthouse)"
+      },
+      "semantic_structure": {
+        "status": "PASS",
+        "note": "Bonne utilisation des balises sémantiques"
+      }
+    }
+  },
+  
+  "6_security_seo": {
+    "status": "GOOD",
+    "score": 85,
+    "checks": {
+      "https_forced": {
+        "status": "PASS",
+        "note": "Site accessible uniquement en HTTPS"
+      },
+      "mixed_content": {
+        "status": "PASS",
+        "note": "Aucun mixed content détecté"
+      },
+      "external_scripts": {
+        "status": "PASS",
+        "scripts": [
+          "emergent-main.js (Emergent - interne)",
+          "posthog (analytics déclaré)"
+        ],
+        "note": "Scripts externes légitimes et déclarés"
+      },
+      "trackers": {
+        "status": "PASS",
+        "declared_trackers": ["PostHog"],
+        "undeclared_trackers": 0
+      }
+    }
+  },
+  
+  "7_mobile_compatibility": {
+    "status": "EXCELLENT",
+    "score": 95,
+    "checks": {
+      "viewport_meta": {
+        "status": "PASS",
+        "value": "width=device-width, initial-scale=1"
+      },
+      "responsive_design": {
+        "status": "PASS",
+        "breakpoint_occurrences": 649,
+        "note": "Excellent usage des classes responsive Tailwind"
+      },
+      "touch_friendly": {
+        "status": "PASS",
+        "occurrences": 2633,
+        "note": "Nombreux éléments avec padding approprié"
+      },
+      "pwa_support": {
+        "status": "PASS",
+        "manifest": true,
+        "service_worker": true,
+        "apple_meta_tags": true
+      }
+    }
+  },
+  
+  "8_code_quality": {
+    "status": "WARNING",
+    "score": 55,
+    "checks": {
+      "inline_styles": {
+        "status": "WARNING",
+        "count": 357,
+        "priority": "MEDIUM",
+        "recommendation": "Réduire les styles inline, utiliser classes CSS"
+      },
+      "console_statements": {
+        "status": "FAIL",
+        "count": 528,
+        "priority": "MEDIUM",
+        "recommendation": "Supprimer tous les console.log en production"
+      },
+      "duplicate_tags": {
+        "status": "PASS",
+        "note": "Aucune balise dupliquée détectée dans index.html"
+      },
+      "blocking_scripts": {
+        "status": "WARNING",
+        "count": 1,
+        "script": "emergent-main.js",
+        "recommendation": "Ajouter defer"
+      }
+    }
+  },
+  
+  "critical_issues": [
+    {
+      "id": "CRITICAL-001",
+      "category": "Indexability",
+      "issue": "robots.txt manquant",
+      "impact": "Les moteurs de recherche ne peuvent pas savoir quelles pages indexer",
+      "fix": "Créer /app/frontend/public/robots.txt avec User-agent et Sitemap"
+    },
+    {
+      "id": "CRITICAL-002",
+      "category": "Indexability",
+      "issue": "sitemap.xml manquant",
+      "impact": "Les moteurs de recherche ne découvrent pas toutes les pages",
+      "fix": "Créer sitemap.xml avec toutes les URLs importantes"
+    },
+    {
+      "id": "CRITICAL-003",
+      "category": "Images",
+      "issue": "20 images sans attribut alt",
+      "impact": "Mauvais pour l'accessibilité et le SEO images",
+      "fix": "Ajouter alt descriptif à toutes les images"
+    }
+  ],
+  
+  "high_priority_issues": [
+    {
+      "id": "HIGH-001",
+      "category": "H1",
+      "issue": "Certaines pages ont plusieurs H1",
+      "fix": "Garder un seul H1 par page"
+    },
+    {
+      "id": "HIGH-002",
+      "category": "Performance",
+      "issue": "Script bloquant (emergent-main.js)",
+      "fix": "Ajouter defer ou async"
+    },
+    {
+      "id": "HIGH-003",
+      "category": "Accessibility",
+      "issue": "39% des formulaires sans label",
+      "fix": "Ajouter aria-label ou htmlFor"
+    },
+    {
+      "id": "HIGH-004",
+      "category": "Code Quality",
+      "issue": "528 console.log restants",
+      "fix": "Supprimer en production"
+    },
+    {
+      "id": "HIGH-005",
+      "category": "SEO",
+      "issue": "Meta robots manquant",
+      "fix": "Ajouter <meta name='robots' content='index, follow'>"
+    }
+  ],
+  
+  "recommendations_prioritized": [
+    {
+      "priority": "P0",
+      "action": "Créer robots.txt",
+      "effort": "5 minutes",
+      "impact": "CRITICAL"
+    },
+    {
+      "priority": "P0",
+      "action": "Créer sitemap.xml",
+      "effort": "30 minutes",
+      "impact": "CRITICAL"
+    },
+    {
+      "priority": "P1",
+      "action": "Ajouter alt à toutes les images",
+      "effort": "2 heures",
+      "impact": "HIGH"
+    },
+    {
+      "priority": "P1",
+      "action": "Fixer les H1 multiples",
+      "effort": "1 heure",
+      "impact": "MEDIUM"
+    },
+    {
+      "priority": "P2",
+      "action": "Ajouter defer à emergent-main.js",
+      "effort": "5 minutes",
+      "impact": "MEDIUM"
+    },
+    {
+      "priority": "P2",
+      "action": "Supprimer console.log en production",
+      "effort": "1 heure",
+      "impact": "MEDIUM"
+    },
+    {
+      "priority": "P3",
+      "action": "Réduire styles inline",
+      "effort": "4 heures",
+      "impact": "LOW"
+    }
+  ],
+  
+  "positive_findings": [
+    "SEOHead.jsx bien implémenté avec OpenGraph, Twitter Cards et Schema.org",
+    "Excellent support mobile et PWA",
+    "Bonne utilisation des balises sémantiques",
+    "HTTPS forcé, pas de mixed content",
+    "Canonical URLs dynamiques",
+    "Responsive design bien implémenté avec Tailwind"
+  ],
+  
+  "mode_staging_validation": {
+    "status": "MAINTAINED",
+    "internal_only": true,
+    "external_flows": false,
+    "code_modified": false
+  },
+  
+  "next_steps": {
+    "immediate": "Créer robots.txt et sitemap.xml",
+    "short_term": "Corriger les images sans alt et les H1 multiples",
+    "medium_term": "Améliorer l'accessibilité des formulaires"
+  }
+}

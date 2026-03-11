@@ -1,0 +1,218 @@
+{
+  "report_id": "BIONIC-ERROR-ISOLATION-001",
+  "report_type": "BUG_ISOLATION",
+  "phase": "PHASE_2_ISOLATION",
+  "timestamp": "2026-02-19T18:42:00+00:00",
+  "investigator": "E1-AGENT",
+  "status": "SOURCE_ISOLATED",
+  
+  "error_signature": {
+    "type": "TypeError",
+    "message": "object of type 'int' has no len()",
+    "severity": "CRITICAL"
+  },
+  
+  "data_flow_analysis": {
+    "input_chain": "API Request → Pydantic Validation → MongoDB Write",
+    "output_chain": "MongoDB Read → Dataclass Instantiation → len() Call → ERROR",
+    "corruption_point": "MongoDB Document",
+    "trigger_point": "_check_profile_complete() in user_context.py line 296"
+  },
+  
+  "source_isolation": {
+    "primary_source": {
+      "location": "EXTERNAL_DATA_INJECTION",
+      "description": "Données corrompues injectées directement dans MongoDB, contournant la validation Pydantic API",
+      "evidence": "Les 3 documents corrompus trouvés ont tous été injectés par des scripts de test Phase 1"
+    },
+    "secondary_vulnerability": {
+      "location": "DATACLASS_NO_VALIDATION",
+      "description": "Le dataclass UserContext accepte n'importe quel type sans validation runtime",
+      "file": "/app/backend/modules/user_context.py",
+      "lines": [45, 76],
+      "code": "@dataclass class UserContext: pages_visited: List[str] = field(default_factory=list)"
+    },
+    "tertiary_vulnerability": {
+      "location": "LEN_CALL_WITHOUT_TYPE_CHECK",
+      "description": "Appel à len() sans vérification préalable du type",
+      "file": "/app/backend/modules/user_context.py",
+      "lines": [296, 298],
+      "code": "if len(context.pages_visited) >= 5:"
+    }
+  },
+  
+  "write_operations_audit": {
+    "modules_that_write_to_user_contexts": [
+      {
+        "module": "user_context.py",
+        "operations": [
+          {"line": 185, "operation": "insert_one", "method": "get_context()"},
+          {"line": 246, "operation": "update_one with $set", "method": "update_context()"},
+          {"line": 267, "operation": "update_one with $set", "method": "set_gibier_principal()"}
+        ],
+        "uses_asdict": true,
+        "safe": true,
+        "reason": "Écrit toujours depuis un dataclass, donc types corrects"
+      }
+    ],
+    "modules_that_read_user_contexts": [
+      {"module": "user_context.py", "line": 169, "operation": "find_one"},
+      {"module": "next_step_engine.py", "line": 326, "operation": "find_one"},
+      {"module": "hunter_score.py", "line": 87, "operation": "find_one"},
+      {"module": "chasseur_jumeau.py", "line": 233, "operation": "find_one"},
+      {"module": "score_preparation.py", "line": 139, "operation": "find_one"}
+    ]
+  },
+  
+  "mongodb_corruption_analysis": {
+    "collection": "user_contexts",
+    "total_documents": 4,
+    "corrupted_documents": 3,
+    "corruption_rate": "75%",
+    "corrupted_users": [
+      {
+        "user_id": "corrupted-user-001",
+        "pages_visited_type": "int",
+        "pages_visited_value": 10,
+        "tools_used_type": "int",
+        "tools_used_value": 5,
+        "source": "Phase 1 test injection"
+      },
+      {
+        "user_id": "critical-user-001",
+        "pages_visited_type": "int",
+        "pages_visited_value": 42,
+        "tools_used_type": "list",
+        "source": "Phase 1 test injection"
+      },
+      {
+        "user_id": "critical-user-002",
+        "pages_visited_type": "list",
+        "tools_used_type": "int",
+        "tools_used_value": 5,
+        "source": "Phase 1 test injection"
+      },
+      {
+        "user_id": "typeerror-user-001",
+        "pages_visited_type": "int",
+        "pages_visited_value": 42,
+        "tools_used_type": "int",
+        "tools_used_value": 10,
+        "source": "Phase 1 test injection"
+      }
+    ],
+    "pattern": "Tous les documents corrompus proviennent des tests d'injection Phase 1"
+  },
+  
+  "potential_real_corruption_scenarios": [
+    {
+      "scenario": "DIRECT_MONGODB_ACCESS",
+      "likelihood": "HIGH",
+      "description": "Accès direct à MongoDB Compass ou shell sans passer par l'API",
+      "mitigation": "Restreindre l'accès DB, utiliser des schémas JSON MongoDB"
+    },
+    {
+      "scenario": "MIGRATION_SCRIPT_ERROR",
+      "likelihood": "MEDIUM",
+      "description": "Script de migration qui convertit les listes en compteurs",
+      "mitigation": "Valider les types avant et après migration"
+    },
+    {
+      "scenario": "CONCURRENT_RACE_CONDITION",
+      "likelihood": "LOW",
+      "description": "Condition de course lors d'upserts simultanés",
+      "mitigation": "Utiliser des transactions MongoDB"
+    },
+    {
+      "scenario": "API_VALIDATION_BYPASS",
+      "likelihood": "VERY_LOW",
+      "description": "Endpoint sans validation Pydantic qui écrit des entiers",
+      "evidence": "Non trouvé - tous les endpoints utilisent Pydantic"
+    }
+  ],
+  
+  "code_paths_affected": [
+    {
+      "file": "/app/backend/modules/user_context.py",
+      "method": "_check_profile_complete",
+      "line": 296,
+      "code": "if len(context.pages_visited) >= 5:",
+      "error_triggered": true,
+      "fix_recommendation": "Ajouter isinstance(context.pages_visited, list) check"
+    },
+    {
+      "file": "/app/backend/modules/user_context.py",
+      "method": "_check_profile_complete",
+      "line": 298,
+      "code": "if len(context.tools_used) >= 2:",
+      "error_triggered": true,
+      "fix_recommendation": "Ajouter isinstance(context.tools_used, list) check"
+    },
+    {
+      "file": "/app/backend/modules/hunter_score.py",
+      "method": "calculate_score",
+      "lines": [131, 137],
+      "code": "len(tools_used) * 3",
+      "error_triggered": false,
+      "reason": "Utilise context.get('field', []) qui retourne [] si non-liste"
+    },
+    {
+      "file": "/app/backend/modules/score_preparation.py",
+      "method": "calculate_score",
+      "line": 143,
+      "code": "len([p for p in context.get('pages_visited', [])])",
+      "error_triggered": false,
+      "reason": "Itération sur [] si non-liste, mais TypeError si liste compréhension sur int"
+    }
+  ],
+  
+  "schema_analysis": {
+    "expected_schema": {
+      "pages_visited": {"type": "array", "items": {"type": "string"}},
+      "tools_used": {"type": "array", "items": {"type": "string"}},
+      "pourvoiries_consulted": {"type": "array", "items": {"type": "string"}},
+      "setups_consulted": {"type": "array", "items": {"type": "string"}},
+      "permis_consulted": {"type": "array", "items": {"type": "string"}}
+    },
+    "actual_corrupted_schema": {
+      "pages_visited": {"type": "integer"},
+      "tools_used": {"type": "integer"}
+    },
+    "schema_validation_in_place": false,
+    "recommendation": "Implémenter JSON Schema validation dans MongoDB"
+  },
+  
+  "api_protection_analysis": {
+    "input_validation": {
+      "pydantic_used": true,
+      "models_validated": ["UpdateContextRequest", "SetGibierRequest", "SetupRequest"],
+      "protection_level": "STRONG"
+    },
+    "output_validation": {
+      "protection_level": "NONE",
+      "issue": "Données lues depuis MongoDB ne sont pas validées avant utilisation"
+    }
+  },
+  
+  "conclusion": {
+    "primary_cause": "EXTERNAL_DATA_CORRUPTION",
+    "secondary_cause": "MISSING_RUNTIME_TYPE_VALIDATION",
+    "root_file": "/app/backend/modules/user_context.py",
+    "root_lines": [296, 298],
+    "root_method": "_check_profile_complete",
+    "attack_vector": "Direct MongoDB manipulation bypassing API validation"
+  },
+  
+  "mode_staging_validation": {
+    "status": "MAINTAINED",
+    "internal_only": true,
+    "external_flows": false,
+    "code_modified": false,
+    "db_modified": false
+  },
+  
+  "next_phase": {
+    "phase_3": "AUDIT - Documenter toutes les structures de données BIONIC",
+    "phase_4": "AUDIT DEPS - Mapper les dépendances entre modules"
+  }
+}

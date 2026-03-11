@@ -1,0 +1,59 @@
+{
+  "audit_name": "bionic_mon_territoire_zone_visibility_audit_v1",
+  "version": "V5_300_STRICT",
+  "date": "2026-03-03T15:50:00Z",
+  "command": "emergent_bionic_classification_toggle_and_visibility_fix --profile=BIONIC_V5_300_STRICT",
+  "status": "PASS",
+  "summary": "La visibilité des zones dans MON TERRITOIRE est restaurée. Le bug racine (dépendances useEffect instables) a été corrigé. Les zones apparaissent correctement après chargement.",
+  "root_cause_analysis": {
+    "bug_description": "Les zones structurelles n'apparaissaient pas sur la carte malgré 15 couches actives",
+    "root_cause": "Le useEffect de chargement des zones avait currentMapBounds et currentZoom dans ses dépendances. Chaque pan/zoom annulait la requête backend (~23s) et en redémarrait une nouvelle.",
+    "fix_applied": "Remplacement des dépendances directes par des refs stables (boundsRef, zoomRef) + viewportTrigger debounced (1.5s). L'effet ne dépend plus que de zoneLockKey (waypoint+espèce) et viewportTrigger.",
+    "file_modified": "MonTerritoireBionicPage.jsx",
+    "lines_affected": "577-710"
+  },
+  "pipeline_verification": {
+    "zoneLockKey_used": true,
+    "zoneLockKey_formula": "${selectedSpecies}_${waypointKey|viewport}",
+    "viewportTrigger_debounced": true,
+    "viewportTrigger_delay_ms": 1500,
+    "boundsRef_used": true,
+    "zoomRef_used": true,
+    "boundsReadyRef_initial_trigger": true,
+    "currentMapBounds_NOT_in_dependencies": true,
+    "currentZoom_NOT_in_dependencies": true
+  },
+  "clipping_verification": {
+    "clipping_applied_after_generation": true,
+    "clipping_only_when_waypoint_selected": true,
+    "clipping_does_not_block_viewport_mode": true,
+    "clipping_1km_x_1km_invariant": true
+  },
+  "classification_sync": {
+    "classification_toggles_affect_rendering": true,
+    "classification_does_not_trigger_recalculation": true,
+    "classification_filter_in_bionicZones_useMemo": true,
+    "layer_mapping_verified": true
+  },
+  "zones_verification": {
+    "zones_received_from_backend": true,
+    "zones_count_viewport_mode": 23,
+    "backend_endpoint": "/api/v1/bionic/organic-zones",
+    "backend_response_time_cached": "<0.3s",
+    "backend_response_time_uncached": "~23s"
+  },
+  "anti_regression_tests": {
+    "spatial_clipping_tests": "15/15 PASS",
+    "testing_agent_frontend": "100% PASS",
+    "test_report": "/app/test_reports/iteration_112.json"
+  },
+  "state_locking_invariants": {
+    "zones_frozen_after_first_calculation": true,
+    "no_recalculation_on_pan": true,
+    "no_recalculation_on_zoom": true,
+    "no_recalculation_on_layer_toggle": true,
+    "no_recalculation_on_classification_toggle": true,
+    "recalculation_only_on_species_change": true,
+    "recalculation_only_on_waypoint_change": true
+  }
+}

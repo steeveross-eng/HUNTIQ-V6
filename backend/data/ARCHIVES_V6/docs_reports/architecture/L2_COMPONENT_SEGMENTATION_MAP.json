@@ -1,0 +1,137 @@
+{
+  "report_id": "L2_COMPONENT_SEGMENTATION_MAP",
+  "generated_at": "2026-02-19T22:35:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "phase": "L2",
+  "category": "Architecture - Component Segmentation",
+
+  "executive_summary": {
+    "total_components": 200,
+    "heavy_components": 15,
+    "lazy_loadable": 35,
+    "critical_path_components": 8,
+    "segmentation_status": "PARTIAL"
+  },
+
+  "component_categories": {
+    "critical_path": {
+      "description": "Composants chargés au premier rendu",
+      "components": [
+        {"name": "App.js", "lines": 1058, "lazy_candidate": false},
+        {"name": "MainLayout.jsx", "lines": 400, "lazy_candidate": false},
+        {"name": "Header", "lines": 250, "lazy_candidate": false},
+        {"name": "Navigation", "lines": 150, "lazy_candidate": false},
+        {"name": "GlobalAuth", "lines": 300, "lazy_candidate": false},
+        {"name": "LanguageContext", "lines": 3008, "lazy_candidate": false},
+        {"name": "CookieConsent", "lines": 100, "lazy_candidate": false},
+        {"name": "Toaster", "lines": 50, "lazy_candidate": false}
+      ],
+      "total_lines": 5316,
+      "optimization": "Minimiser, ne pas lazy load"
+    },
+
+    "route_level": {
+      "description": "Composants de pages (déjà lazy loaded)",
+      "components": [
+        {"name": "HomePage", "lines": 800, "lazy": true},
+        {"name": "DashboardPage", "lines": 600, "lazy": true},
+        {"name": "MonTerritoireBionicPage", "lines": 2425, "lazy": true},
+        {"name": "MapPage", "lines": 500, "lazy": true},
+        {"name": "ShopPage", "lines": 400, "lazy": true},
+        {"name": "AdminPage", "lines": 1125, "lazy": true}
+      ],
+      "status": "OPTIMIZED",
+      "note": "Routes déjà lazy loaded via config/routes.js"
+    },
+
+    "heavy_in_page": {
+      "description": "Composants lourds chargés dans les pages",
+      "components": [
+        {"name": "TerritoryMap", "lines": 5127, "lazy": false, "priority": "P0"},
+        {"name": "LandsRental", "lines": 1951, "lazy": false, "priority": "P1"},
+        {"name": "NetworkingHub", "lines": 1539, "lazy": false, "priority": "P1"},
+        {"name": "HuntMarketplace", "lines": 1462, "lazy": false, "priority": "P1"},
+        {"name": "PartnershipAdmin", "lines": 1306, "lazy": false, "priority": "P1"},
+        {"name": "ProductDiscoveryAdmin", "lines": 1197, "lazy": false, "priority": "P2"},
+        {"name": "BionicMicroZones", "lines": 1155, "lazy": false, "priority": "P1"},
+        {"name": "EcoforestryLayers", "lines": 1131, "lazy": false, "priority": "P1"},
+        {"name": "BionicAnalyzer", "lines": 1092, "lazy": false, "priority": "P1"},
+        {"name": "TerritoryAdvanced", "lines": 1047, "lazy": false, "priority": "P1"},
+        {"name": "AdminSEO", "lines": 953, "lazy": false, "priority": "P2"},
+        {"name": "AdminService", "lines": 879, "lazy": false, "priority": "P2"},
+        {"name": "DynamicReferralWidget", "lines": 832, "lazy": false, "priority": "P2"},
+        {"name": "ContentDepot", "lines": 821, "lazy": false, "priority": "P2"}
+      ],
+      "total_lines": 20492,
+      "optimization": "Candidats prioritaires pour lazy loading"
+    },
+
+    "library_heavy": {
+      "description": "Composants utilisant des bibliothèques lourdes",
+      "components": [
+        {"name": "*Map* components", "library": "leaflet", "size": "~300KB"},
+        {"name": "*Chart* components", "library": "recharts", "size": "~400KB"},
+        {"name": "*PDF* components", "library": "jspdf", "size": "~350KB"}
+      ],
+      "optimization": "Lazy load les bibliothèques avec les composants"
+    },
+
+    "admin_modules": {
+      "description": "Modules admin UI",
+      "components": 35,
+      "loading_strategy": "Tab-based, already somewhat lazy",
+      "optimization": "Lazy load chaque tab individuellement"
+    }
+  },
+
+  "segmentation_recommendations": {
+    "tier_1_critical": {
+      "components": ["App", "Layout", "Auth", "Navigation"],
+      "strategy": "Always load immediately",
+      "size_target": "<100KB"
+    },
+    "tier_2_route": {
+      "components": ["*Page components"],
+      "strategy": "React.lazy per route (already implemented)",
+      "size_target": "<200KB per route"
+    },
+    "tier_3_feature": {
+      "components": ["TerritoryMap", "Charts", "Heavy Admin"],
+      "strategy": "React.lazy within pages",
+      "size_target": "Load on demand"
+    },
+    "tier_4_background": {
+      "components": ["PDF generation", "Analytics heavy"],
+      "strategy": "Dynamic import on user action",
+      "size_target": "Never in initial bundle"
+    }
+  },
+
+  "lazy_loading_implementation_map": [
+    {
+      "component": "TerritoryMap",
+      "location": "/modules/territory/components/",
+      "used_in": ["MonTerritoireBionicPage", "MapPage"],
+      "implementation": "const TerritoryMap = React.lazy(() => import('./TerritoryMap'))"
+    },
+    {
+      "component": "LandsRental",
+      "location": "/modules/realestate/components/",
+      "used_in": ["RealEstate pages"],
+      "implementation": "const LandsRental = React.lazy(() => import('./LandsRental'))"
+    },
+    {
+      "component": "HuntMarketplace",
+      "location": "/modules/marketplace/components/",
+      "used_in": ["Marketplace pages"],
+      "implementation": "const HuntMarketplace = React.lazy(() => import('./HuntMarketplace'))"
+    },
+    {
+      "component": "BionicAnalyzer",
+      "location": "/modules/analytics/components/",
+      "used_in": ["AnalyticsPage"],
+      "implementation": "const BionicAnalyzer = React.lazy(() => import('./BionicAnalyzer'))"
+    }
+  ]
+}

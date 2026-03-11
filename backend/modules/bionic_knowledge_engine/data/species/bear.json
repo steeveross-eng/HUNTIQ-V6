@@ -1,0 +1,64 @@
+{
+  "species_id": "bear",
+  "scientific_name": "Ursus americanus",
+  "common_name_fr": "Ours noir",
+  "common_name_en": "Black Bear",
+  "category": "ursidae",
+  "description_fr": "Plus petit des ours nord-américains, omnivore opportuniste présent partout au Québec.",
+  "weight_range_kg": {
+    "male_min": 115,
+    "male_max": 270,
+    "female_min": 90,
+    "female_max": 180
+  },
+  "home_range_km2": {
+    "male": 100,
+    "female": 40
+  },
+  "temperature_range": {
+    "optimal_min": 5,
+    "optimal_max": 25,
+    "tolerance_min": -20,
+    "tolerance_max": 35,
+    "activity_threshold": 35
+  },
+  "elevation_range_m": {
+    "min": 0,
+    "max": 1500,
+    "optimal": 400
+  },
+  "activity_patterns": [
+    {"period": "dawn", "activity_level": 0.7, "feeding_probability": 0.8, "movement_probability": 0.6},
+    {"period": "morning", "activity_level": 0.6, "feeding_probability": 0.7, "movement_probability": 0.5},
+    {"period": "midday", "activity_level": 0.4, "feeding_probability": 0.4, "movement_probability": 0.3},
+    {"period": "afternoon", "activity_level": 0.5, "feeding_probability": 0.5, "movement_probability": 0.4},
+    {"period": "dusk", "activity_level": 0.8, "feeding_probability": 0.9, "movement_probability": 0.7},
+    {"period": "night", "activity_level": 0.5, "feeding_probability": 0.5, "movement_probability": 0.4}
+  ],
+  "habitat_preferences": [
+    {"habitat_type": "mixed_forest", "preference_score": 0.9, "notes": "Habitat principal"},
+    {"habitat_type": "deciduous_forest", "preference_score": 0.85, "notes": "Glands automne"},
+    {"habitat_type": "wetland", "preference_score": 0.75, "notes": "Baies et insectes"},
+    {"habitat_type": "regeneration", "preference_score": 0.7, "notes": "Baies abondantes"},
+    {"habitat_type": "agricultural", "preference_score": 0.6, "notes": "Cultures attractives"}
+  ],
+  "food_sources": [
+    {"name": "berries", "name_fr": "Baies", "category": "fruit", "availability_months": [7,8,9], "preference_score": 0.95},
+    {"name": "acorns", "name_fr": "Glands", "category": "mast", "availability_months": [9,10,11], "preference_score": 0.9},
+    {"name": "insects", "name_fr": "Insectes", "category": "protein", "availability_months": [5,6,7,8,9], "preference_score": 0.85},
+    {"name": "fish", "name_fr": "Poisson", "category": "protein", "availability_months": [5,6,7,8,9,10], "preference_score": 0.8},
+    {"name": "carrion", "name_fr": "Charogne", "category": "protein", "availability_months": [4,5,6], "preference_score": 0.75}
+  ],
+  "human_tolerance": 0.6,
+  "flight_distance_m": 50,
+  "road_avoidance_m": 100,
+  "hibernation_info": {
+    "den_entry_month": 11,
+    "emergence_month": 4,
+    "hyperphagia_start": 8,
+    "hyperphagia_end": 10
+  },
+  "data_quality_score": 0.88,
+  "sources": ["mffp_quebec", "sepaq"],
+  "last_updated": "2024-02-17"
+}

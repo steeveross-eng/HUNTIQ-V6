@@ -1,0 +1,173 @@
+{
+  "report_id": "BIONIC_AUDIT_MON_TERRITOIRE",
+  "phase": "B",
+  "title": "Audit Complet - Module 'Mon Territoire' BIONIC",
+  "generated_at": "2026-02-19T16:30:00Z",
+  "generated_by": "BIONIC_AUDIT_ENGINE",
+  "status": "VALIDATED",
+
+  "module_location": {
+    "primary_page": "/app/frontend/src/pages/MonTerritoireBionicPage.jsx",
+    "component": "/app/frontend/src/components/territoire/MonTerritoireBionic.jsx",
+    "route": "/territoire",
+    "lines_of_code": "~2000+"
+  },
+
+  "current_functions": {
+    "map_display": {
+      "status": "ACTIVE",
+      "description": "Carte interactive Leaflet avec fond BIONIC Premium",
+      "zoom_levels": "8-18",
+      "center_default": "[46.8139, -71.2080] (Quebec)"
+    },
+    "bionic_layers": {
+      "status": "ACTIVE",
+      "layers_available": [
+        "habitats - Zones d'habitat optimales",
+        "rut - Zones de rut",
+        "affuts - Affuts potentiels",
+        "corridors - Corridors de deplacement",
+        "alimentation - Zones d'alimentation",
+        "repos - Zones de repos",
+        "salines - Salines"
+      ],
+      "toggle_mechanism": "useBionicLayers hook"
+    },
+    "zone_display_modes": {
+      "micro": "Micro-zones avec cercles concentriques (defaut)",
+      "classic": "Zones hexagonales classiques"
+    },
+    "waypoints_management": {
+      "status": "ACTIVE",
+      "features": ["Ajout", "Modification", "Suppression", "Activation/Desactivation"],
+      "sync_backend": true
+    },
+    "places_management": {
+      "status": "ACTIVE",
+      "place_types": ["ZEC", "Pourvoirie", "Prive", "SEPAQ", "Affut", "Saline", "Observation", "Stationnement", "Camp", "Autre"]
+    },
+    "geolocation": {
+      "status": "ACTIVE",
+      "features": ["Position live", "Centrage sur utilisateur", "Watch position"]
+    },
+    "weather_integration": {
+      "status": "ACTIVE",
+      "hook": "useBionicWeather",
+      "data": ["Temperature", "Vent", "Score de chasse", "Fenetre optimale"]
+    },
+    "water_exclusion": {
+      "status": "PERMANENT_ACTIVE",
+      "description": "Exclusion automatique des zones aquatiques - impossible a desactiver",
+      "service": "/app/frontend/src/services/WaterExclusionService.js"
+    }
+  },
+
+  "activatable_layers": {
+    "ecoforestry_layers": {
+      "peuplements": false,
+      "essences": false,
+      "perturbations": false,
+      "densite": false,
+      "hauteur": false,
+      "lidar_chm": false,
+      "lidar_volume": false,
+      "lidar_st": false,
+      "courbes_niveau": false
+    },
+    "bionic_layers": {
+      "habitats": true,
+      "affuts": true,
+      "corridors": true,
+      "alimentation": true
+    }
+  },
+
+  "user_interactions": {
+    "click_to_create_waypoint": true,
+    "double_click_create": true,
+    "drag_map": true,
+    "zoom_wheel": true,
+    "layer_toggle": true,
+    "waypoint_selection_for_zones": true
+  },
+
+  "backend_dependencies": {
+    "endpoints_used": [
+      "GET /api/waypoints/{user_id}",
+      "POST /api/waypoints",
+      "PUT /api/waypoints/{id}",
+      "DELETE /api/waypoints/{id}",
+      "GET /api/places/{user_id}",
+      "POST /api/places",
+      "PUT /api/places/{id}",
+      "DELETE /api/places/{id}",
+      "GET /api/weather (via Open-Meteo)"
+    ],
+    "external_services": [
+      "Open-Meteo API (meteo)",
+      "OpenStreetMap / CartoDB (tiles)",
+      "Overpass API (water exclusion)"
+    ]
+  },
+
+  "data_structures": {
+    "waypoints": "Array<{id, name, lat, lng, type, active, created_at}>",
+    "places": "Array<{id, name, lat, lng, type, notes, created_at}>",
+    "zones": "Array<{id, layerId, positions, color, score, label, center, radiusKm}>",
+    "status": "STRUCTURES VIDES PREPAREES POUR BIONIC ULTIMATE"
+  },
+
+  "internal_links_verification": {
+    "setup_builder": {
+      "status": "PREPARED",
+      "description": "Structure prete pour integration future"
+    },
+    "liste_epicerie": {
+      "status": "PREPARED",
+      "description": "Structure prete pour integration future"
+    },
+    "score_preparation": {
+      "status": "ACTIVE",
+      "hook": "useBionicScoring"
+    },
+    "plan_saison": {
+      "status": "PREPARED",
+      "description": "Structure prete pour integration future"
+    },
+    "hotspots": {
+      "status": "PREPARED",
+      "description": "Structures vides - upsell module"
+    },
+    "capsules": {
+      "status": "PREPARED",
+      "description": "Structure prete pour integration future"
+    },
+    "abonnements": {
+      "status": "PREPARED",
+      "description": "Lie a /pricing"
+    }
+  },
+
+  "data_acceptance": {
+    "zones": true,
+    "hotspots": "VIDE - Pret pour BIONIC ULTIMATE",
+    "corridors": true,
+    "intensites": true,
+    "deplacements_j0_j7": "VIDE - Pret pour BIONIC ULTIMATE",
+    "superpositions_multi_couches": true
+  },
+
+  "architecture_compliance": {
+    "modularity": "PASS - Module isole dans /pages et /components/territoire",
+    "coupling": "LOOSE - Dependances via hooks et services",
+    "side_effects": "NONE - Pas d'effet sur autres modules",
+    "bionic_ultimate_ready": true
+  },
+
+  "conclusion": {
+    "status": "VALIDATED",
+    "active_features": 12,
+    "prepared_structures": 8,
+    "message": "Module 'Mon Territoire' BIONIC est operationnel avec 12 fonctionnalites actives. Les structures de donnees pour le BIONIC Ultimate Territory Intelligence Engine sont preparees mais intentionnellement vides."
+  }
+}

@@ -1,0 +1,115 @@
+/**
+ * Map Popup Styles - Phase 8
+ * BIONIC Design System compliant
+ */
+
+/* Base popup styles */
+.bionic-map-popup .leaflet-popup-content-wrapper {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.bionic-map-popup .leaflet-popup-content {
+  margin: 0;
+  min-width: 180px;
+  max-width: 280px;
+}
+
+.bionic-map-popup .leaflet-popup-tip {
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Popup content structure */
+.bionic-popup-content {
+  color: white;
+}
+
+.bionic-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bionic-popup-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #F5A623;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bionic-popup-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.bionic-popup-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.bionic-popup-body {
+  padding: 12px 14px;
+}
+
+/* Variant: Waypoint */
+.bionic-map-popup--waypoint .leaflet-popup-content-wrapper {
+  border-color: rgba(245, 166, 35, 0.3);
+}
+
+.bionic-map-popup--waypoint .bionic-popup-header {
+  background: rgba(245, 166, 35, 0.1);
+}
+
+/* Variant: Marker */
+.bionic-map-popup--marker .leaflet-popup-content-wrapper {
+  min-width: auto;
+}
+
+.bionic-map-popup--marker .bionic-popup-body {
+  padding: 8px 12px;
+}
+
+/* Variant: Info */
+.bionic-map-popup--info .leaflet-popup-content-wrapper {
+  min-width: 200px;
+}
+
+/* Variant: Action */
+.bionic-map-popup--action .leaflet-popup-content-wrapper {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .bionic-map-popup .leaflet-popup-content {
+    min-width: 160px;
+    max-width: 240px;
+  }
+  
+  .bionic-popup-header,
+  .bionic-popup-body {
+    padding: 10px 12px;
+  }
+  
+  .bionic-popup-title {
+    font-size: 13px;
+  }
+}

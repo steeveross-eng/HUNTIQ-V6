@@ -1,0 +1,198 @@
+{
+  "report_id": "L2_CRITICAL_PATH",
+  "generated_at": "2026-02-19T22:15:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "phase": "L2",
+  "category": "Performance - Critical Rendering Path",
+
+  "executive_summary": {
+    "critical_path_optimized": false,
+    "render_blocking_resources": 3,
+    "critical_css_extracted": false,
+    "above_fold_content_optimized": false,
+    "status": "NEEDS_OPTIMIZATION"
+  },
+
+  "current_critical_path": {
+    "sequence": [
+      {"step": 1, "resource": "HTML document", "type": "document", "blocking": false},
+      {"step": 2, "resource": "Google Fonts CSS", "type": "stylesheet", "blocking": true, "impact": "HIGH"},
+      {"step": 3, "resource": "Main CSS bundle", "type": "stylesheet", "blocking": true, "impact": "HIGH"},
+      {"step": 4, "resource": "emergent-main.js", "type": "script", "blocking": true, "impact": "MEDIUM"},
+      {"step": 5, "resource": "Main JS bundle", "type": "script", "blocking": true, "impact": "HIGH"},
+      {"step": 6, "resource": "React hydration", "type": "javascript", "blocking": true, "impact": "HIGH"},
+      {"step": 7, "resource": "Font files (woff2)", "type": "font", "blocking": false, "impact": "MEDIUM"},
+      {"step": 8, "resource": "Hero images", "type": "image", "blocking": false, "impact": "HIGH"}
+    ],
+    "total_blocking_time_estimated": "2-3s",
+    "target_blocking_time": "<500ms"
+  },
+
+  "render_blocking_resources": [
+    {
+      "resource": "Google Fonts CSS (@import)",
+      "type": "External CSS",
+      "location": "index.css or App.css",
+      "impact": "Blocks first paint until CSS loaded",
+      "solution": "Move to <link> in HTML with preconnect, or inline critical fonts"
+    },
+    {
+      "resource": "Main CSS bundle",
+      "type": "CSS",
+      "estimated_size": "~150KB unminified",
+      "impact": "Blocks render until fully loaded",
+      "solution": "Extract critical CSS (~10KB), inline in <head>, defer rest"
+    },
+    {
+      "resource": "emergent-main.js",
+      "type": "JavaScript",
+      "location": "<head>",
+      "impact": "Blocks HTML parsing",
+      "solution": "Add defer attribute"
+    }
+  ],
+
+  "above_fold_analysis": {
+    "components": [
+      {"name": "Header/Navigation", "critical": true, "css_size": "~5KB"},
+      {"name": "Hero Section", "critical": true, "css_size": "~8KB"},
+      {"name": "Hero Image/Logo", "critical": true, "needs_preload": true},
+      {"name": "Primary CTA buttons", "critical": true, "css_size": "~2KB"}
+    ],
+    "estimated_critical_css": "~15-20KB",
+    "current_css_delivery": "Full bundle blocking"
+  },
+
+  "long_tasks_analysis": {
+    "react_hydration": {
+      "impact": "~500-800ms blocking",
+      "cause": "Full app hydration on initial load",
+      "solutions": [
+        "Implement React 18 selective hydration",
+        "Use streaming SSR (if applicable)",
+        "Progressive hydration for below-fold components"
+      ]
+    },
+    "javascript_evaluation": {
+      "impact": "~1-1.5s",
+      "cause": "Large unminified bundle",
+      "solutions": [
+        "Code splitting",
+        "Tree shaking",
+        "Lazy loading non-critical modules"
+      ]
+    },
+    "third_party_scripts": {
+      "posthog": {
+        "impact": "~100-200ms",
+        "location": "End of body",
+        "status": "Acceptable"
+      },
+      "emergent_main": {
+        "impact": "~50-100ms",
+        "location": "<head>",
+        "status": "Needs defer"
+      }
+    }
+  },
+
+  "critical_css_strategy": {
+    "approach": "Extract above-fold CSS and inline in <head>",
+    "tools": ["critical", "penthouse", "critters (webpack plugin)"],
+    "implementation_steps": [
+      "1. Identify above-fold HTML structure",
+      "2. Use tool to extract required CSS",
+      "3. Inline extracted CSS in <head>",
+      "4. Load remaining CSS asynchronously",
+      "5. Add preload for full CSS file"
+    ],
+    "expected_improvement": {
+      "fcp": "~300-500ms",
+      "lcp": "~200-400ms"
+    }
+  },
+
+  "async_css_loading": {
+    "current": "Render-blocking <link rel='stylesheet'>",
+    "optimized": {
+      "pattern": "<link rel='preload' href='styles.css' as='style' onload=\"this.onload=null;this.rel='stylesheet'\"><noscript><link rel='stylesheet' href='styles.css'></noscript>",
+      "alternative": "Use media='print' onload pattern"
+    }
+  },
+
+  "script_optimization": {
+    "current_issues": [
+      "emergent-main.js in <head> without defer",
+      "Main bundle loaded synchronously"
+    ],
+    "fixes": [
+      {
+        "script": "emergent-main.js",
+        "fix": "Add defer attribute",
+        "implementation": "<script defer src='...'></script>"
+      },
+      {
+        "script": "Tailwind CDN (conditional)",
+        "status": "Only loads in iframe, acceptable"
+      }
+    ]
+  },
+
+  "recommendations": {
+    "P0_critical": [
+      {
+        "id": "CRP-001",
+        "action": "Ajouter defer à emergent-main.js",
+        "implementation": "Modifier index.html",
+        "impact": "Réduction TBT ~50-100ms",
+        "effort": "LOW"
+      },
+      {
+        "id": "CRP-002",
+        "action": "Convertir @import fonts en <link> avec preconnect",
+        "implementation": "Déplacer import vers index.html avec preconnect",
+        "impact": "Réduction FCP ~200ms",
+        "effort": "LOW"
+      }
+    ],
+    "P1_high": [
+      {
+        "id": "CRP-003",
+        "action": "Extraire et inliner le CSS critique (~15KB)",
+        "implementation": "Utiliser critters ou critical",
+        "impact": "Réduction FCP ~300-500ms",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "CRP-004",
+        "action": "Charger le CSS non-critique de manière asynchrone",
+        "implementation": "Pattern preload + onload",
+        "impact": "Amélioration render",
+        "effort": "MEDIUM"
+      }
+    ],
+    "P2_medium": [
+      {
+        "id": "CRP-005",
+        "action": "Implémenter progressive hydration",
+        "implementation": "React.lazy pour composants below-fold",
+        "impact": "Réduction TBT significative",
+        "effort": "HIGH"
+      }
+    ]
+  },
+
+  "expected_gains": {
+    "after_p0": {
+      "tbt_reduction": "~100-150ms",
+      "fcp_improvement": "~200ms",
+      "lighthouse_performance": "+5-8 points"
+    },
+    "after_p1": {
+      "fcp_improvement": "~300-500ms",
+      "lcp_improvement": "~200-400ms",
+      "lighthouse_performance": "+8-12 points"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "audit_name": "bionic_mon_territoire_rendering_diagnostic_v1",
+  "version": "V5_300_STRICT",
+  "date": "2026-03-03T22:30:00Z",
+  "command": "emergent_bionic_mon_territoire_rendering_diagnostic --profile=BIONIC_V5_300_STRICT",
+  "status": "PASS — Root cause identified and fixed",
+  "root_cause": {
+    "primary": "Service Worker cache-first strategy serving stale JavaScript bundles",
+    "description": "Le Service Worker (sw-v2.js) utilisait staleWhileRevalidate pour les fichiers JS/CSS statiques. Lorsque le nouveau code était déployé, l'utilisateur recevait l'ancienne version depuis le cache SW, ce qui empêchait les corrections de zones de s'appliquer.",
+    "evidence": [
+      "Le pipeline de zones fonctionne parfaitement dans les tests frais (13 zones en 11s)",
+      "La console montre 'Service Worker registered' → interception active des requêtes",
+      "sw-v2.js utilisait staleWhileRevalidate pour handleStaticRequest (JS/CSS)",
+      "L'utilisateur voyait l'ancien code avec le bug currentMapBounds dans useEffect"
+    ],
+    "fix_applied": [
+      "CACHE_NAME incrémenté de v2 à v3 dans sw.js → force invalidation",
+      "Cache names incrémentés de v2 à v3 dans sw-v2.js (static, images, api, fonts, pages)",
+      "SW_VERSION incrémenté de 2.0.0 à 3.0.0",
+      "handleStaticRequest changé de staleWhileRevalidate à networkFirst pour JS/CSS",
+      "sw.js: JS/CSS explicitement routés vers networkFirstStrategy"
+    ]
+  },
+  "phase_1_state_verification": {
+    "status": "PASS",
+    "bionicZonesData_contains_zones": true,
+    "zones_count": 13,
+    "state_updated_after_backend_response": true,
+    "zoneLockRef_locked_after_load": true
+  },
+  "phase_2_pipeline_verification": {
+    "status": "PASS",
+    "useEffect_depends_on": ["zoneLockKey", "forceReloadZones"],
+    "zoneLockKey_not_null_with_waypoint": true,
+    "no_viewport_hooks": true,
+    "no_currentMapBounds_dependency": true,
+    "no_currentZoom_dependency": true
+  },
+  "phase_3_rendering_verification": {
+    "status": "PASS",
+    "BionicMicroZones_receives_zones": true,
+    "classification_toggles_all_ON_by_default": true,
+    "layersVisible_all_true": true,
+    "minPercentageFilter_30_vs_scores_40": "40 >= 30 → all zones pass",
+    "MAX_AREA_M2_1000000_vs_areas_25000": "25000 < 1000000 → all zones pass"
+  },
+  "phase_4_ui_verification": {
+    "status": "PASS",
+    "loading_indicator_visible": true,
+    "loading_indicator_text": "Calcul en cours...",
+    "badge_shows_loading": "'...' during loading",
+    "badge_shows_count_after_load": "13",
+    "reload_button_available": true,
+    "reload_button_triggers_re_fetch": true
+  },
+  "improvements_applied": {
+    "service_worker_fix": "Network-first for JS/CSS, cache version v3",
+    "retry_mechanism": "3 attempts with exponential backoff (2s, 4s)",
+    "reload_button": "Manual 'Recharger zones' button when ZONES=0 with active waypoints",
+    "loading_indicator": "Pulsing animation + 'Calcul en cours...' during backend processing",
+    "null_safety": "Added null checks for waypoint lat/lng in loadZonesWithRetry"
+  }
+}

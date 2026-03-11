@@ -1,0 +1,82 @@
+{
+  "audit_id": "bionic_zone_staticity_audit_v1",
+  "profile": "BIONIC_V5_300_STRICT",
+  "date": "2026-03-03T04:00:00Z",
+  "status": "COMPLETED",
+
+  "executive_summary": {
+    "structural_zone_variations": 0,
+    "involuntary_recalculations": 0,
+    "motor_isolation": "COMPLETE",
+    "bionic_compliance": "STRICT"
+  },
+
+  "state_locking": {
+    "status": "IMPLEMENTED",
+    "mechanism": "zoneLockRef dans MonTerritoireBionicPage — calcul unique, verrouillage par cle",
+    "lock_key_composition": "selectedSpecies + waypoint(s) coordinates",
+    "triggers_blocked": [
+      "zoom — ne declenche PAS de recalcul des zones structurelles",
+      "pan — ne declenche PAS de recalcul des zones structurelles",
+      "changement de couche (layersVisible) — filtre au RENDU, pas au calcul",
+      "rafraichissement carte — zones verrouillees dans zoneLockRef",
+      "rechargement donnees dynamiques — pipeline isole",
+      "variations de layers=... — couches structurelles independantes"
+    ],
+    "legitimate_recalculation_triggers": [
+      "Changement d'espece (selectedSpecies)",
+      "Changement de waypoint cible (selectedWaypointForZones)"
+    ],
+    "components_locked": [
+      "MonTerritoireBionicPage (zoneLockRef)",
+      "WaypointMap/Carte Interactive (moveend handler supprime)",
+      "StructureContrastLayer (structureLockRef)",
+      "TerritoryShell (recoit allZones non filtrees — enveloppe stable)"
+    ]
+  },
+
+  "motor_isolation": {
+    "status": "COMPLETE",
+    "structural_pipeline": {
+      "source": "generateBionicZonesV5 → backend /api/v1/bionic/organic-zones",
+      "layers": "TOUTES les couches structurelles (habitats, rut, repos, alimentation, corridors, etc.)",
+      "recalculation": "UNE SEULE FOIS par espece/waypoint",
+      "visibility": "Filtre client-side via useMemo(allZones.filter(z => layersVisible[z.layerId]))"
+    },
+    "dynamic_pipeline": {
+      "source": "DiagnosticExclusionsPanel → /api/v1/bionic/dynamic/scores",
+      "layers": "meteo, pression humaine, heure, stress thermique, saison, mise bas",
+      "isolation": "Pipeline completement separe — aucune influence sur les zones structurelles",
+      "rendering": "Panneau lateral uniquement (pas sur la carte)"
+    },
+    "cross_influence": "ZERO — Le moteur dynamique ne modifie jamais les zones structurelles"
+  },
+
+  "api_layers_isolation": {
+    "status": "IMPLEMENTED",
+    "structural_independence": "Les couches structurelles sont calculees avec TOUTES les couches (allStructuralLayers), independamment de layersVisible",
+    "dynamic_independence": "layers=conditions, layers=exclusions, layers=dynamic ne declenchent AUCUN recalcul structurel",
+    "toggle_behavior": "ON/OFF modifie uniquement le filtre de rendu (useMemo), pas le calcul backend"
+  },
+
+  "structural_purity": {
+    "status": "VERIFIED",
+    "determinism": "100% — Memes inputs (espece, position) = memes zones",
+    "visual_stability": "Couleurs generees par angle d'or (deterministique), epaisseur par score (fixe)",
+    "geometric_stability": "Positions, surfaces, formes identiques apres creation",
+    "territory_shell_stability": "Enveloppe calculee sur allZones (non filtrees) — stable meme si layers ON/OFF"
+  },
+
+  "mffp_401_impact": {
+    "analysis": "L'erreur MFFP 401 n'affecte PAS les zones structurelles car le moteur de zones utilise le backend pipeline V2 (Overpass/OpenTopography), pas le WMS MFFP. Le WMS MFFP est reserve a la couche ecoforestiere visuelle uniquement.",
+    "recalculation_risk": "ZERO — Aucun lien entre MFFP et le pipeline de zones organiques"
+  },
+
+  "bionic_v5_300_compliance": {
+    "zero_variation": "PASS — Zones structurelles identiques apres creation",
+    "zero_involuntary_recalculation": "PASS — zoneLockRef bloque les recalculs",
+    "motor_isolation": "PASS — Pipelines structurel et dynamique completement separes",
+    "api_layers_isolation": "PASS — layersVisible = filtre rendu uniquement",
+    "determinism": "PASS — 100% deterministe par espece/position"
+  }
+}

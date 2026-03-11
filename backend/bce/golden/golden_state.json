@@ -1,0 +1,180 @@
+{
+  "species": [
+    "bear",
+    "deer",
+    "elk",
+    "moose",
+    "wild_turkey"
+  ],
+  "layers": [
+    "affuts",
+    "alimentation",
+    "altitude",
+    "corridors",
+    "ensoleillement",
+    "habitats",
+    "hydro",
+    "ndvi",
+    "orientation",
+    "pentes",
+    "peuplements",
+    "repos",
+    "rut",
+    "salines",
+    "trajets"
+  ],
+  "species_weight_keys": {
+    "moose": [
+      "affuts",
+      "alimentation",
+      "altitude",
+      "corridors",
+      "ensoleillement",
+      "habitats",
+      "hydro",
+      "ndvi",
+      "orientation",
+      "pentes",
+      "peuplements",
+      "repos",
+      "rut",
+      "salines",
+      "trajets"
+    ],
+    "deer": [
+      "affuts",
+      "alimentation",
+      "altitude",
+      "corridors",
+      "ensoleillement",
+      "habitats",
+      "hydro",
+      "ndvi",
+      "orientation",
+      "pentes",
+      "peuplements",
+      "repos",
+      "rut",
+      "salines",
+      "trajets"
+    ],
+    "bear": [
+      "affuts",
+      "alimentation",
+      "altitude",
+      "corridors",
+      "ensoleillement",
+      "habitats",
+      "hydro",
+      "ndvi",
+      "orientation",
+      "pentes",
+      "peuplements",
+      "repos",
+      "rut",
+      "salines",
+      "trajets"
+    ],
+    "wild_turkey": [
+      "affuts",
+      "alimentation",
+      "altitude",
+      "corridors",
+      "ensoleillement",
+      "habitats",
+      "hydro",
+      "ndvi",
+      "orientation",
+      "pentes",
+      "peuplements",
+      "repos",
+      "rut",
+      "salines",
+      "trajets"
+    ],
+    "elk": [
+      "affuts",
+      "alimentation",
+      "altitude",
+      "corridors",
+      "ensoleillement",
+      "habitats",
+      "hydro",
+      "ndvi",
+      "orientation",
+      "pentes",
+      "peuplements",
+      "repos",
+      "rut",
+      "salines",
+      "trajets"
+    ]
+  },
+  "seasons": [
+    "post_rut",
+    "pre_rut",
+    "rut",
+    "spring",
+    "winter"
+  ],
+  "subscore_weights": {
+    "food": 0.25,
+    "safety": 0.2,
+    "access": 0.15,
+    "stealth": 0.15,
+    "water": 0.1,
+    "topo": 0.1,
+    "dynamic": 0.05
+  },
+  "zone_types": [
+    "corridor",
+    "feed",
+    "heat_ref",
+    "hunt_ref",
+    "mixed",
+    "rest",
+    "rut"
+  ],
+  "species_needs_keys": {
+    "moose": [
+      "feed",
+      "heat_ref",
+      "hunt_ref",
+      "rest",
+      "rut"
+    ],
+    "deer": [
+      "feed",
+      "heat_ref",
+      "hunt_ref",
+      "rest",
+      "rut"
+    ],
+    "bear": [
+      "feed",
+      "heat_ref",
+      "hunt_ref",
+      "rest"
+    ],
+    "elk": [
+      "feed",
+      "heat_ref",
+      "hunt_ref",
+      "rest",
+      "rut"
+    ],
+    "wild_turkey": [
+      "feed",
+      "heat_ref",
+      "hunt_ref",
+      "rest",
+      "rut"
+    ]
+  },
+  "exclusion_engine_version": "unknown",
+  "ui_defaults": {
+    "main_page_exists": true
+  },
+  "_version": "BCE-GoldenState-v1",
+  "_certified": true
+}

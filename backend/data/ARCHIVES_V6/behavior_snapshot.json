@@ -1,0 +1,82 @@
+{
+  "version": "BIONIC_V5_FULL_LAYER_FREEZE_BASELINE",
+  "date": "2026-03-07",
+  "section": "S5_BEHAVIOR_FREEZE",
+
+  "pipeline_behavior": {
+    "step_1_raster": {
+      "function": "generate_layer_raster",
+      "file": "behavioral_rasterizer.py",
+      "input": "bounds + layer_id + species + resolution",
+      "output": "2D numpy array (resolution x resolution)",
+      "method": "simplex 2D noise, multi-octave with species weighting",
+      "deterministic": true,
+      "seed_formula": "hash(lat, lng, layer_id, species)"
+    },
+    "step_2_contour": {
+      "function": "extract_organic_zones",
+      "file": "organic_contour_generator.py",
+      "input": "raster + threshold + min_area + max_area",
+      "output": "list of zone dicts {coords, area_m2, compactness, vertices}",
+      "method": "marching squares + Chaikin smoothing (4 iterations)"
+    },
+    "step_3_exclusion": {
+      "function": "_is_zone_excluded",
+      "file": "zone_engine_core_v2.py",
+      "input": "zone_coords + exclusions list",
+      "output": "boolean (True = rejected)",
+      "method": "5-point test (centroid + 4 cardinal at 50% radius)",
+      "rules": {
+        "water_deep": "lake/reservoir: >50% hits = reject",
+        "water_pond": "pond >2000m2: >50% hits = reject",
+        "water_other": "micro_water/stream/ditch/wetland = NEVER exclude",
+        "roads": "buffer 25m, >50% hits = reject, tracks IGNORED",
+        "urban": "polygon test, >50% hits = reject",
+        "infrastructure": "polygon test, >80% hits = reject",
+        "filtered_out": "ALWAYS skip"
+      }
+    },
+    "step_4_penalty": {
+      "function": "calculate_zone_penalty",
+      "file": "zone_penalty_engine.py",
+      "input": "zone centroid + exclusions + layer_id",
+      "output": "(penalty_factor float, details dict)",
+      "method": "proximity bands + fragmentation",
+      "bands": {"close": "<200m", "medium": "200-500m", "far": "500-1000m"},
+      "score_floor": 15
+    },
+    "step_5_serialize": {
+      "function": "zone_to_geojson_feature",
+      "file": "zone_visual_layer_v2.py",
+      "input": "zone + layer_id + species + score + penalty",
+      "output": "GeoJSON Feature with properties",
+      "includes": "layer_id, label, category, species, score, area_m2, compactness, vertices, penalty_factor, penalty_details, color"
+    }
+  },
+
+  "expected_behaviors": {
+    "zone_generation": {
+      "for_bounds_46.8_-71.2_moose": "20-45 zones across 10-15 layers",
+      "min_zones": 20,
+      "min_layers": 8
+    },
+    "exclusion": {
+      "water_invisible": true,
+      "wetland_never_excluded": true,
+      "oversized_relations_filtered": true,
+      "micro_water_not_excluded": true
+    },
+    "scoring": {
+      "scores_range": [55, 100],
+      "penalty_floor": 15,
+      "penalty_multiplier_range": [0.0, 1.05]
+    },
+    "frontend_rendering": {
+      "no_blue_water_polygons": true,
+      "anthropique_v5_active": true,
+      "zone_colors_match_palette": true,
+      "max_lines": 200,
+      "max_polygons": 80
+    }
+  }
+}

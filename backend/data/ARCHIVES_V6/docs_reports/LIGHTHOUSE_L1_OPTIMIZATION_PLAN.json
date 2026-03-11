@@ -1,0 +1,191 @@
+{
+  "report_id": "LIGHTHOUSE_L1_OPTIMIZATION_PLAN",
+  "generated_at": "2026-02-19T21:23:51.484394",
+  "mode": "STAGING",
+  "internal_only": true,
+  "current_global_score": 79.0,
+  "target_score": 99.0,
+  "aspirational_score": 99.9,
+  "priority_categories": [
+    {
+      "category": "performance",
+      "gap": 48.0,
+      "issues_count": 56
+    },
+    {
+      "category": "accessibility",
+      "gap": 18.200000000000003,
+      "issues_count": 18
+    },
+    {
+      "category": "seo",
+      "gap": 7.0,
+      "issues_count": 6
+    },
+    {
+      "category": "best-practices",
+      "gap": 3.0,
+      "issues_count": 6
+    }
+  ],
+  "fixes": {
+    "critical": [
+      {
+        "category": "performance",
+        "audit_id": "unminified-javascript",
+        "title": "Minify JavaScript",
+        "score": 0,
+        "page": "home",
+        "description": "Est savings of 870\u00a0KiB"
+      },
+      {
+        "category": "performance",
+        "audit_id": "unused-javascript",
+        "title": "Reduce unused JavaScript",
+        "score": 0,
+        "page": "home",
+        "description": "Est savings of 1,891\u00a0KiB"
+      },
+      {
+        "category": "performance",
+        "audit_id": "bootup-time",
+        "title": "Reduce JavaScript execution time",
+        "score": 0,
+        "page": "contenus",
+        "description": "1.4\u00a0s"
+      },
+      {
+        "category": "accessibility",
+        "audit_id": "image-alt",
+        "title": "Image elements do not have `[alt]` attributes",
+        "score": 0,
+        "page": "home",
+        "description": ""
+      },
+      {
+        "category": "accessibility",
+        "audit_id": "button-name",
+        "title": "Buttons do not have an accessible name",
+        "score": 0,
+        "page": "home",
+        "description": ""
+      },
+      {
+        "category": "accessibility",
+        "audit_id": "color-contrast",
+        "title": "Background and foreground colors do not have a sufficient contrast ratio.",
+        "score": 0,
+        "page": "contenus",
+        "description": ""
+      },
+      {
+        "category": "accessibility",
+        "audit_id": "heading-order",
+        "title": "Heading elements are not in a sequentially-descending order",
+        "score": 0,
+        "page": "shop",
+        "description": ""
+      },
+      {
+        "category": "best-practices",
+        "audit_id": "errors-in-console",
+        "title": "Browser errors were logged to the console",
+        "score": 0,
+        "page": "home",
+        "description": ""
+      },
+      {
+        "category": "seo",
+        "audit_id": "image-alt",
+        "title": "Image elements do not have `[alt]` attributes",
+        "score": 0,
+        "page": "home",
+        "description": ""
+      },
+      {
+        "category": "performance",
+        "audit_id": "total-blocking-time",
+        "title": "Total Blocking Time",
+        "score": 12.0,
+        "page": "home",
+        "description": "760\u00a0ms"
+      },
+      {
+        "category": "performance",
+        "audit_id": "largest-contentful-paint",
+        "title": "Largest Contentful Paint",
+        "score": 18.0,
+        "page": "home",
+        "description": "3.9\u00a0s"
+      },
+      {
+        "category": "performance",
+        "audit_id": "speed-index",
+        "title": "Speed Index",
+        "score": 40.0,
+        "page": "home",
+        "description": "2.6\u00a0s"
+      }
+    ],
+    "high": [
+      {
+        "category": "performance",
+        "audit_id": "unminified-css",
+        "title": "Minify CSS",
+        "score": 50.0,
+        "page": "home",
+        "description": "Est savings of 32\u00a0KiB"
+      },
+      {
+        "category": "performance",
+        "audit_id": "unused-css-rules",
+        "title": "Reduce unused CSS",
+        "score": 50.0,
+        "page": "home",
+        "description": "Est savings of 47\u00a0KiB"
+      },
+      {
+        "category": "performance",
+        "audit_id": "speed-index",
+        "title": "Speed Index",
+        "score": 58.0,
+        "page": "login",
+        "description": "2.1\u00a0s"
+      },
+      {
+        "category": "performance",
+        "audit_id": "interactive",
+        "title": "Time to Interactive",
+        "score": 61.0,
+        "page": "home",
+        "description": "3.9\u00a0s"
+      }
+    ],
+    "medium": [],
+    "low": [
+      {
+        "category": "performance",
+        "audit_id": "first-contentful-paint",
+        "title": "First Contentful Paint",
+        "score": 99.0,
+        "page": "home",
+        "description": "0.6\u00a0s"
+      }
+    ]
+  },
+  "total_issues": {
+    "critical": 12,
+    "high": 4,
+    "medium": 0,
+    "low": 1
+  },
+  "recommended_actions": [
+    "1. Corriger tous les probl\u00e8mes critiques (score < 50)",
+    "2. Optimiser les images (formats modernes, lazy loading)",
+    "3. \u00c9liminer les ressources bloquantes (CSS/JS critiques)",
+    "4. Am\u00e9liorer l'accessibilit\u00e9 (contraste, labels, aria)",
+    "5. Optimiser les Core Web Vitals (LCP, CLS, TBT)",
+    "6. Compresser et minifier les assets",
+    "7. Impl\u00e9menter le preconnect/prefetch"
+  ]
+}

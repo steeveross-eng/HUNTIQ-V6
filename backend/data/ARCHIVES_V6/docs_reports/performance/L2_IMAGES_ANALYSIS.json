@@ -1,0 +1,214 @@
+{
+  "report_id": "L2_IMAGES_ANALYSIS",
+  "generated_at": "2026-02-19T22:05:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "phase": "L2",
+  "category": "Performance - Images",
+
+  "executive_summary": {
+    "total_images_in_public": 4,
+    "total_image_tags_in_code": 72,
+    "images_with_lazy_loading": 1,
+    "images_without_lazy_loading": 71,
+    "heavy_images_detected": 4,
+    "optimization_status": "CRITICAL"
+  },
+
+  "static_images_audit": {
+    "location": "/app/frontend/public/logos/",
+    "images": [
+      {
+        "file": "logo-chasse-bionic-fr.png",
+        "size": "1.6MB",
+        "status": "CRITICAL",
+        "used_in": "Hero, Header",
+        "optimization": "Convert to WebP, resize, compress"
+      },
+      {
+        "file": "logo-bionic-hunt-en.png",
+        "size": "1.6MB",
+        "status": "CRITICAL",
+        "used_in": "Hero, Header (EN)",
+        "optimization": "Convert to WebP, resize, compress"
+      },
+      {
+        "file": "bionic-logo-official.png",
+        "size": "803KB",
+        "status": "HIGH",
+        "used_in": "BionicLogo component",
+        "optimization": "Convert to WebP, compress"
+      },
+      {
+        "file": "bionic-logo-main.png",
+        "size": "803KB",
+        "status": "HIGH",
+        "used_in": "Brand identity",
+        "optimization": "Convert to WebP, compress"
+      }
+    ],
+    "total_size": "4.8MB",
+    "target_size": "<500KB total",
+    "reduction_potential": "~90%"
+  },
+
+  "dynamic_images_audit": {
+    "total_img_tags": 72,
+    "with_lazy_loading": 1,
+    "without_lazy_loading": 71,
+    "compliance_rate": "1.4%",
+    "locations": [
+      {"component": "SpeciesIcon.jsx", "has_lazy": true, "images": 1},
+      {"component": "TerritoryMap.jsx", "has_lazy": false, "images": "multiple"},
+      {"component": "LandsRental.jsx", "has_lazy": false, "images": 2},
+      {"component": "HuntMarketplace.jsx", "has_lazy": false, "images": 4},
+      {"component": "ProductCarousel.jsx", "has_lazy": false, "images": "dynamic"},
+      {"component": "CommunitySection.jsx", "has_lazy": false, "images": "dynamic"},
+      {"component": "BlogSection.jsx", "has_lazy": false, "images": "dynamic"},
+      {"component": "PartnersSection.jsx", "has_lazy": false, "images": "dynamic"},
+      {"component": "BrandIdentityAdmin.jsx", "has_lazy": false, "images": 4},
+      {"component": "ContentDepot.jsx", "has_lazy": false, "images": 2}
+    ]
+  },
+
+  "image_format_analysis": {
+    "current_formats": ["PNG", "JPG", "SVG"],
+    "modern_formats_used": false,
+    "webp_usage": "NONE",
+    "avif_usage": "NONE",
+    "recommendation": "Convertir toutes les images PNG/JPG en WebP avec fallback"
+  },
+
+  "lazy_loading_gaps": {
+    "files_needing_update": [
+      {
+        "file": "/app/frontend/src/modules/cart/components/CartWidget.jsx",
+        "line": 65,
+        "fix": "Ajouter loading='lazy'"
+      },
+      {
+        "file": "/app/frontend/src/modules/admin/components/BrandIdentityAdmin.jsx",
+        "lines": [383, 431, 621, 705],
+        "fix": "Ajouter loading='lazy' à toutes les images"
+      },
+      {
+        "file": "/app/frontend/src/modules/admin/components/ContentDepot.jsx",
+        "lines": [311, 573],
+        "fix": "Ajouter loading='lazy'"
+      },
+      {
+        "file": "/app/frontend/src/modules/realestate/components/PropertyGallery.jsx",
+        "lines": [45, 103, 121],
+        "fix": "Ajouter loading='lazy' sauf image principale"
+      },
+      {
+        "file": "/app/frontend/src/modules/products/components/ProductCard.jsx",
+        "lines": [31, 60],
+        "fix": "Ajouter loading='lazy'"
+      },
+      {
+        "file": "/app/frontend/src/components/frontpage/ProductCarousel.jsx",
+        "line": 103,
+        "fix": "Ajouter loading='lazy'"
+      },
+      {
+        "file": "/app/frontend/src/components/frontpage/MarketplaceSection.jsx",
+        "line": 140,
+        "fix": "Ajouter loading='lazy'"
+      },
+      {
+        "file": "/app/frontend/src/components/frontpage/CommunitySection.jsx",
+        "lines": [104, 113],
+        "fix": "Ajouter loading='lazy'"
+      },
+      {
+        "file": "/app/frontend/src/components/frontpage/BlogSection.jsx",
+        "lines": [115, 175],
+        "fix": "Ajouter loading='lazy'"
+      },
+      {
+        "file": "/app/frontend/src/components/frontpage/PartnersSection.jsx",
+        "lines": [81, 123],
+        "fix": "Ajouter loading='lazy'"
+      }
+    ],
+    "total_files_to_update": 15,
+    "total_images_to_fix": 71
+  },
+
+  "lcp_impact": {
+    "current_lcp": "3.9s",
+    "target_lcp": "<2.5s",
+    "lcp_element_likely": "Hero image or logo",
+    "optimizations_for_lcp": [
+      "Précharger l'image hero avec <link rel='preload'>",
+      "Compresser logo principal de 1.6MB à <100KB",
+      "Utiliser format WebP avec fallback PNG",
+      "Ajouter width/height pour réserver l'espace (éviter CLS)"
+    ]
+  },
+
+  "recommendations": {
+    "P0_critical": [
+      {
+        "id": "IMG-001",
+        "action": "Compresser les logos de 1.6MB à <100KB",
+        "implementation": "Utiliser TinyPNG ou ImageOptim, convertir en WebP",
+        "impact": "Réduction ~1.5MB par logo",
+        "effort": "LOW"
+      },
+      {
+        "id": "IMG-002",
+        "action": "Ajouter loading='lazy' à toutes les images hors viewport",
+        "implementation": "Ajouter attribut à chaque balise <img>",
+        "impact": "Réduction LCP significative",
+        "effort": "LOW"
+      },
+      {
+        "id": "IMG-003",
+        "action": "Précharger l'image hero/logo principale",
+        "implementation": "<link rel='preload' as='image' href='...' fetchpriority='high'>",
+        "impact": "Amélioration LCP ~500ms",
+        "effort": "LOW"
+      }
+    ],
+    "P1_high": [
+      {
+        "id": "IMG-004",
+        "action": "Convertir toutes les images en WebP avec fallback",
+        "implementation": "Script de conversion + <picture> element",
+        "impact": "Réduction taille ~30-50%",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "IMG-005",
+        "action": "Ajouter width et height à toutes les images",
+        "implementation": "Attributs explicites pour éviter CLS",
+        "impact": "Amélioration CLS",
+        "effort": "MEDIUM"
+      }
+    ],
+    "P2_medium": [
+      {
+        "id": "IMG-006",
+        "action": "Implémenter responsive images avec srcset",
+        "implementation": "srcset pour différentes résolutions",
+        "impact": "Économie data sur mobile",
+        "effort": "HIGH"
+      }
+    ]
+  },
+
+  "expected_gains": {
+    "after_p0": {
+      "lcp_improvement": "~1.5s",
+      "bundle_reduction": "~3MB",
+      "lighthouse_performance": "+15 points"
+    },
+    "after_p1": {
+      "additional_reduction": "~500KB",
+      "cls_improvement": "significant",
+      "lighthouse_performance": "+5 points"
+    }
+  }
+}

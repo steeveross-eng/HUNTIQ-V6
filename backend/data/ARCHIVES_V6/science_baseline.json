@@ -1,0 +1,123 @@
+{
+  "version": "BIONIC_V5_SCIENCE_BASELINE",
+  "date": "2026-03-07",
+  "section": "S3_SCIENCE_FREEZE",
+
+  "layer_params": {
+    "rut":            {"octaves": 5, "base_freq": 0.0012, "threshold": 0.52, "cluster": 0.65},
+    "repos":          {"octaves": 4, "base_freq": 0.0008, "threshold": 0.55, "cluster": 0.70},
+    "alimentation":   {"octaves": 5, "base_freq": 0.0015, "threshold": 0.48, "cluster": 0.55},
+    "corridors":      {"octaves": 5, "base_freq": 0.0018, "threshold": 0.40, "cluster": 0.45},
+    "habitats":       {"octaves": 4, "base_freq": 0.0010, "threshold": 0.50, "cluster": 0.65},
+    "peuplements":    {"octaves": 3, "base_freq": 0.0007, "threshold": 0.52, "cluster": 0.80},
+    "ndvi":           {"octaves": 5, "base_freq": 0.0010, "threshold": 0.45, "cluster": 0.55},
+    "hydro":          {"octaves": 4, "base_freq": 0.0018, "threshold": 0.60, "cluster": 0.45},
+    "pentes":         {"octaves": 4, "base_freq": 0.0012, "threshold": 0.50, "cluster": 0.65},
+    "orientation":    {"octaves": 3, "base_freq": 0.0009, "threshold": 0.48, "cluster": 0.75},
+    "salines":        {"octaves": 5, "base_freq": 0.0025, "threshold": 0.55, "cluster": 0.35},
+    "affuts":         {"octaves": 5, "base_freq": 0.0016, "threshold": 0.55, "cluster": 0.45},
+    "trajets":        {"octaves": 5, "base_freq": 0.0018, "threshold": 0.45, "cluster": 0.45},
+    "altitude":       {"octaves": 3, "base_freq": 0.0005, "threshold": 0.50, "cluster": 0.85},
+    "ensoleillement": {"octaves": 3, "base_freq": 0.0007, "threshold": 0.48, "cluster": 0.75}
+  },
+
+  "species_weights": {
+    "moose": {
+      "rut": 0.95, "repos": 0.80, "alimentation": 0.85, "corridors": 0.90,
+      "habitats": 0.95, "peuplements": 0.85, "ndvi": 0.80, "hydro": 0.95,
+      "pentes": 0.70, "orientation": 0.60, "salines": 0.90, "affuts": 0.75,
+      "trajets": 0.70, "altitude": 0.65, "ensoleillement": 0.55
+    },
+    "deer": {
+      "rut": 0.90, "repos": 0.85, "alimentation": 0.90, "corridors": 0.85,
+      "habitats": 0.90, "peuplements": 0.90, "ndvi": 0.85, "hydro": 0.70,
+      "pentes": 0.75, "orientation": 0.70, "salines": 0.60, "affuts": 0.90,
+      "trajets": 0.80, "altitude": 0.60, "ensoleillement": 0.75
+    },
+    "bear": {
+      "rut": 0.40, "repos": 0.85, "alimentation": 0.95, "corridors": 0.80,
+      "habitats": 0.90, "peuplements": 0.85, "ndvi": 0.90, "hydro": 0.85,
+      "pentes": 0.80, "orientation": 0.50, "salines": 0.30, "affuts": 0.60,
+      "trajets": 0.65, "altitude": 0.70, "ensoleillement": 0.55
+    },
+    "wild_turkey": {
+      "rut": 0.75, "repos": 0.70, "alimentation": 0.90, "corridors": 0.60,
+      "habitats": 0.85, "peuplements": 0.80, "ndvi": 0.85, "hydro": 0.50,
+      "pentes": 0.65, "orientation": 0.60, "salines": 0.20, "affuts": 0.85,
+      "trajets": 0.70, "altitude": 0.50, "ensoleillement": 0.90
+    },
+    "elk": {
+      "rut": 0.90, "repos": 0.80, "alimentation": 0.85, "corridors": 0.90,
+      "habitats": 0.85, "peuplements": 0.75, "ndvi": 0.80, "hydro": 0.75,
+      "pentes": 0.80, "orientation": 0.65, "salines": 0.70, "affuts": 0.70,
+      "trajets": 0.75, "altitude": 0.80, "ensoleillement": 0.60
+    }
+  },
+
+  "penalty_matrix": {
+    "alimentation": {
+      "water": {"close": 1.05, "medium": 1.00, "far": 1.00},
+      "urban": {"close": 0.40, "medium": 0.65, "far": 0.85},
+      "roads": {"close": 0.30, "medium": 0.60, "far": 0.85},
+      "infrastructure": {"close": 0.40, "medium": 0.70, "far": 0.90}
+    },
+    "repos": {
+      "water": {"close": 0.70, "medium": 0.90, "far": 1.00},
+      "urban": {"close": 0.25, "medium": 0.55, "far": 0.80},
+      "roads": {"close": 0.25, "medium": 0.55, "far": 0.80},
+      "infrastructure": {"close": 0.35, "medium": 0.65, "far": 0.85}
+    },
+    "rut": {
+      "water": {"close": 0.70, "medium": 0.90, "far": 1.00},
+      "urban": {"close": 0.25, "medium": 0.55, "far": 0.80},
+      "roads": {"close": 0.30, "medium": 0.60, "far": 0.85},
+      "infrastructure": {"close": 0.35, "medium": 0.65, "far": 0.85}
+    },
+    "habitats": {
+      "water": {"close": 0.95, "medium": 1.00, "far": 1.00},
+      "urban": {"close": 0.40, "medium": 0.65, "far": 0.85},
+      "roads": {"close": 0.45, "medium": 0.70, "far": 0.90},
+      "infrastructure": {"close": 0.45, "medium": 0.70, "far": 0.90}
+    },
+    "corridors": {
+      "water": {"close": 0.95, "medium": 1.00, "far": 1.00},
+      "urban": {"close": 0.40, "medium": 0.65, "far": 0.85},
+      "roads": {"close": 0.50, "medium": 0.70, "far": 0.90},
+      "infrastructure": {"close": 0.50, "medium": 0.70, "far": 0.90}
+    },
+    "_default": {
+      "water": {"close": 0.90, "medium": 1.00, "far": 1.00},
+      "urban": {"close": 0.40, "medium": 0.65, "far": 0.85},
+      "roads": {"close": 0.40, "medium": 0.65, "far": 0.85},
+      "infrastructure": {"close": 0.45, "medium": 0.70, "far": 0.90}
+    }
+  },
+
+  "proximity_bands_m": {
+    "close": 200,
+    "medium": 500,
+    "far": 1000
+  },
+
+  "fragmentation_rules": {
+    "severe": {"max_compactness": 0.3, "max_area_m2": 10000, "multiplier": 0.60},
+    "moderate": {"max_compactness": 0.5, "multiplier": 0.80}
+  },
+
+  "exclusion_rules_hydro_fix": {
+    "deep_water_only": ["lake", "reservoir"],
+    "pond_min_area_m2": 2000,
+    "never_exclude_types": ["wetland", "stream", "ditch", "micro_water"],
+    "standard_rejection": ">50% of 5 test points",
+    "infrastructure_rejection": ">80% of 5 test points",
+    "road_buffer_m": 25,
+    "track_excluded": false
+  },
+
+  "scoring_rules": {
+    "intensity_score_range": [55, 100],
+    "intensity_formula": "55 + intensity * 45",
+    "penalty_score_floor": 15,
+    "score_floor_formula": "max(15, raw_score * penalty_factor)"
+  }
+}

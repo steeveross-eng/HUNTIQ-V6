@@ -1,0 +1,435 @@
+{
+  "report_id": "L2_ROLLBACK_STRATEGY_V5_ULTIME",
+  "generated_at": "2026-02-20T00:05:00Z",
+  "version": "V5_ULTIME",
+  "classification": "INTERNAL - STAGING MODE STRICT",
+  "status": "STRATEGY_DEFINED - NO_EXECUTION",
+
+  "rollback_header": {
+    "purpose": "Plan de rollback multi-niveaux complet",
+    "scope": "Module, Phase, Global",
+    "execution_status": "BLOCKED"
+  },
+
+  "rollback_principles": {
+    "principle_1": "Tout changement doit être réversible",
+    "principle_2": "Rollback ne doit pas introduire de nouveaux bugs",
+    "principle_3": "Rollback doit être testable avant exécution",
+    "principle_4": "Documentation de chaque rollback obligatoire"
+  },
+
+  "pre_execution_backup_strategy": {
+    "required_before_any_execution": [
+      {
+        "id": "BACKUP-001",
+        "action": "Créer branche Git de backup",
+        "command": "git checkout -b backup/pre-L2-$(date +%Y%m%d-%H%M%S)",
+        "verification": "git branch --list 'backup/*'"
+      },
+      {
+        "id": "BACKUP-002",
+        "action": "Capturer screenshots baseline",
+        "pages": ["home", "mon-territoire", "carte-interactive", "shop", "admin"],
+        "tool": "Playwright screenshot tool"
+      },
+      {
+        "id": "BACKUP-003",
+        "action": "Documenter Lighthouse baseline",
+        "current_scores": {
+          "performance": 47,
+          "accessibility": 80.8,
+          "best_practices": 96,
+          "seo": 92,
+          "global": 79
+        }
+      },
+      {
+        "id": "BACKUP-004",
+        "action": "Backup assets originaux",
+        "command": "cp -r /app/frontend/public/logos /app/backup/logos-original",
+        "verification": "ls -la /app/backup/logos-original"
+      }
+    ]
+  },
+
+  "rollback_by_module": {
+    "description": "Rollback ciblé par module affecté",
+    "modules": [
+      {
+        "module": "territory",
+        "files_potentially_modified": [
+          "TerritoryMap.jsx",
+          "TerritoryAdvanced.jsx"
+        ],
+        "rollback_command": "git checkout HEAD -- /app/frontend/src/modules/territory/",
+        "verification": [
+          "Page /mon-territoire charge correctement",
+          "Carte s'affiche",
+          "Aucune erreur console"
+        ],
+        "dependencies_to_check": ["leaflet", "react-leaflet"],
+        "estimated_time": "2 minutes"
+      },
+      {
+        "module": "analytics",
+        "files_potentially_modified": [
+          "BionicAnalyzer.jsx"
+        ],
+        "rollback_command": "git checkout HEAD -- /app/frontend/src/modules/analytics/",
+        "verification": [
+          "Dashboard analytics charge",
+          "Charts s'affichent",
+          "Aucune erreur console"
+        ],
+        "dependencies_to_check": ["recharts"],
+        "estimated_time": "2 minutes"
+      },
+      {
+        "module": "realestate",
+        "files_potentially_modified": [
+          "LandsRental.jsx",
+          "PropertyGallery.jsx"
+        ],
+        "rollback_command": "git checkout HEAD -- /app/frontend/src/modules/realestate/",
+        "verification": [
+          "Page terrains charge",
+          "Images s'affichent",
+          "Navigation fonctionne"
+        ],
+        "dependencies_to_check": [],
+        "estimated_time": "2 minutes"
+      },
+      {
+        "module": "marketplace",
+        "files_potentially_modified": [
+          "HuntMarketplace.jsx"
+        ],
+        "rollback_command": "git checkout HEAD -- /app/frontend/src/modules/marketplace/",
+        "verification": [
+          "Page marketplace charge",
+          "Listings s'affichent"
+        ],
+        "dependencies_to_check": [],
+        "estimated_time": "2 minutes"
+      },
+      {
+        "module": "affiliate",
+        "files_potentially_modified": [
+          "DynamicReferralWidget.jsx"
+        ],
+        "rollback_command": "git checkout HEAD -- /app/frontend/src/modules/affiliate/",
+        "verification": [
+          "Widget parrainage fonctionne"
+        ],
+        "dependencies_to_check": [],
+        "estimated_time": "1 minute"
+      },
+      {
+        "module": "admin",
+        "files_potentially_modified": [
+          "BrandIdentityAdmin.jsx",
+          "ContentDepot.jsx",
+          "ProductDiscoveryAdmin.jsx"
+        ],
+        "rollback_command": "git checkout HEAD -- /app/frontend/src/modules/admin/",
+        "verification": [
+          "Admin page charge",
+          "Tous les tabs fonctionnent"
+        ],
+        "dependencies_to_check": [],
+        "estimated_time": "2 minutes"
+      },
+      {
+        "module": "public_assets",
+        "files_potentially_modified": [
+          "index.html",
+          "logos/*"
+        ],
+        "rollback_commands": [
+          "git checkout HEAD -- /app/frontend/public/index.html",
+          "cp -r /app/backup/logos-original/* /app/frontend/public/logos/"
+        ],
+        "verification": [
+          "App charge correctement",
+          "Logos s'affichent",
+          "Fonts chargent"
+        ],
+        "dependencies_to_check": ["Google Fonts CDN"],
+        "estimated_time": "2 minutes"
+      },
+      {
+        "module": "styles",
+        "files_potentially_modified": [
+          "index.css",
+          "App.css",
+          "bionic-design-system.css"
+        ],
+        "rollback_command": "git checkout HEAD -- /app/frontend/src/styles/ /app/frontend/src/index.css /app/frontend/src/App.css",
+        "verification": [
+          "Styles appliqués correctement",
+          "Aucun FOUC",
+          "Contrastes corrects"
+        ],
+        "dependencies_to_check": [],
+        "estimated_time": "2 minutes"
+      }
+    ]
+  },
+
+  "rollback_by_phase": {
+    "description": "Rollback d'une phase entière",
+    "phases": [
+      {
+        "phase": "Quick Wins",
+        "phase_id": "QW",
+        "files_modified": [
+          "/app/frontend/public/index.html",
+          "/app/frontend/public/logos/*",
+          "15 fichiers JSX avec loading=lazy"
+        ],
+        "rollback_procedure": [
+          "1. git stash (save current work)",
+          "2. git checkout HEAD~N -- . (N = number of commits in phase)",
+          "3. cp -r /app/backup/logos-original/* /app/frontend/public/logos/",
+          "4. sudo supervisorctl restart frontend",
+          "5. Verify all pages load"
+        ],
+        "alternative_rollback": "git revert --no-commit HEAD~N..HEAD",
+        "verification_checklist": [
+          "Homepage loads",
+          "All images display",
+          "Fonts load correctly",
+          "No console errors"
+        ],
+        "estimated_time": "5 minutes",
+        "impact_of_rollback": "Lose ~10 performance points"
+      },
+      {
+        "phase": "Accessibility",
+        "phase_id": "A11Y",
+        "files_modified": [
+          "Multiple JSX files (aria-label)",
+          "CSS files (contrast)"
+        ],
+        "rollback_procedure": [
+          "1. git log --oneline | grep 'A11Y' (identify commits)",
+          "2. git revert --no-commit <commits>",
+          "3. Verify changes reverted",
+          "4. git commit -m 'Rollback Accessibility phase'"
+        ],
+        "verification_checklist": [
+          "Visual appearance unchanged",
+          "No new console errors",
+          "App functional"
+        ],
+        "estimated_time": "5 minutes",
+        "impact_of_rollback": "Lose ~10 accessibility points"
+      },
+      {
+        "phase": "Deep Optimizations",
+        "phase_id": "DEEP",
+        "files_modified": [
+          "Route config (lazy imports)",
+          "Multiple heavy components",
+          "CSS (fonts)"
+        ],
+        "rollback_procedure": [
+          "1. Identify all lazy loading changes",
+          "2. Revert to static imports",
+          "3. Restore font URL",
+          "4. Rebuild and verify"
+        ],
+        "rollback_commands": [
+          "git checkout HEAD~N -- /app/frontend/src/config/routes.js",
+          "git checkout HEAD~N -- /app/frontend/src/modules/territory/",
+          "git checkout HEAD~N -- /app/frontend/src/modules/analytics/",
+          "git checkout HEAD~N -- /app/frontend/src/styles/"
+        ],
+        "verification_checklist": [
+          "All routes navigate correctly",
+          "Map loads",
+          "Charts display",
+          "Fonts correct"
+        ],
+        "estimated_time": "10 minutes",
+        "impact_of_rollback": "Lose ~15 performance points"
+      },
+      {
+        "phase": "Core Web Vitals",
+        "phase_id": "CWV",
+        "files_modified": [
+          "index.html (preload)",
+          "Components (skeletons)"
+        ],
+        "rollback_procedure": [
+          "1. Remove preload links from index.html",
+          "2. Remove skeleton components",
+          "3. Verify"
+        ],
+        "estimated_time": "5 minutes",
+        "impact_of_rollback": "Lose ~3 performance points"
+      },
+      {
+        "phase": "SEO Polish",
+        "phase_id": "SEO",
+        "files_modified": [
+          "Page components (JSON-LD)",
+          "SEOHead component"
+        ],
+        "rollback_procedure": [
+          "1. Remove JSON-LD scripts",
+          "2. Revert meta description changes",
+          "3. Verify pages load"
+        ],
+        "estimated_time": "5 minutes",
+        "impact_of_rollback": "Lose ~5 SEO points"
+      },
+      {
+        "phase": "Final Polish",
+        "phase_id": "FINAL",
+        "files_modified": [
+          "service-worker.js (if created)",
+          "Build config"
+        ],
+        "rollback_procedure": [
+          "1. Unregister service worker",
+          "2. Clear browser caches",
+          "3. Revert build config",
+          "4. Rebuild"
+        ],
+        "unregister_sw_code": "navigator.serviceWorker.getRegistrations().then(r => r.forEach(sw => sw.unregister()))",
+        "estimated_time": "10 minutes",
+        "impact_of_rollback": "Lose ~2 performance points"
+      }
+    ]
+  },
+
+  "rollback_global": {
+    "description": "Rollback complet à l'état pré-optimisation",
+    "trigger_conditions": [
+      "Multiple phase failures",
+      "Critical functionality broken",
+      "Score dropped below baseline (79)",
+      "Production deployment deadline missed",
+      "COPILOT MAÎTRE orders full rollback"
+    ],
+    "procedure": {
+      "steps": [
+        {
+          "step": 1,
+          "action": "Stop frontend service",
+          "command": "sudo supervisorctl stop frontend"
+        },
+        {
+          "step": 2,
+          "action": "Checkout backup branch",
+          "command": "git checkout backup/pre-L2-YYYYMMDD-HHMMSS"
+        },
+        {
+          "step": 3,
+          "action": "Restore original assets",
+          "command": "cp -r /app/backup/logos-original/* /app/frontend/public/logos/"
+        },
+        {
+          "step": 4,
+          "action": "Clear any cached builds",
+          "command": "rm -rf /app/frontend/node_modules/.cache"
+        },
+        {
+          "step": 5,
+          "action": "Restart frontend",
+          "command": "sudo supervisorctl start frontend"
+        },
+        {
+          "step": 6,
+          "action": "Verify baseline restored",
+          "verification": [
+            "Run Lighthouse audit",
+            "Compare to baseline scores",
+            "Visual check all pages"
+          ]
+        },
+        {
+          "step": 7,
+          "action": "Document rollback",
+          "create_file": "/app/docs/reports/ROLLBACK_EXECUTED_$(date +%Y%m%d).json"
+        }
+      ],
+      "estimated_time": "15 minutes",
+      "verification_complete": "Lighthouse score matches baseline (79)"
+    },
+    "post_rollback_actions": [
+      "Document reason for rollback",
+      "Analyze what went wrong",
+      "Update risk assessment",
+      "Plan corrective actions",
+      "Schedule retry with fixes"
+    ]
+  },
+
+  "rollback_decision_tree": {
+    "format": "Decision flow",
+    "tree": [
+      {
+        "condition": "Single file broken?",
+        "yes": "→ File-level rollback",
+        "no": "↓"
+      },
+      {
+        "condition": "Single module broken?",
+        "yes": "→ Module-level rollback",
+        "no": "↓"
+      },
+      {
+        "condition": "Single phase broken?",
+        "yes": "→ Phase-level rollback",
+        "no": "↓"
+      },
+      {
+        "condition": "Multiple phases broken?",
+        "yes": "→ Global rollback",
+        "no": "→ Investigate specific issue"
+      }
+    ]
+  },
+
+  "rollback_testing": {
+    "pre_execution_test": {
+      "description": "Tester le rollback AVANT d'exécuter les optimisations",
+      "steps": [
+        "1. Create test branch",
+        "2. Make small change",
+        "3. Rollback the change",
+        "4. Verify original state restored",
+        "5. Delete test branch"
+      ],
+      "purpose": "Confirm rollback procedures work"
+    }
+  },
+
+  "communication_protocol": {
+    "during_rollback": [
+      "Inform COPILOT MAÎTRE immediately",
+      "Document exact state before rollback",
+      "Document rollback execution",
+      "Confirm restoration complete"
+    ],
+    "post_rollback": [
+      "Generate rollback report",
+      "Root cause analysis",
+      "Updated risk assessment",
+      "Revised execution plan"
+    ]
+  },
+
+  "rollback_summary": {
+    "levels_defined": 3,
+    "module_rollbacks": 8,
+    "phase_rollbacks": 6,
+    "global_rollback": 1,
+    "all_procedures_documented": true,
+    "all_commands_specified": true,
+    "all_verifications_defined": true,
+    "execution_status": "BLOCKED_PENDING_APPROVAL"
+  }
+}

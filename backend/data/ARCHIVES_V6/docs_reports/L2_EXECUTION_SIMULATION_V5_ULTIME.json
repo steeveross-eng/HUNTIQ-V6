@@ -1,0 +1,526 @@
+{
+  "report_id": "L2_EXECUTION_SIMULATION_V5_ULTIME",
+  "generated_at": "2026-02-19T23:40:00Z",
+  "version": "V5_ULTIME",
+  "classification": "INTERNAL - STAGING MODE STRICT",
+  "status": "SIMULATION_ONLY - NO_REAL_EXECUTION",
+
+  "simulation_header": {
+    "purpose": "Simulation d'exécution complète sans exécution réelle",
+    "type": "DRY_RUN_SIMULATION",
+    "real_execution": false,
+    "scope": "Phases L2 Quick Wins → Final Polish (79 → 99.9)"
+  },
+
+  "pre_execution_requirements": {
+    "mandatory_checks": [
+      {"id": "PRE-001", "check": "COPILOT MAÎTRE approval", "status": "REQUIRED", "current": "NOT_GIVEN"},
+      {"id": "PRE-002", "check": "npm audit clean", "status": "REQUIRED", "current": "TO_RUN"},
+      {"id": "PRE-003", "check": "Git backup branch created", "status": "REQUIRED", "current": "NOT_CREATED"},
+      {"id": "PRE-004", "check": "Screenshot baseline captured", "status": "RECOMMENDED", "current": "NOT_CAPTURED"},
+      {"id": "PRE-005", "check": "Lighthouse baseline documented", "status": "DONE", "value": 79.0}
+    ],
+    "all_checks_passed": false,
+    "blocking": true
+  },
+
+  "execution_sequence": {
+    "phase_1_quick_wins": {
+      "name": "Quick Wins",
+      "target": "79 → 85",
+      "duration_estimate": "~30 minutes",
+      "operations": [
+        {
+          "order": 1,
+          "id": "QW-001",
+          "action": "Compresser logos",
+          "type": "ASSET_MODIFICATION",
+          "steps": [
+            "1. Backup /app/frontend/public/logos/ vers /app/backup/logos/",
+            "2. Compresser logo-chasse-bionic-fr.png avec TinyPNG/ImageOptim",
+            "3. Convertir en WebP avec fallback PNG",
+            "4. Remplacer fichier original",
+            "5. Répéter pour les 3 autres logos",
+            "6. Vérifier visuellement la qualité"
+          ],
+          "files": [
+            "/app/frontend/public/logos/logo-chasse-bionic-fr.png",
+            "/app/frontend/public/logos/logo-bionic-hunt-en.png",
+            "/app/frontend/public/logos/bionic-logo-official.png",
+            "/app/frontend/public/logos/bionic-logo-main.png"
+          ],
+          "risk": "LOW",
+          "rollback": "Restaurer depuis /app/backup/logos/",
+          "validation": "ls -la /app/frontend/public/logos/ && open preview URL"
+        },
+        {
+          "order": 2,
+          "id": "QW-002",
+          "action": "Ajouter loading='lazy' aux images",
+          "type": "CODE_MODIFICATION",
+          "steps": [
+            "1. grep -rn '<img' /app/frontend/src --include='*.jsx' | grep -v 'loading='",
+            "2. Pour chaque fichier, ajouter loading='lazy' sauf images hero/above-fold",
+            "3. Utiliser search_replace pour modifications",
+            "4. Lint frontend après modifications",
+            "5. Vérifier visuellement que les images se chargent"
+          ],
+          "files_count": 15,
+          "estimated_changes": 71,
+          "risk": "LOW",
+          "rollback": "git checkout -- <files>",
+          "validation": "Network panel shows lazy loading"
+        },
+        {
+          "order": 3,
+          "id": "QW-003",
+          "action": "Ajouter preconnect Google Fonts",
+          "type": "HTML_MODIFICATION",
+          "steps": [
+            "1. Ouvrir /app/frontend/public/index.html",
+            "2. Ajouter après <meta viewport>:",
+            "   <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">",
+            "   <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>",
+            "3. Sauvegarder",
+            "4. Vérifier dans Network panel que preconnect est établi"
+          ],
+          "files": ["/app/frontend/public/index.html"],
+          "lines_added": 2,
+          "risk": "NONE",
+          "rollback": "Supprimer les 2 lignes ajoutées",
+          "validation": "DevTools Network shows preconnect"
+        },
+        {
+          "order": 4,
+          "id": "QW-004",
+          "action": "Ajouter defer à emergent-main.js",
+          "type": "HTML_MODIFICATION",
+          "steps": [
+            "1. Ouvrir /app/frontend/public/index.html",
+            "2. Trouver: <script src=\"https://assets.emergent.sh/scripts/emergent-main.js\"></script>",
+            "3. Remplacer par: <script defer src=\"https://assets.emergent.sh/scripts/emergent-main.js\"></script>",
+            "4. Sauvegarder",
+            "5. Vérifier que le script n'est plus bloquant"
+          ],
+          "files": ["/app/frontend/public/index.html"],
+          "risk": "LOW",
+          "rollback": "Retirer defer",
+          "validation": "DevTools Performance shows non-blocking script"
+        },
+        {
+          "order": 5,
+          "id": "QW-005",
+          "action": "Précharger hero image",
+          "type": "HTML_MODIFICATION",
+          "steps": [
+            "1. Identifier l'image hero principale utilisée",
+            "2. Ajouter dans <head>:",
+            "   <link rel=\"preload\" as=\"image\" href=\"/logos/bionic-logo-official.png\" fetchpriority=\"high\">",
+            "3. Sauvegarder",
+            "4. Vérifier dans Network panel que l'image est préchargée"
+          ],
+          "files": ["/app/frontend/public/index.html"],
+          "lines_added": 1,
+          "risk": "NONE",
+          "rollback": "Supprimer la ligne",
+          "validation": "Network shows preload request"
+        }
+      ],
+      "post_phase_validation": {
+        "lighthouse_audit": "Run Lighthouse on home page",
+        "expected_score": 85,
+        "visual_check": "Screenshot comparison",
+        "functional_check": "Navigate all main routes"
+      }
+    },
+
+    "phase_2_accessibility": {
+      "name": "Accessibility Fixes",
+      "target": "85 → 88.5",
+      "duration_estimate": "~45 minutes",
+      "operations": [
+        {
+          "order": 6,
+          "id": "A11Y-001",
+          "action": "Ajouter aria-label aux boutons icônes",
+          "type": "CODE_MODIFICATION",
+          "steps": [
+            "1. grep -rn '<Button' /app/frontend/src --include='*.jsx' | grep -v 'aria-label'",
+            "2. Identifier les boutons avec uniquement des icônes",
+            "3. Ajouter aria-label descriptif à chaque bouton",
+            "4. Lint et vérifier",
+            "5. Test avec lecteur d'écran (simulation)"
+          ],
+          "estimated_changes": 30,
+          "risk": "LOW",
+          "rollback": "git checkout -- <files>",
+          "validation": "Lighthouse Accessibility audit"
+        },
+        {
+          "order": 7,
+          "id": "A11Y-002",
+          "action": "Corriger contrastes couleurs",
+          "type": "CSS_MODIFICATION",
+          "steps": [
+            "1. Identifier les éléments avec contraste insuffisant via Lighthouse",
+            "2. Ajuster les CSS variables dans bionic-design-system.css",
+            "3. Vérifier avec WebAIM Contrast Checker",
+            "4. Appliquer les changements",
+            "5. Revérifier toutes les pages"
+          ],
+          "files": ["/app/frontend/src/styles/bionic-design-system.css"],
+          "risk": "MEDIUM",
+          "rollback": "git checkout -- bionic-design-system.css",
+          "validation": "WebAIM Contrast Checker >= 4.5:1"
+        },
+        {
+          "order": 8,
+          "id": "A11Y-003",
+          "action": "Corriger hiérarchie titres",
+          "type": "CODE_MODIFICATION",
+          "steps": [
+            "1. Identifier les pages avec hiérarchie incorrecte via Lighthouse",
+            "2. Restructurer h1 → h2 → h3 sans sauts",
+            "3. Vérifier chaque page modifiée",
+            "4. Lint et test"
+          ],
+          "estimated_changes": 10,
+          "risk": "LOW",
+          "rollback": "git checkout -- <files>",
+          "validation": "Lighthouse heading-order audit"
+        }
+      ],
+      "post_phase_validation": {
+        "lighthouse_audit": "Run Lighthouse Accessibility",
+        "expected_score": 88.5,
+        "screen_reader_test": "Simulated NVDA/VoiceOver test"
+      }
+    },
+
+    "phase_3_deep_optimizations": {
+      "name": "Deep Optimizations",
+      "target": "88.5 → 95",
+      "duration_estimate": "~60 minutes",
+      "operations": [
+        {
+          "order": 9,
+          "id": "DEEP-001",
+          "action": "Lazy load TerritoryMap.jsx",
+          "type": "CODE_MODIFICATION",
+          "steps": [
+            "1. Backup TerritoryMap.jsx",
+            "2. Dans les fichiers qui importent TerritoryMap:",
+            "   - import TerritoryMap from './TerritoryMap'",
+            "   → const TerritoryMap = React.lazy(() => import('./TerritoryMap'))",
+            "3. Wrapper avec <Suspense fallback={<Skeleton />}>",
+            "4. Créer composant Skeleton approprié",
+            "5. Tester le chargement lazy",
+            "6. Vérifier bundle size reduction"
+          ],
+          "files": ["TerritoryMap.jsx", "Pages utilisant TerritoryMap"],
+          "risk": "MEDIUM",
+          "rollback": "Revenir à import statique",
+          "validation": "Bundle analyzer shows split chunk"
+        },
+        {
+          "order": 10,
+          "id": "DEEP-002",
+          "action": "Lazy load autres composants lourds",
+          "type": "CODE_MODIFICATION",
+          "steps": [
+            "Répéter DEEP-001 pour:",
+            "- LandsRental.jsx",
+            "- HuntMarketplace.jsx",
+            "- BionicAnalyzer.jsx",
+            "- NetworkingHub.jsx"
+          ],
+          "files_count": 8,
+          "risk": "MEDIUM",
+          "rollback": "Revenir aux imports statiques",
+          "validation": "Initial bundle < 500KB"
+        },
+        {
+          "order": 11,
+          "id": "DEEP-003",
+          "action": "Réduire weights fonts",
+          "type": "CSS_MODIFICATION",
+          "steps": [
+            "1. Trouver @import Google Fonts dans CSS",
+            "2. Changer URL de:",
+            "   wght@400;500;600;700;900 → wght@600;700 (Barlow)",
+            "   wght@400;500;600;700 → wght@400;500;600 (Inter)",
+            "   wght@400;500;600 → wght@400 (JetBrains)",
+            "3. Vérifier visuellement les textes",
+            "4. Confirmer réduction taille"
+          ],
+          "files": ["index.css ou App.css"],
+          "risk": "LOW",
+          "rollback": "Restaurer URL complète",
+          "validation": "Visual comparison + size check"
+        },
+        {
+          "order": 12,
+          "id": "DEEP-004",
+          "action": "Ajouter width/height aux images",
+          "type": "CODE_MODIFICATION",
+          "steps": [
+            "1. Identifier toutes les <img> sans width/height",
+            "2. Ajouter les dimensions appropriées",
+            "3. Utiliser aspect-ratio CSS si dimensions dynamiques",
+            "4. Vérifier CLS"
+          ],
+          "estimated_changes": 50,
+          "risk": "LOW",
+          "rollback": "git checkout",
+          "validation": "CLS < 0.1 in Lighthouse"
+        }
+      ],
+      "post_phase_validation": {
+        "lighthouse_audit": "Full Lighthouse audit",
+        "expected_score": 95,
+        "bundle_check": "Initial bundle < 500KB",
+        "visual_regression": "Screenshot comparison"
+      }
+    },
+
+    "phase_4_core_web_vitals": {
+      "name": "Core Web Vitals",
+      "target": "95 → 97",
+      "duration_estimate": "~45 minutes",
+      "operations": [
+        {
+          "order": 13,
+          "id": "CWV-001",
+          "action": "Précharger fonts critiques",
+          "type": "HTML_MODIFICATION",
+          "risk": "LOW",
+          "rollback": "Remove preload links"
+        },
+        {
+          "order": 14,
+          "id": "CWV-002",
+          "action": "Skeleton loaders",
+          "type": "CODE_MODIFICATION",
+          "risk": "LOW",
+          "rollback": "git checkout"
+        },
+        {
+          "order": 15,
+          "id": "CWV-003",
+          "action": "Fragment long tasks",
+          "type": "CODE_MODIFICATION",
+          "risk": "MEDIUM",
+          "rollback": "git checkout"
+        }
+      ],
+      "post_phase_validation": {
+        "lighthouse_audit": "Performance focus",
+        "expected_score": 97,
+        "cwv_check": "LCP < 2.5s, TBT < 200ms, CLS < 0.1"
+      }
+    },
+
+    "phase_5_seo_polish": {
+      "name": "SEO Polish",
+      "target": "97 → 99",
+      "duration_estimate": "~30 minutes",
+      "operations": [
+        {
+          "order": 16,
+          "id": "SEO-001",
+          "action": "Implémenter JSON-LD",
+          "type": "CODE_MODIFICATION",
+          "risk": "LOW",
+          "rollback": "Remove JSON-LD scripts"
+        },
+        {
+          "order": 17,
+          "id": "SEO-002",
+          "action": "Meta descriptions uniques",
+          "type": "CODE_MODIFICATION",
+          "risk": "LOW",
+          "rollback": "git checkout"
+        },
+        {
+          "order": 18,
+          "id": "SEO-003",
+          "action": "Éliminer erreurs console",
+          "type": "CODE_MODIFICATION",
+          "risk": "MEDIUM",
+          "rollback": "git checkout"
+        }
+      ],
+      "post_phase_validation": {
+        "lighthouse_audit": "SEO and Best Practices focus",
+        "expected_score": 99,
+        "console_check": "Zero errors",
+        "structured_data_test": "Google Rich Results Test"
+      }
+    },
+
+    "phase_6_final_polish": {
+      "name": "Final Polish",
+      "target": "99 → 99.9",
+      "duration_estimate": "~60 minutes",
+      "operations": [
+        {
+          "order": 19,
+          "id": "FINAL-001",
+          "action": "Service Worker",
+          "type": "NEW_FEATURE",
+          "risk": "HIGH",
+          "rollback": "Unregister service worker"
+        },
+        {
+          "order": 20,
+          "id": "FINAL-002",
+          "action": "Bundle optimization",
+          "type": "BUILD_CONFIG",
+          "risk": "MEDIUM",
+          "rollback": "Revert build config"
+        },
+        {
+          "order": 21,
+          "id": "FINAL-003",
+          "action": "Final regression audit",
+          "type": "TESTING",
+          "risk": "NONE",
+          "rollback": "N/A"
+        }
+      ],
+      "post_phase_validation": {
+        "lighthouse_audit": "Full audit all pages",
+        "expected_score": 99.9,
+        "regression_suite": "Full functional test"
+      }
+    }
+  },
+
+  "rollback_conditions": {
+    "per_operation": [
+      {
+        "condition": "Visual regression detected",
+        "action": "git checkout -- affected files",
+        "priority": "IMMEDIATE"
+      },
+      {
+        "condition": "Functional test failure",
+        "action": "git checkout -- affected files",
+        "priority": "IMMEDIATE"
+      },
+      {
+        "condition": "Lighthouse score drop > 5 points",
+        "action": "Rollback entire phase",
+        "priority": "HIGH"
+      },
+      {
+        "condition": "Console errors introduced",
+        "action": "Debug or rollback",
+        "priority": "HIGH"
+      },
+      {
+        "condition": "Build failure",
+        "action": "git checkout -- affected files",
+        "priority": "IMMEDIATE"
+      }
+    ],
+    "full_rollback": {
+      "command": "git checkout -b pre-L2-backup && git checkout main && git reset --hard <pre-L2-commit>",
+      "when": "Multiple phase failures or critical regression"
+    }
+  },
+
+  "validation_conditions": {
+    "per_phase": [
+      {
+        "phase": "Quick Wins",
+        "conditions": [
+          "Lighthouse Performance >= 75",
+          "Visual regression: NONE",
+          "All routes navigable",
+          "Images load correctly"
+        ]
+      },
+      {
+        "phase": "Accessibility",
+        "conditions": [
+          "Lighthouse Accessibility >= 88",
+          "Zero new WCAG violations",
+          "Screen reader: all content readable"
+        ]
+      },
+      {
+        "phase": "Deep Opt",
+        "conditions": [
+          "Lighthouse Performance >= 90",
+          "Bundle initial < 500KB",
+          "Lazy loading works",
+          "No functional regression"
+        ]
+      },
+      {
+        "phase": "Core Web Vitals",
+        "conditions": [
+          "LCP < 2.5s",
+          "TBT < 200ms",
+          "CLS < 0.1"
+        ]
+      },
+      {
+        "phase": "SEO Polish",
+        "conditions": [
+          "Lighthouse SEO >= 98",
+          "Zero console errors",
+          "Structured data valid"
+        ]
+      },
+      {
+        "phase": "Final Polish",
+        "conditions": [
+          "Lighthouse Global >= 99.0",
+          "All tests pass",
+          "No regressions"
+        ]
+      }
+    ]
+  },
+
+  "non_regression_conditions": {
+    "critical_checks": [
+      {"check": "Login/Auth flow works", "priority": "CRITICAL"},
+      {"check": "Map loads and functions", "priority": "CRITICAL"},
+      {"check": "E-commerce cart works", "priority": "HIGH"},
+      {"check": "All API calls succeed", "priority": "HIGH"},
+      {"check": "Mobile responsiveness", "priority": "HIGH"},
+      {"check": "Language switching", "priority": "MEDIUM"},
+      {"check": "Admin panel accessible", "priority": "MEDIUM"}
+    ],
+    "testing_approach": [
+      "Automated Lighthouse after each phase",
+      "Visual regression screenshots",
+      "Manual functional testing of critical paths",
+      "API endpoint verification"
+    ]
+  },
+
+  "simulation_summary": {
+    "total_operations": 21,
+    "total_phases": 6,
+    "estimated_total_duration": "~4.5 hours",
+    "risk_distribution": {
+      "low_risk": 14,
+      "medium_risk": 5,
+      "high_risk": 2
+    },
+    "rollback_coverage": "100%",
+    "validation_coverage": "100%",
+    "execution_status": "SIMULATION_ONLY - NOT_EXECUTED"
+  },
+
+  "approval_required": {
+    "format": "INSTRUCTION MAÎTRE — AUTORISATION EXÉCUTION PHASE [X]",
+    "phases_available": ["Quick Wins", "Accessibility", "Deep Opt", "Core Web Vitals", "SEO Polish", "Final Polish"],
+    "full_execution_format": "INSTRUCTION MAÎTRE — AUTORISATION EXÉCUTION COMPLÈTE",
+    "current_status": "BLOCKED_AWAITING_APPROVAL"
+  }
+}

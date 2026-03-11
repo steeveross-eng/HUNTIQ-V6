@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "dry_run": false,
+  "reason": null,
+  "statistics": {
+    "events_migrated": 5,
+    "events_failed": 0,
+    "tracks_migrated": 3,
+    "tracks_failed": 0,
+    "errors": [],
+    "started_at": "2026-02-11 14:59:18.228563+00:00",
+    "completed_at": "2026-02-11 14:59:18.336235+00:00"
+  },
+  "summary": {
+    "events": {
+      "migrated": 5,
+      "failed": 0
+    },
+    "tracks": {
+      "migrated": 3,
+      "failed": 0
+    },
+    "total_migrated": 8,
+    "total_failed": 0
+  }
+}

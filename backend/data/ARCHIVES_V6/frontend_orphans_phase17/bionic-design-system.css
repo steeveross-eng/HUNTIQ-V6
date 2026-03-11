@@ -1,0 +1,354 @@
+/**
+ * BIONIC DESIGN SYSTEM - CSS Variables
+ * Source unique de vérité pour les styles visuels
+ * Version: 1.0.0
+ * Date: 11 Février 2026
+ * 
+ * RÈGLES:
+ * - Aucune couleur hardcodée dans les composants
+ * - Utiliser uniquement ces variables CSS
+ * - Pas de modification locale autorisée
+ */
+
+:root {
+  /* ============================================
+   * PALETTE TACTIQUE - COULEURS PRIMAIRES
+   * ============================================ */
+  
+  /* Noir - Backgrounds */
+  --bionic-black-pure: #000000;
+  --bionic-black-deep: #0a0a0a;
+  --bionic-black-base: #121212;
+  --bionic-black-elevated: #1a1a1a;
+  
+  /* Gris Scientifique - Surfaces & Borders */
+  --bionic-gray-900: #1a1a1a;
+  --bionic-gray-800: #2a2a2a;
+  --bionic-gray-700: #3a3a3a;
+  --bionic-gray-600: #4a4a4a;
+  --bionic-gray-500: #6a6a6a;
+  --bionic-gray-400: #8a8a8a;
+  --bionic-gray-300: #a0a0a0;
+  --bionic-gray-200: #b0b0b0;
+  --bionic-gray-100: #d0d0d0;
+  
+  /* Jaune Analytique - Accent Principal */
+  --bionic-gold-primary: #F5A623;
+  --bionic-gold-light: #FBBF24;
+  --bionic-gold-lighter: #FCD34D;
+  --bionic-gold-dark: #D4890E;
+  --bionic-gold-muted: rgba(245, 166, 35, 0.1);
+  --bionic-gold-glow: rgba(245, 166, 35, 0.4);
+  
+  /* Bleu Analytique - Données & Informations */
+  --bionic-blue-primary: #1E40AF;
+  --bionic-blue-light: #3B82F6;
+  --bionic-blue-lighter: #60A5FA;
+  --bionic-blue-dark: #1E3A8A;
+  --bionic-blue-muted: rgba(59, 130, 246, 0.1);
+  
+  /* Vert Tactique - Succès & Actions Positives */
+  --bionic-green-primary: #10B981;
+  --bionic-green-light: #34D399;
+  --bionic-green-dark: #059669;
+  --bionic-green-muted: rgba(16, 185, 129, 0.1);
+  
+  /* Rouge Alerte - Erreurs & Warnings */
+  --bionic-red-primary: #EF4444;
+  --bionic-red-light: #F87171;
+  --bionic-red-dark: #DC2626;
+  --bionic-red-muted: rgba(239, 68, 68, 0.1);
+  
+  /* Violet Analytique - Données Secondaires */
+  --bionic-purple-primary: #8B5CF6;
+  --bionic-purple-light: #A78BFA;
+  --bionic-purple-muted: rgba(139, 92, 246, 0.1);
+  
+  /* Cyan Tactique - Informations Spéciales */
+  --bionic-cyan-primary: #06B6D4;
+  --bionic-cyan-light: #22D3EE;
+  --bionic-cyan-muted: rgba(6, 182, 212, 0.1);
+  
+  /* ============================================
+   * COULEURS SÉMANTIQUES
+   * ============================================ */
+  
+  /* Backgrounds */
+  --bionic-bg-primary: var(--bionic-black-base);
+  --bionic-bg-secondary: var(--bionic-black-elevated);
+  --bionic-bg-card: var(--bionic-gray-900);
+  --bionic-bg-hover: rgba(255, 255, 255, 0.05);
+  --bionic-bg-active: rgba(245, 166, 35, 0.1);
+  
+  /* Borders */
+  --bionic-border-primary: var(--bionic-gray-700);
+  --bionic-border-secondary: var(--bionic-gray-800);
+  --bionic-border-accent: var(--bionic-gold-primary);
+  
+  /* Text */
+  --bionic-text-primary: #FFFFFF;
+  --bionic-text-secondary: var(--bionic-gray-400);
+  --bionic-text-muted: var(--bionic-gray-500);
+  --bionic-text-accent: var(--bionic-gold-primary);
+  
+  /* States */
+  --bionic-state-success: var(--bionic-green-primary);
+  --bionic-state-warning: var(--bionic-gold-primary);
+  --bionic-state-error: var(--bionic-red-primary);
+  --bionic-state-info: var(--bionic-blue-light);
+  
+  /* ============================================
+   * TYPOGRAPHIE - INTER
+   * ============================================ */
+  
+  --bionic-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bionic-font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  
+  /* Font Sizes */
+  --bionic-text-xs: 0.75rem;    /* 12px */
+  --bionic-text-sm: 0.875rem;   /* 14px */
+  --bionic-text-base: 1rem;     /* 16px */
+  --bionic-text-lg: 1.125rem;   /* 18px */
+  --bionic-text-xl: 1.25rem;    /* 20px */
+  --bionic-text-2xl: 1.5rem;    /* 24px */
+  --bionic-text-3xl: 1.875rem;  /* 30px */
+  --bionic-text-4xl: 2.25rem;   /* 36px */
+  --bionic-text-5xl: 3rem;      /* 48px */
+  
+  /* Font Weights */
+  --bionic-font-normal: 400;
+  --bionic-font-medium: 500;
+  --bionic-font-semibold: 600;
+  --bionic-font-bold: 700;
+  
+  /* Line Heights */
+  --bionic-leading-none: 1;
+  --bionic-leading-tight: 1.25;
+  --bionic-leading-normal: 1.5;
+  --bionic-leading-relaxed: 1.625;
+  
+  /* Letter Spacing */
+  --bionic-tracking-tight: -0.025em;
+  --bionic-tracking-normal: 0;
+  --bionic-tracking-wide: 0.025em;
+  --bionic-tracking-wider: 0.05em;
+  --bionic-tracking-widest: 0.1em;
+  
+  /* ============================================
+   * ESPACEMENTS
+   * ============================================ */
+  
+  --bionic-space-0: 0;
+  --bionic-space-1: 0.25rem;   /* 4px */
+  --bionic-space-2: 0.5rem;    /* 8px */
+  --bionic-space-3: 0.75rem;   /* 12px */
+  --bionic-space-4: 1rem;      /* 16px */
+  --bionic-space-5: 1.25rem;   /* 20px */
+  --bionic-space-6: 1.5rem;    /* 24px */
+  --bionic-space-8: 2rem;      /* 32px */
+  --bionic-space-10: 2.5rem;   /* 40px */
+  --bionic-space-12: 3rem;     /* 48px */
+  --bionic-space-16: 4rem;     /* 64px */
+  --bionic-space-20: 5rem;     /* 80px */
+  --bionic-space-24: 6rem;     /* 96px */
+  
+  /* ============================================
+   * BORDURES & RAYONS
+   * ============================================ */
+  
+  --bionic-radius-none: 0;
+  --bionic-radius-sm: 0.125rem;  /* 2px */
+  --bionic-radius-base: 0.25rem; /* 4px */
+  --bionic-radius-md: 0.375rem;  /* 6px */
+  --bionic-radius-lg: 0.5rem;    /* 8px */
+  --bionic-radius-xl: 0.75rem;   /* 12px */
+  --bionic-radius-2xl: 1rem;     /* 16px */
+  --bionic-radius-full: 9999px;
+  
+  /* Border Widths */
+  --bionic-border-0: 0;
+  --bionic-border-1: 1px;
+  --bionic-border-2: 2px;
+  --bionic-border-4: 4px;
+  
+  /* ============================================
+   * OMBRES
+   * ============================================ */
+  
+  --bionic-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --bionic-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5);
+  --bionic-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
+  --bionic-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --bionic-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --bionic-shadow-glow-gold: 0 0 20px rgba(245, 166, 35, 0.3);
+  --bionic-shadow-glow-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+  --bionic-shadow-glow-green: 0 0 20px rgba(16, 185, 129, 0.3);
+  
+  /* ============================================
+   * TRANSITIONS
+   * ============================================ */
+  
+  --bionic-transition-fast: 150ms;
+  --bionic-transition-base: 200ms;
+  --bionic-transition-slow: 300ms;
+  --bionic-transition-slower: 500ms;
+  --bionic-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --bionic-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --bionic-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --bionic-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* ============================================
+   * Z-INDEX
+   * ============================================ */
+  
+  --bionic-z-base: 0;
+  --bionic-z-dropdown: 1000;
+  --bionic-z-sticky: 1020;
+  --bionic-z-fixed: 1030;
+  --bionic-z-modal-backdrop: 1040;
+  --bionic-z-modal: 1050;
+  --bionic-z-popover: 1060;
+  --bionic-z-tooltip: 1070;
+  --bionic-z-toast: 1080;
+  
+  /* ============================================
+   * BREAKPOINTS (pour référence JS)
+   * ============================================ */
+  
+  --bionic-breakpoint-sm: 640px;
+  --bionic-breakpoint-md: 768px;
+  --bionic-breakpoint-lg: 1024px;
+  --bionic-breakpoint-xl: 1280px;
+  --bionic-breakpoint-2xl: 1536px;
+}
+
+/* ============================================
+ * CLASSES UTILITAIRES BIONIC
+ * ============================================ */
+
+/* Golden Text Effect */
+.bionic-text-gold {
+  color: var(--bionic-gold-primary);
+}
+
+.bionic-text-gradient {
+  background: linear-gradient(135deg, var(--bionic-gold-primary) 0%, var(--bionic-gold-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card Styles */
+.bionic-card {
+  background: var(--bionic-bg-card);
+  border: var(--bionic-border-1) solid var(--bionic-border-secondary);
+  border-radius: var(--bionic-radius-lg);
+}
+
+.bionic-card-elevated {
+  background: var(--bionic-bg-secondary);
+  border: var(--bionic-border-1) solid var(--bionic-border-primary);
+  border-radius: var(--bionic-radius-lg);
+  box-shadow: var(--bionic-shadow-lg);
+}
+
+/* Button Base */
+.bionic-btn {
+  font-family: var(--bionic-font-family);
+  font-weight: var(--bionic-font-semibold);
+  font-size: var(--bionic-text-sm);
+  letter-spacing: var(--bionic-tracking-wide);
+  text-transform: uppercase;
+  border-radius: var(--bionic-radius-base);
+  transition: all var(--bionic-transition-base) var(--bionic-ease-default);
+}
+
+.bionic-btn-primary {
+  background: var(--bionic-gold-primary);
+  color: var(--bionic-black-pure);
+}
+
+.bionic-btn-primary:hover {
+  background: var(--bionic-gold-dark);
+  box-shadow: var(--bionic-shadow-glow-gold);
+}
+
+.bionic-btn-secondary {
+  background: transparent;
+  border: var(--bionic-border-1) solid var(--bionic-border-primary);
+  color: var(--bionic-text-secondary);
+}
+
+.bionic-btn-secondary:hover {
+  background: var(--bionic-bg-hover);
+  border-color: var(--bionic-gold-primary);
+  color: var(--bionic-gold-primary);
+}
+
+/* Badge Styles */
+.bionic-badge {
+  font-size: var(--bionic-text-xs);
+  font-weight: var(--bionic-font-medium);
+  padding: var(--bionic-space-1) var(--bionic-space-2);
+  border-radius: var(--bionic-radius-full);
+}
+
+.bionic-badge-success {
+  background: var(--bionic-green-muted);
+  color: var(--bionic-green-light);
+}
+
+.bionic-badge-warning {
+  background: var(--bionic-gold-muted);
+  color: var(--bionic-gold-primary);
+}
+
+.bionic-badge-error {
+  background: var(--bionic-red-muted);
+  color: var(--bionic-red-light);
+}
+
+.bionic-badge-info {
+  background: var(--bionic-blue-muted);
+  color: var(--bionic-blue-light);
+}
+
+/* Input Styles */
+.bionic-input {
+  background: var(--bionic-bg-secondary);
+  border: var(--bionic-border-1) solid var(--bionic-border-secondary);
+  border-radius: var(--bionic-radius-md);
+  color: var(--bionic-text-primary);
+  font-family: var(--bionic-font-family);
+  transition: border-color var(--bionic-transition-fast) var(--bionic-ease-default);
+}
+
+.bionic-input:focus {
+  border-color: var(--bionic-gold-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bionic-gold-muted);
+}
+
+/* Tactical Header */
+.bionic-header {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: var(--bionic-border-1) solid rgba(255, 255, 255, 0.1);
+}
+
+/* Score Indicators */
+.bionic-score-excellent {
+  color: var(--bionic-green-primary);
+}
+
+.bionic-score-good {
+  color: var(--bionic-gold-primary);
+}
+
+.bionic-score-average {
+  color: var(--bionic-blue-light);
+}
+
+.bionic-score-poor {
+  color: var(--bionic-red-primary);
+}

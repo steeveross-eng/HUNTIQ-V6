@@ -1,0 +1,215 @@
+{
+  "report_id": "L2_JS_CSS_ANALYSIS",
+  "generated_at": "2026-02-19T22:00:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "phase": "L2",
+  "category": "Performance",
+
+  "executive_summary": {
+    "total_js_lines": 160565,
+    "total_css_lines": 1424,
+    "dependencies_count": 56,
+    "heavy_components_count": 15,
+    "lazy_loading_status": "PARTIAL",
+    "code_splitting_status": "PARTIAL",
+    "minification_status": "DEVELOPMENT_ONLY"
+  },
+
+  "javascript_analysis": {
+    "bundle_composition": {
+      "total_lines": 160565,
+      "estimated_unminified_size": "~4.5MB",
+      "estimated_minified_size": "~1.2MB",
+      "estimated_gzipped_size": "~350KB"
+    },
+
+    "heavy_components": [
+      {"file": "TerritoryMap.jsx", "lines": 5127, "module": "territory", "lazy_candidate": true, "priority": "P0"},
+      {"file": "LanguageContext.jsx", "lines": 3008, "module": "contexts", "lazy_candidate": false, "priority": "P2"},
+      {"file": "MonTerritoireBionicPage.jsx", "lines": 2425, "module": "pages", "lazy_candidate": true, "priority": "P0"},
+      {"file": "LandsRental.jsx", "lines": 1951, "module": "realestate", "lazy_candidate": true, "priority": "P1"},
+      {"file": "NetworkingHub.jsx", "lines": 1539, "module": "collaborative", "lazy_candidate": true, "priority": "P1"},
+      {"file": "HuntMarketplace.jsx", "lines": 1462, "module": "marketplace", "lazy_candidate": true, "priority": "P1"},
+      {"file": "PartnershipAdmin.jsx", "lines": 1306, "module": "affiliate", "lazy_candidate": true, "priority": "P1"},
+      {"file": "ProductDiscoveryAdmin.jsx", "lines": 1197, "module": "admin", "lazy_candidate": true, "priority": "P2"},
+      {"file": "BionicMicroZones.jsx", "lines": 1155, "module": "territoire", "lazy_candidate": true, "priority": "P1"},
+      {"file": "EcoforestryLayers.jsx", "lines": 1131, "module": "territoire", "lazy_candidate": true, "priority": "P1"},
+      {"file": "AdminPage.jsx", "lines": 1125, "module": "pages", "lazy_candidate": true, "priority": "P1"},
+      {"file": "BionicAnalyzer.jsx", "lines": 1092, "module": "analytics", "lazy_candidate": true, "priority": "P1"},
+      {"file": "App.js", "lines": 1058, "module": "core", "lazy_candidate": false, "priority": "N/A"},
+      {"file": "TerritoryAdvanced.jsx", "lines": 1047, "module": "territory", "lazy_candidate": true, "priority": "P1"},
+      {"file": "AdminSEO.jsx", "lines": 953, "module": "admin_seo", "lazy_candidate": true, "priority": "P2"}
+    ],
+
+    "lazy_loading_audit": {
+      "current_status": "PARTIAL",
+      "pages_with_lazy": 35,
+      "components_with_lazy": 1,
+      "missing_lazy_loading": [
+        "Heavy territory components (TerritoryMap, TerritoryAdvanced)",
+        "Heavy admin components (ProductDiscoveryAdmin, AdminSEO)",
+        "Heavy marketplace components (HuntMarketplace, LandsRental)",
+        "Heavy analytics components (BionicAnalyzer)"
+      ],
+      "recommendation": "Implémenter React.lazy() pour tous les composants > 500 lignes chargés conditionnellement"
+    },
+
+    "code_splitting_audit": {
+      "current_status": "PARTIAL",
+      "route_splitting": true,
+      "component_splitting": false,
+      "vendor_splitting": "UNKNOWN",
+      "routes_lazy_loaded": [
+        "HomePage", "DashboardPage", "AnalyticsPage", "ForecastPage",
+        "PlanMaitrePage", "MapPage", "MonTerritoireBionicPage", "TripsPage",
+        "ShopPage", "ComparePage", "BusinessPage", "AdminPage", "AdminGeoPage"
+      ],
+      "missing_splitting": [
+        "Heavy components within pages",
+        "Admin UI modules",
+        "Territory visualization components",
+        "Chart/data visualization libraries"
+      ]
+    },
+
+    "dependencies_audit": {
+      "total_dependencies": 56,
+      "heavy_dependencies": [
+        {"name": "recharts", "estimated_size": "~400KB", "tree_shakeable": true, "optimization": "Import specific components only"},
+        {"name": "leaflet", "estimated_size": "~200KB", "tree_shakeable": false, "optimization": "Lazy load map components"},
+        {"name": "react-leaflet", "estimated_size": "~100KB", "tree_shakeable": true, "optimization": "Lazy load with leaflet"},
+        {"name": "jspdf", "estimated_size": "~300KB", "tree_shakeable": false, "optimization": "Lazy load PDF generation"},
+        {"name": "jspdf-autotable", "estimated_size": "~50KB", "tree_shakeable": false, "optimization": "Lazy load with jspdf"},
+        {"name": "date-fns", "estimated_size": "~200KB", "tree_shakeable": true, "optimization": "Import specific functions only"},
+        {"name": "lucide-react", "estimated_size": "~150KB", "tree_shakeable": true, "optimization": "Import specific icons only"}
+      ],
+      "radix_ui_components": 27,
+      "radix_total_estimated": "~400KB",
+      "radix_optimization": "Already tree-shakeable, import only used components"
+    },
+
+    "blocking_scripts": [
+      {
+        "script": "emergent-main.js",
+        "location": "<head>",
+        "blocking": true,
+        "recommendation": "Add defer attribute or move to end of body"
+      },
+      {
+        "script": "posthog analytics",
+        "location": "end of <body>",
+        "blocking": false,
+        "recommendation": "Already non-blocking, acceptable"
+      }
+    ],
+
+    "dead_code_indicators": [
+      "Component duplication between /modules and /components (8+ files)",
+      "Empty modules (marketplace_v2_engine, territory_advanced_engine)",
+      "Potentially unused imports (to be verified with bundle analyzer)"
+    ]
+  },
+
+  "css_analysis": {
+    "total_lines": 1424,
+    "files": [
+      {"file": "App.css", "lines": 671},
+      {"file": "bionic-design-system.css", "lines": 354},
+      {"file": "index.css", "lines": 284},
+      {"file": "MapPopup.css", "lines": 115}
+    ],
+    "tailwind_usage": true,
+    "critical_css_extracted": false,
+    "unused_css_estimated": "~30-40%",
+    "optimization_opportunities": [
+      "Extract critical CSS for above-the-fold content",
+      "PurgeCSS for removing unused Tailwind classes",
+      "Minify CSS in production build"
+    ]
+  },
+
+  "font_analysis": {
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap",
+    "fonts_loaded": [
+      {"name": "Barlow Condensed", "weights": [400, 500, 600, 700, 900], "usage": "Headings"},
+      {"name": "Inter", "weights": [400, 500, 600, 700], "usage": "Body text"},
+      {"name": "JetBrains Mono", "weights": [400, 500, 600], "usage": "Data/Code"}
+    ],
+    "total_weights": 12,
+    "estimated_size": "~300-400KB",
+    "blocking": true,
+    "display_swap": true,
+    "preload_configured": false,
+    "optimization_opportunities": [
+      "Add <link rel='preconnect'> for fonts.googleapis.com",
+      "Add <link rel='preconnect'> for fonts.gstatic.com",
+      "Reduce font weights to essential only",
+      "Consider font subsetting",
+      "Add <link rel='preload'> for critical fonts"
+    ]
+  },
+
+  "recommendations": {
+    "P0_critical": [
+      {
+        "id": "JS-001",
+        "action": "Vérifier que le build de production utilise la minification",
+        "impact": "Réduction ~70% taille JS",
+        "effort": "LOW"
+      },
+      {
+        "id": "JS-002",
+        "action": "Implémenter code splitting pour composants lourds (>1000 lignes)",
+        "impact": "Réduction bundle initial ~40%",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "JS-003",
+        "action": "Lazy load les bibliothèques lourdes (recharts, leaflet, jspdf)",
+        "impact": "Réduction bundle initial ~500KB",
+        "effort": "MEDIUM"
+      }
+    ],
+    "P1_high": [
+      {
+        "id": "CSS-001",
+        "action": "Extraire et inline le CSS critique",
+        "impact": "Amélioration FCP et LCP",
+        "effort": "MEDIUM"
+      },
+      {
+        "id": "FONT-001",
+        "action": "Ajouter preconnect et preload pour Google Fonts",
+        "impact": "Réduction temps de chargement fonts ~200ms",
+        "effort": "LOW"
+      },
+      {
+        "id": "JS-004",
+        "action": "Supprimer les composants dupliqués",
+        "impact": "Réduction code mort, maintenance simplifiée",
+        "effort": "MEDIUM"
+      }
+    ],
+    "P2_medium": [
+      {
+        "id": "CSS-002",
+        "action": "Configurer PurgeCSS pour Tailwind",
+        "impact": "Réduction CSS ~60%",
+        "effort": "LOW"
+      },
+      {
+        "id": "FONT-002",
+        "action": "Réduire le nombre de weights de fonts",
+        "impact": "Réduction ~100KB",
+        "effort": "MEDIUM"
+      }
+    ]
+  },
+
+  "expected_gains": {
+    "after_p0": "+15-20 points Lighthouse Performance",
+    "after_p1": "+8-10 points Lighthouse Performance",
+    "after_p2": "+3-5 points Lighthouse Performance"
+  }
+}

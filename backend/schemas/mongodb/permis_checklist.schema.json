@@ -1,0 +1,70 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "PermisChecklist Schema",
+    "description": "Schema for BIONIC Permis Checklist documents - Prevents TypeError by enforcing array types",
+    "required": ["user_id", "permis_type"],
+    "properties": {
+      "user_id": {
+        "bsonType": "string",
+        "description": "Unique user identifier - required"
+      },
+      "permis_type": {
+        "bsonType": "string",
+        "description": "Type of permit (orignal, chevreuil, ours, etc.) - required"
+      },
+      "province": {
+        "bsonType": ["string", "null"],
+        "description": "Province code (QC, ON, etc.)"
+      },
+      "items": {
+        "bsonType": "array",
+        "items": {
+          "bsonType": "object",
+          "properties": {
+            "id": {
+              "bsonType": "string",
+              "description": "Item identifier"
+            },
+            "label": {
+              "bsonType": "string",
+              "description": "Item label"
+            },
+            "label_en": {
+              "bsonType": "string",
+              "description": "Item label in English"
+            },
+            "is_completed": {
+              "bsonType": "bool",
+              "description": "Whether item is completed"
+            },
+            "required": {
+              "bsonType": "bool",
+              "description": "Whether item is required"
+            },
+            "url": {
+              "bsonType": ["string", "null"],
+              "description": "Optional URL for the item"
+            }
+          }
+        },
+        "description": "Checklist items - MUST be array of objects - CRITICAL FIELD"
+      },
+      "completion_percentage": {
+        "bsonType": ["int", "double"],
+        "minimum": 0,
+        "maximum": 100,
+        "description": "Completion percentage (0-100)"
+      },
+      "created_at": {
+        "bsonType": ["string", "null"],
+        "description": "Creation timestamp (ISO format)"
+      },
+      "updated_at": {
+        "bsonType": ["string", "null"],
+        "description": "Last update timestamp (ISO format)"
+      }
+    },
+    "additionalProperties": true
+  }
+}

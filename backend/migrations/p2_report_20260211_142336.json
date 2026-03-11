@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "dry_run": true,
+  "reason": null,
+  "statistics": {
+    "events_migrated": 4,
+    "events_failed": 1,
+    "tracks_migrated": 3,
+    "tracks_failed": 0,
+    "errors": [
+      "Event 698c90e17bd49b06d8241cb0: 'NoneType' object has no attribute 'title'"
+    ],
+    "started_at": "2026-02-11 14:23:36.121701+00:00",
+    "completed_at": "2026-02-11 14:23:36.128765+00:00"
+  },
+  "summary": {
+    "events": {
+      "migrated": 4,
+      "failed": 1
+    },
+    "tracks": {
+      "migrated": 3,
+      "failed": 0
+    },
+    "total_migrated": 7,
+    "total_failed": 1
+  }
+}

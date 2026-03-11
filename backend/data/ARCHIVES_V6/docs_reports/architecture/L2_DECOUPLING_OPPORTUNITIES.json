@@ -1,0 +1,144 @@
+{
+  "report_id": "L2_DECOUPLING_OPPORTUNITIES",
+  "generated_at": "2026-02-19T22:40:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "phase": "L2",
+  "category": "Architecture - Decoupling",
+
+  "executive_summary": {
+    "decoupling_opportunities": 5,
+    "high_priority": 2,
+    "medium_priority": 2,
+    "low_priority": 1,
+    "estimated_bundle_reduction": "~500KB",
+    "estimated_maintenance_improvement": "30%"
+  },
+
+  "current_coupling_analysis": {
+    "tight_coupling_zones": [
+      {
+        "zone": "Component duplication",
+        "description": "/modules/* et /components/* contiennent des copies identiques",
+        "impact": "Double maintenance, divergence possible",
+        "files_affected": 8
+      },
+      {
+        "zone": "Library dependencies in core",
+        "description": "Leaflet, Recharts importés dans plusieurs composants",
+        "impact": "Bundle bloat si non lazy loaded",
+        "files_affected": 15
+      }
+    ],
+    "loose_coupling_zones": [
+      {
+        "zone": "API communication",
+        "description": "Tous les modules communiquent via REST",
+        "status": "GOOD"
+      },
+      {
+        "zone": "Admin modules",
+        "description": "Chaque admin module est indépendant",
+        "status": "GOOD"
+      }
+    ]
+  },
+
+  "decoupling_opportunities": [
+    {
+      "id": "DC-001",
+      "priority": "HIGH",
+      "title": "Éliminer duplication composants",
+      "current_state": "8+ composants dupliqués entre /modules et /components",
+      "target_state": "Source unique dans /modules, /components supprimé ou re-export",
+      "implementation_steps": [
+        "1. Identifier tous les doublons",
+        "2. Conserver la version dans /modules",
+        "3. Mettre à jour les imports",
+        "4. Supprimer les doublons dans /components"
+      ],
+      "benefit": "Réduction code, maintenance simplifiée",
+      "risk": "Casser des imports",
+      "mitigation": "Audit complet des imports avant suppression",
+      "effort": "MEDIUM"
+    },
+    {
+      "id": "DC-002",
+      "priority": "HIGH",
+      "title": "Découpler les bibliothèques lourdes",
+      "current_state": "Leaflet, Recharts chargés avec les composants",
+      "target_state": "Dynamic import des bibliothèques",
+      "implementation_steps": [
+        "1. Créer wrappers lazy pour les composants map/chart",
+        "2. Utiliser React.lazy + Suspense",
+        "3. Afficher skeleton pendant le chargement"
+      ],
+      "benefit": "Réduction bundle initial ~400KB",
+      "risk": "Flash de contenu pendant chargement",
+      "mitigation": "Skeletons bien conçus",
+      "effort": "MEDIUM"
+    },
+    {
+      "id": "DC-003",
+      "priority": "MEDIUM",
+      "title": "Découpler LanguageContext",
+      "current_state": "3008 lignes, chargé globalement",
+      "target_state": "Traductions chargées par chunks de langue",
+      "implementation_steps": [
+        "1. Séparer traductions FR et EN",
+        "2. Charger dynamiquement selon la langue",
+        "3. Précharger la langue détectée"
+      ],
+      "benefit": "Réduction ~50% de LanguageContext par page",
+      "risk": "Flash de texte non traduit",
+      "mitigation": "Précharger langue principale",
+      "effort": "MEDIUM"
+    },
+    {
+      "id": "DC-004",
+      "priority": "MEDIUM",
+      "title": "Modulariser les Admin tabs",
+      "current_state": "Tous les admin modules chargés ensemble",
+      "target_state": "Chaque tab lazy loaded individuellement",
+      "implementation_steps": [
+        "1. Convertir imports en React.lazy",
+        "2. Wraper chaque tab avec Suspense",
+        "3. Ajouter loading indicators"
+      ],
+      "benefit": "Réduction temps chargement page Admin",
+      "risk": "Latence lors du switch de tab",
+      "mitigation": "Préfetch des tabs adjacents",
+      "effort": "LOW"
+    },
+    {
+      "id": "DC-005",
+      "priority": "LOW",
+      "title": "Extraire PDF generation",
+      "current_state": "jspdf chargé avec l'app",
+      "target_state": "Dynamic import uniquement quand PDF généré",
+      "implementation_steps": [
+        "1. Créer fonction async generatePDF",
+        "2. Import dynamique de jspdf",
+        "3. Afficher loader pendant génération"
+      ],
+      "benefit": "~350KB hors du bundle initial",
+      "risk": "Délai première génération PDF",
+      "mitigation": "Préfetch sur hover bouton PDF",
+      "effort": "LOW"
+    }
+  ],
+
+  "implementation_priority_matrix": {
+    "quick_wins": ["DC-004", "DC-005"],
+    "high_impact": ["DC-001", "DC-002"],
+    "strategic": ["DC-003"]
+  },
+
+  "expected_results": {
+    "after_dc_001": "Code cleanup, -8 fichiers dupliqués",
+    "after_dc_002": "Bundle -400KB, Performance +10 points",
+    "after_dc_003": "Performance +3 points",
+    "after_dc_004": "Admin page load +5 points",
+    "after_dc_005": "Bundle -350KB initial"
+  }
+}

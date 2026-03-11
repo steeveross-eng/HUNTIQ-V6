@@ -1,0 +1,2 @@
+"""Waypoint Scoring Engine v1"""
+from .router import router

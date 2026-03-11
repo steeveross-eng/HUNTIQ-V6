@@ -1,0 +1,309 @@
+{
+  "report_id": "BIONIC_V5_MODULARITY_MAP",
+  "generated_at": "2026-02-19T21:40:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+
+  "architecture_overview": {
+    "principle": "LEGO Architecture - Strict Modularity",
+    "description": "Chaque fonctionnalité est encapsulée dans un module indépendant avec couplage minimal",
+    "total_backend_modules": 77,
+    "total_frontend_modules": 45,
+    "total_admin_ui_modules": 35,
+    "estimated_api_endpoints": "400+",
+    "estimated_components": "200+"
+  },
+
+  "backend_modules": {
+    "core_domain": [
+      {"name": "auth_engine", "files": 6, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "user_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "territory_engine", "files": 2, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "bionic_knowledge_engine", "files": 8, "has_router": false, "versioned": false, "status": "STABLE"}
+    ],
+    "geospatial": [
+      {"name": "geo_engine", "files": 3, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "geospatial_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "geolocation_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "advanced_geospatial_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "waypoint_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "waypoint_scoring_engine", "files": 6, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "wms_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"}
+    ],
+    "hunting_intelligence": [
+      {"name": "hunting_trip_logger", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "wildlife_behavior_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "scoring_engine", "files": 7, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "predictive_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "recommendation_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "strategy_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "adaptive_strategy_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"}
+    ],
+    "commerce": [
+      {"name": "products_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "cart_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "orders_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "payment_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "suppliers_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "customers_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"}
+    ],
+    "marketing_automation": [
+      {"name": "affiliate_engine", "files": 5, "has_router": false, "versioned": true, "status": "LOCKED"},
+      {"name": "affiliate_ads_engine", "files": 2, "has_router": true, "versioned": false, "status": "LOCKED"},
+      {"name": "affiliate_switch_engine", "files": 2, "has_router": true, "versioned": false, "status": "LOCKED"},
+      {"name": "ad_spaces_engine", "files": 2, "has_router": true, "versioned": false, "status": "LOCKED"},
+      {"name": "contact_engine", "files": 2, "has_router": true, "versioned": false, "status": "LOCKED"},
+      {"name": "trigger_engine", "files": 2, "has_router": true, "versioned": false, "status": "LOCKED"},
+      {"name": "messaging_engine", "files": 2, "has_router": true, "versioned": false, "status": "LOCKED"},
+      {"name": "marketing_engine", "files": 5, "has_router": false, "versioned": true, "status": "LOCKED"},
+      {"name": "marketing_calendar_engine", "files": 6, "has_router": false, "versioned": false, "status": "LOCKED"}
+    ],
+    "seo_content": [
+      {"name": "seo_engine", "files": 23, "has_router": false, "versioned": false, "status": "STABLE"},
+      {"name": "formations_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"}
+    ],
+    "administration": [
+      {"name": "admin_engine", "files": 29, "has_router": true, "versioned": true, "status": "STABLE"},
+      {"name": "admin_advanced_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "admin_unified_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "global_master_switch", "files": 2, "has_router": true, "versioned": false, "status": "ACTIVE"},
+      {"name": "master_switch", "files": 2, "has_router": true, "versioned": false, "status": "ACTIVE"}
+    ],
+    "real_estate": [
+      {"name": "realestate", "files": 8, "has_router": false, "versioned": false, "status": "STABLE"},
+      {"name": "rental_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "marketplace_engine", "files": 2, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "marketplace_v2_engine", "files": 0, "has_router": false, "versioned": false, "status": "EMPTY"}
+    ],
+    "auxiliary": [
+      {"name": "analytics_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "tracking_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "notification_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "notification_unified_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "alerts_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "weather_engine", "files": 6, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "weather_fauna_simulation_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "legal_time_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "nutrition_engine", "files": 7, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "camera_engine", "files": 7, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "ai_engine", "files": 8, "has_router": false, "versioned": true, "status": "STABLE"}
+    ],
+    "monetization": [
+      {"name": "freemium_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "upsell_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "referral_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "progression_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "onboarding_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "tutorial_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"}
+    ],
+    "data_infrastructure": [
+      {"name": "data_layers", "files": 21, "has_router": false, "versioned": false, "status": "STABLE"},
+      {"name": "backup_cloud_engine", "files": 3, "has_router": true, "versioned": false, "status": "STABLE"}
+    ],
+    "collaboration": [
+      {"name": "collaborative_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "social_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "networking_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "partner_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"}
+    ],
+    "specialized": [
+      {"name": "ecoforestry_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "live_heading_engine", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "live_heading_view", "files": 2, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "engine_3d", "files": 5, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "plugins_engine", "files": 2, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "rules_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "roles_engine", "files": 6, "has_router": false, "versioned": true, "status": "STABLE"},
+      {"name": "communication_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"},
+      {"name": "strategy_master_engine", "files": 2, "has_router": true, "versioned": false, "status": "STABLE"}
+    ]
+  },
+
+  "frontend_modules": {
+    "high_component_count": [
+      {"name": "admin", "components": 14, "hooks": 0},
+      {"name": "realestate", "components": 11, "hooks": 2},
+      {"name": "affiliate", "components": 10, "hooks": 0},
+      {"name": "territory", "components": 9, "hooks": 0},
+      {"name": "groupe", "components": 8, "hooks": 4},
+      {"name": "live_heading_view", "components": 8, "hooks": 0},
+      {"name": "onboarding", "components": 6, "hooks": 2},
+      {"name": "scoring", "components": 5, "hooks": 0},
+      {"name": "weather", "components": 5, "hooks": 0}
+    ],
+    "medium_component_count": [
+      {"name": "tracking", "components": 4, "hooks": 0},
+      {"name": "ai", "components": 3, "hooks": 0},
+      {"name": "analytics", "components": 3, "hooks": 0},
+      {"name": "collaborative", "components": 3, "hooks": 0},
+      {"name": "notifications", "components": 3, "hooks": 0},
+      {"name": "nutrition", "components": 3, "hooks": 0},
+      {"name": "products", "components": 3, "hooks": 0},
+      {"name": "strategy", "components": 3, "hooks": 0}
+    ],
+    "low_or_empty": [
+      {"name": "marketplace", "components": 2, "hooks": 0},
+      {"name": "recommendation", "components": 2, "hooks": 0},
+      {"name": "orders", "components": 2, "hooks": 0},
+      {"name": "legaltime", "components": 2, "hooks": 0},
+      {"name": "user", "components": 2, "hooks": 0},
+      {"name": "wildlife", "components": 2, "hooks": 0},
+      {"name": "behavioral", "components": 1, "hooks": 0},
+      {"name": "cart", "components": 1, "hooks": 0},
+      {"name": "customers", "components": 1, "hooks": 0},
+      {"name": "ecoforestry", "components": 1, "hooks": 0},
+      {"name": "map_interaction", "components": 1, "hooks": 1},
+      {"name": "predictive", "components": 1, "hooks": 0},
+      {"name": "suppliers", "components": 1, "hooks": 0}
+    ]
+  },
+
+  "admin_ui_modules": {
+    "modules": [
+      "admin_ad_spaces",
+      "admin_affiliate_ads",
+      "admin_affiliate_switch",
+      "admin_analytics",
+      "admin_backup",
+      "admin_branding",
+      "admin_categories",
+      "admin_contacts",
+      "admin_content",
+      "admin_dashboard",
+      "admin_ecommerce",
+      "admin_email",
+      "admin_freemium",
+      "admin_global_switch",
+      "admin_hotspots",
+      "admin_knowledge",
+      "admin_logs",
+      "admin_maintenance",
+      "admin_marketing",
+      "admin_marketing_controls",
+      "admin_messaging",
+      "admin_networking",
+      "admin_onboarding",
+      "admin_partners",
+      "admin_payments",
+      "admin_rules",
+      "admin_seo",
+      "admin_settings",
+      "admin_strategy",
+      "admin_suppliers",
+      "admin_tutorials",
+      "admin_upsell",
+      "admin_users",
+      "admin_x300"
+    ],
+    "count": 34,
+    "integration_point": "AdminPremiumPage.jsx"
+  },
+
+  "dependencies_analysis": {
+    "critical_dependencies": [
+      {
+        "module": "bionic_knowledge_engine",
+        "depended_by": ["scoring_engine", "predictive_engine", "recommendation_engine", "strategy_engine"],
+        "coupling": "HIGH",
+        "risk": "MEDIUM"
+      },
+      {
+        "module": "auth_engine",
+        "depended_by": ["ALL"],
+        "coupling": "HIGH",
+        "risk": "LOW"
+      },
+      {
+        "module": "global_master_switch",
+        "depended_by": ["ALL marketing modules"],
+        "coupling": "HIGH",
+        "risk": "LOW"
+      }
+    ],
+    "circular_dependencies": [],
+    "orphan_modules": [
+      {"name": "marketplace_v2_engine", "reason": "Empty module, no files"},
+      {"name": "territory_advanced_engine", "reason": "Empty module, no files"}
+    ]
+  },
+
+  "coupling_analysis": {
+    "tight_coupling": [
+      {
+        "modules": ["admin_engine", "global_master_switch"],
+        "reason": "Master switch controls all admin marketing features",
+        "acceptable": true
+      }
+    ],
+    "loose_coupling": "Majority of modules communicate via REST API only",
+    "compliance": "COMPLIANT with LEGO architecture"
+  },
+
+  "breakpoints_analysis": {
+    "potential_breakpoints": [
+      {
+        "id": "BP-001",
+        "location": "server.py router registration",
+        "risk": "If router import fails, entire backend fails",
+        "mitigation": "Try-catch on router imports"
+      },
+      {
+        "id": "BP-002",
+        "location": "MongoDB connection",
+        "risk": "Database unavailability crashes all services",
+        "mitigation": "Connection retry logic implemented"
+      }
+    ],
+    "single_points_of_failure": [
+      "MongoDB instance",
+      "Auth service (JWT validation)"
+    ]
+  },
+
+  "non_compliant_zones": {
+    "structural": [
+      {
+        "id": "NCZ-001",
+        "issue": "Component duplication in /components and /modules",
+        "files_affected": [
+          "LandsRental.jsx (exists in both)",
+          "HuntMarketplace.jsx (exists in both)",
+          "ContentDepot.jsx (exists in both)",
+          "DynamicReferralWidget.jsx (exists in both)",
+          "BrandIdentityAdmin.jsx (3 copies)"
+        ],
+        "impact": "Maintenance overhead, potential divergence",
+        "priority": "P2",
+        "recommendation": "Consolidate to single source of truth"
+      }
+    ],
+    "performance": [
+      {
+        "id": "NCZ-002",
+        "issue": "Large bundle size",
+        "root_cause": "No code splitting, no tree shaking in preview mode",
+        "impact": "Poor Lighthouse Performance score",
+        "priority": "P0"
+      }
+    ],
+    "empty_modules": [
+      {"name": "marketplace_v2_engine", "action": "Remove or implement"},
+      {"name": "territory_advanced_engine", "action": "Remove or implement"}
+    ]
+  },
+
+  "recommendations": {
+    "immediate": [
+      "Supprimer les modules vides (marketplace_v2_engine, territory_advanced_engine)",
+      "Consolider les composants dupliqués"
+    ],
+    "short_term": [
+      "Implémenter code splitting par route",
+      "Activer tree-shaking pour production builds"
+    ],
+    "long_term": [
+      "Considérer micro-frontends pour modules volumineux",
+      "Implémenter module federation si nécessaire"
+    ]
+  }
+}

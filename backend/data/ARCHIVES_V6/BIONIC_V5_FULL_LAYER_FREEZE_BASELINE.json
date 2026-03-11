@@ -1,0 +1,66 @@
+{
+  "baseline_name": "BIONIC_V5_FULL_LAYER_FREEZE_BASELINE",
+  "created": "2026-03-07T04:45:00Z",
+  "author": "COPILOT MAITRE",
+
+  "sections_included": {
+    "S1_VISUAL": {
+      "files": ["style_dump.json", "layer_dump.json"],
+      "status": "FROZEN"
+    },
+    "S2_FUNCTIONAL": {
+      "files": ["geometry_dump.json"],
+      "test_suite": "test_freeze_regression.py",
+      "status": "FROZEN"
+    },
+    "S3_SCIENTIFIC": {
+      "files": ["science_baseline.json"],
+      "status": "FROZEN"
+    },
+    "S4_DATA": {
+      "files": ["data_reference.json", "exclusion_data_reference.json"],
+      "note": "Waypoint (46.81, -71.21) results are reference only. Waypoint itself is NOT frozen.",
+      "status": "FROZEN"
+    },
+    "S5_BEHAVIORAL": {
+      "files": ["behavior_snapshot.json"],
+      "status": "FROZEN"
+    },
+    "S6_TESTS": {
+      "test_file": "/app/backend/tests/freeze/test_freeze_regression.py",
+      "coverage": ["visual", "functional", "scientific", "data", "behavioral", "performance"],
+      "status": "ACTIVE"
+    }
+  },
+
+  "frozen_backend_files": [
+    "modules/bionic_engine_p0/services/zone_engine_core_v2.py",
+    "modules/bionic_engine_p0/services/behavioral_rasterizer.py",
+    "modules/bionic_engine_p0/services/zone_penalty_engine.py",
+    "modules/bionic_engine_p0/services/zone_visual_layer_v2.py",
+    "modules/bionic_engine_p0/services/organic_contour_generator.py",
+    "modules/bionic_engine_p0/services/organic_zone_generator_v2.py",
+    "modules/bionic_engine_p0/routers/terrain_data_router.py",
+    "modules/bionic_engine_p0/routers/organic_zones_router.py",
+    "modules/bionic_engine_p0/config/exclusions_config_v1.json"
+  ],
+
+  "frozen_frontend_files": [
+    "src/components/territoire/ExclusionOverlayLayer.jsx",
+    "src/components/territoire/StructureContrastLayer.jsx",
+    "src/components/territoire/BionicMicroZones.jsx",
+    "src/components/territoire/HydrographyOverlayLayer.jsx",
+    "src/components/territoire/HydroPaneAttenuator.jsx",
+    "src/components/territoire/TerritoryShell.jsx",
+    "src/components/territoire/BionicAntiDoublesGuard.jsx"
+  ],
+
+  "build_block_rules": {
+    "visual_diff_threshold_pct": 0.1,
+    "functional_diff_blocked": true,
+    "scientific_diff_blocked": true,
+    "behavioral_diff_blocked": true,
+    "data_diff_blocked": true,
+    "enforcement": "All tests in test_freeze_regression.py must pass before any BIONIC module change is accepted."
+  }
+}

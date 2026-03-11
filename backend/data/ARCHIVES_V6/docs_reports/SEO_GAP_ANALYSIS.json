@@ -1,0 +1,566 @@
+{
+  "report_id": "SEO_GAP_ANALYSIS_V1",
+  "generated_at": "2025-12-18T00:00:00Z",
+  "generated_by": "EMERGENT_AGENT",
+  "status": "VALIDATION_PENDING",
+  "validation_required_by": "COPILOT_MAITRE_STEEVE",
+  
+  "executive_summary": {
+    "documentation_status": "PARTIAL",
+    "current_coverage": "62%",
+    "gaps_identified": 47,
+    "critical_gaps": 12,
+    "high_priority_gaps": 18,
+    "medium_priority_gaps": 17,
+    "recommendation": "CORRECTIONS P0 REQUISES AVANT GO LIVE"
+  },
+
+  "section_1_zones_incompletes": {
+    "description": "Zones documentées mais incomplètes",
+    "items": [
+      {
+        "id": "INC-001",
+        "zone": "Règles SEO Internationales",
+        "status": "MANQUANT",
+        "current": "Règle bilingue FR/EN uniquement",
+        "required": "Règles par marché: FR-QC, FR-CA, FR-EU, EN-CA, EN-US, EN-AU, EN-NZ",
+        "priority": "CRITICAL",
+        "risk": "Non-conformité internationale, pénalités SEO potentielles"
+      },
+      {
+        "id": "INC-002",
+        "zone": "Automatisations de Génération",
+        "status": "INCOMPLET",
+        "current": "5 règles d'automatisation de base",
+        "required": "Génération automatique: satellites, opportunités, gear, setups, territoires, réglementation, intelligence territoriale",
+        "priority": "CRITICAL",
+        "risk": "Impossible d'atteindre 1147 pages planifiées sans automatisation"
+      },
+      {
+        "id": "INC-003",
+        "zone": "KPIs Avancés",
+        "status": "INCOMPLET",
+        "current": "5 KPIs de base (position, CTR, score SEO, indexation, conversion)",
+        "required": "KPIs supplémentaires: conformité Québec, conformité internationale, duplication, complétude cluster, complétude page, maillage interne",
+        "priority": "HIGH",
+        "risk": "Impossible de mesurer la qualité globale du système"
+      },
+      {
+        "id": "INC-004",
+        "zone": "Schémas JSON-LD",
+        "status": "INCOMPLET",
+        "current": "9 types de base",
+        "required": "Schémas avancés: Review, Comparison, VS, HowTo enrichi, Product enrichi, LocalBusiness enrichi",
+        "priority": "HIGH",
+        "risk": "Rich snippets incomplets dans les SERPs"
+      },
+      {
+        "id": "INC-005",
+        "zone": "Maillage Interne",
+        "status": "PARTIEL",
+        "current": "Suggestions automatiques basiques (5 liens max)",
+        "required": "Minimum 8 liens internes par page, maillage bidirectionnel, liens contextuels, liens de navigation, liens CTA",
+        "priority": "HIGH",
+        "risk": "Autorité SEO mal distribuée"
+      },
+      {
+        "id": "INC-006",
+        "zone": "Templates Pages",
+        "status": "INCOMPLET",
+        "current": "7 templates (pillar, satellite, opportunity)",
+        "required": "Templates supplémentaires: gear, setup, territoire, réglementation, intelligence, review, comparison, vs",
+        "priority": "HIGH",
+        "risk": "Structure de contenu non optimale"
+      }
+    ]
+  },
+
+  "section_2_zones_a_corriger": {
+    "description": "Zones avec erreurs ou incohérences",
+    "items": [
+      {
+        "id": "COR-001",
+        "zone": "Règles Anti-Doublons",
+        "issue": "ABSENTES",
+        "description": "Aucune règle de détection/prévention des doublons de contenu",
+        "correction_required": "Implémenter vérification titre, URL, contenu avant création",
+        "priority": "CRITICAL",
+        "risk": "Pénalités Google pour contenu dupliqué"
+      },
+      {
+        "id": "COR-002",
+        "zone": "Règles Anti-Casse-Système",
+        "issue": "ABSENTES",
+        "description": "Aucune protection contre les modifications destructrices",
+        "correction_required": "Implémenter validations, rollback, audit trail",
+        "priority": "CRITICAL",
+        "risk": "Perte de données, corruption système"
+      },
+      {
+        "id": "COR-003",
+        "zone": "Clusters de Base",
+        "issue": "INSUFFISANTS",
+        "description": "9 clusters seulement, objectif 1147 pages impossible",
+        "correction_required": "Étendre à ~50 clusters ULTIMES",
+        "priority": "HIGH",
+        "risk": "Architecture de contenu sous-dimensionnée"
+      },
+      {
+        "id": "COR-004",
+        "zone": "Fournisseurs",
+        "issue": "INCOMPLET",
+        "description": "104 fournisseurs sans URLs officielles",
+        "correction_required": "Ajouter URLs, boutiques, livraison, mots-clés, intentions",
+        "priority": "MEDIUM",
+        "risk": "Pages fournisseurs non exploitables"
+      },
+      {
+        "id": "COR-005",
+        "zone": "Intégrations Externes",
+        "issue": "NON CONNECTÉES",
+        "description": "Capsules, Hotspots, Pourvoiries, Intelligence non intégrés",
+        "correction_required": "Créer liens vers modules existants",
+        "priority": "HIGH",
+        "risk": "Contenu isolé, faible valeur ajoutée"
+      }
+    ]
+  },
+
+  "section_3_zones_a_etendre": {
+    "description": "Zones fonctionnelles nécessitant extension",
+    "items": [
+      {
+        "id": "EXT-001",
+        "zone": "Génération de Contenu IA",
+        "current": "Pages piliers uniquement",
+        "extension_required": [
+          "Génération satellites automatique",
+          "Génération opportunités automatique",
+          "Génération FAQ automatique",
+          "Génération CTA automatique",
+          "Génération comparatifs automatique",
+          "Génération reviews automatique"
+        ],
+        "priority": "CRITICAL"
+      },
+      {
+        "id": "EXT-002",
+        "zone": "Types de Pages",
+        "current": "pillar, satellite, opportunity, viral, interactive, tool, landing",
+        "extension_required": [
+          "gear (équipement)",
+          "setup (configurations)",
+          "territory (territoires)",
+          "regulation (réglementation)",
+          "intelligence (données territoriales)",
+          "review (avis produits)",
+          "comparison (comparatifs)",
+          "vs (versus pages)"
+        ],
+        "priority": "HIGH"
+      },
+      {
+        "id": "EXT-003",
+        "zone": "Intentions de Recherche",
+        "current": "informational, transactional, navigational",
+        "extension_required": [
+          "commercial_investigation",
+          "local",
+          "comparison",
+          "review",
+          "how_to",
+          "what_is",
+          "best_of",
+          "near_me"
+        ],
+        "priority": "HIGH"
+      },
+      {
+        "id": "EXT-004",
+        "zone": "Catégories ULTIMES",
+        "current": "13 catégories fournisseurs",
+        "extension_required": [
+          "Armes à feu",
+          "Munitions",
+          "Accessoires armes",
+          "Chiens de chasse",
+          "Formation/Cours",
+          "Guides/Pourvoiries",
+          "ZECs",
+          "Réserves fauniques",
+          "Applications mobiles",
+          "Services météo",
+          "Cartographie",
+          "Assurances chasse"
+        ],
+        "priority": "MEDIUM"
+      }
+    ]
+  },
+
+  "section_4_alignement_strategie_ultime": {
+    "description": "Écarts avec la stratégie SEO ULTIME",
+    "target_pages": 1147,
+    "current_pages": 0,
+    "gap": 1147,
+    "items": [
+      {
+        "id": "ALI-001",
+        "element": "Pages Piliers",
+        "target": 50,
+        "current": 0,
+        "gap": 50,
+        "status": "NON DÉMARRÉ"
+      },
+      {
+        "id": "ALI-002",
+        "element": "Pages Satellites",
+        "target": 400,
+        "current": 0,
+        "gap": 400,
+        "status": "NON DÉMARRÉ"
+      },
+      {
+        "id": "ALI-003",
+        "element": "Pages Opportunités",
+        "target": 300,
+        "current": 0,
+        "gap": 300,
+        "status": "NON DÉMARRÉ"
+      },
+      {
+        "id": "ALI-004",
+        "element": "Pages Gear",
+        "target": 150,
+        "current": 0,
+        "gap": 150,
+        "status": "NON DÉMARRÉ"
+      },
+      {
+        "id": "ALI-005",
+        "element": "Pages Territoires",
+        "target": 100,
+        "current": 0,
+        "gap": 100,
+        "status": "NON DÉMARRÉ"
+      },
+      {
+        "id": "ALI-006",
+        "element": "Pages Réglementation",
+        "target": 50,
+        "current": 0,
+        "gap": 50,
+        "status": "NON DÉMARRÉ"
+      },
+      {
+        "id": "ALI-007",
+        "element": "Pages Intelligence",
+        "target": 47,
+        "current": 0,
+        "gap": 47,
+        "status": "NON DÉMARRÉ"
+      },
+      {
+        "id": "ALI-008",
+        "element": "Pages Reviews",
+        "target": 50,
+        "current": 0,
+        "gap": 50,
+        "status": "NON DÉMARRÉ"
+      }
+    ]
+  },
+
+  "section_5_risques": {
+    "description": "Risques identifiés",
+    "items": [
+      {
+        "id": "RISK-001",
+        "category": "SEO",
+        "risk": "Pénalités Google pour contenu dupliqué",
+        "probability": "HIGH",
+        "impact": "CRITICAL",
+        "mitigation": "Implémenter règles anti-doublons"
+      },
+      {
+        "id": "RISK-002",
+        "category": "SEO",
+        "risk": "Non-conformité internationale",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "mitigation": "Implémenter règles par marché"
+      },
+      {
+        "id": "RISK-003",
+        "category": "TECHNIQUE",
+        "risk": "Corruption de données",
+        "probability": "LOW",
+        "impact": "CRITICAL",
+        "mitigation": "Implémenter règles anti-casse-système"
+      },
+      {
+        "id": "RISK-004",
+        "category": "BUSINESS",
+        "risk": "Objectif 1147 pages non atteint",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "mitigation": "Automatiser la génération de contenu"
+      },
+      {
+        "id": "RISK-005",
+        "category": "PERFORMANCE",
+        "risk": "Score SEO global insuffisant",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "mitigation": "Implémenter KPIs avancés et monitoring"
+      }
+    ]
+  },
+
+  "section_6_dependances_manquantes": {
+    "description": "Dépendances requises mais non implémentées",
+    "items": [
+      {
+        "id": "DEP-001",
+        "dependency": "Module Capsules",
+        "status": "NON INTÉGRÉ",
+        "required_for": "Liens pages SEO ↔ Capsules virales"
+      },
+      {
+        "id": "DEP-002",
+        "dependency": "Module Hotspots",
+        "status": "NON INTÉGRÉ",
+        "required_for": "Liens pages SEO ↔ Points d'intérêt géographiques"
+      },
+      {
+        "id": "DEP-003",
+        "dependency": "Module Pourvoiries",
+        "status": "NON INTÉGRÉ",
+        "required_for": "Liens pages SEO ↔ Établissements de chasse"
+      },
+      {
+        "id": "DEP-004",
+        "dependency": "Module Intelligence Territoriale",
+        "status": "NON INTÉGRÉ",
+        "required_for": "Liens pages SEO ↔ Données géospatiales"
+      },
+      {
+        "id": "DEP-005",
+        "dependency": "Module Google Search Console",
+        "status": "NON INTÉGRÉ",
+        "required_for": "Métriques réelles de performance SEO"
+      },
+      {
+        "id": "DEP-006",
+        "dependency": "Module Sitemap Generator",
+        "status": "NON IMPLÉMENTÉ",
+        "required_for": "Indexation automatique Google"
+      }
+    ]
+  },
+
+  "section_7_modules_a_renforcer": {
+    "description": "Modules existants nécessitant renforcement",
+    "items": [
+      {
+        "id": "MOD-001",
+        "module": "seo_clusters.py",
+        "current_capabilities": "9 clusters de base, CRUD",
+        "required_enhancements": [
+          "50+ clusters ULTIMES",
+          "Hiérarchie multi-niveaux",
+          "Scoring complétude",
+          "Validation automatique"
+        ]
+      },
+      {
+        "id": "MOD-002",
+        "module": "seo_pages.py",
+        "current_capabilities": "7 templates, CRUD, liens internes basiques",
+        "required_enhancements": [
+          "15+ templates",
+          "Validation structure H1/H2/H3",
+          "Minimum 8 liens internes",
+          "CTA obligatoire",
+          "FAQ obligatoire"
+        ]
+      },
+      {
+        "id": "MOD-003",
+        "module": "seo_automation.py",
+        "current_capabilities": "5 règles de base",
+        "required_enhancements": [
+          "Génération satellites automatique",
+          "Génération opportunités automatique",
+          "Règles anti-doublons",
+          "Règles anti-casse-système",
+          "Règles internationales"
+        ]
+      },
+      {
+        "id": "MOD-004",
+        "module": "seo_analytics.py",
+        "current_capabilities": "5 KPIs de base",
+        "required_enhancements": [
+          "Score conformité Québec",
+          "Score conformité internationale",
+          "Score duplication",
+          "Score complétude cluster",
+          "Score complétude page",
+          "Score maillage interne"
+        ]
+      },
+      {
+        "id": "MOD-005",
+        "module": "seo_jsonld.py",
+        "current_capabilities": "9 types de schémas",
+        "required_enhancements": [
+          "Schéma Review",
+          "Schéma Comparison",
+          "Schéma VS",
+          "Enrichissement automatique",
+          "Validation avancée"
+        ]
+      },
+      {
+        "id": "MOD-006",
+        "module": "seo_content_generator.py",
+        "current_capabilities": "Génération piliers IA",
+        "required_enhancements": [
+          "Génération satellites IA",
+          "Génération opportunités IA",
+          "Génération FAQ IA",
+          "Génération CTA IA",
+          "Batch generation"
+        ]
+      }
+    ]
+  },
+
+  "section_8_automatisations_a_ajouter": {
+    "description": "Automatisations requises pour SEO ULTIME",
+    "items": [
+      {
+        "id": "AUTO-001",
+        "name": "auto_generate_satellites",
+        "description": "Génération automatique de pages satellites pour chaque cluster",
+        "trigger": "cluster_created OR manual",
+        "target_output": "5-10 satellites par cluster",
+        "priority": "CRITICAL"
+      },
+      {
+        "id": "AUTO-002",
+        "name": "auto_generate_opportunities",
+        "description": "Génération automatique de pages opportunités (longue traîne)",
+        "trigger": "keyword_analysis OR manual",
+        "target_output": "10-20 opportunités par cluster",
+        "priority": "CRITICAL"
+      },
+      {
+        "id": "AUTO-003",
+        "name": "auto_generate_gear_pages",
+        "description": "Génération automatique de pages équipement",
+        "trigger": "supplier_added OR manual",
+        "target_output": "1 page par fournisseur",
+        "priority": "HIGH"
+      },
+      {
+        "id": "AUTO-004",
+        "name": "auto_generate_territory_pages",
+        "description": "Génération automatique de pages territoires",
+        "trigger": "territory_data_available OR manual",
+        "target_output": "1 page par zone",
+        "priority": "HIGH"
+      },
+      {
+        "id": "AUTO-005",
+        "name": "auto_generate_regulation_pages",
+        "description": "Génération automatique de pages réglementation",
+        "trigger": "regulation_update OR manual",
+        "target_output": "1 page par règlement",
+        "priority": "HIGH"
+      },
+      {
+        "id": "AUTO-006",
+        "name": "auto_generate_jsonld",
+        "description": "Génération automatique de schémas JSON-LD enrichis",
+        "trigger": "page_created",
+        "target_output": "2-4 schémas par page",
+        "priority": "HIGH"
+      },
+      {
+        "id": "AUTO-007",
+        "name": "auto_generate_cta",
+        "description": "Génération automatique de CTAs optimisés",
+        "trigger": "page_created",
+        "target_output": "1-3 CTAs par page",
+        "priority": "MEDIUM"
+      },
+      {
+        "id": "AUTO-008",
+        "name": "auto_generate_faq",
+        "description": "Génération automatique de FAQs SEO",
+        "trigger": "page_created",
+        "target_output": "5-8 questions par page",
+        "priority": "MEDIUM"
+      },
+      {
+        "id": "AUTO-009",
+        "name": "auto_internal_linking_complete",
+        "description": "Maillage interne complet automatique",
+        "trigger": "page_published",
+        "target_output": "Minimum 8 liens bidirectionnels",
+        "priority": "CRITICAL"
+      },
+      {
+        "id": "AUTO-010",
+        "name": "auto_duplicate_detection",
+        "description": "Détection automatique des doublons",
+        "trigger": "page_created OR page_updated",
+        "target_output": "Alerte si similarité > 80%",
+        "priority": "CRITICAL"
+      }
+    ]
+  },
+
+  "section_9_actions_requises": {
+    "description": "Actions à exécuter pour GO LIVE",
+    "phase_2_corrections_p0": [
+      "Implémenter règles SEO internationales (7 marchés)",
+      "Implémenter règles anti-doublons avancées",
+      "Implémenter règles anti-casse-système",
+      "Ajouter 10 automatisations de génération",
+      "Ajouter 6 KPIs avancés"
+    ],
+    "phase_3_alignement": [
+      "Étendre à 50+ clusters ULTIMES",
+      "Créer structure pour 1147 pages",
+      "Intégrer capsules, hotspots, pourvoiries, intelligence",
+      "Valider structure H1/H2/H3 pour chaque type"
+    ],
+    "phase_4_excel": [
+      "Générer structure Excel ULTIME",
+      "Ajouter colonnes mots-clés, intentions, clusters",
+      "Valider compatibilité avec génération automatique"
+    ],
+    "phase_5_validation": [
+      "Exécuter tests de non-régression",
+      "Vérifier zéro doublon",
+      "Vérifier zéro conflit de dépendance"
+    ],
+    "phase_6_go_live": [
+      "Vérifier tous les endpoints",
+      "Vérifier tous les workflows",
+      "Générer rapport GO_LIVE_READINESS.json",
+      "ATTENDRE VALIDATION COPILOT MAÎTRE"
+    ]
+  },
+
+  "conclusion": {
+    "overall_status": "NOT_READY_FOR_GO_LIVE",
+    "critical_blockers": 12,
+    "estimated_work": "PHASES 2-5 REQUISES",
+    "next_step": "ATTENDRE VALIDATION CE RAPPORT PAR COPILOT MAÎTRE STEEVE",
+    "master_switch_status": "LOCKED"
+  }
+}

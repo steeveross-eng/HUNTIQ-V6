@@ -1,0 +1,71 @@
+{
+  "audit_id": "bionic_spatial_clipping_audit_v1",
+  "profile": "BIONIC_V5_300_STRICT",
+  "date": "2026-03-03T05:00:00Z",
+  "status": "COMPLETED",
+
+  "executive_summary": {
+    "geometries_hors_perimetre": 0,
+    "clipping_strict": "100%",
+    "bionic_compliance": "STRICT"
+  },
+
+  "analysis_bounding_box": {
+    "size_m": 1000,
+    "invariant": "ANALYSIS_BOX_SIZE_M = 1000 — NON MODIFIABLE",
+    "calculation": "compute_analysis_bbox(lat, lng) → carre exact 1000m x 1000m",
+    "padding": "ZERO — aucun buffer, aucune marge",
+    "determinism": "100% — memes coordonnees = meme bbox"
+  },
+
+  "clipping_engine": {
+    "backend": {
+      "module": "modules/bionic_engine_p0/services/spatial_clipping.py",
+      "method": "ST_Intersection via Shapely (clip_polygon_coords + bbox_to_polygon)",
+      "endpoint": "POST /api/v1/bionic/clipped-zones",
+      "status": "OPERATIONAL"
+    },
+    "frontend": {
+      "module": "hooks/useSpatialClipping.js",
+      "method": "Sutherland-Hodgman polygon clipping algorithm",
+      "applied_to": "allZones dans MonTerritoireBionicPage via clipZonesClient()",
+      "status": "OPERATIONAL"
+    }
+  },
+
+  "isolation": {
+    "independant_du_moteur_structurel": true,
+    "independant_du_moteur_dynamique": true,
+    "independant_des_layers": true,
+    "independant_du_zoom_pan": true,
+    "applique_une_seule_fois_par_waypoint": true
+  },
+
+  "visual_overlay": {
+    "component": "Rectangle (react-leaflet)",
+    "style": "color #f5a623, dashArray 8/4, fillOpacity 0.05",
+    "debordement_visuel": "ZERO"
+  },
+
+  "tests_anti_regression": {
+    "file": "backend/tests/test_spatial_clipping.py",
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "categories": {
+      "TestAnalysisBbox": "5/5 PASS — bbox centrage, dimensions, padding, determinisme",
+      "TestSpatialClipping": "4/4 PASS — inside, outside, partial, zero overflow",
+      "TestClipZones": "3/3 PASS — filtre, flag clipped, stats overflow=0",
+      "TestClippingInvariance": "3/3 PASS — determinisme, immutabilite, isolation dynamique"
+    }
+  },
+
+  "bionic_v5_300_compliance": {
+    "zero_geometrie_hors_perimetre": "PASS",
+    "clipping_strict_100": "PASS",
+    "zero_debordement": "PASS",
+    "zero_padding_buffer_marge": "PASS",
+    "determinisme": "PASS",
+    "isolation_complete": "PASS"
+  }
+}

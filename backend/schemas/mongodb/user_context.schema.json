@@ -1,0 +1,110 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "UserContext Schema",
+    "description": "Schema for BIONIC User Context documents - Prevents TypeError by enforcing array types",
+    "required": ["user_id"],
+    "properties": {
+      "user_id": {
+        "bsonType": "string",
+        "description": "Unique user identifier - required"
+      },
+      "gibier_principal": {
+        "bsonType": ["string", "null"],
+        "description": "Primary game type (orignal, chevreuil, ours, etc.)"
+      },
+      "gibiers_secondaires": {
+        "bsonType": "array",
+        "items": {
+          "bsonType": "string"
+        },
+        "description": "Secondary game types - MUST be array of strings"
+      },
+      "region": {
+        "bsonType": ["string", "null"],
+        "description": "Quebec region"
+      },
+      "province": {
+        "bsonType": ["string", "null"],
+        "description": "Province code (QC, ON, etc.)"
+      },
+      "gps_lat": {
+        "bsonType": ["double", "null", "int"],
+        "description": "GPS latitude"
+      },
+      "gps_lng": {
+        "bsonType": ["double", "null", "int"],
+        "description": "GPS longitude"
+      },
+      "pages_visited": {
+        "bsonType": "array",
+        "items": {
+          "bsonType": "string"
+        },
+        "description": "Pages visited by user - MUST be array of strings - CRITICAL FIELD"
+      },
+      "tools_used": {
+        "bsonType": "array",
+        "items": {
+          "bsonType": "string"
+        },
+        "description": "Tools used by user - MUST be array of strings - CRITICAL FIELD"
+      },
+      "pourvoiries_consulted": {
+        "bsonType": "array",
+        "items": {
+          "bsonType": "string"
+        },
+        "description": "Outfitters consulted - MUST be array of strings"
+      },
+      "setups_consulted": {
+        "bsonType": "array",
+        "items": {
+          "bsonType": "string"
+        },
+        "description": "Setups consulted - MUST be array of strings"
+      },
+      "permis_consulted": {
+        "bsonType": "array",
+        "items": {
+          "bsonType": "string"
+        },
+        "description": "Permits consulted - MUST be array of strings"
+      },
+      "current_season": {
+        "bsonType": ["string", "null"],
+        "enum": ["printemps", "ete", "automne", "hiver", null],
+        "description": "Current hunting season"
+      },
+      "season_dates": {
+        "bsonType": "object",
+        "description": "Season dates by game type"
+      },
+      "quotas": {
+        "bsonType": "object",
+        "description": "Quotas by game type"
+      },
+      "last_activity": {
+        "bsonType": ["string", "null"],
+        "description": "Last activity timestamp (ISO format)"
+      },
+      "created_at": {
+        "bsonType": ["string", "null"],
+        "description": "Creation timestamp (ISO format)"
+      },
+      "updated_at": {
+        "bsonType": ["string", "null"],
+        "description": "Last update timestamp (ISO format)"
+      },
+      "needs_gibier_popup": {
+        "bsonType": "bool",
+        "description": "Whether user needs to select game type"
+      },
+      "has_complete_profile": {
+        "bsonType": "bool",
+        "description": "Whether user profile is complete"
+      }
+    },
+    "additionalProperties": true
+  }
+}

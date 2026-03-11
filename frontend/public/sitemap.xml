@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  
+  <!-- 
+    PHASE E SEO AVANCÉ - Sitemap BIONIC HUNT/Chasse/Chasse Bionic
+    Dernière mise à jour: 2026-02-20
+    Total URLs: 15 pages principales
+  -->
+  
+  <!-- Homepage - PRIORITY 1.0 -->
+  <url>
+    <loc>https://bionic-huntiq.com/</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bionic-huntiq.com/"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://bionic-huntiq.com/og-image.jpg</image:loc>
+      <image:title>Chasse Bionic TM - Votre parcours guidé vers une chasse parfaite</image:title>
+    </image:image>
+  </url>
+  
+  <!-- Shop - E-Commerce HIGH PRIORITY -->
+  <url>
+    <loc>https://bionic-huntiq.com/shop</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/shop"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/shop"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Analyze - Core Feature -->
+  <url>
+    <loc>https://bionic-huntiq.com/analyze</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/analyze"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/analyze"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Compare - Core Feature -->
+  <url>
+    <loc>https://bionic-huntiq.com/compare</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/compare"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/compare"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Permis de Chasse - Strategic Module -->
+  <url>
+    <loc>https://bionic-huntiq.com/permis-chasse</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/permis-chasse"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/permis-chasse"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Interactive Map -->
+  <url>
+    <loc>https://bionic-huntiq.com/map</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/map"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/map"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Territory BIONIC -->
+  <url>
+    <loc>https://bionic-huntiq.com/territoire</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/territoire"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/territoire"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Forecast -->
+  <url>
+    <loc>https://bionic-huntiq.com/forecast</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/forecast"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/forecast"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Trips Planning -->
+  <url>
+    <loc>https://bionic-huntiq.com/trips</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/trips"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/trips"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Pricing -->
+  <url>
+    <loc>https://bionic-huntiq.com/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/pricing"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/pricing"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Dashboard -->
+  <url>
+    <loc>https://bionic-huntiq.com/dashboard</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/dashboard"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/dashboard"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Analytics -->
+  <url>
+    <loc>https://bionic-huntiq.com/analytics</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/analytics"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/analytics"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Business / B2B -->
+  <url>
+    <loc>https://bionic-huntiq.com/business</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/business"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/business"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Plan Maître -->
+  <url>
+    <loc>https://bionic-huntiq.com/plan-maitre</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/plan-maitre"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/plan-maitre"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Formations -->
+  <url>
+    <loc>https://bionic-huntiq.com/formations</loc>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://bionic-huntiq.com/formations"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://bionic-huntiq.com/formations"/>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+</urlset>

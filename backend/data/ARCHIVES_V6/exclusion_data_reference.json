@@ -1,0 +1,47 @@
+{
+  "version": "BIONIC_V5_FULL_LAYER_FREEZE_BASELINE",
+  "date": "2026-03-07",
+  "section": "S4_EXCLUSION_DATA_FREEZE",
+  "terrain_bounds": {
+    "south": 46.8,
+    "west": -71.23,
+    "north": 46.84,
+    "east": -71.18
+  },
+  "total_zones": 328,
+  "by_type": {
+    "water": 323,
+    "wetland": 5
+  },
+  "by_reason": {
+    "micro_water": 8,
+    "valid_water": 12,
+    "stream_to_line": 3,
+    "oversized_river": 5,
+    "wetland": 5,
+    "water_line": 5,
+    "shoreline": 279,
+    "oversized_relation": 11
+  },
+  "by_filtered": {
+    "False": 312,
+    "True": 16
+  },
+  "by_geometry": {
+    "polygon": 41,
+    "line": 287
+  },
+  "hydro_summary": {
+    "water_polygons_total": 36,
+    "water_polygons_filtered": 16,
+    "wetland_polygons": 5,
+    "micro_water": 8,
+    "oversized_filtered": 16
+  },
+  "regression_thresholds": {
+    "all_water_filtered_or_invisible": true,
+    "all_wetland_type_separate": true,
+    "no_blue_polygons_on_map": true,
+    "note": "Reference data for terrain exclusion snapshot. Waypoint coordinates are NOT frozen."
+  }
+}

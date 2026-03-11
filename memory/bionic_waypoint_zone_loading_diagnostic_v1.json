@@ -1,0 +1,69 @@
+{
+  "audit_name": "bionic_waypoint_zone_loading_diagnostic_v1",
+  "version": "V5_300_STRICT",
+  "date": "2026-03-03T22:10:00Z",
+  "command": "emergent_bionic_waypoint_zone_loading_diagnostic --profile=BIONIC_V5_300_STRICT",
+  "status": "PASS — Pipeline confirmé fonctionnel",
+  "diagnostic_summary": "Le pipeline waypoint exclusif fonctionne correctement. 13 zones générées et affichées autour du waypoint de test (46.60, -70.40). L'indicateur de chargement a été ajouté pour informer l'utilisateur pendant le temps de calcul backend (~11s uncached, <1s cached).",
+  "phase_1_zoneLockKey_verification": {
+    "status": "PASS",
+    "zoneLockKey_with_waypoint": "tous_wps_46.6000_-70.4000",
+    "zoneLockKey_without_waypoint": "null (correct — pas de zones)",
+    "zoneLockKey_with_selected_target": "${species}_wp_${lat}_${lng}",
+    "debug_logs_captured": [
+      "useEffect fired. zoneLockKey: null activeWaypoints: 0 → correct initial state",
+      "useEffect fired. zoneLockKey: tous_wps_46.6000_-70.4000 activeWaypoints: 1 → effect fires!",
+      "loadZones started. waypoints: 1 zoom: 14 species: tous",
+      "Calling generateWaypointZonesV5 for wp: 46.6 -70.4",
+      "Response received. zones: 13",
+      "loadZones complete. cancelled: false total zones: 13 → SUCCESS"
+    ]
+  },
+  "phase_2_pipeline_verification": {
+    "status": "PASS",
+    "useEffect_depends_on": ["zoneLockKey"],
+    "no_currentMapBounds_dependency": true,
+    "no_currentZoom_dependency": true,
+    "no_viewportTrigger_dependency": true,
+    "zoomRef_stable": true,
+    "selectedSpecies_in_zoneLockKey": true
+  },
+  "phase_3_backend_verification": {
+    "status": "PASS",
+    "endpoint": "/api/v1/bionic/organic-zones",
+    "test_coordinates": {"lat": 46.60, "lng": -70.40},
+    "response_features": 13,
+    "response_time_uncached": "11.37s",
+    "response_time_cached": "<1s (LRU cache hit)",
+    "all_zone_scores": 40,
+    "all_zone_areas_m2": 25000,
+    "scores_pass_minPercentageFilter_30": true,
+    "areas_pass_MAX_AREA_M2_1000000": true
+  },
+  "phase_4_ui_verification": {
+    "status": "PASS",
+    "zones_stored_in_state": true,
+    "zones_rendered_on_map": true,
+    "classification_toggles_all_ON": true,
+    "layersVisible_all_true": true,
+    "loading_indicator_added": true,
+    "loading_indicator_shows_during_computation": "Pulsing dots + 'Calcul en cours...' text",
+    "toolbar_badge_shows_loading": "'...' badge during loading"
+  },
+  "improvements_applied": {
+    "loading_indicator_zones_panel": "Added pulsing animation + 'Calcul en cours...' text during zone computation",
+    "loading_indicator_toolbar_badge": "Shows '...' instead of '0' during loading",
+    "debug_logging_removed": "Temporary debug console.log statements removed from production code"
+  },
+  "possible_user_issue_causes": [
+    "Backend computation takes 11+ seconds for uncached coordinates — user may not have waited long enough",
+    "Browser cache may serve old JavaScript bundle — hard refresh (Ctrl+Shift+R) recommended",
+    "The LRU cache on the backend only caches specific coordinate+layer combinations"
+  ],
+  "test_evidence": {
+    "screenshot_zones_13": "/tmp/diagnostic_with_wp.png",
+    "screenshot_loading": "/tmp/loading_indicator.png",
+    "backend_curl_test": "13 features returned in 11.37s",
+    "debug_logs": "Full pipeline execution traced successfully"
+  }
+}

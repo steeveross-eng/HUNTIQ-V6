@@ -1,0 +1,106 @@
+{
+  "report_id": "EXCEL_STRUCTURE_ULTIME_V1",
+  "generated_at": "2025-12-18T00:00:00Z",
+  "status": "READY_FOR_EXPORT",
+  
+  "excel_structure": {
+    "columns": [
+      {"id": "A", "name": "Catégorie", "type": "string", "required": true, "example": "Caméras de Chasse"},
+      {"id": "B", "name": "Sous-catégorie", "type": "string", "required": true, "example": "Trail Cameras Cellulaires"},
+      {"id": "C", "name": "Compagnie", "type": "string", "required": true, "example": "Spypoint"},
+      {"id": "D", "name": "Pays", "type": "string", "required": true, "example": "Canada"},
+      {"id": "E", "name": "Lien_Officiel", "type": "url", "required": false, "example": ""},
+      {"id": "F", "name": "Boutique_Officielle", "type": "enum", "values": ["Oui", "Non", "N/A"], "required": true, "example": "Oui"},
+      {"id": "G", "name": "Livraison_Gratuite", "type": "enum", "values": ["Oui", "Non", "Parfois", "N/A"], "required": true, "example": "Parfois"},
+      {"id": "H", "name": "Mots_Cles_Associes", "type": "array", "required": true, "example": "caméra trail, spypoint, caméra cellulaire"},
+      {"id": "I", "name": "Intentions_Associees", "type": "array", "required": true, "example": "commercial_investigation, transactional"},
+      {"id": "J", "name": "Cluster_SEO_Associe", "type": "string", "required": true, "example": "cluster_trail_cameras_ultime"},
+      {"id": "K", "name": "Pages_Satellites_Associees", "type": "array", "required": false, "example": "spypoint-link-micro, spypoint-flex"},
+      {"id": "L", "name": "Pages_Opportunites_Associees", "type": "array", "required": false, "example": "meilleure camera trail 2025"},
+      {"id": "M", "name": "Tags_SEO_Associes", "type": "array", "required": true, "example": "trail_camera, cellular, canadian_brand"},
+      {"id": "N", "name": "Priorite_SEO", "type": "enum", "values": ["high", "medium", "low"], "required": true, "example": "high"},
+      {"id": "O", "name": "Notes_Strategiques", "type": "text", "required": false, "example": "Leader canadien, excellent pour contenu local"}
+    ],
+    "total_columns": 15
+  },
+  
+  "sample_data": [
+    {
+      "Catégorie": "Caméras de Chasse",
+      "Sous-catégorie": "Trail Cameras Cellulaires",
+      "Compagnie": "Spypoint",
+      "Pays": "Canada",
+      "Lien_Officiel": "",
+      "Boutique_Officielle": "Oui",
+      "Livraison_Gratuite": "Parfois",
+      "Mots_Cles_Associes": ["caméra spypoint", "spypoint link", "caméra cellulaire chasse"],
+      "Intentions_Associees": ["commercial_investigation", "transactional"],
+      "Cluster_SEO_Associe": "cluster_trail_cameras_ultime",
+      "Pages_Satellites_Associees": ["spypoint-link-micro-lte", "spypoint-flex-review"],
+      "Pages_Opportunites_Associees": ["meilleure camera trail cellulaire 2025"],
+      "Tags_SEO_Associes": ["trail_camera", "cellular", "canadian", "solar"],
+      "Priorite_SEO": "high",
+      "Notes_Strategiques": "Marque canadienne leader - priorité contenu local Québec"
+    },
+    {
+      "Catégorie": "Arcs et Arbalètes",
+      "Sous-catégorie": "Compound Bows Premium",
+      "Compagnie": "Mathews",
+      "Pays": "USA",
+      "Lien_Officiel": "",
+      "Boutique_Officielle": "Non",
+      "Livraison_Gratuite": "Non",
+      "Mots_Cles_Associes": ["arc mathews", "mathews v3x", "arc compound premium"],
+      "Intentions_Associees": ["commercial_investigation", "informational"],
+      "Cluster_SEO_Associe": "cluster_bows_crossbows_ultime",
+      "Pages_Satellites_Associees": ["mathews-v3x-review", "mathews-vs-hoyt"],
+      "Pages_Opportunites_Associees": ["meilleur arc compound 2025", "arc mathews avis"],
+      "Tags_SEO_Associes": ["compound_bow", "premium", "american"],
+      "Priorite_SEO": "high",
+      "Notes_Strategiques": "Marque premium - focus pages comparatives vs Hoyt"
+    },
+    {
+      "Catégorie": "Vêtements de Chasse",
+      "Sous-catégorie": "Systèmes Complets",
+      "Compagnie": "Sitka Gear",
+      "Pays": "USA",
+      "Lien_Officiel": "",
+      "Boutique_Officielle": "Oui",
+      "Livraison_Gratuite": "Parfois",
+      "Mots_Cles_Associes": ["sitka gear", "vêtements sitka", "camo optifade"],
+      "Intentions_Associees": ["commercial_investigation", "transactional"],
+      "Cluster_SEO_Associe": "cluster_clothing_ultime",
+      "Pages_Satellites_Associees": ["sitka-subalpine-review", "sitka-optifade-guide"],
+      "Pages_Opportunites_Associees": ["sitka gear avis", "meilleur camo chasse 2025"],
+      "Tags_SEO_Associes": ["hunting_clothing", "premium", "layering_system"],
+      "Priorite_SEO": "high",
+      "Notes_Strategiques": "Premium - nombreuses pages comparatives possibles"
+    }
+  ],
+  
+  "compatibility_checks": {
+    "generation_automatique": {
+      "compatible": true,
+      "fields_used": ["Mots_Cles_Associes", "Cluster_SEO_Associe", "Intentions_Associees"],
+      "notes": "Structure permet génération automatique de pages gear/review"
+    },
+    "maillage_interne": {
+      "compatible": true,
+      "fields_used": ["Cluster_SEO_Associe", "Pages_Satellites_Associees", "Pages_Opportunites_Associees"],
+      "notes": "Liens définis explicitement pour chaque fournisseur"
+    },
+    "scoring_seo": {
+      "compatible": true,
+      "fields_used": ["Priorite_SEO", "Tags_SEO_Associes", "Intentions_Associees"],
+      "notes": "Priorité et tags permettent scoring automatique"
+    },
+    "regles_anti_doublons": {
+      "compatible": true,
+      "fields_used": ["Compagnie", "Sous-catégorie", "Mots_Cles_Associes"],
+      "notes": "Combinaison unique Compagnie+Sous-catégorie empêche doublons"
+    }
+  },
+  
+  "export_formats": ["xlsx", "csv", "json"],
+  "estimated_rows": 150
+}

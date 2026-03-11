@@ -1,0 +1,64 @@
+{
+  "audit_name": "bionic_waypoint_centering_audit_v1",
+  "version": "V5_300_STRICT",
+  "date": "2026-03-03T16:10:00Z",
+  "command": "emergent_bionic_waypoint_zone_centering_fix --profile=BIONIC_V5_300_STRICT",
+  "status": "PASS",
+  "summary": "Le mode viewport a été complètement supprimé. Les zones sont générées EXCLUSIVEMENT autour du waypoint actif. Aucune dépendance sur currentMapBounds, currentZoom, ou viewport visible.",
+  "phase_1_viewport_disabled": {
+    "status": "PASS",
+    "items_removed": {
+      "viewportTrigger_state": "SUPPRIMÉ — useState(0) pour le déclencheur viewport",
+      "viewportTimerRef": "SUPPRIMÉ — useRef pour le debounce timer",
+      "boundsReadyRef": "SUPPRIMÉ — useRef pour le premier déclenchement bounds",
+      "boundsRef": "SUPPRIMÉ — useRef pour currentMapBounds (plus nécessaire)",
+      "viewport_debounce_useEffect": "SUPPRIMÉ — useEffect avec currentMapBounds/currentZoom",
+      "viewport_key_in_zoneLockKey": "SUPPRIMÉ — le cas 'viewport' n'existe plus",
+      "generateBionicZonesV5_call": "SUPPRIMÉ — appel viewport dans loadZones else branch",
+      "generateBionicZonesV5_import": "SUPPRIMÉ — import inutilisé retiré"
+    },
+    "remaining_dependencies_on_viewport": "AUCUNE",
+    "grep_verification": {
+      "viewportTrigger": "0 occurrences (sauf commentaire explicatif)",
+      "boundsRef": "0 occurrences",
+      "boundsReadyRef": "0 occurrences",
+      "generateBionicZonesV5": "0 occurrences dans le fichier"
+    }
+  },
+  "phase_2_waypoint_pipeline": {
+    "status": "PASS",
+    "zoneLockKey": {
+      "formula_with_target": "${species}_wp_${lat.toFixed(4)}_${lng.toFixed(4)}",
+      "formula_with_active_wps": "${species}_wps_${waypoints.map(coords).join('|')}",
+      "formula_no_waypoints": "null (aucune génération)",
+      "dependencies": ["selectedSpecies", "selectedWaypointForZones", "activeWaypoints"]
+    },
+    "useEffect_dependencies": ["zoneLockKey"],
+    "no_viewport_dependencies": true,
+    "clipping_1km_post_generation": true,
+    "zoomRef_stable": true,
+    "state_locking_preserved": true
+  },
+  "behavior_verified": {
+    "no_waypoints_active": {
+      "zones_count": 0,
+      "zones_generated": false,
+      "backend_called": false,
+      "evidence": "Testing agent iteration_113 confirmed ZONES=0"
+    },
+    "waypoint_created": {
+      "zones_count": 13,
+      "zones_centered_on_waypoint": true,
+      "backend_called": true,
+      "response_time": "~5s (cached from previous session)",
+      "evidence": "Testing agent iteration_113 confirmed 13 zones appeared"
+    },
+    "classification_toggles_functional": true,
+    "zero_console_errors_zone_related": true
+  },
+  "test_evidence": {
+    "testing_agent_report": "/app/test_reports/iteration_113.json",
+    "success_rate": "100%",
+    "all_tests_passed": true
+  }
+}

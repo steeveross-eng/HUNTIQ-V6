@@ -1,0 +1,78 @@
+# Robots.txt for Chasse Bionic TM / BIONIC HUNT/Chasse
+# PHASE E SEO AVANCÉ - Optimisé pour indexation Google 2026
+# https://www.robotstxt.org/robotstxt.html
+
+# Allow all major search engine crawlers
+User-agent: *
+Allow: /
+
+# Core indexable pages (HIGH PRIORITY)
+Allow: /
+Allow: /shop
+Allow: /compare
+Allow: /analyze
+Allow: /map
+Allow: /territoire
+Allow: /forecast
+Allow: /trips
+Allow: /permis-chasse
+Allow: /pricing
+Allow: /business
+Allow: /dashboard
+Allow: /analytics
+
+# Disallow admin and internal pages
+Disallow: /admin
+Disallow: /admin-premium
+Disallow: /admin-geo
+Disallow: /api/
+Disallow: /internal/
+Disallow: /auth/
+
+# Disallow user-specific and transactional pages
+Disallow: /payment/success
+Disallow: /payment/cancel
+Disallow: /onboarding
+Disallow: /reset-password
+Disallow: /partner/dashboard
+
+# Disallow static assets directories (not useful for SEO)
+Disallow: /static/js/
+Disallow: /static/css/
+Disallow: /static/media/
+
+# Crawl-delay for respectful crawling (1 second)
+Crawl-delay: 1
+
+# Sitemap location (CRITICAL for indexation)
+Sitemap: https://bionic-huntiq.com/sitemap.xml
+
+# Google specific optimizations
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Google Images
+User-agent: Googlebot-Image
+Allow: /logos/
+Allow: /images/
+Allow: /og-image.jpg
+
+# Bing specific
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+
+# Yandex
+User-agent: Yandex
+Allow: /
+Crawl-delay: 2
+
+# Baidu
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 2

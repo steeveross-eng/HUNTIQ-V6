@@ -1,0 +1,458 @@
+{
+  "report_id": "L2_OPTIMAL_SEQUENCE_V5_ULTIME",
+  "generated_at": "2026-02-20T02:15:00Z",
+  "version": "V5_ULTIME_FINAL",
+  "classification": "INTERNAL - STAGING MODE STRICT",
+  "status": "ANALYSIS_COMPLETE",
+
+  "analysis_header": {
+    "purpose": "Sequence d'execution optimale pour les optimisations L2",
+    "scope": "Ordre, timing, validation, rollback pour chaque operation",
+    "execution_status": "BLOCKED",
+    "methodology": "Analyse de dependances + minimisation des risques"
+  },
+
+  "optimal_sequence_overview": {
+    "total_phases": 5,
+    "total_optimizations": 32,
+    "total_duration": "~5 heures",
+    "validation_checkpoints": 5,
+    "rollback_points": 5,
+    "scenario": "C - EQUILIBRE V5 (RECOMMANDE)"
+  },
+
+  "sequence_phases": [
+    {
+      "phase_id": 1,
+      "name": "QUICK WINS - SAFE OPTIMIZATIONS",
+      "duration": "45 minutes",
+      "baseline": 79.0,
+      "target": 85.0,
+      "risk_level": "MINIMAL",
+      "operations": [
+        {
+          "order": 1,
+          "operation": "Image compression",
+          "files": ["/app/frontend/public/logos/*"],
+          "tool": "Sharp/imagemin",
+          "expected_impact": "+8 Performance",
+          "rollback": "Restore from backup",
+          "duration": "15min"
+        },
+        {
+          "order": 2,
+          "operation": "Image lazy loading",
+          "files": ["All <img> tags without loading='lazy'"],
+          "count": 71,
+          "expected_impact": "+5 Performance",
+          "rollback": "Remove loading='lazy'",
+          "duration": "10min"
+        },
+        {
+          "order": 3,
+          "operation": "Preconnect fonts",
+          "files": ["/app/frontend/public/index.html"],
+          "expected_impact": "+2 Performance",
+          "rollback": "Remove preconnect link",
+          "duration": "5min"
+        },
+        {
+          "order": 4,
+          "operation": "Defer external scripts",
+          "files": ["/app/frontend/public/index.html"],
+          "expected_impact": "+2 Performance",
+          "rollback": "Remove defer attribute",
+          "duration": "5min"
+        },
+        {
+          "order": 5,
+          "operation": "Preload hero image",
+          "files": ["/app/frontend/public/index.html"],
+          "expected_impact": "+1 Performance",
+          "rollback": "Remove preload link",
+          "duration": "5min"
+        }
+      ],
+      "validation": {
+        "method": "Lighthouse audit",
+        "expected_score": ">=85",
+        "proceed_if": "score >= 83",
+        "rollback_if": "score < 80 OR regression in other categories"
+      },
+      "dependencies": "NONE",
+      "can_execute_independently": true
+    },
+    {
+      "phase_id": 2,
+      "name": "ACCESSIBILITY FIXES",
+      "duration": "45 minutes",
+      "baseline": 85.0,
+      "target": 88.5,
+      "risk_level": "LOW",
+      "operations": [
+        {
+          "order": 1,
+          "operation": "Add aria-label to buttons",
+          "files": ["Multiple component files"],
+          "count": "~30 buttons",
+          "expected_impact": "+8 Accessibility",
+          "rollback": "Revert button changes",
+          "duration": "20min"
+        },
+        {
+          "order": 2,
+          "operation": "Fix color contrast",
+          "files": ["CSS/Tailwind classes"],
+          "count": "~5 elements",
+          "expected_impact": "+5 Accessibility",
+          "rollback": "Revert color changes",
+          "duration": "15min"
+        },
+        {
+          "order": 3,
+          "operation": "Fix heading hierarchy",
+          "files": ["Pages with broken h1-h6 structure"],
+          "expected_impact": "+3 Accessibility",
+          "rollback": "Revert heading changes",
+          "duration": "10min"
+        }
+      ],
+      "validation": {
+        "method": "Lighthouse audit",
+        "expected_score": ">=88",
+        "proceed_if": "score >= 86",
+        "rollback_if": "score < 85 OR performance regression > 2 points"
+      },
+      "dependencies": ["Phase 1 completed"],
+      "can_execute_independently": false
+    },
+    {
+      "phase_id": 3,
+      "name": "DEEP CONTROLLED OPTIMIZATIONS",
+      "duration": "90 minutes",
+      "baseline": 88.5,
+      "target": 95.0,
+      "risk_level": "LOW-MEDIUM",
+      "operations": [
+        {
+          "order": 1,
+          "operation": "Lazy load TerritoryMap",
+          "files": [
+            "/app/frontend/src/modules/territory/components/TerritoryMap.jsx",
+            "Pages using TerritoryMap"
+          ],
+          "pattern": "const TerritoryMap = React.lazy(() => import('./TerritoryMap'))",
+          "expected_impact": "+4 Performance",
+          "rollback": "Revert to static import",
+          "duration": "30min",
+          "critical": true
+        },
+        {
+          "order": 2,
+          "operation": "Lazy load BionicAnalyzer",
+          "files": ["/app/frontend/src/modules/analytics/"],
+          "expected_impact": "+3 Performance",
+          "rollback": "Revert to static import",
+          "duration": "15min"
+        },
+        {
+          "order": 3,
+          "operation": "Lazy load heavy admin components",
+          "files": ["/app/frontend/src/components/admin/"],
+          "count": 4,
+          "expected_impact": "+2 Performance",
+          "rollback": "Revert to static imports",
+          "duration": "20min"
+        },
+        {
+          "order": 4,
+          "operation": "Font weight reduction",
+          "files": ["/app/frontend/public/index.html", "Google Fonts URLs"],
+          "from": "12 weights",
+          "to": "6 weights (400,500,700 x 2 families)",
+          "expected_impact": "+2 Performance",
+          "rollback": "Restore original font URL",
+          "duration": "10min"
+        },
+        {
+          "order": 5,
+          "operation": "Add explicit image dimensions",
+          "files": ["All <img> tags missing width/height"],
+          "expected_impact": "CLS improvement",
+          "rollback": "Remove dimensions",
+          "duration": "15min"
+        }
+      ],
+      "validation": {
+        "method": "Lighthouse audit + functional testing",
+        "expected_score": ">=94",
+        "proceed_if": "score >= 92 AND all lazy components load correctly",
+        "rollback_if": "score < 90 OR lazy loading breaks functionality"
+      },
+      "dependencies": ["Phase 1 completed", "Phase 2 completed"],
+      "can_execute_independently": false
+    },
+    {
+      "phase_id": 4,
+      "name": "SEO & BEST PRACTICES",
+      "duration": "45 minutes",
+      "baseline": 95.0,
+      "target": 99.0,
+      "risk_level": "LOW",
+      "operations": [
+        {
+          "order": 1,
+          "operation": "Add JSON-LD structured data",
+          "files": ["/app/frontend/public/index.html"],
+          "schemas": ["Organization", "WebSite"],
+          "expected_impact": "+3 SEO",
+          "rollback": "Remove JSON-LD script",
+          "duration": "15min"
+        },
+        {
+          "order": 2,
+          "operation": "Complete meta descriptions",
+          "files": ["Page components with missing meta"],
+          "expected_impact": "+2 SEO",
+          "rollback": "Revert meta changes",
+          "duration": "10min"
+        },
+        {
+          "order": 3,
+          "operation": "Add canonical URLs",
+          "files": ["/app/frontend/public/index.html", "Page components"],
+          "expected_impact": "+1 SEO",
+          "rollback": "Remove canonical links",
+          "duration": "10min"
+        },
+        {
+          "order": 4,
+          "operation": "Fix console errors",
+          "files": ["Various - based on console output"],
+          "expected_impact": "+2 Best Practices",
+          "rollback": "N/A - fixes only",
+          "duration": "10min"
+        }
+      ],
+      "validation": {
+        "method": "Lighthouse audit",
+        "expected_score": ">=98",
+        "proceed_if": "score >= 97 AND SEO >= 99",
+        "rollback_if": "score < 95"
+      },
+      "dependencies": ["Phase 1-3 completed"],
+      "can_execute_independently": false
+    },
+    {
+      "phase_id": 5,
+      "name": "FINAL POLISH (OPTIONAL)",
+      "duration": "45 minutes",
+      "baseline": 99.0,
+      "target": 99.9,
+      "risk_level": "MEDIUM",
+      "conditional": true,
+      "condition": "Execute only if Phase 4 score >= 98 AND explicit approval",
+      "operations": [
+        {
+          "order": 1,
+          "operation": "Service Worker implementation",
+          "files": ["/app/frontend/public/sw.js (new)"],
+          "expected_impact": "+0.3 Performance",
+          "rollback": "Unregister service worker",
+          "duration": "25min",
+          "optional": true
+        },
+        {
+          "order": 2,
+          "operation": "Bundle analyzer review",
+          "files": ["webpack config"],
+          "expected_impact": "+0.2 Performance",
+          "rollback": "N/A - analysis only",
+          "duration": "10min"
+        },
+        {
+          "order": 3,
+          "operation": "Fine-tune preload priorities",
+          "files": ["/app/frontend/public/index.html"],
+          "expected_impact": "+0.1 Performance",
+          "rollback": "Remove/adjust preloads",
+          "duration": "10min"
+        }
+      ],
+      "validation": {
+        "method": "Lighthouse audit",
+        "expected_score": ">=99.5",
+        "proceed_if": "score >= 99",
+        "rollback_if": "score < 98.5"
+      },
+      "dependencies": ["Phase 1-4 completed"],
+      "can_execute_independently": false
+    }
+  ],
+
+  "critical_path": {
+    "phases": [1, 2, 3, 4],
+    "critical_operations": [
+      {"phase": 1, "operation": "Image compression"},
+      {"phase": 3, "operation": "Lazy load TerritoryMap"}
+    ],
+    "minimum_path_duration": "4h15min",
+    "with_phase_5": "5h"
+  },
+
+  "parallel_execution_opportunities": {
+    "within_phase_1": ["Operations 3,4,5 can run in parallel after 1,2"],
+    "within_phase_2": ["All operations can run in parallel"],
+    "within_phase_3": ["Operations 2,3 can run in parallel after 1"],
+    "within_phase_4": ["Operations 1,2,3 can run in parallel"],
+    "between_phases": "NOT RECOMMENDED - validate before proceeding"
+  },
+
+  "rollback_strategy_by_phase": {
+    "phase_1_rollback": {
+      "trigger": "Score < 80 OR unexpected regression",
+      "actions": [
+        "1. Restore logos from backup",
+        "2. Remove loading='lazy' attributes",
+        "3. Remove preconnect/preload/defer"
+      ],
+      "time": "20 minutes",
+      "complexity": "LOW"
+    },
+    "phase_2_rollback": {
+      "trigger": "Score < 85 OR performance regression > 2",
+      "actions": [
+        "1. Revert aria-label changes",
+        "2. Revert color changes",
+        "3. Revert heading changes"
+      ],
+      "time": "15 minutes",
+      "complexity": "LOW"
+    },
+    "phase_3_rollback": {
+      "trigger": "Score < 90 OR lazy loading breaks",
+      "actions": [
+        "1. Revert TerritoryMap to static import",
+        "2. Revert other lazy components",
+        "3. Restore original font URL",
+        "4. Remove image dimensions"
+      ],
+      "time": "30 minutes",
+      "complexity": "MEDIUM"
+    },
+    "phase_4_rollback": {
+      "trigger": "Score < 95",
+      "actions": [
+        "1. Remove JSON-LD",
+        "2. Revert meta changes",
+        "3. Remove canonical links"
+      ],
+      "time": "15 minutes",
+      "complexity": "LOW"
+    },
+    "phase_5_rollback": {
+      "trigger": "Score < 98.5",
+      "actions": [
+        "1. Unregister Service Worker",
+        "2. Remove preload adjustments"
+      ],
+      "time": "10 minutes",
+      "complexity": "TRIVIAL"
+    },
+    "full_rollback": {
+      "trigger": "Catastrophic failure",
+      "actions": ["1. git checkout backup/pre-L2-*"],
+      "time": "5 minutes",
+      "complexity": "TRIVIAL"
+    }
+  },
+
+  "validation_checkpoints": {
+    "checkpoint_1": {
+      "after": "Phase 1",
+      "validate": ["Lighthouse Performance >= 83", "No accessibility regression", "All images load correctly"],
+      "proceed_criteria": "All validations pass"
+    },
+    "checkpoint_2": {
+      "after": "Phase 2",
+      "validate": ["Lighthouse Accessibility >= 86", "No performance regression > 2 points"],
+      "proceed_criteria": "All validations pass"
+    },
+    "checkpoint_3": {
+      "after": "Phase 3",
+      "validate": ["Lighthouse Performance >= 92", "All lazy components load", "No console errors"],
+      "proceed_criteria": "All validations pass"
+    },
+    "checkpoint_4": {
+      "after": "Phase 4",
+      "validate": ["Lighthouse Global >= 97", "SEO >= 99", "Best Practices >= 98"],
+      "proceed_criteria": "All validations pass"
+    },
+    "checkpoint_5": {
+      "after": "Phase 5 (optional)",
+      "validate": ["Lighthouse Global >= 99", "Service Worker functional (if enabled)"],
+      "proceed_criteria": "All validations pass"
+    }
+  },
+
+  "execution_commands_template": {
+    "backup_before_start": [
+      "git checkout -b backup/pre-L2-$(date +%Y%m%d-%H%M%S)",
+      "cp -r /app/frontend/public/logos /app/backup/logos-original",
+      "npm audit --audit-level=critical"
+    ],
+    "validation_command": "npx lighthouse https://[URL] --output=json --output-path=./lighthouse-phase-X.json",
+    "rollback_command": "git checkout backup/pre-L2-*"
+  },
+
+  "sequence_diagram": {
+    "representation": "ASCII",
+    "diagram": [
+      "╔══════════════════════════════════════════════════════════════════╗",
+      "║  PHASE 1: QUICK WINS (45min)                                     ║",
+      "║  [Image Compress] → [Lazy Images] → [Preconnect+Defer+Preload]   ║",
+      "║  Baseline: 79 → Target: 85                                       ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  ✓ CHECKPOINT 1: Validate >= 83                                  ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  PHASE 2: ACCESSIBILITY (45min)                                  ║",
+      "║  [aria-label] → [Contrast] → [Headings]                          ║",
+      "║  Baseline: 85 → Target: 88.5                                     ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  ✓ CHECKPOINT 2: Validate >= 86                                  ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  PHASE 3: DEEP OPTIMIZATIONS (90min)                             ║",
+      "║  [Lazy TerritoryMap] → [Lazy Analytics] → [Lazy Admin] →         ║",
+      "║  [Font Reduction] → [Image Dimensions]                           ║",
+      "║  Baseline: 88.5 → Target: 95                                     ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  ✓ CHECKPOINT 3: Validate >= 92                                  ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  PHASE 4: SEO & BEST PRACTICES (45min)                           ║",
+      "║  [JSON-LD] → [Meta] → [Canonical] → [Console Fixes]              ║",
+      "║  Baseline: 95 → Target: 99                                       ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  ✓ CHECKPOINT 4: Validate >= 97                                  ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  PHASE 5: POLISH (45min) [OPTIONAL]                              ║",
+      "║  [Service Worker] → [Bundle Review] → [Preload Tune]             ║",
+      "║  Baseline: 99 → Target: 99.9                                     ║",
+      "╠══════════════════════════════════════════════════════════════════╣",
+      "║  ✓ CHECKPOINT 5: Validate >= 99                                  ║",
+      "╚══════════════════════════════════════════════════════════════════╝"
+    ]
+  },
+
+  "conclusion": {
+    "analysis_status": "COMPLETE",
+    "optimal_sequence_defined": true,
+    "total_phases": 5,
+    "mandatory_phases": 4,
+    "optional_phases": 1,
+    "total_operations": 32,
+    "total_duration": "~5 heures",
+    "rollback_coverage": "100%",
+    "validation_checkpoints": 5,
+    "execution_status": "BLOCKED_PENDING_APPROVAL"
+  }
+}

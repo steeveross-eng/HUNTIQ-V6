@@ -1,0 +1,92 @@
+{
+  "version": "ExclusionsSpatiales.v1",
+  "date": "2026-03-02",
+  "author": "BIONIC V5 300%",
+  "description": "Configuration des exclusions spatiales — Version figée V1",
+  
+  "exclusion_types": {
+    "water": {
+      "enabled": true,
+      "overpass_tags": ["natural=water", "waterway=*", "water=*"],
+      "buffer_m": 200,
+      "priority": 1,
+      "description": "Hydrographie: fleuves, rivières, lacs, marais, zones humides"
+    },
+    "urban": {
+      "enabled": true,
+      "overpass_tags": ["landuse=residential", "landuse=commercial", "landuse=industrial", "landuse=retail"],
+      "buffer_m": 0,
+      "priority": 2,
+      "description": "Zones bâties: résidentiel, commercial, industriel"
+    },
+    "roads": {
+      "enabled": true,
+      "overpass_tags": ["highway=motorway", "highway=trunk", "highway=primary", "highway=secondary"],
+      "buffer_m": 80,
+      "priority": 3,
+      "description": "Routes majeures: autoroutes, nationales, principales, secondaires"
+    },
+    "infrastructure": {
+      "enabled": true,
+      "overpass_tags": ["aeroway=*", "railway=rail", "power=plant", "man_made=works"],
+      "buffer_m": 100,
+      "priority": 4,
+      "description": "Infrastructures: aéroports, voies ferrées, centrales, usines"
+    }
+  },
+  
+  "p0_hard_exclusion": {
+    "method": "multi_points",
+    "description": "Centroïde + 4 points cardinaux à 50% du rayon",
+    "rule": "1 seul point dans zone exclue = zone REJETÉE",
+    "points_count": 5,
+    "cardinal_ratio": 0.5
+  },
+  
+  "p1_soft_penalty": {
+    "bands": [
+      {"min_m": 0, "max_m": 200, "factor": 0.7, "description": "Proximité immédiate"},
+      {"min_m": 200, "max_m": 500, "factor": 0.85, "description": "Zone tampon"},
+      {"min_m": 500, "max_m": 1000, "factor": 0.95, "description": "Influence distante"}
+    ],
+    "fragmentation_factor": 0.8,
+    "score_floor": 15
+  },
+  
+  "pipeline_order": [
+    "1. raster (generate_layer_raster)",
+    "2. contour (extract_organic_zones — Marching Squares)",
+    "3. lissage (Chaikin 4 iterations)",
+    "4. EXCLUSION P0 (_is_zone_excluded — multi-points)",
+    "5. PÉNALITÉ P1 (calculate_zone_penalty — bandes proximité)",
+    "6. sérialisation (zones_to_geojson)"
+  ],
+  
+  "overpass_api": {
+    "url": "https://overpass-api.de/api/interpreter",
+    "max_retries": 3,
+    "retry_delay_ms": 1000,
+    "timeout_s": 8,
+    "max_tiles": 9,
+    "cache_ttl_s": 300,
+    "detail_levels": {
+      "low": "Polygones bruts",
+      "medium": "Polygones + lignes",
+      "high": "Polygones + lignes + points"
+    }
+  },
+  
+  "anti_regression_tests": [
+    "TEST_EAU_INTERSECTION",
+    "TEST_URBAIN_INTERSECTION",
+    "TEST_ACTIVITES_INTERSECTION",
+    "TEST_CENTROID_HORS_EXCLUSION",
+    "TEST_SURFACE_EXCLUE_MAX"
+  ],
+  
+  "thresholds": {
+    "max_excluded_surface_pct": 5,
+    "intersection_tolerance_m2": 10,
+    "min_distance_to_exclusion_m": 10
+  }
+}

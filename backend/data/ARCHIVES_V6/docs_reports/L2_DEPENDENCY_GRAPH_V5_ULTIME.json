@@ -1,0 +1,391 @@
+{
+  "report_id": "L2_DEPENDENCY_GRAPH_V5_ULTIME",
+  "generated_at": "2026-02-19T23:55:00Z",
+  "version": "V5_ULTIME",
+  "classification": "INTERNAL - STAGING MODE STRICT",
+  "status": "ANALYSIS_ONLY - NO_EXECUTION",
+
+  "dependency_header": {
+    "purpose": "Cartographie complète des dépendances critiques",
+    "scope": "Directes, transitives, points de rupture, zones d'isolation",
+    "execution_status": "BLOCKED"
+  },
+
+  "direct_dependencies": {
+    "npm_production": {
+      "total": 56,
+      "critical_for_optimization": [
+        {
+          "package": "react",
+          "version": "18.x",
+          "used_by": "ALL components",
+          "optimization_impact": "React.lazy, Suspense",
+          "risk_if_modified": "CRITICAL",
+          "isolation_required": false
+        },
+        {
+          "package": "react-dom",
+          "version": "18.x",
+          "used_by": "App entry point",
+          "optimization_impact": "Hydration optimization",
+          "risk_if_modified": "CRITICAL",
+          "isolation_required": false
+        },
+        {
+          "package": "leaflet",
+          "version": "1.9.x",
+          "used_by": ["TerritoryMap", "MapPage", "geo components"],
+          "optimization_impact": "Lazy loading candidate",
+          "risk_if_modified": "HIGH",
+          "isolation_required": true,
+          "isolation_strategy": "Lazy load entire map module"
+        },
+        {
+          "package": "react-leaflet",
+          "version": "4.x",
+          "used_by": ["TerritoryMap", "map components"],
+          "optimization_impact": "Lazy load with leaflet",
+          "risk_if_modified": "HIGH",
+          "isolation_required": true,
+          "isolation_strategy": "Bundle with leaflet"
+        },
+        {
+          "package": "recharts",
+          "version": "2.x",
+          "used_by": ["BionicAnalyzer", "dashboard", "analytics"],
+          "optimization_impact": "Lazy loading candidate",
+          "risk_if_modified": "MEDIUM",
+          "isolation_required": true,
+          "isolation_strategy": "Create ChartWrapper lazy component"
+        },
+        {
+          "package": "jspdf",
+          "version": "2.x",
+          "used_by": ["PDF export features"],
+          "optimization_impact": "Dynamic import on action",
+          "risk_if_modified": "LOW",
+          "isolation_required": true,
+          "isolation_strategy": "Import only when PDF generated"
+        },
+        {
+          "package": "jspdf-autotable",
+          "version": "3.x",
+          "used_by": ["PDF table exports"],
+          "optimization_impact": "Bundle with jspdf",
+          "risk_if_modified": "LOW",
+          "isolation_required": true,
+          "isolation_strategy": "Import with jspdf"
+        },
+        {
+          "package": "date-fns",
+          "version": "2.x",
+          "used_by": ["Date formatting across app"],
+          "optimization_impact": "Tree shaking",
+          "risk_if_modified": "LOW",
+          "isolation_required": false,
+          "optimization": "Import specific functions only"
+        },
+        {
+          "package": "lucide-react",
+          "version": "latest",
+          "used_by": ["Icons across app"],
+          "optimization_impact": "Tree shaking",
+          "risk_if_modified": "LOW",
+          "isolation_required": false,
+          "optimization": "Import specific icons only"
+        }
+      ],
+      "radix_ui_components": {
+        "count": 27,
+        "used_for": "UI primitives",
+        "optimization_impact": "Already tree-shakeable",
+        "risk_if_modified": "LOW",
+        "isolation_required": false
+      }
+    },
+    "external_cdns": [
+      {
+        "resource": "Google Fonts",
+        "url": "fonts.googleapis.com",
+        "used_by": "Typography",
+        "optimization_impact": "Preconnect, preload, weight reduction",
+        "risk_if_modified": "LOW",
+        "isolation_required": false
+      },
+      {
+        "resource": "Emergent Scripts",
+        "url": "assets.emergent.sh",
+        "used_by": "Platform integration",
+        "optimization_impact": "Defer script",
+        "risk_if_modified": "LOW",
+        "isolation_required": false
+      }
+    ]
+  },
+
+  "transitive_dependencies": {
+    "high_risk_chains": [
+      {
+        "chain": "react → react-dom → scheduler",
+        "depth": 3,
+        "impact": "Core rendering",
+        "modification_allowed": false
+      },
+      {
+        "chain": "leaflet → proj4 → mgrs",
+        "depth": 3,
+        "impact": "Map projections",
+        "modification_allowed": false,
+        "lazy_load_entire_chain": true
+      },
+      {
+        "chain": "recharts → d3-shape → d3-path",
+        "depth": 3,
+        "impact": "Chart rendering",
+        "modification_allowed": false,
+        "lazy_load_entire_chain": true
+      }
+    ],
+    "safe_chains": [
+      {
+        "chain": "tailwindcss → postcss → autoprefixer",
+        "depth": 3,
+        "impact": "Build-time only",
+        "modification_safe": true
+      },
+      {
+        "chain": "jspdf → html2canvas → css-line-break",
+        "depth": 3,
+        "impact": "PDF generation only",
+        "lazy_loadable": true
+      }
+    ]
+  },
+
+  "breakpoint_analysis": {
+    "potential_breakpoints": [
+      {
+        "id": "BP-001",
+        "location": "TerritoryMap initialization",
+        "description": "Si leaflet n'est pas chargé quand TerritoryMap monte, erreur fatale",
+        "trigger": "Lazy loading mal configuré",
+        "probability": "UNLIKELY",
+        "impact": "Map ne s'affiche pas",
+        "detection": "Console error: 'L is not defined'",
+        "prevention": [
+          "Suspense boundary autour du composant",
+          "Vérifier que leaflet est dans le même chunk que react-leaflet"
+        ],
+        "isolation_zone": "modules/territory/"
+      },
+      {
+        "id": "BP-002",
+        "location": "Chart component render",
+        "description": "Si recharts n'est pas chargé, composants analytics échouent",
+        "trigger": "Lazy loading sans Suspense",
+        "probability": "UNLIKELY",
+        "impact": "Charts ne s'affichent pas",
+        "detection": "Console error: 'ResponsiveContainer is not defined'",
+        "prevention": [
+          "Wrapper lazy pour tous les charts",
+          "Fallback skeleton"
+        ],
+        "isolation_zone": "modules/analytics/"
+      },
+      {
+        "id": "BP-003",
+        "location": "LanguageContext provider",
+        "description": "Si traductions manquent, textes non traduits",
+        "trigger": "Lazy loading traductions",
+        "probability": "POSSIBLE",
+        "impact": "UX dégradée, textes bruts",
+        "detection": "Visual check: clés de traduction visibles",
+        "prevention": [
+          "Ne pas lazy load la langue par défaut",
+          "Précharger langue active"
+        ],
+        "isolation_zone": "contexts/"
+      },
+      {
+        "id": "BP-004",
+        "location": "Critical CSS missing",
+        "description": "Si CSS critique mal extrait, FOUC (Flash of Unstyled Content)",
+        "trigger": "Extraction CSS trop agressive ou insuffisante",
+        "probability": "POSSIBLE",
+        "impact": "Flash visuel au chargement",
+        "detection": "Visual check en throttled network",
+        "prevention": [
+          "Tester en slow 3G",
+          "Inclure tous les styles above-fold"
+        ],
+        "isolation_zone": "styles/"
+      },
+      {
+        "id": "BP-005",
+        "location": "Service Worker registration",
+        "description": "Si SW mal configuré, cache périmé ou app cassée offline",
+        "trigger": "SW deployment sans versioning",
+        "probability": "LIKELY",
+        "impact": "Utilisateurs voient ancien contenu",
+        "detection": "Version check, cache inspection",
+        "prevention": [
+          "Versioning SW",
+          "skipWaiting on activate",
+          "Cache-bust assets"
+        ],
+        "isolation_zone": "public/service-worker.js"
+      }
+    ]
+  },
+
+  "isolation_zones": {
+    "zones_to_isolate_before_execution": [
+      {
+        "zone_id": "ISO-001",
+        "name": "Map Module",
+        "path": "/app/frontend/src/modules/territory/",
+        "dependencies": ["leaflet", "react-leaflet"],
+        "isolation_strategy": "Lazy load entire module",
+        "chunk_name": "map-chunk",
+        "estimated_size": "~300KB"
+      },
+      {
+        "zone_id": "ISO-002",
+        "name": "Analytics Module",
+        "path": "/app/frontend/src/modules/analytics/",
+        "dependencies": ["recharts"],
+        "isolation_strategy": "Lazy load analytics components",
+        "chunk_name": "analytics-chunk",
+        "estimated_size": "~400KB"
+      },
+      {
+        "zone_id": "ISO-003",
+        "name": "PDF Generation",
+        "path": "Various (export features)",
+        "dependencies": ["jspdf", "jspdf-autotable"],
+        "isolation_strategy": "Dynamic import on user action",
+        "chunk_name": "pdf-chunk",
+        "estimated_size": "~350KB"
+      },
+      {
+        "zone_id": "ISO-004",
+        "name": "Admin Heavy Components",
+        "path": "/app/frontend/src/modules/admin/",
+        "dependencies": ["Various"],
+        "isolation_strategy": "Lazy load per admin tab",
+        "chunk_name": "admin-*-chunk",
+        "estimated_size": "~500KB total"
+      },
+      {
+        "zone_id": "ISO-005",
+        "name": "Real Estate Module",
+        "path": "/app/frontend/src/modules/realestate/",
+        "dependencies": ["None heavy"],
+        "isolation_strategy": "Lazy load LandsRental",
+        "chunk_name": "realestate-chunk",
+        "estimated_size": "~100KB"
+      },
+      {
+        "zone_id": "ISO-006",
+        "name": "Marketplace Module",
+        "path": "/app/frontend/src/modules/marketplace/",
+        "dependencies": ["None heavy"],
+        "isolation_strategy": "Lazy load HuntMarketplace",
+        "chunk_name": "marketplace-chunk",
+        "estimated_size": "~100KB"
+      }
+    ],
+    "core_zones_no_isolation": [
+      {
+        "zone": "App Shell",
+        "path": "/app/frontend/src/App.js",
+        "reason": "Must load immediately"
+      },
+      {
+        "zone": "Auth Context",
+        "path": "/app/frontend/src/contexts/AuthContext.jsx",
+        "reason": "Required for all protected routes"
+      },
+      {
+        "zone": "Layout",
+        "path": "/app/frontend/src/layouts/",
+        "reason": "Always visible"
+      },
+      {
+        "zone": "UI Primitives",
+        "path": "/app/frontend/src/components/ui/",
+        "reason": "Used everywhere, already tree-shaken"
+      }
+    ]
+  },
+
+  "dependency_graph_visualization": {
+    "format": "ASCII",
+    "graph": [
+      "App.js",
+      "├── AuthContext (CORE - no isolation)",
+      "├── LanguageContext (CORE - potential lazy translation)",
+      "├── MainLayout (CORE - no isolation)",
+      "│   ├── Header (CORE)",
+      "│   └── Navigation (CORE)",
+      "├── Routes",
+      "│   ├── HomePage (LAZY) ─────────────────┐",
+      "│   ├── DashboardPage (LAZY) ─────────┐  │",
+      "│   │   └── Charts ← recharts ────────┴──┤ ISO-002",
+      "│   ├── MonTerritoirePage (LAZY) ─────┐  │",
+      "│   │   └── TerritoryMap ← leaflet ───┴──┤ ISO-001",
+      "│   ├── MapPage (LAZY) ───────────────┘  │",
+      "│   ├── AdminPage (LAZY) ─────────────┐  │",
+      "│   │   └── Heavy Admin ──────────────┴──┤ ISO-004",
+      "│   ├── ShopPage (LAZY) ─────────────────┤",
+      "│   │   └── HuntMarketplace ─────────────┤ ISO-006",
+      "│   └── RealEstatePage (LAZY) ───────────┤",
+      "│       └── LandsRental ─────────────────┤ ISO-005",
+      "└── [Export Actions] ← jspdf ────────────┘ ISO-003"
+    ]
+  },
+
+  "optimization_impact_on_dependencies": {
+    "safe_to_optimize": [
+      "Image compression (no dependency impact)",
+      "Lazy loading images (no dependency impact)",
+      "Preconnect (CDN dependency, no risk)",
+      "Defer script (timing only, no dependency change)",
+      "aria-label (no dependency impact)",
+      "Color contrast CSS (no dependency impact)",
+      "Heading hierarchy (no dependency impact)"
+    ],
+    "requires_careful_handling": [
+      {
+        "optimization": "Lazy load TerritoryMap",
+        "dependency_consideration": "Must bundle leaflet + react-leaflet together",
+        "verification": "Check webpack chunks"
+      },
+      {
+        "optimization": "Lazy load analytics",
+        "dependency_consideration": "Must bundle all recharts components together",
+        "verification": "Check webpack chunks"
+      },
+      {
+        "optimization": "Font weight reduction",
+        "dependency_consideration": "Google Fonts URL change, CDN dependency",
+        "verification": "Visual check all typography"
+      },
+      {
+        "optimization": "Critical CSS extraction",
+        "dependency_consideration": "Build-time dependency (critters/penthouse)",
+        "verification": "Check FOUC in slow network"
+      }
+    ]
+  },
+
+  "summary": {
+    "total_direct_dependencies": 56,
+    "critical_dependencies": 9,
+    "isolation_zones_defined": 6,
+    "breakpoints_identified": 5,
+    "dependency_risk_level": "MEDIUM",
+    "all_dependencies_mapped": true,
+    "execution_status": "BLOCKED_PENDING_APPROVAL"
+  }
+}

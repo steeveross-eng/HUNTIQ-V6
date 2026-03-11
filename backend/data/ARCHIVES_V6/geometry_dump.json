@@ -1,0 +1,49 @@
+{
+  "version": "BIONIC_V5_FULL_LAYER_FREEZE_BASELINE",
+  "date": "2026-03-07",
+  "section": "S1_GEOMETRY_FREEZE",
+
+  "zone_extraction_params": {
+    "min_area_m2": 8000.0,
+    "max_area_m2": 80000.0,
+    "chaikin_iterations": 4,
+    "max_compactness": 0.85,
+    "default_resolution": 80
+  },
+
+  "adaptive_resolution_rules": {
+    "very_large_viewport_gt_0.15deg": 25,
+    "large_viewport_gt_0.1deg": 30,
+    "medium_viewport_gt_0.05deg": 40,
+    "normal_viewport": 80
+  },
+
+  "exclusion_geometry": {
+    "test_points_count": 5,
+    "test_points_method": "centroid + 4 cardinal at 50% radius",
+    "standard_rejection_threshold": ">50% hits",
+    "infrastructure_rejection_threshold": ">80% hits",
+    "road_buffer_m": 25,
+    "track_exclusion": false
+  },
+
+  "hydro_fix_filters": {
+    "AREA_10KM2": 10000000,
+    "AREA_2KM2": 2000000,
+    "AREA_MICRO": 2000,
+    "deep_water_only": ["lake", "reservoir"],
+    "pond_min_area_m2": 2000,
+    "never_exclude": ["wetland", "stream", "ditch", "micro_water"],
+    "stream_ditch_convert_to_line": true,
+    "oversized_relation_filter": true,
+    "oversized_river_filter": true,
+    "no_subtype_filter": true
+  },
+
+  "overpass_tiling": {
+    "max_tile_lat": 0.06,
+    "max_tile_lng": 0.08,
+    "max_tiles": 9,
+    "timeout_s": 10
+  }
+}

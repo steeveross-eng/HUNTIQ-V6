@@ -1,0 +1,394 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PHASE C: WCAG 2.2 Accessibility - Contrast Enhancement */
+@layer utilities {
+  /* Accessible secondary text color (WCAG AA compliant ~7:1 ratio on dark bg) */
+  .text-accessible-secondary {
+    color: #D1D5DB; /* Replaces text-gray-400 for better contrast */
+  }
+  /* Accessible muted text color (WCAG AA compliant ~5:1 ratio) */
+  .text-accessible-muted {
+    color: #9CA3AF; /* Same as gray-400 but use only for large text */
+  }
+}
+
+/* PHASE C: WCAG 2.2 Accessibility - Focus Visibility */
+@layer base {
+  /* Enhanced focus ring for all interactive elements */
+  *:focus-visible {
+    outline: 2px solid #F5A623 !important;
+    outline-offset: 2px !important;
+  }
+  
+  /* Remove default outline when not using keyboard */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  /* Skip link for keyboard navigation */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #F5A623;
+    color: black;
+    padding: 8px 16px;
+    z-index: 100;
+    transition: top 0.3s;
+  }
+  
+  .skip-link:focus {
+    top: 0;
+  }
+  
+  /* PHASE D: Optimize scroll performance */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* PHASE D: Passive event listeners hint */
+  * {
+    touch-action: manipulation;
+  }
+  
+  /* PHASE D: GPU acceleration for animations */
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  /* PHASE D: Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+html {
+    min-height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+body {
+    min-height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+#root {
+    min-height: 100%;
+}
+
+body {
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family:
+        source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+@layer base {
+    :root {
+        --background: 0 0% 7%;
+        --foreground: 0 0% 98%;
+        --card: 0 0% 10%;
+        --card-foreground: 0 0% 98%;
+        --popover: 0 0% 10%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 43 96% 56%;
+        --primary-foreground: 0 0% 9%;
+        --secondary: 0 0% 14.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 0 0% 14.9%;
+        --muted-foreground: 0 0% 63.9%;
+        --accent: 43 96% 56%;
+        --accent-foreground: 0 0% 9%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 0 0% 20%;
+        --input: 0 0% 20%;
+        --ring: 43 96% 56%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        --radius: 0.5rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+
+    [data-debug-wrapper="true"] > * {
+        margin-left: inherit;
+        margin-right: inherit;
+        margin-top: inherit;
+        margin-bottom: inherit;
+        padding-left: inherit;
+        padding-right: inherit;
+        padding-top: inherit;
+        padding-bottom: inherit;
+        column-gap: inherit;
+        row-gap: inherit;
+        gap: inherit;
+        border-left-width: inherit;
+        border-right-width: inherit;
+        border-top-width: inherit;
+        border-bottom-width: inherit;
+        border-left-style: inherit;
+        border-right-style: inherit;
+        border-top-style: inherit;
+        border-bottom-style: inherit;
+        border-left-color: inherit;
+        border-right-color: inherit;
+        border-top-color: inherit;
+        border-bottom-color: inherit;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: hsl(0 0% 10%);
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(43 96% 56%);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(43 96% 46%);
+}
+
+/* ================================================
+   REDUCED SCROLL SPEED - Vitesse de défilement réduite de moitié
+   ================================================ */
+
+/* Smooth scrolling pour tout le document */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Réduire la vitesse de défilement au clavier (flèches haut/bas) */
+* {
+    scroll-behavior: smooth;
+}
+
+/* Style pour ScrollArea components - défilement plus lent */
+[data-radix-scroll-area-viewport],
+.scroll-area-viewport,
+[class*="ScrollArea"] > div {
+    scroll-behavior: smooth;
+}
+
+/* Classe utilitaire pour le défilement lent */
+.smooth-scroll {
+    scroll-behavior: smooth;
+}
+
+/* Override pour les zones de défilement - transition plus douce */
+.overflow-auto,
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-scroll {
+    scroll-behavior: smooth;
+}
+
+/* JavaScript scroll step reduction - appliqué via CSS custom property */
+:root {
+    --scroll-step: 20px; /* Réduit de 40px par défaut à 20px */
+}
+
+
+/* ============================================
+   BIONIC MICRO-ZONES STYLES
+   Style "Dany Lavoie" - Cercles épais et visibles
+   ============================================ */
+
+/* 
+   STYLE "DANY LAVOIE":
+   - Contours ÉPAIS (4-6px)
+   - Couleurs VIVES et SATURÉES
+   - Remplissage SEMI-TRANSPARENT (50-70%)
+   - PAS d'ombre/glow sur les cercles
+   - Contours SOLIDES (pas de pointillés sauf corridors)
+*/
+
+/* Style des cercles de zone - PAS d'effets d'ombre */
+.bionic-zone-circle {
+    /* Style Dany Lavoie: cercles nets sans effets */
+    transition: opacity 0.15s ease-out;
+}
+
+.bionic-zone-circle:hover {
+    /* Légère augmentation d'opacité au survol */
+    opacity: 1 !important;
+}
+
+/* Leaflet circle path styling */
+.leaflet-interactive.bionic-zone-circle {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Tooltip personnalisé pour les zones */
+.bionic-zone-tooltip .leaflet-tooltip-content {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.bionic-zone-tooltip {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* PAS d'animation pulse - style statique "Dany Lavoie" */
+
+/* Lignes de corridors - style épais */
+.bionic-corridor-line {
+    /* Style Dany Lavoie: pas d'ombre, juste ligne épaisse */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Indicateur de zone prioritaire (haute probabilité) */
+.bionic-priority-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Badge de pourcentage sur la carte */
+.bionic-percentage-badge {
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Légende des modules BIONIC */
+.bionic-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.bionic-legend-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.bionic-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    background: transparent;
+}
+
+/* Overlay de confidentialité */
+.bionic-private-overlay {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0.1) 10px,
+        rgba(0, 0, 0, 0.15) 10px,
+        rgba(0, 0, 0, 0.15) 20px
+    );
+    pointer-events: none;
+    z-index: 1000;
+}
+
+
+/* TILE LOCKING SYSTEM — BIONIC V5 300% Ecoforestry Stabilization */
+.ecoforestry-tile-locked {
+  transition: opacity 300ms ease-in-out !important;
+}
+
+/* V8.1 BIONIC — Ajustement tonalité carte écoforestière
+   Légère désaturation + teinte froide + luminosité ajustée
+   pour meilleur contraste avec zones BIONIC et carré 2×2km */
+.leaflet-tile-pane {
+  filter: saturate(0.82) brightness(0.92) hue-rotate(-5deg);
+}
+
+/* ============================================ */
+/* SmartMapTooltip — Collision Avoidance CSS    */
+/* Ciblé UNIQUEMENT sur les popups explicatifs  */
+/* AUCUNE modification du layout global         */
+/* ============================================ */
+
+.bionic-smart-tooltip {
+  font-family: inherit;
+  color: white;
+  border-radius: 8px;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5));
+  pointer-events: auto;
+}
+
+.bionic-smart-tooltip::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bionic-smart-tooltip::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.bionic-smart-tooltip::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.bionic-smart-tooltip::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

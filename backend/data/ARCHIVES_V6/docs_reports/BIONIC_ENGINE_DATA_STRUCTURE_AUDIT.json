@@ -1,0 +1,375 @@
+{
+  "report_id": "BIONIC-DATA-AUDIT-001",
+  "report_type": "DATA_STRUCTURE_AUDIT",
+  "phase": "PHASE_3_DATA_AUDIT",
+  "timestamp": "2026-02-19T19:05:00+00:00",
+  "investigator": "E1-AGENT",
+  "status": "AUDIT_COMPLETE",
+  
+  "summary": {
+    "total_data_structures_analyzed": 47,
+    "total_collections_mongodb": 2,
+    "total_species_profiles": 4,
+    "total_divergences_found": 7,
+    "critical_divergences": 4,
+    "warning_divergences": 2,
+    "info_divergences": 1
+  },
+  
+  "mongodb_collections_audit": {
+    "user_contexts": {
+      "documents_total": 4,
+      "documents_corrupted": 3,
+      "corruption_rate": "75%",
+      "expected_schema": {
+        "user_id": "string (required)",
+        "gibier_principal": "string | null",
+        "gibiers_secondaires": "array<string>",
+        "region": "string | null",
+        "province": "string | null",
+        "gps_lat": "float | null",
+        "gps_lng": "float | null",
+        "pages_visited": "array<string>",
+        "tools_used": "array<string>",
+        "pourvoiries_consulted": "array<string>",
+        "setups_consulted": "array<string>",
+        "permis_consulted": "array<string>",
+        "current_season": "string",
+        "season_dates": "object",
+        "quotas": "object",
+        "last_activity": "string (ISO datetime)",
+        "created_at": "string (ISO datetime)",
+        "updated_at": "string (ISO datetime)",
+        "needs_gibier_popup": "boolean",
+        "has_complete_profile": "boolean"
+      },
+      "divergences": [
+        {
+          "user_id": "corrupted-user-001",
+          "severity": "CRITICAL",
+          "field": "pages_visited",
+          "expected_type": "array<string>",
+          "actual_type": "int",
+          "actual_value": 10
+        },
+        {
+          "user_id": "corrupted-user-001",
+          "severity": "CRITICAL",
+          "field": "tools_used",
+          "expected_type": "array<string>",
+          "actual_type": "int",
+          "actual_value": 5
+        },
+        {
+          "user_id": "corrupted-user-001",
+          "severity": "WARNING",
+          "field": "pourvoiries_consulted",
+          "expected_type": "array<string>",
+          "actual_type": "string",
+          "actual_value": "invalid"
+        },
+        {
+          "user_id": "corrupted-user-001",
+          "severity": "WARNING",
+          "field": "setups_consulted",
+          "expected_type": "array<string>",
+          "actual_type": "NoneType",
+          "actual_value": null
+        },
+        {
+          "user_id": "critical-user-001",
+          "severity": "CRITICAL",
+          "field": "pages_visited",
+          "expected_type": "array<string>",
+          "actual_type": "int",
+          "actual_value": 42
+        },
+        {
+          "user_id": "critical-user-002",
+          "severity": "CRITICAL",
+          "field": "tools_used",
+          "expected_type": "array<string>",
+          "actual_type": "int",
+          "actual_value": 5
+        },
+        {
+          "user_id": "typeerror-user-001",
+          "severity": "CRITICAL",
+          "field": "pages_visited",
+          "expected_type": "array<string>",
+          "actual_type": "int",
+          "actual_value": 42
+        },
+        {
+          "user_id": "typeerror-user-001",
+          "severity": "CRITICAL",
+          "field": "tools_used",
+          "expected_type": "array<string>",
+          "actual_type": "int",
+          "actual_value": 10
+        }
+      ]
+    },
+    "permis_checklists": {
+      "documents_total": 1,
+      "documents_corrupted": 1,
+      "corruption_rate": "100%",
+      "expected_schema": {
+        "user_id": "string (required)",
+        "permis_type": "string",
+        "province": "string",
+        "items": "array<object>",
+        "completion_percentage": "int"
+      },
+      "divergences": [
+        {
+          "user_id": "critical-user-003",
+          "severity": "CRITICAL",
+          "field": "items",
+          "expected_type": "array<object>",
+          "actual_type": "int",
+          "actual_value": 12
+        }
+      ]
+    }
+  },
+  
+  "bionic_data_structures_audit": {
+    "zones": {
+      "models_found": [
+        "HuntingZone (territories.py:132)",
+        "HuntingZone (geospatial_engine/v1/models.py:20)",
+        "ConcentrationZone (advanced_geospatial_engine/v1/models.py:22)",
+        "GeofenceZone (geolocation_engine/v1/models.py:44)",
+        "SafetyZone (tracking_engine/v1/__init__.py:46)",
+        "TerritoryZone (models/territory.py:57)",
+        "DepthZone (routes/bathymetry.py:61)"
+      ],
+      "status": "DEFINED_BUT_EMPTY_IN_DB",
+      "mongodb_collection": "N/A - zones are embedded or computed",
+      "note": "Zones are generated dynamically from analysis, not stored persistently"
+    },
+    "hotspots": {
+      "models_found": [
+        "HotspotUpsell (modules/setup_builder.py:57)",
+        "HotspotMetadata (models/geo_entity.py:160)",
+        "B2BHotspotRequest (realestate/models/property_models.py:143)"
+      ],
+      "status": "DEFINED_BUT_EMPTY_IN_DB",
+      "mongodb_collection": "hotspots (not created yet)",
+      "note": "Hotspots are generated per-request, not persisted"
+    },
+    "corridors": {
+      "models_found": [
+        "MovementCorridor (advanced_geospatial_engine/v1/models.py:51)",
+        "CorridorData (data_layers/advanced_geospatial_layers/data_layer.py:38)",
+        "CorridorMetadata (models/geo_entity.py:179)"
+      ],
+      "status": "DEFINED_BUT_EMPTY_IN_DB",
+      "expected_fields": [
+        "id", "path", "width_m", "length_km", "corridor_type",
+        "species", "terrain_type", "vegetation_cover", "elevation_change",
+        "usage_frequency", "peak_usage_times", "importance_score",
+        "hunting_potential", "funnel_points"
+      ],
+      "note": "Corridors are computed dynamically"
+    },
+    "intensities": {
+      "models_found": [],
+      "status": "NOT_EXPLICITLY_DEFINED",
+      "note": "Intensity values are embedded within module scores (0-100 scale)"
+    },
+    "displacements_J0_J7": {
+      "models_found": [
+        "PredictionResult (bionic_engine.py:149)"
+      ],
+      "forecast_fields": [
+        "forecast_24h: Dict[species, score]",
+        "forecast_72h: Dict[species, score]",
+        "forecast_7d: Dict[species, score]",
+        "movement_prediction: Dict[direction, probability]"
+      ],
+      "status": "DEFINED_AND_FUNCTIONAL",
+      "data_source": "Open-Meteo weather API + computed predictions"
+    },
+    "superpositions": {
+      "models_found": [
+        "DATA_LAYERS registry (data_layers/__init__.py)"
+      ],
+      "available_layers": [
+        "ecoforestry",
+        "behavioral",
+        "simulation",
+        "3d",
+        "advanced_geospatial"
+      ],
+      "status": "DEFINED_BUT_EMPTY_IN_DB",
+      "note": "Layers are computed on-demand, not stored"
+    }
+  },
+  
+  "species_profiles_audit": {
+    "profiles_found": [
+      {
+        "file": "data/species/moose.json",
+        "species_id": "moose",
+        "scientific_name": "Alces alces",
+        "data_quality_score": 0.92,
+        "last_updated": "2024-02-17",
+        "status": "COMPLETE",
+        "fields_present": 20,
+        "fields_expected": 20
+      },
+      {
+        "file": "data/species/deer.json",
+        "species_id": "deer",
+        "scientific_name": "Odocoileus virginianus",
+        "data_quality_score": 0.9,
+        "last_updated": "2024-02-17",
+        "status": "COMPLETE",
+        "fields_present": 20,
+        "fields_expected": 20
+      },
+      {
+        "file": "data/species/bear.json",
+        "species_id": "bear",
+        "scientific_name": "Ursus americanus",
+        "data_quality_score": 0.88,
+        "last_updated": "2024-02-17",
+        "status": "COMPLETE",
+        "fields_present": 20,
+        "fields_expected": 20
+      },
+      {
+        "file": "data/species/elk.json",
+        "species_id": "elk",
+        "status": "PRESENT",
+        "note": "Additional profile for elk/wapiti"
+      }
+    ],
+    "missing_profiles": [
+      "caribou (defined in SpeciesType enum but no JSON file)",
+      "wolf (defined in SpeciesType enum but no JSON file)",
+      "turkey (defined in SpeciesType enum but no JSON file)"
+    ],
+    "consistency_check": {
+      "enums_vs_files": "PARTIAL_MATCH",
+      "note": "6 species in enum, only 4 JSON profiles"
+    }
+  },
+  
+  "knowledge_models_audit": {
+    "pydantic_models_analyzed": [
+      "SpeciesKnowledge",
+      "BehaviorRule",
+      "HabitatVariable",
+      "SeasonalModel",
+      "KnowledgeSource",
+      "TemperatureRange",
+      "ActivityPattern",
+      "SeasonalBehavior",
+      "HabitatPreference",
+      "FoodSource"
+    ],
+    "enums_defined": [
+      "SpeciesCategory (7 values)",
+      "SeasonType (8 values)",
+      "ActivityPeriod (9 values)",
+      "HabitatType (15 values)",
+      "RuleConfidence (4 values)",
+      "SourceType (8 values)"
+    ],
+    "status": "WELL_DEFINED",
+    "validation_level": "PYDANTIC_ENFORCED"
+  },
+  
+  "internal_consistency_check": {
+    "zones_hotspots_corridors": {
+      "status": "NOT_APPLICABLE",
+      "reason": "All computed dynamically, no persistent storage"
+    },
+    "intensities_consistency": {
+      "status": "OK",
+      "note": "All scores use 0-100 scale consistently"
+    },
+    "displacements_J0_J7": {
+      "status": "OK",
+      "note": "Forecasts properly structured as 24h/72h/7d windows"
+    },
+    "superpositions": {
+      "status": "OK",
+      "note": "5 data layers properly defined and isolated"
+    },
+    "species_profiles": {
+      "status": "PARTIAL",
+      "issue": "3 species defined in code but missing JSON profiles"
+    }
+  },
+  
+  "external_compatibility_check": {
+    "data_injection_layer": {
+      "status": "EMPTY_BUT_DEFINED",
+      "note": "Structure exists but no data injected"
+    },
+    "data_validation_layer": {
+      "status": "EMPTY_BUT_DEFINED",
+      "note": "ValidationResult model exists but not actively used"
+    },
+    "bionic_ultimate_engine": {
+      "status": "COMPATIBLE",
+      "note": "Structures align with expected BIONIC Ultimate specifications"
+    }
+  },
+  
+  "obsolete_fields_found": [],
+  
+  "undocumented_fields_found": [
+    {
+      "collection": "user_contexts",
+      "field": "permis_consulted",
+      "type": "dict",
+      "found_in": "corrupted-user-001",
+      "note": "Should be array<string>, found as dict in one document"
+    }
+  ],
+  
+  "recommendations": [
+    {
+      "priority": "P0",
+      "action": "Add JSON Schema validation to MongoDB collections",
+      "affected": ["user_contexts", "permis_checklists"]
+    },
+    {
+      "priority": "P0",
+      "action": "Add runtime type validation in UserContext dataclass __post_init__",
+      "affected": ["user_context.py"]
+    },
+    {
+      "priority": "P1",
+      "action": "Create JSON profiles for missing species (caribou, wolf, turkey)",
+      "affected": ["bionic_knowledge_engine/data/species/"]
+    },
+    {
+      "priority": "P1",
+      "action": "Clean corrupted test data from MongoDB",
+      "affected": ["user_contexts", "permis_checklists"]
+    },
+    {
+      "priority": "P2",
+      "action": "Add Pydantic validation for MongoDB reads, not just writes",
+      "affected": ["All modules reading from MongoDB"]
+    }
+  ],
+  
+  "mode_staging_validation": {
+    "status": "MAINTAINED",
+    "internal_only": true,
+    "external_flows": false,
+    "code_modified": false,
+    "db_modified": false
+  },
+  
+  "next_phase": {
+    "phase_4": "DEPENDENCY_AUDIT - Map all internal dependencies between BIONIC modules"
+  }
+}

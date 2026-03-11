@@ -1,0 +1,55 @@
+{
+  "audit_name": "bionic_mon_territoire_state_flow_v1",
+  "version": "V5_300_STRICT",
+  "date": "2026-03-03T22:30:00Z",
+  "command": "emergent_bionic_mon_territoire_rendering_diagnostic --profile=BIONIC_V5_300_STRICT",
+  "status": "PASS",
+  "summary": "Le flux d'état complet du pipeline zones a été vérifié. Les zones sont correctement générées, stockées, filtrées et rendues.",
+  "state_flow": {
+    "step_1_waypoints_load": {
+      "source": "useUserData hook → localStorage + backend sync",
+      "result": "activeWaypoints = [{lat, lng, name, active: true, ...}]",
+      "timing": "~100ms (localStorage) + async backend sync"
+    },
+    "step_2_zoneLockKey_computation": {
+      "source": "useMemo([selectedSpecies, selectedWaypointForZones, activeWaypoints])",
+      "result_no_waypoints": "null → no zones generated",
+      "result_with_waypoints": "${species}_wps_${lat.toFixed(4)}_${lng.toFixed(4)}",
+      "result_with_target": "${species}_wp_${lat.toFixed(4)}_${lng.toFixed(4)}"
+    },
+    "step_3_useEffect_triggers": {
+      "dependencies": ["zoneLockKey", "forceReloadZones"],
+      "guard_null_key": "Returns early with empty zones",
+      "guard_locked": "Returns cached zones from zoneLockRef",
+      "normal_path": "Calls loadZonesWithRetry()"
+    },
+    "step_4_backend_fetch": {
+      "function": "generateWaypointZonesV5 → generateBionicZonesV5",
+      "endpoint": "POST /api/v1/bionic/organic-zones",
+      "payload": "{bounds: ±0.005, species, layers, resolution, max_zones_per_layer}",
+      "response_time": "~11s uncached, <1s cached (LRU)",
+      "retry": "Up to 3 attempts with 2s/4s backoff"
+    },
+    "step_5_state_update": {
+      "zoneLockRef": "{ locked: true, key: zoneLockKey, data: result }",
+      "bionicZonesData": "{ zones: [...13 zones], stats: { total: 13 } }",
+      "isLoadingZones": "false"
+    },
+    "step_6_filtering": {
+      "rawZones": "bionicZonesData.zones (13 zones)",
+      "allZones": "rawZones or clipZonesClient(rawZones) if target selected",
+      "bionicZones": "allZones filtered by layersVisible + classificationToggles (13 zones)",
+      "visibleZonesCount": "bionicZones filtered by score >= 30 (13 zones)"
+    },
+    "step_7_rendering": {
+      "BionicMicroZones": "Renders 13 zone Polygon components",
+      "TerritoryShell": "Renders territory outline",
+      "StructureContrastLayer": "Renders anthropic zones (if classification toggle ON)"
+    }
+  },
+  "service_worker_impact": {
+    "problem": "SW served stale JS bundles from cache-first/staleWhileRevalidate strategy",
+    "fix": "Changed to network-first for JS/CSS, incremented cache version to v3",
+    "user_action_needed": "Hard refresh (Ctrl+Shift+R) or wait for SW update cycle"
+  }
+}

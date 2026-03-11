@@ -1,0 +1,149 @@
+{
+  "$schema": "https://huntiq.ca/schemas/bionic-zone-v1.json",
+  "contract_id": "zone_schema_v1",
+  "contract_version": "1.0.0",
+  "module_name": "map_zones",
+  "phase": "P1-HOTSPOTS",
+  "status": "ACTIVE",
+  "created_at": "2025-12-21",
+  "author": "BIONIC Engine Team",
+  "approved_by": "COPILOT MAITRE",
+  "description": "Schema pour les zones comportementales BIONIC V5 ULTIME x2",
+
+  "zone_types": {
+    "enum": [
+      "feeding",
+      "bedding",
+      "rut_arena",
+      "thermal_cover",
+      "water_access",
+      "predation_zone",
+      "yarding_zone"
+    ],
+    "descriptions": {
+      "feeding": "Zone d'alimentation principale",
+      "bedding": "Zone de repos/coucher",
+      "rut_arena": "Arene de rut/reproduction",
+      "thermal_cover": "Couvert thermique",
+      "water_access": "Acces a l'eau",
+      "predation_zone": "Zone de predation active",
+      "yarding_zone": "Ravage hivernal"
+    }
+  },
+
+  "visual_spec": {
+    "stroke_width_px": {"min": 1, "max": 2, "default": 1.5},
+    "fill_opacity": {"const": 0, "description": "TOUJOURS 0 - Centre transparent"},
+    "contour_algorithm": "natural_boundary_extraction",
+    "effects": {
+      "glow": false,
+      "shadow": false,
+      "halo": false
+    }
+  },
+
+  "color_palette": {
+    "feeding": "#4CAF50",
+    "bedding": "#3F51B5",
+    "rut_arena": "#E91E63",
+    "thermal_cover": "#00BCD4",
+    "water_access": "#2196F3",
+    "predation_zone": "#F44336",
+    "yarding_zone": "#ECEFF1"
+  },
+
+  "request_schema": {
+    "type": "object",
+    "required": ["bounds", "species"],
+    "properties": {
+      "bounds": {
+        "type": "object",
+        "required": ["north", "south", "east", "west"],
+        "properties": {
+          "north": {"type": "number"},
+          "south": {"type": "number"},
+          "east": {"type": "number"},
+          "west": {"type": "number"}
+        }
+      },
+      "species": {
+        "type": "string",
+        "enum": ["moose", "deer", "bear", "wild_turkey", "elk"]
+      },
+      "zone_types": {
+        "type": "array",
+        "items": {"$ref": "#/zone_types/enum"},
+        "default": ["feeding", "bedding", "rut_arena", "water_access"]
+      },
+      "datetime": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "include_overlaps": {
+        "type": "boolean",
+        "default": true
+      }
+    }
+  },
+
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "success": {"type": "boolean"},
+      "zones": {
+        "type": "array",
+        "items": {"$ref": "#/zone_object"}
+      },
+      "overlap_matrix": {
+        "type": "object",
+        "description": "Matrice des zones qui se superposent"
+      },
+      "metadata": {
+        "type": "object"
+      }
+    }
+  },
+
+  "zone_object": {
+    "type": "object",
+    "required": ["id", "type", "geometry", "behavior_context", "style"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^ZN-[A-Z0-9]{8}$"
+      },
+      "type": {
+        "$ref": "#/zone_types/enum"
+      },
+      "geometry": {
+        "type": "object",
+        "properties": {
+          "type": {"const": "Polygon"},
+          "coordinates": {"type": "array"}
+        }
+      },
+      "behavior_context": {
+        "type": "object",
+        "properties": {
+          "primary_activity": {"type": "string"},
+          "time_of_day": {"type": "array", "items": {"type": "string"}},
+          "seasonal_relevance": {"type": "array", "items": {"type": "integer"}},
+          "species_affinity": {"type": "object"}
+        }
+      },
+      "overlap_zones": {
+        "type": "array",
+        "items": {"type": "string"}
+      },
+      "style": {
+        "type": "object",
+        "properties": {
+          "stroke_color": {"type": "string"},
+          "stroke_width": {"type": "number", "default": 1.5},
+          "stroke_dasharray": {"type": "string", "default": "none"},
+          "fill_opacity": {"const": 0}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "branch": "BIONIC_V6_LAB",
+  "git_branch": "bionic_v6_lab",
+  "git_policy": "ACTIVE — branche principale pour V6-001 a V6-006",
+  "created": "2026-03-07T05:00:00Z",
+  "origin": "BIONIC_V5_FINAL_FREEZE",
+  "status": "ACTIVE",
+
+  "description": "Branche d'evolution post-V5. Toutes les optimisations majeures, reecritures et ameliorations x300% seront realisees ici. Les tests de non-regression V5 (28 tests) doivent rester verts.",
+
+  "constraints": {
+    "v5_regression_suite": "tests/freeze/test_freeze_regression.py — 28 tests MUST PASS",
+    "v5_baseline_dir": "data/freeze_baseline/",
+    "breaking_changes_allowed": true,
+    "new_modules_allowed": true,
+    "v5_api_compatibility": "RECOMMENDED but not mandatory if tests pass"
+  },
+
+  "planned_scope": [
+    {
+      "id": "V6-001",
+      "priority": "P2",
+      "name": "Anthropique V5 Phase 2 — Coupes Forestieres",
+      "description": "Integrer les donnees sur l'age et la regeneration des coupes forestieres via couche WMS du MFFP"
+    },
+    {
+      "id": "V6-002",
+      "priority": "P2",
+      "name": "route_planner_v2 — Mode Equipe",
+      "description": "Planification de routes multi-chasseurs avec coordination"
+    },
+    {
+      "id": "V6-003",
+      "priority": "P2",
+      "name": "Mode Timelapse 24h",
+      "description": "Visualisation animee de l'activite faunique sur 24 heures"
+    },
+    {
+      "id": "V6-004",
+      "priority": "P3",
+      "name": "Integration ML Cloud",
+      "description": "ml_training_session_v1 — apprentissage automatique sur donnees terrain"
+    },
+    {
+      "id": "V6-005",
+      "priority": "P3",
+      "name": "Donnees supplementaires MODIS LST / NDVI",
+      "description": "Integration de donnees satellite pour temperature de surface et vegetation"
+    },
+    {
+      "id": "V6-006",
+      "priority": "P3",
+      "name": "Enrichissement panneau Waypoint",
+      "description": "Informations detaillees et analytiques dans le panneau lateral waypoint"
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "report_id": "L2_CORE_WEB_VITALS_IMPACT",
+  "generated_at": "2026-02-19T22:20:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "phase": "L2",
+  "category": "Performance - Core Web Vitals",
+
+  "executive_summary": {
+    "overall_status": "NEEDS_IMPROVEMENT",
+    "lcp_status": "POOR",
+    "fid_tbt_status": "POOR",
+    "cls_status": "UNKNOWN",
+    "inp_status": "TO_BE_MEASURED"
+  },
+
+  "current_metrics": {
+    "LCP": {
+      "current": "3.9s",
+      "target": "<2.5s",
+      "status": "POOR",
+      "threshold_good": "<2.5s",
+      "threshold_needs_improvement": "2.5s-4s",
+      "threshold_poor": ">4s"
+    },
+    "TBT": {
+      "current": "760ms",
+      "target": "<200ms",
+      "status": "POOR",
+      "note": "TBT is lab metric proxy for FID"
+    },
+    "FCP": {
+      "current": "0.6s",
+      "target": "<1.8s",
+      "status": "GOOD"
+    },
+    "CLS": {
+      "current": "Unknown",
+      "target": "<0.1",
+      "status": "TO_BE_MEASURED"
+    },
+    "INP": {
+      "current": "Unknown",
+      "target": "<200ms",
+      "status": "TO_BE_MEASURED"
+    }
+  },
+
+  "lcp_deep_analysis": {
+    "current_value": "3.9s",
+    "gap_to_target": "1.4s",
+    "likely_lcp_element": "Hero image or main logo",
+    "contributing_factors": [
+      {
+        "factor": "Heavy uncompressed images",
+        "impact": "~1.5s delay",
+        "details": "Logos 1.6MB each",
+        "fix": "Compress to <100KB, convert to WebP"
+      },
+      {
+        "factor": "Render-blocking CSS",
+        "impact": "~300-500ms delay",
+        "details": "Google Fonts via @import",
+        "fix": "Preconnect, preload, extract critical CSS"
+      },
+      {
+        "factor": "No image preload",
+        "impact": "~200-300ms delay",
+        "details": "Hero image discovered late",
+        "fix": "<link rel='preload' as='image'>"
+      },
+      {
+        "factor": "Large JS bundle blocking",
+        "impact": "~500-800ms delay",
+        "details": "React hydration",
+        "fix": "Code splitting, lazy loading"
+      }
+    ],
+    "optimization_roadmap": [
+      {"action": "Compress logos", "expected_gain": "~1s"},
+      {"action": "Preload hero image", "expected_gain": "~300ms"},
+      {"action": "Add font preconnect", "expected_gain": "~200ms"},
+      {"action": "Extract critical CSS", "expected_gain": "~200ms"}
+    ],
+    "target_achievable": true,
+    "estimated_final_lcp": "~1.8-2.2s"
+  },
+
+  "tbt_fid_deep_analysis": {
+    "current_tbt": "760ms",
+    "gap_to_target": "560ms",
+    "contributing_factors": [
+      {
+        "factor": "Large JavaScript bundle",
+        "impact": "~300-400ms",
+        "details": "Entire app parsed/executed on load",
+        "fix": "Code splitting, tree shaking"
+      },
+      {
+        "factor": "React hydration",
+        "impact": "~200-300ms",
+        "details": "Full component tree hydration",
+        "fix": "Progressive hydration, lazy components"
+      },
+      {
+        "factor": "Third-party scripts",
+        "impact": "~100-150ms",
+        "details": "Analytics, tracking",
+        "fix": "Defer, async loading"
+      },
+      {
+        "factor": "Heavy component initialization",
+        "impact": "~100-200ms",
+        "details": "Map, charts init",
+        "fix": "Lazy load heavy components"
+      }
+    ],
+    "long_tasks_identified": [
+      {"task": "JavaScript evaluation", "duration": "~400ms"},
+      {"task": "React mount/hydration", "duration": "~250ms"},
+      {"task": "Layout/paint", "duration": "~100ms"}
+    ],
+    "optimization_roadmap": [
+      {"action": "Code splitting routes", "expected_gain": "~200ms"},
+      {"action": "Lazy load heavy components", "expected_gain": "~150ms"},
+      {"action": "Defer third-party scripts", "expected_gain": "~100ms"},
+      {"action": "Break up long tasks", "expected_gain": "~100ms"}
+    ],
+    "target_achievable": true,
+    "estimated_final_tbt": "~150-200ms"
+  },
+
+  "cls_analysis": {
+    "current_status": "TO_BE_MEASURED",
+    "potential_cls_sources": [
+      {
+        "source": "Images without dimensions",
+        "likelihood": "HIGH",
+        "fix": "Add explicit width/height attributes"
+      },
+      {
+        "source": "Web fonts loading",
+        "likelihood": "MEDIUM",
+        "fix": "font-display: swap + size-adjust"
+      },
+      {
+        "source": "Dynamic content insertion",
+        "likelihood": "MEDIUM",
+        "fix": "Reserve space with skeletons"
+      },
+      {
+        "source": "Ads/banners loading late",
+        "likelihood": "LOW",
+        "fix": "Reserve ad space"
+      }
+    ],
+    "prevention_strategies": [
+      "Always set width/height on images",
+      "Use aspect-ratio CSS for responsive images",
+      "Skeleton loaders for dynamic content",
+      "Reserve space for async components"
+    ]
+  },
+
+  "inp_analysis": {
+    "current_status": "TO_BE_MEASURED",
+    "potential_inp_issues": [
+      "Heavy event handlers on map interactions",
+      "Complex form validations",
+      "Real-time filtering/sorting"
+    ],
+    "optimization_strategies": [
+      "Debounce/throttle event handlers",
+      "Use requestIdleCallback for non-urgent work",
+      "Virtualize long lists"
+    ]
+  },
+
+  "impact_matrix": {
+    "optimizations_by_impact": [
+      {
+        "optimization": "Compress hero images",
+        "lcp_impact": "HIGH",
+        "tbt_impact": "LOW",
+        "cls_impact": "NONE",
+        "priority": "P0"
+      },
+      {
+        "optimization": "Code splitting",
+        "lcp_impact": "MEDIUM",
+        "tbt_impact": "HIGH",
+        "cls_impact": "NONE",
+        "priority": "P0"
+      },
+      {
+        "optimization": "Font preconnect/preload",
+        "lcp_impact": "MEDIUM",
+        "tbt_impact": "LOW",
+        "cls_impact": "MEDIUM",
+        "priority": "P0"
+      },
+      {
+        "optimization": "Critical CSS",
+        "lcp_impact": "MEDIUM",
+        "tbt_impact": "MEDIUM",
+        "cls_impact": "NONE",
+        "priority": "P1"
+      },
+      {
+        "optimization": "Image dimensions",
+        "lcp_impact": "NONE",
+        "tbt_impact": "NONE",
+        "cls_impact": "HIGH",
+        "priority": "P1"
+      },
+      {
+        "optimization": "Lazy load components",
+        "lcp_impact": "LOW",
+        "tbt_impact": "HIGH",
+        "cls_impact": "LOW",
+        "priority": "P1"
+      }
+    ]
+  },
+
+  "recommendations": {
+    "for_lcp": [
+      "Compresser les images logo/hero à <100KB",
+      "Précharger l'image hero avec <link rel='preload'>",
+      "Ajouter preconnect pour Google Fonts",
+      "Extraire et inliner le CSS critique"
+    ],
+    "for_tbt_fid": [
+      "Implémenter code splitting par route (déjà partiellement fait)",
+      "Lazy load les composants lourds (carte, charts, admin)",
+      "Ajouter defer aux scripts tiers dans <head>",
+      "Fragmenter les long tasks avec requestIdleCallback"
+    ],
+    "for_cls": [
+      "Ajouter width/height à toutes les images",
+      "Utiliser skeleton loaders pour contenu dynamique",
+      "Réserver l'espace pour les fonts avec size-adjust"
+    ]
+  },
+
+  "target_metrics_after_l2": {
+    "LCP": "<2.5s (from 3.9s)",
+    "TBT": "<250ms (from 760ms)",
+    "FCP": "<1.5s (already good at 0.6s)",
+    "CLS": "<0.1",
+    "lighthouse_performance": ">70 (from 47)"
+  },
+
+  "target_metrics_after_l4": {
+    "LCP": "<2.0s",
+    "TBT": "<150ms",
+    "FCP": "<1.2s",
+    "CLS": "<0.05",
+    "lighthouse_performance": ">90"
+  }
+}

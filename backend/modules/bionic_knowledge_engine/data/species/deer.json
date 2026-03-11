@@ -1,0 +1,66 @@
+{
+  "species_id": "deer",
+  "scientific_name": "Odocoileus virginianus",
+  "common_name_fr": "Cerf de Virginie",
+  "common_name_en": "White-tailed Deer",
+  "category": "cervidae",
+  "description_fr": "Cervidé le plus répandu en Amérique du Nord, présent dans le sud du Québec.",
+  "weight_range_kg": {
+    "male_min": 60,
+    "male_max": 130,
+    "female_min": 45,
+    "female_max": 90
+  },
+  "home_range_km2": {
+    "male_summer": 3,
+    "male_rut": 10,
+    "female_summer": 1.5,
+    "female_winter": 0.5
+  },
+  "temperature_range": {
+    "optimal_min": -10,
+    "optimal_max": 20,
+    "tolerance_min": -35,
+    "tolerance_max": 35,
+    "activity_threshold": 30
+  },
+  "elevation_range_m": {
+    "min": 0,
+    "max": 600,
+    "optimal": 200
+  },
+  "activity_patterns": [
+    {"period": "dawn", "activity_level": 0.85, "feeding_probability": 0.8, "movement_probability": 0.75},
+    {"period": "morning", "activity_level": 0.5, "feeding_probability": 0.4, "movement_probability": 0.35},
+    {"period": "midday", "activity_level": 0.25, "feeding_probability": 0.15, "movement_probability": 0.15},
+    {"period": "afternoon", "activity_level": 0.45, "feeding_probability": 0.35, "movement_probability": 0.3},
+    {"period": "dusk", "activity_level": 0.9, "feeding_probability": 0.85, "movement_probability": 0.8},
+    {"period": "night", "activity_level": 0.6, "feeding_probability": 0.5, "movement_probability": 0.45}
+  ],
+  "habitat_preferences": [
+    {"habitat_type": "deciduous_forest", "preference_score": 0.9, "notes": "Habitat principal"},
+    {"habitat_type": "agricultural", "preference_score": 0.85, "notes": "Alimentation cultures"},
+    {"habitat_type": "mixed_forest", "preference_score": 0.8, "notes": "Couvert mixte"},
+    {"habitat_type": "regeneration", "preference_score": 0.75, "notes": "Brout jeune"},
+    {"habitat_type": "coniferous_forest", "preference_score": 0.7, "notes": "Ravage hivernal"}
+  ],
+  "food_sources": [
+    {"name": "corn", "name_fr": "Maïs", "category": "graze", "availability_months": [9,10,11], "preference_score": 0.95},
+    {"name": "acorns", "name_fr": "Glands", "category": "mast", "availability_months": [9,10,11], "preference_score": 0.9},
+    {"name": "soybeans", "name_fr": "Soya", "category": "graze", "availability_months": [9,10], "preference_score": 0.85},
+    {"name": "clover", "name_fr": "Trèfle", "category": "graze", "availability_months": [5,6,7,8,9], "preference_score": 0.8},
+    {"name": "cedar", "name_fr": "Cèdre", "category": "browse", "availability_months": [12,1,2,3], "preference_score": 0.7}
+  ],
+  "human_tolerance": 0.5,
+  "flight_distance_m": 75,
+  "road_avoidance_m": 150,
+  "breeding_info": {
+    "rut_start_month": 10,
+    "rut_peak_month": 11,
+    "rut_end_month": 12,
+    "gestation_days": 200
+  },
+  "data_quality_score": 0.9,
+  "sources": ["mffp_quebec", "fqf"],
+  "last_updated": "2024-02-17"
+}

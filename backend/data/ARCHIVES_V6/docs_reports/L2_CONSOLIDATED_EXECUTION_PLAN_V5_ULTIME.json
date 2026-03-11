@@ -1,0 +1,545 @@
+{
+  "report_id": "L2_CONSOLIDATED_EXECUTION_PLAN_V5_ULTIME",
+  "generated_at": "2026-02-19T23:00:00Z",
+  "version": "V5_ULTIME",
+  "classification": "INTERNAL - STAGING MODE STRICT",
+  "status": "PLAN_ONLY - NO_EXECUTION",
+
+  "compliance_header": {
+    "INTERNAL_ONLY": true,
+    "EXTERNAL_FLOWS": false,
+    "MODE": "STAGING_STRICT",
+    "CODE_MODIFICATION": "FORBIDDEN_WITHOUT_APPROVAL",
+    "AUTOMATIC_OPTIMIZATION": "FORBIDDEN",
+    "AUTOMATIC_EXECUTION": "FORBIDDEN"
+  },
+
+  "executive_summary": {
+    "document_purpose": "Plan consolidé unique pour validation pré-exécution",
+    "current_score": 79.0,
+    "target_trajectory": "79 → 85 → 88.5 → 95 → 99 → 99.9",
+    "total_optimizations_planned": 32,
+    "phases": 6,
+    "execution_status": "BLOCKED_PENDING_APPROVAL"
+  },
+
+  "trajectory_overview": {
+    "milestone_1": {
+      "name": "Quick Wins",
+      "target_score": 85,
+      "gain": "+6 points",
+      "optimizations_count": 5,
+      "execution_status": "PENDING_APPROVAL"
+    },
+    "milestone_2": {
+      "name": "Accessibility",
+      "target_score": 88.5,
+      "gain": "+3.5 points",
+      "optimizations_count": 3,
+      "execution_status": "PENDING_APPROVAL"
+    },
+    "milestone_3": {
+      "name": "Deep Optimizations",
+      "target_score": 95,
+      "gain": "+6.5 points",
+      "optimizations_count": 8,
+      "execution_status": "PENDING_APPROVAL"
+    },
+    "milestone_4": {
+      "name": "Core Web Vitals",
+      "target_score": 97,
+      "gain": "+2 points",
+      "optimizations_count": 5,
+      "execution_status": "PENDING_APPROVAL"
+    },
+    "milestone_5": {
+      "name": "SEO Polish",
+      "target_score": 99,
+      "gain": "+2 points",
+      "optimizations_count": 6,
+      "execution_status": "PENDING_APPROVAL"
+    },
+    "milestone_6": {
+      "name": "Final Polish",
+      "target_score": 99.9,
+      "gain": "+0.9 points",
+      "optimizations_count": 5,
+      "execution_status": "PENDING_APPROVAL"
+    }
+  },
+
+  "consolidated_plan": {
+    "phase_1_quick_wins": {
+      "id": "QW",
+      "name": "Quick Wins (ANALYSE UNIQUEMENT)",
+      "target": "79 → 85",
+      "optimizations": [
+        {
+          "id": "QW-001",
+          "action": "Compresser logos 1.6MB → <100KB",
+          "type": "ASSET_OPTIMIZATION",
+          "files_affected": [
+            "/app/frontend/public/logos/logo-chasse-bionic-fr.png",
+            "/app/frontend/public/logos/logo-bionic-hunt-en.png",
+            "/app/frontend/public/logos/bionic-logo-official.png",
+            "/app/frontend/public/logos/bionic-logo-main.png"
+          ],
+          "expected_gain": "+5 Performance",
+          "risk_level": "LOW",
+          "regression_risk": "NONE",
+          "rollback_strategy": "Restaurer images originales depuis backup",
+          "validation_criteria": "Images < 100KB, qualité visuelle acceptable",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "QW-002",
+          "action": "Ajouter loading='lazy' à 71 images",
+          "type": "CODE_MODIFICATION",
+          "files_affected": "15 fichiers JSX",
+          "expected_gain": "+3 Performance",
+          "risk_level": "LOW",
+          "regression_risk": "LOW",
+          "rollback_strategy": "git revert des modifications",
+          "validation_criteria": "Toutes images hors viewport ont loading='lazy'",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "QW-003",
+          "action": "Ajouter preconnect Google Fonts",
+          "type": "HTML_MODIFICATION",
+          "files_affected": ["/app/frontend/public/index.html"],
+          "code_to_add": "<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>",
+          "expected_gain": "+2 Performance",
+          "risk_level": "NONE",
+          "regression_risk": "NONE",
+          "rollback_strategy": "Supprimer les lignes ajoutées",
+          "validation_criteria": "Network panel montre preconnect établi",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "QW-004",
+          "action": "Ajouter defer à emergent-main.js",
+          "type": "HTML_MODIFICATION",
+          "files_affected": ["/app/frontend/public/index.html"],
+          "current_code": "<script src=\"https://assets.emergent.sh/scripts/emergent-main.js\"></script>",
+          "target_code": "<script defer src=\"https://assets.emergent.sh/scripts/emergent-main.js\"></script>",
+          "expected_gain": "+1 Performance",
+          "risk_level": "LOW",
+          "regression_risk": "LOW",
+          "rollback_strategy": "Retirer defer",
+          "validation_criteria": "Script non-bloquant dans DevTools",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "QW-005",
+          "action": "Précharger hero image",
+          "type": "HTML_MODIFICATION",
+          "files_affected": ["/app/frontend/public/index.html"],
+          "code_to_add": "<link rel=\"preload\" as=\"image\" href=\"/logos/bionic-logo-official.png\" fetchpriority=\"high\">",
+          "expected_gain": "+1 Performance",
+          "risk_level": "NONE",
+          "regression_risk": "NONE",
+          "rollback_strategy": "Supprimer la ligne",
+          "validation_criteria": "Image préchargée visible dans Network panel",
+          "execution_status": "BLOCKED"
+        }
+      ],
+      "total_expected_gain": "+12 points",
+      "subtotal_score": 85
+    },
+
+    "phase_2_accessibility": {
+      "id": "A11Y",
+      "name": "Accessibility Fixes (ANALYSE UNIQUEMENT)",
+      "target": "85 → 88.5",
+      "optimizations": [
+        {
+          "id": "A11Y-001",
+          "action": "Ajouter aria-label aux boutons icônes",
+          "type": "CODE_MODIFICATION",
+          "files_affected": "Multiple composants UI",
+          "audit_required": true,
+          "audit_method": "grep -rn '<Button' | grep -v 'aria-label'",
+          "expected_gain": "+5 Accessibility",
+          "risk_level": "LOW",
+          "regression_risk": "NONE",
+          "rollback_strategy": "git revert",
+          "validation_criteria": "Zero boutons sans aria-label ou texte visible",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "A11Y-002",
+          "action": "Corriger contrastes couleurs insuffisants",
+          "type": "CSS_MODIFICATION",
+          "files_affected": ["CSS variables", "Component styles"],
+          "audit_required": true,
+          "audit_method": "WebAIM Contrast Checker sur pages clés",
+          "expected_gain": "+3 Accessibility",
+          "risk_level": "MEDIUM",
+          "regression_risk": "LOW",
+          "rollback_strategy": "git revert CSS changes",
+          "validation_criteria": "Ratio contraste >= 4.5:1 pour texte normal",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "A11Y-003",
+          "action": "Corriger hiérarchie des titres",
+          "type": "CODE_MODIFICATION",
+          "files_affected": ["ShopPage.jsx", "autres pages"],
+          "expected_gain": "+2 Accessibility",
+          "risk_level": "LOW",
+          "regression_risk": "LOW",
+          "rollback_strategy": "git revert",
+          "validation_criteria": "h1 → h2 → h3 sans sauts",
+          "execution_status": "BLOCKED"
+        }
+      ],
+      "total_expected_gain": "+10 Accessibility points",
+      "subtotal_score": 88.5
+    },
+
+    "phase_3_deep_optimizations": {
+      "id": "DEEP",
+      "name": "Deep Optimizations (ANALYSE UNIQUEMENT)",
+      "target": "88.5 → 95",
+      "optimizations": [
+        {
+          "id": "DEEP-001",
+          "action": "Lazy load TerritoryMap.jsx (5127 lignes)",
+          "type": "CODE_MODIFICATION",
+          "files_affected": [
+            "/app/frontend/src/modules/territory/components/TerritoryMap.jsx",
+            "Pages utilisant TerritoryMap"
+          ],
+          "implementation_pattern": "const TerritoryMap = React.lazy(() => import('./TerritoryMap'))",
+          "expected_gain": "+3 Performance",
+          "risk_level": "MEDIUM",
+          "regression_risk": "MEDIUM",
+          "rollback_strategy": "Revenir à import statique",
+          "validation_criteria": "Composant chargé à la demande, bundle initial réduit",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "DEEP-002",
+          "action": "Lazy load composants lourds (>1000 lignes)",
+          "type": "CODE_MODIFICATION",
+          "files_affected": [
+            "LandsRental.jsx",
+            "HuntMarketplace.jsx",
+            "BionicAnalyzer.jsx",
+            "NetworkingHub.jsx"
+          ],
+          "expected_gain": "+4 Performance",
+          "risk_level": "MEDIUM",
+          "regression_risk": "MEDIUM",
+          "rollback_strategy": "Revenir aux imports statiques",
+          "validation_criteria": "Bundle initial < 500KB",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "DEEP-003",
+          "action": "Extraire et inliner CSS critique (~15KB)",
+          "type": "BUILD_CONFIGURATION",
+          "implementation": "Configurer critters webpack plugin ou extraction manuelle",
+          "expected_gain": "+3 Performance",
+          "risk_level": "MEDIUM",
+          "regression_risk": "LOW",
+          "rollback_strategy": "Désactiver plugin, revenir au CSS bloquant",
+          "validation_criteria": "CSS critique inline dans <head>, reste chargé async",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "DEEP-004",
+          "action": "Réduire weights de fonts (12 → 6)",
+          "type": "CSS_MODIFICATION",
+          "files_affected": ["CSS avec @import Google Fonts"],
+          "current_url": "family=Barlow+Condensed:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600",
+          "target_url": "family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400",
+          "expected_gain": "+1 Performance",
+          "risk_level": "LOW",
+          "regression_risk": "LOW",
+          "rollback_strategy": "Restaurer URL complète",
+          "validation_criteria": "Visuels identiques avec weights réduits",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "DEEP-005",
+          "action": "Ajouter width/height à toutes les images",
+          "type": "CODE_MODIFICATION",
+          "files_affected": "Tous les <img> sans dimensions",
+          "expected_gain": "+2 CLS",
+          "risk_level": "LOW",
+          "regression_risk": "NONE",
+          "rollback_strategy": "git revert",
+          "validation_criteria": "CLS < 0.1",
+          "execution_status": "BLOCKED"
+        }
+      ],
+      "total_expected_gain": "+13 points combined",
+      "subtotal_score": 95
+    },
+
+    "phase_4_core_web_vitals": {
+      "id": "CWV",
+      "name": "Core Web Vitals (ANALYSE UNIQUEMENT)",
+      "target": "95 → 97",
+      "optimizations": [
+        {
+          "id": "CWV-001",
+          "action": "Précharger fonts critiques",
+          "type": "HTML_MODIFICATION",
+          "expected_gain": "+0.5 Performance",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "CWV-002",
+          "action": "Préconnexion origines tierces",
+          "type": "HTML_MODIFICATION",
+          "expected_gain": "+0.5 Performance",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "CWV-003",
+          "action": "Skeleton loaders pour contenu dynamique",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+0.5 CLS",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "CWV-004",
+          "action": "Fragmenter long tasks JavaScript",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+1 TBT",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "CWV-005",
+          "action": "Optimiser React hydration",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+0.5 Performance",
+          "execution_status": "BLOCKED"
+        }
+      ],
+      "total_expected_gain": "+3 points",
+      "subtotal_score": 97
+    },
+
+    "phase_5_seo_polish": {
+      "id": "SEO",
+      "name": "SEO Polish (ANALYSE UNIQUEMENT)",
+      "target": "97 → 99",
+      "optimizations": [
+        {
+          "id": "SEO-001",
+          "action": "Implémenter JSON-LD structured data",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+1.5 SEO",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "SEO-002",
+          "action": "Meta descriptions uniques par page",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+0.5 SEO",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "SEO-003",
+          "action": "Canonical URLs dynamiques",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+0.3 SEO",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "SEO-004",
+          "action": "Open Graph tags complets",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+0.3 SEO",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "SEO-005",
+          "action": "Éliminer erreurs console",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+1 Best Practices",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "SEO-006",
+          "action": "Vérifier images JS-rendered ont alt",
+          "type": "CODE_MODIFICATION",
+          "expected_gain": "+0.4 SEO",
+          "execution_status": "BLOCKED"
+        }
+      ],
+      "total_expected_gain": "+4 points",
+      "subtotal_score": 99
+    },
+
+    "phase_6_final_polish": {
+      "id": "FINAL",
+      "name": "Final Polish vers 99.9% (ANALYSE UNIQUEMENT)",
+      "target": "99 → 99.9",
+      "optimizations": [
+        {
+          "id": "FINAL-001",
+          "action": "Service Worker caching",
+          "type": "NEW_FEATURE",
+          "expected_gain": "+0.3",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "FINAL-002",
+          "action": "Bundle analyzer + dead code removal",
+          "type": "BUILD_CONFIGURATION",
+          "expected_gain": "+0.3",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "FINAL-003",
+          "action": "Brotli compression fine-tuning",
+          "type": "SERVER_CONFIGURATION",
+          "expected_gain": "+0.1",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "FINAL-004",
+          "action": "Font subsetting",
+          "type": "ASSET_OPTIMIZATION",
+          "expected_gain": "+0.1",
+          "execution_status": "BLOCKED"
+        },
+        {
+          "id": "FINAL-005",
+          "action": "Zero regression audit",
+          "type": "TESTING",
+          "expected_gain": "+0.1",
+          "execution_status": "BLOCKED"
+        }
+      ],
+      "total_expected_gain": "+0.9 points",
+      "subtotal_score": 99.9
+    }
+  },
+
+  "architecture_modulaire_stricte": {
+    "compliance_requirement": "100% BIONIC V5",
+    "current_compliance": "95%",
+    "cleanup_actions": [
+      {
+        "id": "ARCH-001",
+        "action": "Supprimer composants dupliqués",
+        "files_count": 8,
+        "priority": "P2",
+        "execution_status": "BLOCKED"
+      },
+      {
+        "id": "ARCH-002",
+        "action": "Supprimer modules vides",
+        "modules": ["marketplace_v2_engine", "territory_advanced_engine"],
+        "priority": "P3",
+        "execution_status": "BLOCKED"
+      },
+      {
+        "id": "ARCH-003",
+        "action": "Standardiser API versioning v1/",
+        "priority": "P3",
+        "execution_status": "BLOCKED"
+      }
+    ],
+    "impact_on_optimizations": "NONE - Cleanup indépendant des optimisations performance"
+  },
+
+  "risks_regression": {
+    "identified_risks": [
+      {
+        "risk_id": "RISK-001",
+        "description": "Lazy loading casse le rendu des composants",
+        "probability": "LOW",
+        "impact": "HIGH",
+        "mitigation": "Test unitaire chaque composant lazy loadé",
+        "rollback": "Revenir à import statique"
+      },
+      {
+        "risk_id": "RISK-002",
+        "description": "Critical CSS extraction trop agressive",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "mitigation": "Vérification visuelle above-the-fold",
+        "rollback": "Désactiver extraction"
+      },
+      {
+        "risk_id": "RISK-003",
+        "description": "Réduction weights fonts casse les visuels",
+        "probability": "LOW",
+        "impact": "LOW",
+        "mitigation": "Comparaison visuelle avant/après",
+        "rollback": "Restaurer weights complets"
+      },
+      {
+        "risk_id": "RISK-004",
+        "description": "Compression images dégrade la qualité",
+        "probability": "LOW",
+        "impact": "LOW",
+        "mitigation": "Validation qualité avant remplacement",
+        "rollback": "Restaurer originaux"
+      },
+      {
+        "risk_id": "RISK-005",
+        "description": "Defer script casse fonctionnalité",
+        "probability": "LOW",
+        "impact": "LOW",
+        "mitigation": "Test fonctionnel complet",
+        "rollback": "Retirer defer"
+      }
+    ],
+    "global_risk_level": "LOW",
+    "regression_probability": "5%"
+  },
+
+  "conditions_validation_pre_execution": {
+    "mandatory_before_execution": [
+      "COPILOT MAÎTRE approval explicite",
+      "Backup complet du code actuel",
+      "Plan de rollback validé",
+      "Tests de régression définis",
+      "Environnement STAGING vérifié"
+    ],
+    "validation_per_phase": {
+      "phase_1": ["Lighthouse audit post-QW", "Visual regression check"],
+      "phase_2": ["Accessibility audit", "Screen reader test"],
+      "phase_3": ["Bundle size analysis", "Route loading test"],
+      "phase_4": ["Core Web Vitals measurement", "Performance audit"],
+      "phase_5": ["SEO audit", "Structured data validation"],
+      "phase_6": ["Full regression suite", "Final Lighthouse audit"]
+    }
+  },
+
+  "impact_trajectory": {
+    "baseline": 79.0,
+    "after_phase_1": 85.0,
+    "after_phase_2": 88.5,
+    "after_phase_3": 95.0,
+    "after_phase_4": 97.0,
+    "after_phase_5": 99.0,
+    "after_phase_6": 99.9,
+    "total_gain": 20.9,
+    "phases_count": 6,
+    "optimizations_count": 32
+  },
+
+  "execution_approval": {
+    "status": "BLOCKED",
+    "requires": "COPILOT MAÎTRE explicit approval",
+    "approval_format": "INSTRUCTION MAÎTRE — AUTORISATION EXÉCUTION PHASE [X]",
+    "partial_execution_allowed": true,
+    "phase_by_phase": true
+  },
+
+  "document_status": {
+    "type": "PLAN_ONLY",
+    "execution": "FORBIDDEN",
+    "purpose": "Pre-validation consolidation",
+    "next_step": "Await COPILOT MAÎTRE approval"
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "report_id": "LIGHTHOUSE_L1_SUMMARY",
+  "generated_at": "2026-02-19T21:23:51.484070",
+  "mode": "STAGING",
+  "internal_only": true,
+  "pages_audited": [
+    "home",
+    "contenus",
+    "carte_interactive",
+    "mon_territoire",
+    "shop",
+    "login"
+  ],
+  "scores_by_page": {
+    "home": {
+      "scores": {
+        "performance": 47.0,
+        "accessibility": 86.0,
+        "best-practices": 96.0,
+        "seo": 92.0
+      },
+      "url": "https://territory-analysis.preview.emergentagent.com/",
+      "fetchTime": "2026-02-19T21:21:12.645Z",
+      "issues_count": {
+        "performance": 9,
+        "accessibility": 2,
+        "best-practices": 1,
+        "seo": 1
+      }
+    },
+    "contenus": {
+      "scores": {
+        "performance": 46.0,
+        "accessibility": 79.0,
+        "best-practices": 96.0,
+        "seo": 92.0
+      },
+      "url": "https://territory-analysis.preview.emergentagent.com/contenus",
+      "fetchTime": "2026-02-19T21:22:11.629Z",
+      "issues_count": {
+        "performance": 10,
+        "accessibility": 3,
+        "best-practices": 1,
+        "seo": 1
+      }
+    },
+    "carte_interactive": {
+      "scores": {
+        "performance": 48.0,
+        "accessibility": 79.0,
+        "best-practices": 96.0,
+        "seo": 92.0
+      },
+      "url": "https://territory-analysis.preview.emergentagent.com/carte-interactive",
+      "fetchTime": "2026-02-19T21:21:56.600Z",
+      "issues_count": {
+        "performance": 9,
+        "accessibility": 3,
+        "best-practices": 1,
+        "seo": 1
+      }
+    },
+    "mon_territoire": {
+      "scores": {
+        "performance": 46.0,
+        "accessibility": 79.0,
+        "best-practices": 96.0,
+        "seo": 92.0
+      },
+      "url": "https://territory-analysis.preview.emergentagent.com/mon-territoire",
+      "fetchTime": "2026-02-19T21:21:41.747Z",
+      "issues_count": {
+        "performance": 9,
+        "accessibility": 3,
+        "best-practices": 1,
+        "seo": 1
+      }
+    },
+    "shop": {
+      "scores": {
+        "performance": 45.0,
+        "accessibility": 83.0,
+        "best-practices": 96.0,
+        "seo": 92.0
+      },
+      "url": "https://territory-analysis.preview.emergentagent.com/shop",
+      "fetchTime": "2026-02-19T21:22:41.610Z",
+      "issues_count": {
+        "performance": 10,
+        "accessibility": 4,
+        "best-practices": 1,
+        "seo": 1
+      }
+    },
+    "login": {
+      "scores": {
+        "performance": 50.0,
+        "accessibility": 79.0,
+        "best-practices": 96.0,
+        "seo": 92.0
+      },
+      "url": "https://territory-analysis.preview.emergentagent.com/login",
+      "fetchTime": "2026-02-19T21:22:26.749Z",
+      "issues_count": {
+        "performance": 9,
+        "accessibility": 3,
+        "best-practices": 1,
+        "seo": 1
+      }
+    }
+  },
+  "average_scores": {
+    "performance": 47.0,
+    "accessibility": 80.8,
+    "best-practices": 96.0,
+    "seo": 92.0
+  },
+  "global_average": 79.0,
+  "targets": {
+    "performance": 95,
+    "accessibility": 99,
+    "best-practices": 99,
+    "seo": 99,
+    "global_target": 99.0,
+    "aspirational_target": 99.9
+  },
+  "gaps_to_target": {
+    "performance": 48.0,
+    "accessibility": 18.200000000000003,
+    "best-practices": 3.0,
+    "seo": 7.0,
+    "global": 20.0
+  },
+  "target_achieved": false,
+  "optimization_needed": true
+}

@@ -1,0 +1,144 @@
+"""
+BIONIC Compliance Engine (BCE) — API Router
+============================================
+
+Endpoints:
+  POST /api/bce/validate           — Full compliance validation
+  POST /api/bce/validate/{name}    — Single validator
+  POST /api/bce/certify            — Certify current state as Golden State
+  GET  /api/bce/status             — Quick BCE health check
+"""
+
+import logging
+from datetime import datetime, timezone
+from typing import Optional
+from fastapi import APIRouter
+
+from bce.engine import run_full_validation, run_single_validator, BCE_VERSION
+from bce.validators.golden_state import save_golden_state
+
+logger = logging.getLogger("bce.router")
+
+router = APIRouter(prefix="/api/bce", tags=["BCE"])
+
+
+@router.get("/status")
+async def bce_status():
+    """Quick health check for the BCE module."""
+    return {
+        "status": "operational",
+        "version": BCE_VERSION,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "validators": [
+            "spatial_integrity", "water_exclusion", "species_coherence",
+            "season_coherence", "scoring_determinism", "ui_coherence",
+            "engine_isolation", "pipeline_order", "debug_layer_guard",
+            "golden_state",
+        ],
+    }
+
+
+@router.post("/validate")
+async def bce_validate():
+    """
+    Run FULL BCE compliance validation.
+    This is the MANDATORY CI/CD gate — no merge allowed if any validator fails.
+
+    Validators that need live zone data (spatial_integrity, water_exclusion)
+    will run in SKIP mode without it. To fully validate them, use the
+    /validate-with-zones endpoint or provide zone data.
+    """
+    report = run_full_validation()
+    return report
+
+
+@router.post("/validate/{validator_name}")
+async def bce_validate_single(validator_name: str):
+    """Run a single validator by name."""
+    result = run_single_validator(validator_name)
+    return {
+        "bce_version": BCE_VERSION,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "validator": result,
+    }
+
+
+@router.post("/validate-with-zones")
+async def bce_validate_with_zones():
+    """
+    Run FULL BCE validation including spatial/water checks
+    against live zone generation for a test area.
+    """
+    try:
+        from modules.bionic_engine_p0.services.zone_engine_core_v2 import (
+            generate_organic_zones,
+        )
+
+        # Generate zones for a known test area (rural Quebec, near water)
+        test_bounds = {
+            "north": 46.96,
+            "south": 46.93,
+            "east": -71.27,
+            "west": -71.33,
+        }
+        test_layers = ["habitats", "alimentation", "repos"]
+
+        geojson = await generate_organic_zones(
+            bounds=test_bounds,
+            layers=test_layers,
+            species="moose",
+            resolution=40,
+            max_zones_per_layer=5,
+        )
+
+        # Extract exclusions from the stats for water validation
+        exclusions = geojson.get("_exclusions", [])
+
+        report = run_full_validation(
+            zones_geojson=geojson,
+            exclusions=exclusions,
+        )
+        report["test_area"] = test_bounds
+        report["zones_generated"] = len(geojson.get("features", []))
+        return report
+
+    except Exception as e:
+        logger.error(f"BCE validate-with-zones failed: {e}")
+        # Fall back to validation without zones
+        report = run_full_validation()
+        report["zone_generation_error"] = str(e)
+        return report
+
+
+@router.post("/certify")
+async def bce_certify():
+    """
+    Certify the current state as the Golden State reference.
+    Allows certification if ONLY golden_state validator fails (expected on update).
+    All other validators must pass.
+    """
+    report = run_full_validation()
+
+    # Check if only golden_state is failing (acceptable for re-certification)
+    non_golden_failures = [
+        v for v in report["validators"]
+        if v["name"] != "golden_state"
+        and v["status"] not in ("PASS", "SKIP", "WARN")
+    ]
+
+    if not non_golden_failures:
+        state = save_golden_state()
+        return {
+            "status": "certified",
+            "golden_state": state,
+            "validation_report": report,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    else:
+        return {
+            "status": "rejected",
+            "reason": f"Cannot certify — {len(non_golden_failures)} non-golden validators failed",
+            "failed_validators": [v["name"] for v in non_golden_failures],
+            "validation_report": report,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }

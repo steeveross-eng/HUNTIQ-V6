@@ -1,0 +1,162 @@
+{
+  "$schema": "https://huntiq.ca/schemas/bionic-corridor-v1.json",
+  "contract_id": "corridor_schema_v1",
+  "contract_version": "1.0.0",
+  "module_name": "map_corridors",
+  "phase": "P1-HOTSPOTS",
+  "status": "ACTIVE",
+  "created_at": "2025-12-21",
+  "author": "BIONIC Engine Team",
+  "approved_by": "COPILOT MAITRE",
+  "description": "Schema pour les corridors de deplacement BIONIC V5 ULTIME x2",
+
+  "corridor_types": {
+    "enum": [
+      "movement",
+      "avoidance",
+      "preferred",
+      "feeding_transit"
+    ],
+    "descriptions": {
+      "movement": "Corridors de deplacement principal",
+      "avoidance": "Corridors d'evitement (zones perturbees)",
+      "preferred": "Routes preferees historiques",
+      "feeding_transit": "Transit alimentation-repos"
+    }
+  },
+
+  "visual_spec": {
+    "stroke_width_px": {"min": 1.5, "max": 2.5, "default": 2},
+    "fill_opacity": {"const": 0},
+    "line_style": {
+      "movement": "solid",
+      "avoidance": "dashed",
+      "preferred": "solid",
+      "feeding_transit": "dotted"
+    },
+    "effects": {
+      "glow": false,
+      "shadow": false,
+      "halo": false
+    }
+  },
+
+  "color_palette": {
+    "movement": "#8BC34A",
+    "avoidance": "#EF5350",
+    "preferred": "#4CAF50",
+    "feeding_transit": "#FF9800"
+  },
+
+  "request_schema": {
+    "type": "object",
+    "required": ["bounds", "species"],
+    "properties": {
+      "bounds": {
+        "type": "object",
+        "required": ["north", "south", "east", "west"],
+        "properties": {
+          "north": {"type": "number"},
+          "south": {"type": "number"},
+          "east": {"type": "number"},
+          "west": {"type": "number"}
+        }
+      },
+      "species": {
+        "type": "string",
+        "enum": ["moose", "deer", "bear", "wild_turkey", "elk"]
+      },
+      "corridor_types": {
+        "type": "array",
+        "items": {"$ref": "#/corridor_types/enum"},
+        "default": ["movement", "preferred", "feeding_transit"]
+      },
+      "datetime": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "connect_zones": {
+        "type": "boolean",
+        "default": true,
+        "description": "Connecter les corridors aux zones comportementales"
+      }
+    }
+  },
+
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "success": {"type": "boolean"},
+      "corridors": {
+        "type": "array",
+        "items": {"$ref": "#/corridor_object"}
+      },
+      "metadata": {
+        "type": "object"
+      }
+    }
+  },
+
+  "corridor_object": {
+    "type": "object",
+    "required": ["id", "type", "geometry", "movement_context", "style"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^CR-[A-Z0-9]{8}$"
+      },
+      "type": {
+        "$ref": "#/corridor_types/enum"
+      },
+      "geometry": {
+        "type": "object",
+        "properties": {
+          "type": {"const": "LineString"},
+          "coordinates": {"type": "array"}
+        }
+      },
+      "movement_context": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string",
+            "enum": ["bidirectional", "north", "south", "east", "west"]
+          },
+          "frequency": {
+            "type": "string",
+            "enum": ["daily", "seasonal", "occasional"]
+          },
+          "peak_hours": {
+            "type": "array",
+            "items": {"type": "integer"}
+          },
+          "connects": {
+            "type": "object",
+            "properties": {
+              "from_zone": {"type": "string"},
+              "to_zone": {"type": "string"}
+            }
+          }
+        }
+      },
+      "width_meters": {
+        "type": "number",
+        "minimum": 10,
+        "maximum": 500
+      },
+      "usage_probability": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "style": {
+        "type": "object",
+        "properties": {
+          "stroke_color": {"type": "string"},
+          "stroke_width": {"type": "number", "default": 2},
+          "stroke_dasharray": {"type": "string"}
+        }
+      }
+    }
+  }
+}

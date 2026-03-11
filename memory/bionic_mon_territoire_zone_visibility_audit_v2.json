@@ -1,0 +1,55 @@
+{
+  "audit_name": "bionic_mon_territoire_zone_visibility_audit_v2",
+  "version": "V5_300_STRICT",
+  "date": "2026-03-03T16:10:00Z",
+  "command": "emergent_bionic_waypoint_zone_centering_fix --profile=BIONIC_V5_300_STRICT",
+  "status": "PASS",
+  "summary": "MON TERRITOIRE utilise le pipeline waypoint exclusif. Zones visibles uniquement autour du waypoint actif. Clipping 1km×1km post-génération. Toggles Classification rendu uniquement.",
+  "pipeline_verification": {
+    "zoneLockKey_waypoint_only": true,
+    "zoneLockKey_returns_null_without_waypoints": true,
+    "no_viewport_mode": true,
+    "no_currentMapBounds_dependency": true,
+    "no_currentZoom_dependency": true,
+    "zoomRef_stable_for_zoom_level": true
+  },
+  "zone_visibility": {
+    "without_waypoints": {
+      "zones_displayed": 0,
+      "map_shows_base_layers_only": true,
+      "behavior": "Carte vide de zones BIONIC — couches de base uniquement"
+    },
+    "with_waypoint": {
+      "zones_displayed": 13,
+      "zones_centered_on_waypoint": true,
+      "territory_shell_present": true,
+      "colored_polygons_visible": true
+    }
+  },
+  "clipping_verification": {
+    "applied_post_generation": true,
+    "only_when_selectedWaypointForZones": true,
+    "1km_x_1km_invariant": true,
+    "analysis_bbox_rectangle_displayed": true
+  },
+  "classification_toggles_verification": {
+    "render_only": true,
+    "no_recalculation_triggered": true,
+    "zones_remain_in_zoneLockRef": true,
+    "all_12_toggles_functional": true,
+    "families": ["Structure", "Fonctionnel", "Conditions", "Instantané"]
+  },
+  "anti_regression": {
+    "state_locking_preserved": true,
+    "no_flash_or_intermediate_state": true,
+    "no_partial_reload": true,
+    "zones_stable_after_pan": true,
+    "zones_stable_after_zoom": true,
+    "zones_stable_after_layer_toggle": true
+  },
+  "test_evidence": {
+    "testing_agent_report": "/app/test_reports/iteration_113.json",
+    "spatial_clipping_tests": "15/15 PASS",
+    "success_rate": "100%"
+  }
+}

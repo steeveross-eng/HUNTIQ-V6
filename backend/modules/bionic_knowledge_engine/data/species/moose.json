@@ -1,0 +1,65 @@
+{
+  "species_id": "moose",
+  "scientific_name": "Alces alces",
+  "common_name_fr": "Orignal",
+  "common_name_en": "Moose",
+  "category": "cervidae",
+  "description_fr": "Le plus grand cervidé du monde, emblématique des forêts boréales du Québec.",
+  "weight_range_kg": {
+    "male_min": 380,
+    "male_max": 700,
+    "female_min": 270,
+    "female_max": 400
+  },
+  "home_range_km2": {
+    "male_summer": 25,
+    "male_winter": 15,
+    "female_summer": 15,
+    "female_winter": 10
+  },
+  "temperature_range": {
+    "optimal_min": -5,
+    "optimal_max": 14,
+    "tolerance_min": -40,
+    "tolerance_max": 25,
+    "activity_threshold": 20
+  },
+  "elevation_range_m": {
+    "min": 0,
+    "max": 1200,
+    "optimal": 300
+  },
+  "activity_patterns": [
+    {"period": "dawn", "activity_level": 0.9, "feeding_probability": 0.8, "movement_probability": 0.7},
+    {"period": "morning", "activity_level": 0.6, "feeding_probability": 0.5, "movement_probability": 0.4},
+    {"period": "midday", "activity_level": 0.3, "feeding_probability": 0.2, "movement_probability": 0.2},
+    {"period": "afternoon", "activity_level": 0.4, "feeding_probability": 0.3, "movement_probability": 0.3},
+    {"period": "dusk", "activity_level": 0.9, "feeding_probability": 0.8, "movement_probability": 0.7},
+    {"period": "night", "activity_level": 0.5, "feeding_probability": 0.4, "movement_probability": 0.3}
+  ],
+  "habitat_preferences": [
+    {"habitat_type": "wetland", "preference_score": 0.9, "notes": "Habitat principal été"},
+    {"habitat_type": "mixed_forest", "preference_score": 0.85, "notes": "Habitat rut"},
+    {"habitat_type": "coniferous_forest", "preference_score": 0.8, "notes": "Ravage hivernal"},
+    {"habitat_type": "lake_shore", "preference_score": 0.75, "notes": "Alimentation aquatique"},
+    {"habitat_type": "regeneration", "preference_score": 0.7, "notes": "Brout abondant"}
+  ],
+  "food_sources": [
+    {"name": "willow", "name_fr": "Saule", "category": "browse", "availability_months": [5,6,7,8,9], "preference_score": 0.95},
+    {"name": "aquatic_plants", "name_fr": "Plantes aquatiques", "category": "browse", "availability_months": [6,7,8], "preference_score": 0.9},
+    {"name": "birch", "name_fr": "Bouleau", "category": "browse", "availability_months": [5,6,7,8,9,10], "preference_score": 0.8},
+    {"name": "balsam_fir", "name_fr": "Sapin baumier", "category": "browse", "availability_months": [11,12,1,2,3], "preference_score": 0.75}
+  ],
+  "human_tolerance": 0.3,
+  "flight_distance_m": 150,
+  "road_avoidance_m": 300,
+  "breeding_info": {
+    "rut_start_month": 9,
+    "rut_peak_month": 10,
+    "rut_end_month": 10,
+    "gestation_days": 230
+  },
+  "data_quality_score": 0.92,
+  "sources": ["mffp_quebec", "sepaq", "fqf"],
+  "last_updated": "2024-02-17"
+}

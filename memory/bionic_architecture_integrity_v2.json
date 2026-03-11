@@ -1,0 +1,98 @@
+{
+  "audit_id": "bionic_architecture_integrity_v2",
+  "profile": "BIONIC_V5_300_STRICT",
+  "date": "2026-03-03T04:00:00Z",
+  "version": "2.0.0",
+  "status": "COMPLETED",
+  "supersedes": "bionic_architecture_integrity_v1",
+
+  "executive_summary": {
+    "cross_connections": 0,
+    "involuntary_recalculations": 0,
+    "structural_zone_stability": "COMPLETE",
+    "bionic_compliance": "STRICT"
+  },
+
+  "module_isolation_audit": {
+    "EcoforestryLayers": {
+      "pipeline": "WMS proxy (NFIS-QC) → Tile Locking → rendu",
+      "state_locking": "Tile Locking System (opacity 0→target, keepBuffer=8, updateWhenZooming=false)",
+      "cross_references": 0,
+      "influences_structural_zones": false,
+      "status": "ISOLE"
+    },
+    "BionicMicroZones": {
+      "pipeline": "bionicZones (filtrees par visibilite) → NormalizedZone (useMemo couleurs)",
+      "state_locking": "Zones recues en props depuis parent — donnees source verrouillees dans zoneLockRef",
+      "cross_references": 0,
+      "influenced_by_dynamic": false,
+      "status": "ISOLE"
+    },
+    "TerritoryShell": {
+      "pipeline": "allZones (NON filtrees) → convexHull → buffer → chaikinSmooth",
+      "state_locking": "Recoit allZones — enveloppe STABLE independamment des toggles de visibilite",
+      "cross_references": 0,
+      "influenced_by_dynamic": false,
+      "status": "ISOLE"
+    },
+    "StructureContrastLayer": {
+      "pipeline": "terrain-data API → exclusion polygons → rendu",
+      "state_locking": "structureLockRef — verrouillage apres premier chargement",
+      "cross_references": 0,
+      "influenced_by_dynamic": false,
+      "status": "ISOLE"
+    },
+    "WaypointUnifiedPanel": {
+      "pipeline": "waypoints state → panneau lateral unifie",
+      "cross_references": 0,
+      "influenced_by_dynamic": false,
+      "status": "ISOLE"
+    },
+    "DiagnosticExclusionsPanel": {
+      "pipeline": "dynamic/scores API → panneau lateral",
+      "isolation": "Pipeline dynamique ISOLE — aucune influence sur zones structurelles",
+      "cross_references": 0,
+      "influences_structural_zones": false,
+      "status": "ISOLE"
+    },
+    "ExclusionZoneOverlay": {
+      "pipeline": "terrain-data API → overlay semi-transparent",
+      "cross_references": 0,
+      "influenced_by_dynamic": false,
+      "status": "ISOLE"
+    }
+  },
+
+  "cross_connection_audit": {
+    "dynamic_to_structural": "ZERO — Le moteur dynamique (meteo, pression, heure) ne modifie JAMAIS les zones structurelles",
+    "structural_to_ecoforestry": "ZERO — Les zones organiques et les tuiles WMS sont des pipelines independants",
+    "waypoint_to_zones": "CONTRAT EXPLICITE — Le changement de waypoint cible declenche un recalcul legitime via zoneLockKey",
+    "layers_to_calculation": "ZERO — layersVisible filtre uniquement le RENDU, pas le calcul"
+  },
+
+  "regression_audit": {
+    "iter_103_normalisation_visuelle": { "status": "PASS", "regression": false },
+    "iter_104_viewport_anchor": { "status": "PASS", "regression": false },
+    "iter_105_exclusions_dynamiques": { "status": "PASS", "regression": false },
+    "iter_106_waypoint_unification": { "status": "PASS", "regression": false },
+    "iter_107_ecoforest_audit": { "status": "PASS", "regression": false },
+    "iter_108_stabilization": { "status": "PASS", "regression": false }
+  },
+
+  "state_locking_summary": {
+    "MonTerritoireBionicPage": "zoneLockRef — zones structurelles calculees UNE FOIS, verrouillees par cle espece+waypoint",
+    "WaypointMap": "moveend handler SUPPRIME — zones calculees au chargement uniquement",
+    "StructureContrastLayer": "structureLockRef — polygones exclusion verrouilles apres premier fetch",
+    "TerritoryShell": "Recoit allZones (non filtrees) — enveloppe stable",
+    "EcoforestryLayers": "Tile Locking System — opacity 0→target, keepBuffer=8"
+  },
+
+  "bionic_v5_300_compliance": {
+    "architecture_modulaire": "PASS — Chaque moteur isole dans son propre pipeline",
+    "zero_connexion_croisee": "PASS — 0 influence dynamique→structurel",
+    "zero_regression": "PASS — iter_103 a iter_108 tous valides",
+    "purete_structurelle": "PASS — Zones 100% deterministes, verrouillees apres creation",
+    "isolation_api_layers": "PASS — Visibilite = filtre rendu uniquement",
+    "stabilite_absolue": "PASS — 0 flash, 0 etat intermediaire, 0 rechargement partiel"
+  }
+}

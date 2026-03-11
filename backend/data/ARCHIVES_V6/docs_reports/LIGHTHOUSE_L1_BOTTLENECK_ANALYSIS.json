@@ -1,0 +1,222 @@
+{
+  "report_id": "LIGHTHOUSE_L1_BOTTLENECK_ANALYSIS",
+  "generated_at": "2026-02-19T21:25:00Z",
+  "mode": "STAGING",
+  "internal_only": true,
+  "executive_summary": {
+    "current_global_score": 79.0,
+    "target_score": 99.0,
+    "gap": 20.0,
+    "status": "OPTIMISATION REQUISE",
+    "priority": "CRITIQUE"
+  },
+  "scores_baseline": {
+    "performance": {
+      "current": 47.0,
+      "target": 95,
+      "gap": 48.0,
+      "status": "CRITIQUE"
+    },
+    "accessibility": {
+      "current": 80.8,
+      "target": 99,
+      "gap": 18.2,
+      "status": "HAUTE PRIORITÉ"
+    },
+    "seo": {
+      "current": 92.0,
+      "target": 99,
+      "gap": 7.0,
+      "status": "MOYENNE PRIORITÉ"
+    },
+    "best_practices": {
+      "current": 96.0,
+      "target": 99,
+      "gap": 3.0,
+      "status": "BASSE PRIORITÉ"
+    }
+  },
+  "bottlenecks": {
+    "performance": [
+      {
+        "id": "P1",
+        "issue": "JavaScript non minifié",
+        "impact": "870 KiB d'économies potentielles",
+        "severity": "CRITIQUE",
+        "solution": "Configurer Webpack/CRA pour minification en production",
+        "files_affected": ["bundle.js", "main.js", "vendors.js"]
+      },
+      {
+        "id": "P2",
+        "issue": "JavaScript inutilisé",
+        "impact": "1,891 KiB de code mort",
+        "severity": "CRITIQUE",
+        "solution": "Activer tree-shaking, code splitting, lazy loading des composants",
+        "files_affected": ["node_modules bundles", "unused component code"]
+      },
+      {
+        "id": "P3",
+        "issue": "Temps d'exécution JavaScript",
+        "impact": "1.4s de temps de blocage",
+        "severity": "CRITIQUE",
+        "solution": "Différer les scripts non critiques, utiliser Web Workers",
+        "files_affected": ["analytics", "third-party scripts", "heavy computations"]
+      },
+      {
+        "id": "P4",
+        "issue": "Total Blocking Time (TBT)",
+        "impact": "760ms (cible < 200ms)",
+        "severity": "CRITIQUE",
+        "solution": "Fragmenter les long tasks, optimiser les event handlers",
+        "files_affected": ["React hydration", "event listeners"]
+      },
+      {
+        "id": "P5",
+        "issue": "Largest Contentful Paint (LCP)",
+        "impact": "3.9s (cible < 2.5s)",
+        "severity": "HAUTE",
+        "solution": "Précharger hero image, optimiser fonts, utiliser CDN",
+        "files_affected": ["hero images", "web fonts", "critical CSS"]
+      },
+      {
+        "id": "P6",
+        "issue": "CSS non minifié",
+        "impact": "32 KiB d'économies",
+        "severity": "MOYENNE",
+        "solution": "Configurer PostCSS/cssnano pour minification"
+      },
+      {
+        "id": "P7",
+        "issue": "CSS inutilisé",
+        "impact": "47 KiB de styles morts",
+        "severity": "MOYENNE",
+        "solution": "Utiliser PurgeCSS, audit Tailwind unused classes"
+      }
+    ],
+    "accessibility": [
+      {
+        "id": "A1",
+        "issue": "Images sans attribut alt",
+        "impact": "Accessibilité écran lecteur compromise",
+        "severity": "CRITIQUE",
+        "solution": "Note: Corrections P0 SEO appliquées - vérifier les images dynamiques chargées après le DOM",
+        "pages_affected": ["home"]
+      },
+      {
+        "id": "A2",
+        "issue": "Boutons sans nom accessible",
+        "impact": "Lecteurs d'écran ne peuvent pas identifier les actions",
+        "severity": "CRITIQUE",
+        "solution": "Ajouter aria-label ou texte visible à tous les boutons icônes",
+        "pages_affected": ["home", "shop", "mon-territoire"]
+      },
+      {
+        "id": "A3",
+        "issue": "Contraste insuffisant",
+        "impact": "Texte illisible pour les malvoyants",
+        "severity": "CRITIQUE",
+        "solution": "Vérifier et ajuster les ratios de contraste (min 4.5:1 pour texte normal)",
+        "pages_affected": ["contenus", "carte-interactive", "mon-territoire"]
+      },
+      {
+        "id": "A4",
+        "issue": "Ordre des titres incorrect",
+        "impact": "Navigation confuse pour lecteurs d'écran",
+        "severity": "HAUTE",
+        "solution": "Restructurer la hiérarchie h1→h2→h3 sans sauter de niveaux",
+        "pages_affected": ["shop"]
+      }
+    ],
+    "seo": [
+      {
+        "id": "S1",
+        "issue": "Images sans alt (SEO)",
+        "impact": "Indexation images compromise",
+        "severity": "CRITIQUE",
+        "solution": "Vérifier les images chargées dynamiquement (JavaScript rendered)"
+      }
+    ],
+    "best_practices": [
+      {
+        "id": "B1",
+        "issue": "Erreurs console navigateur",
+        "impact": "Indique des problèmes JavaScript non gérés",
+        "severity": "HAUTE",
+        "solution": "Auditer et corriger toutes les erreurs console"
+      }
+    ]
+  },
+  "optimization_phases": [
+    {
+      "phase": "L2",
+      "name": "CRITICAL PERFORMANCE",
+      "priority": "P0",
+      "actions": [
+        "Configurer build production avec minification complète",
+        "Activer code splitting (React.lazy + Suspense)",
+        "Implémenter lazy loading pour images (loading='lazy')",
+        "Différer les scripts analytics avec defer/async",
+        "Optimiser le bundle avec Webpack Bundle Analyzer"
+      ],
+      "estimated_impact": "+25-35 points Performance"
+    },
+    {
+      "phase": "L3",
+      "name": "ACCESSIBILITY FIXES",
+      "priority": "P1",
+      "actions": [
+        "Audit et correction de tous les boutons icônes (aria-label)",
+        "Vérification contraste couleurs avec WebAIM tool",
+        "Restructuration hiérarchie titres",
+        "Test avec lecteur d'écran (NVDA/VoiceOver)"
+      ],
+      "estimated_impact": "+15-20 points Accessibility"
+    },
+    {
+      "phase": "L4",
+      "name": "CORE WEB VITALS",
+      "priority": "P2",
+      "actions": [
+        "Précharger fonts critiques (preload)",
+        "Précharger hero images",
+        "Implémenter Critical CSS inline",
+        "Optimiser CLS (réserver l'espace images)",
+        "Préconnexion aux origines tierces"
+      ],
+      "estimated_impact": "+10-15 points Performance"
+    },
+    {
+      "phase": "L5",
+      "name": "SEO POLISH",
+      "priority": "P3",
+      "actions": [
+        "Vérifier toutes les images JS-rendered ont alt",
+        "Implémenter structured data (JSON-LD)",
+        "Optimiser meta descriptions uniques",
+        "Vérifier canonical URLs"
+      ],
+      "estimated_impact": "+5-7 points SEO"
+    }
+  ],
+  "quick_wins": [
+    {
+      "action": "Activer gzip/brotli compression sur le serveur",
+      "impact": "Réduction 60-80% taille transfert"
+    },
+    {
+      "action": "Ajouter loading='lazy' à toutes les images hors viewport",
+      "impact": "Réduction LCP, économie bandwidth"
+    },
+    {
+      "action": "Ajouter aria-label aux boutons icônes",
+      "impact": "+10-15 points Accessibility"
+    }
+  ],
+  "target_timeline": {
+    "phase_L2": "Score Performance > 70",
+    "phase_L3": "Score Accessibility > 95",
+    "phase_L4": "Score Performance > 90",
+    "phase_L5": "Score SEO > 98",
+    "final_target": "Score Global >= 99.0"
+  }
+}

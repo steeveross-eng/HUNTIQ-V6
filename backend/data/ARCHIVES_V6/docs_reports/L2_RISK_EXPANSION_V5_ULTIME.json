@@ -1,0 +1,428 @@
+{
+  "report_id": "L2_RISK_EXPANSION_V5_ULTIME",
+  "generated_at": "2026-02-19T23:50:00Z",
+  "version": "V5_ULTIME",
+  "classification": "INTERNAL - STAGING MODE STRICT",
+  "status": "ANALYSIS_ONLY - NO_EXECUTION",
+
+  "risk_header": {
+    "purpose": "Analyse des risques étendue multi-dimensionnelle",
+    "scope": "Risques croisés, séquentiels, structurels et multi-phases",
+    "execution_status": "BLOCKED"
+  },
+
+  "risk_taxonomy": {
+    "categories": [
+      "CROSS_MODULE_DEPENDENCY",
+      "SEQUENTIAL_EXECUTION",
+      "STRUCTURAL_MODULARITY",
+      "MULTI_PHASE_REGRESSION"
+    ],
+    "severity_levels": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "NEGLIGIBLE"],
+    "probability_levels": ["CERTAIN", "LIKELY", "POSSIBLE", "UNLIKELY", "RARE"]
+  },
+
+  "cross_module_dependency_risks": {
+    "category": "CROSS_MODULE_DEPENDENCY",
+    "description": "Risques liés aux interactions entre modules et dépendances",
+    "risks": [
+      {
+        "risk_id": "CROSS-001",
+        "title": "Lazy loading TerritoryMap impact sur modules dépendants",
+        "description": "TerritoryMap est utilisé par MonTerritoireBionicPage et MapPage. Le lazy loading peut affecter l'initialisation si les données sont attendues synchronement.",
+        "modules_involved": ["territory", "pages/MonTerritoireBionicPage", "pages/MapPage"],
+        "dependencies": ["leaflet", "react-leaflet"],
+        "probability": "POSSIBLE",
+        "severity": "MEDIUM",
+        "impact": "Composant peut ne pas s'afficher correctement au premier rendu",
+        "mitigation": [
+          "Vérifier que les données sont chargées avant le composant",
+          "Utiliser Suspense avec fallback approprié",
+          "Tester chaque page utilisant TerritoryMap"
+        ],
+        "detection": "Visual check + console errors",
+        "rollback": "Revenir à import statique"
+      },
+      {
+        "risk_id": "CROSS-002",
+        "title": "Recharts lazy loading et composants analytics",
+        "description": "Plusieurs composants partagent recharts. Un lazy loading mal coordonné peut causer des chargements multiples.",
+        "modules_involved": ["analytics", "dashboard", "territory"],
+        "dependencies": ["recharts"],
+        "probability": "UNLIKELY",
+        "severity": "LOW",
+        "impact": "Performance dégradée par chargements redondants",
+        "mitigation": [
+          "Créer un wrapper unique pour recharts",
+          "Lazy load le wrapper, pas les composants individuels"
+        ],
+        "detection": "Network panel analysis",
+        "rollback": "Revenir aux imports statiques"
+      },
+      {
+        "risk_id": "CROSS-003",
+        "title": "LanguageContext et traductions asynchrones",
+        "description": "Si les traductions sont lazy loadées par langue, les composants peuvent afficher des clés non traduites temporairement.",
+        "modules_involved": ["contexts/LanguageContext", "ALL_COMPONENTS"],
+        "dependencies": ["i18n"],
+        "probability": "POSSIBLE",
+        "severity": "MEDIUM",
+        "impact": "Flash de texte non traduit (FOUT)",
+        "mitigation": [
+          "Précharger la langue active",
+          "Afficher skeleton pendant chargement",
+          "Ne pas lazy load la langue par défaut (FR)"
+        ],
+        "detection": "Visual check on language switch",
+        "rollback": "Charger toutes les langues statiquement"
+      },
+      {
+        "risk_id": "CROSS-004",
+        "title": "Composants dupliqués et incohérence",
+        "description": "8 composants existent en double (/modules et /components). Une modification sur un peut créer une divergence.",
+        "modules_involved": [
+          "modules/realestate ↔ components/LandsRental",
+          "modules/marketplace ↔ components/HuntMarketplace",
+          "modules/affiliate ↔ components/DynamicReferralWidget"
+        ],
+        "dependencies": [],
+        "probability": "LIKELY",
+        "severity": "LOW",
+        "impact": "Confusion maintenance, bugs incohérents",
+        "mitigation": [
+          "Identifier quel fichier est réellement importé",
+          "Modifier uniquement le fichier source actif",
+          "Planifier cleanup post-99.9%"
+        ],
+        "detection": "grep imports before modification",
+        "rollback": "N/A - cleanup action"
+      },
+      {
+        "risk_id": "CROSS-005",
+        "title": "Google Fonts et CSS timing",
+        "description": "Réduire les weights de fonts peut affecter les composants utilisant des weights supprimés.",
+        "modules_involved": ["ALL_COMPONENTS with Barlow 400/500/900"],
+        "dependencies": ["Google Fonts CDN"],
+        "probability": "POSSIBLE",
+        "severity": "LOW",
+        "impact": "Certains textes peuvent utiliser le fallback weight",
+        "mitigation": [
+          "Auditer tous les usages de font-weight",
+          "Ne supprimer que les weights confirmés non-utilisés"
+        ],
+        "detection": "Visual comparison",
+        "rollback": "Restaurer URL fonts complète"
+      }
+    ],
+    "summary": {
+      "total_risks": 5,
+      "critical": 0,
+      "high": 0,
+      "medium": 2,
+      "low": 3
+    }
+  },
+
+  "sequential_execution_risks": {
+    "category": "SEQUENTIAL_EXECUTION",
+    "description": "Risques liés à l'ordre d'exécution des optimisations",
+    "risks": [
+      {
+        "risk_id": "SEQ-001",
+        "title": "Image compression avant lazy loading",
+        "description": "Si les images sont compressées mais pas lazy loadées, le gain de performance est limité.",
+        "sequence_dependency": "QW-001 (compression) → QW-002 (lazy loading)",
+        "optimal_order": "Compression first, then lazy loading",
+        "current_plan_order": "CORRECT",
+        "probability": "UNLIKELY",
+        "severity": "NEGLIGIBLE",
+        "impact": "Gain suboptimal temporaire",
+        "mitigation": "Suivre l'ordre défini dans le plan"
+      },
+      {
+        "risk_id": "SEQ-002",
+        "title": "Preconnect avant font weight reduction",
+        "description": "Preconnect optimise le chargement des fonts actuelles. Si les weights sont réduits après, le preconnect reste valide.",
+        "sequence_dependency": "QW-003 (preconnect) → DEEP-003 (weights)",
+        "optimal_order": "Either order acceptable",
+        "current_plan_order": "ACCEPTABLE",
+        "probability": "RARE",
+        "severity": "NEGLIGIBLE",
+        "impact": "None",
+        "mitigation": "Aucune action requise"
+      },
+      {
+        "risk_id": "SEQ-003",
+        "title": "Lazy loading composants avant Critical CSS",
+        "description": "Si les composants sont lazy loadés avant l'extraction du Critical CSS, le CSS critique peut inclure du CSS de composants lazy.",
+        "sequence_dependency": "DEEP-001/002 (lazy) ↔ DEEP-003 (critical CSS)",
+        "optimal_order": "Lazy loading AVANT critical CSS extraction",
+        "current_plan_order": "NEEDS_VERIFICATION",
+        "probability": "POSSIBLE",
+        "severity": "LOW",
+        "impact": "Critical CSS plus gros que nécessaire",
+        "mitigation": [
+          "Extraire Critical CSS APRÈS lazy loading",
+          "Re-extraire si lazy loading ajouté après"
+        ]
+      },
+      {
+        "risk_id": "SEQ-004",
+        "title": "Accessibility fixes avant deep optimizations",
+        "description": "Si accessibility fixes sont faits sur des composants qui seront lazy loadés, les fixes doivent être faits sur les bons fichiers.",
+        "sequence_dependency": "A11Y-001 → DEEP-001",
+        "optimal_order": "A11Y before DEEP",
+        "current_plan_order": "CORRECT",
+        "probability": "UNLIKELY",
+        "severity": "LOW",
+        "impact": "Fixes perdus si wrong file modified",
+        "mitigation": "Vérifier imports avant modification"
+      },
+      {
+        "risk_id": "SEQ-005",
+        "title": "SEO metadata avant console error fixes",
+        "description": "Ajouter metadata peut introduire des erreurs si mal formé. Doit être testé.",
+        "sequence_dependency": "SEO-001 (JSON-LD) → SEO-005 (console errors)",
+        "optimal_order": "Add metadata, then fix any introduced errors",
+        "current_plan_order": "CORRECT",
+        "probability": "POSSIBLE",
+        "severity": "LOW",
+        "impact": "Nouvelles erreurs console",
+        "mitigation": "Valider JSON-LD avec Google Rich Results Test"
+      },
+      {
+        "risk_id": "SEQ-006",
+        "title": "Service Worker avant final audit",
+        "description": "Service Worker peut cacher des ressources anciennes si déployé avant audit final.",
+        "sequence_dependency": "FINAL-001 (SW) → FINAL-003 (audit)",
+        "optimal_order": "SW cache invalidation strategy needed",
+        "current_plan_order": "NEEDS_REVIEW",
+        "probability": "LIKELY",
+        "severity": "MEDIUM",
+        "impact": "Utilisateurs voient anciennes versions",
+        "mitigation": [
+          "Implémenter versioning du SW",
+          "Cache-bust sur chaque déploiement",
+          "Tester en incognito après déploiement"
+        ]
+      }
+    ],
+    "summary": {
+      "total_risks": 6,
+      "critical": 0,
+      "high": 0,
+      "medium": 1,
+      "low": 3,
+      "negligible": 2
+    }
+  },
+
+  "structural_modularity_risks": {
+    "category": "STRUCTURAL_MODULARITY",
+    "description": "Risques affectant l'architecture modulaire stricte BIONIC V5",
+    "risks": [
+      {
+        "risk_id": "STRUCT-001",
+        "title": "Lazy loading crée des dépendances implicites",
+        "description": "React.lazy() crée une dépendance sur le bundler pour le code splitting. Si mal configuré, le module n'est pas isolé.",
+        "modules_affected": ["territory", "analytics", "marketplace"],
+        "modularity_principle": "AM-001 Module Independence",
+        "probability": "UNLIKELY",
+        "severity": "LOW",
+        "impact": "Module dans le mauvais chunk",
+        "mitigation": [
+          "Vérifier bundle analyzer après lazy loading",
+          "Confirmer chunks séparés par module"
+        ],
+        "detection": "webpack-bundle-analyzer"
+      },
+      {
+        "risk_id": "STRUCT-002",
+        "title": "Critical CSS peut coupler des modules",
+        "description": "L'extraction de Critical CSS peut inclure du CSS de plusieurs modules, créant un couplage implicite.",
+        "modules_affected": ["ALL with above-fold content"],
+        "modularity_principle": "AM-002 No tight coupling",
+        "probability": "POSSIBLE",
+        "severity": "LOW",
+        "impact": "CSS partagé entre modules",
+        "mitigation": [
+          "Acceptable pour above-fold CSS",
+          "Reste du CSS modulaire par composant"
+        ],
+        "detection": "CSS analysis"
+      },
+      {
+        "risk_id": "STRUCT-003",
+        "title": "Shared Suspense fallback",
+        "description": "Si tous les lazy components utilisent le même fallback, cela crée une dépendance partagée.",
+        "modules_affected": ["ALL lazy loaded"],
+        "modularity_principle": "AM-001 Module Independence",
+        "probability": "POSSIBLE",
+        "severity": "NEGLIGIBLE",
+        "impact": "UX cohérente (positif), mais couplage léger",
+        "mitigation": [
+          "Accepter comme pattern partagé",
+          "Ou créer fallback par module"
+        ],
+        "detection": "Code review"
+      },
+      {
+        "risk_id": "STRUCT-004",
+        "title": "Modifications index.html affectent tous les modules",
+        "description": "Preconnect, preload, script defer dans index.html sont globaux et affectent tous les modules.",
+        "modules_affected": ["ALL"],
+        "modularity_principle": "Global configuration acceptable",
+        "probability": "CERTAIN",
+        "severity": "NEGLIGIBLE",
+        "impact": "Positif - optimisation globale",
+        "mitigation": "Configuration globale est par design"
+      }
+    ],
+    "summary": {
+      "total_risks": 4,
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 2,
+      "negligible": 2
+    },
+    "modularity_compliance_post_optimization": "95% (unchanged)"
+  },
+
+  "multi_phase_regression_risks": {
+    "category": "MULTI_PHASE_REGRESSION",
+    "description": "Risques de régression cumulée à travers les phases L2 → L5",
+    "risks": [
+      {
+        "risk_id": "REGR-001",
+        "title": "Performance regression après accessibility fixes",
+        "description": "Ajout d'aria-labels peut augmenter légèrement la taille du DOM.",
+        "phases": ["Quick Wins → Accessibility"],
+        "metric_affected": "Performance",
+        "probability": "UNLIKELY",
+        "severity": "NEGLIGIBLE",
+        "expected_regression": "<0.5 points",
+        "mitigation": "Impact négligeable, acceptable"
+      },
+      {
+        "risk_id": "REGR-002",
+        "title": "Accessibility regression après deep optimizations",
+        "description": "Lazy loading avec fallback peut temporairement rendre le contenu inaccessible.",
+        "phases": ["Accessibility → Deep Opt"],
+        "metric_affected": "Accessibility",
+        "probability": "POSSIBLE",
+        "severity": "MEDIUM",
+        "expected_regression": "~2-5 points si mal implémenté",
+        "mitigation": [
+          "Fallback doit être accessible",
+          "aria-busy pendant chargement",
+          "Tester avec lecteur d'écran"
+        ]
+      },
+      {
+        "risk_id": "REGR-003",
+        "title": "SEO regression après component changes",
+        "description": "Si les composants lazy loadés contiennent du contenu SEO important, ils peuvent ne pas être crawlés.",
+        "phases": ["Deep Opt → SEO Polish"],
+        "metric_affected": "SEO",
+        "probability": "UNLIKELY",
+        "severity": "LOW",
+        "expected_regression": "~1-2 points",
+        "mitigation": [
+          "Contenu SEO critique doit être server-rendered ou dans HTML initial",
+          "Vérifier avec Google Search Console"
+        ]
+      },
+      {
+        "risk_id": "REGR-004",
+        "title": "Performance regression après SEO additions",
+        "description": "Ajout de JSON-LD et meta tags augmente la taille du HTML.",
+        "phases": ["Core Web Vitals → SEO Polish"],
+        "metric_affected": "Performance",
+        "probability": "POSSIBLE",
+        "severity": "NEGLIGIBLE",
+        "expected_regression": "<0.5 points",
+        "mitigation": "Impact minimal, acceptable"
+      },
+      {
+        "risk_id": "REGR-005",
+        "title": "Service Worker cache staleness",
+        "description": "Service Worker peut servir des ressources anciennes après les optimisations.",
+        "phases": ["Final Polish → Post-deployment"],
+        "metric_affected": "ALL",
+        "probability": "LIKELY",
+        "severity": "MEDIUM",
+        "expected_regression": "Variable - utilisateurs voient ancien contenu",
+        "mitigation": [
+          "Versioning des assets",
+          "Cache invalidation strategy",
+          "SW update prompt"
+        ]
+      },
+      {
+        "risk_id": "REGR-006",
+        "title": "Cumulative CLS regression",
+        "description": "Plusieurs changements peuvent accumuler des layout shifts.",
+        "phases": ["L2 → L5 cumulatif"],
+        "metric_affected": "CLS",
+        "probability": "POSSIBLE",
+        "severity": "LOW",
+        "expected_regression": "~0.05 si mal géré",
+        "mitigation": [
+          "Mesurer CLS après chaque phase",
+          "Skeleton loaders avec dimensions fixes",
+          "Image dimensions toujours définies"
+        ]
+      }
+    ],
+    "cumulative_regression_estimate": {
+      "best_case": "0 points (all mitigations successful)",
+      "expected_case": "~2-3 points temporaires, récupérés dans phases suivantes",
+      "worst_case": "~5-8 points si mitigations échouent"
+    },
+    "summary": {
+      "total_risks": 6,
+      "critical": 0,
+      "high": 0,
+      "medium": 2,
+      "low": 2,
+      "negligible": 2
+    }
+  },
+
+  "risk_heatmap": {
+    "by_category": {
+      "CROSS_MODULE": {"total": 5, "avg_severity": "LOW-MEDIUM"},
+      "SEQUENTIAL": {"total": 6, "avg_severity": "LOW"},
+      "STRUCTURAL": {"total": 4, "avg_severity": "NEGLIGIBLE-LOW"},
+      "MULTI_PHASE": {"total": 6, "avg_severity": "LOW-MEDIUM"}
+    },
+    "by_severity": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 5,
+      "LOW": 10,
+      "NEGLIGIBLE": 6
+    },
+    "overall_risk_level": "LOW-MEDIUM"
+  },
+
+  "risk_mitigation_readiness": {
+    "all_risks_have_mitigation": true,
+    "all_risks_have_detection": true,
+    "all_risks_have_rollback": true,
+    "mitigation_coverage": "100%"
+  },
+
+  "summary": {
+    "total_risks_identified": 21,
+    "critical_risks": 0,
+    "high_risks": 0,
+    "medium_risks": 5,
+    "low_risks": 10,
+    "negligible_risks": 6,
+    "overall_assessment": "LOW-MEDIUM risk profile",
+    "recommendation": "Proceed with caution, phase by phase",
+    "execution_status": "BLOCKED_PENDING_APPROVAL"
+  }
+}

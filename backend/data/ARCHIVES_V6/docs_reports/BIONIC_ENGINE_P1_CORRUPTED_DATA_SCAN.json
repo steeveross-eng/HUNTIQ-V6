@@ -1,0 +1,100 @@
+{
+  "scan_id": "BIONIC-P1-SCAN-001",
+  "timestamp": "2026-02-19T19:32:10.991459+00:00",
+  "collections_scanned": [
+    {
+      "name": "user_contexts",
+      "total_documents": 4,
+      "corrupted_count": 4
+    },
+    {
+      "name": "permis_checklists",
+      "total_documents": 1,
+      "corrupted_count": 1
+    }
+  ],
+  "corrupted_documents_found": [
+    {
+      "collection": "user_contexts",
+      "user_id": "corrupted-user-001",
+      "corrupted_fields": [
+        {
+          "field": "pages_visited",
+          "actual_type": "int",
+          "actual_value": "10"
+        },
+        {
+          "field": "tools_used",
+          "actual_type": "int",
+          "actual_value": "5"
+        },
+        {
+          "field": "pourvoiries_consulted",
+          "actual_type": "str",
+          "actual_value": "invalid"
+        },
+        {
+          "field": "permis_consulted",
+          "actual_type": "dict",
+          "actual_value": "{'count': 2}"
+        }
+      ],
+      "is_test_data": true
+    },
+    {
+      "collection": "user_contexts",
+      "user_id": "critical-user-001",
+      "corrupted_fields": [
+        {
+          "field": "pages_visited",
+          "actual_type": "int",
+          "actual_value": "42"
+        }
+      ],
+      "is_test_data": true
+    },
+    {
+      "collection": "user_contexts",
+      "user_id": "critical-user-002",
+      "corrupted_fields": [
+        {
+          "field": "tools_used",
+          "actual_type": "int",
+          "actual_value": "5"
+        }
+      ],
+      "is_test_data": true
+    },
+    {
+      "collection": "user_contexts",
+      "user_id": "typeerror-user-001",
+      "corrupted_fields": [
+        {
+          "field": "pages_visited",
+          "actual_type": "int",
+          "actual_value": "42"
+        },
+        {
+          "field": "tools_used",
+          "actual_type": "int",
+          "actual_value": "10"
+        }
+      ],
+      "is_test_data": true
+    },
+    {
+      "collection": "permis_checklists",
+      "user_id": "critical-user-003",
+      "permis_type": "orignal",
+      "corrupted_fields": [
+        {
+          "field": "items",
+          "actual_type": "int",
+          "actual_value": "12"
+        }
+      ],
+      "is_test_data": true
+    }
+  ],
+  "total_corrupted": 5
+}
