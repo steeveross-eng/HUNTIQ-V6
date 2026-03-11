@@ -9,8 +9,9 @@
 
 import { useState, useCallback, useMemo, useRef } from 'react';
 
-// Taille du carré d'analyse en mètres — synchronisé avec BionicZoneService radius=0.015
-const ANALYSIS_BOX_SIZE_M = 3000;
+// Taille du carré d'analyse en mètres — BIONIC V8: unifié à 2km² (2000m)
+// CRITIQUE: Cette valeur DOIT correspondre à BionicZone2km.jsx ZONE_SIZE_M
+const ANALYSIS_BOX_SIZE_M = 2000;
 
 /**
  * Calcule le bbox 1km × 1km en degrés décimaux
@@ -95,14 +96,22 @@ function clipEdge(a, b, axis, value, isMin) {
 
 /**
  * Clip une liste de zones et retourne les zones clippées.
- * Supporte les deux formats: 'positions' (Leaflet [lat,lng]) et 'coordinates'.
+ * Supporte les deux formats: 'positions' (Leaflet [lat,lng]) et 'coordinates' (GeoJSON [lng,lat]).
  */
 function clipZones(zones, bbox) {
   const clipped = [];
   for (const zone of zones) {
     // Supporter les deux formats de coordonnées
-    const coords = zone.positions || zone.coordinates;
+    let coords = zone.positions || zone.coordinates;
     if (!coords || coords.length < 3) continue;
+    
+    // Normaliser le format: si premier élément semble être lng (< -50), convertir [lng,lat] → [lat,lng]
+    // Québec: lat ~45-50, lng ~-75 à -70
+    const firstCoord = coords[0];
+    const isGeoJSONFormat = Array.isArray(firstCoord) && firstCoord[0] < -50;
+    if (isGeoJSONFormat) {
+      coords = coords.map(c => [c[1], c[0]]);  // [lng,lat] → [lat,lng]
+    }
     
     const clippedCoords = clipPolygonToBbox(coords, bbox);
     if (clippedCoords) {
@@ -144,11 +153,16 @@ const useSpatialClipping = (waypoint) => {
   const [isGeneratingSnapshot, setIsGeneratingSnapshot] = useState(false);
   const API_BASE = process.env.REACT_APP_BACKEND_URL;
   
-  // Bbox 1km × 1km — calculé uniquement quand le waypoint change
+  // Bbox 2km × 2km — BIONIC V8 (unifié avec BionicZone2km)
+  // calculé uniquement quand le waypoint change
   const analysisBbox = useMemo(() => {
     if (!waypoint) return null;
-    return computeAnalysisBbox(waypoint.lat, waypoint.lng);
-  }, [waypoint?.lat, waypoint?.lng]);
+    // Support lat/latitude et lng/longitude
+    const wpLat = waypoint.lat ?? waypoint.latitude;
+    const wpLng = waypoint.lng ?? waypoint.longitude;
+    if (!wpLat || !wpLng) return null;
+    return computeAnalysisBbox(wpLat, wpLng);
+  }, [waypoint?.lat, waypoint?.lng, waypoint?.latitude, waypoint?.longitude]);
   
   // Bbox Leaflet bounds pour l'overlay visuel
   const bboxBounds = useMemo(() => {

@@ -545,7 +545,16 @@ const MonTerritoireBionicPage = () => {
     hideAllLayers,
     activeCount,
     allLayers
-  } = useBionicLayers({ habitats: true, alimentation: true, repos: true }); // P0 FIX: 3 essential layers only
+  } = useBionicLayers({ 
+    habitats: true, 
+    alimentation: true, 
+    repos: true,
+    rut: true,  // BIONIC V8: Auto-load zones écologiques
+    trajets: true,  // BIONIC V8: Auto-load corridors
+    corridors: true,
+    ensoleillement: true,
+    peuplements: true,
+  }); // P0 FIX: Essential layers for auto-load
   
   const { 
     weather, 
