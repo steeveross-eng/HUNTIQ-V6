@@ -12,7 +12,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://corridor-ecology-hub.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bce-4x-visual-fix.preview.emergentagent.com')
 
 # Remove trailing slash if present
 BASE_URL = BASE_URL.rstrip('/')

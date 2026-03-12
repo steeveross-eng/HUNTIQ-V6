@@ -52,7 +52,7 @@ from modules.bionic_engine_p0.services.unified_scoring_service import (
 from modules.bionic_engine_p0.services.scoring.base_score_service import ScoreContext
 
 # BASE URL for API tests
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://corridor-ecology-hub.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bce-4x-visual-fix.preview.emergentagent.com').rstrip('/')
 
 
 # =============================================================================

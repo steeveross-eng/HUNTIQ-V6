@@ -1,209 +1,131 @@
 <analysis>**original_problem_statement:**
 The user, Steeve, is directing the development of a military-grade ecological analysis tool named BIONIC HUNT. He enforces a strict, phased development strategy (BIONIC 2000%) and a zero-tolerance quality gate known as BCE-MAX / BCE-4X.
 
-The current, non-negotiable directive is the execution of **Phase Corridors V9**. This involves a complete overhaul of the animal movement corridor generation system. The user has provided a detailed, official specification for what constitutes a Corridor V9:
+The current, non-negotiable directive is the execution of **Phase Corridors V9**, involving a complete overhaul of the animal movement corridor generation system. This system must be driven by 9 distinct BIONIC Engines, use dynamic calculations based on real-world data models (DEM, NDVI, human pressure), and produce a 5-level corridor classification.
 
-1.  **Dynamic Calculation:** All hardcoded values must be eliminated. Corridor scores and classifications must be calculated dynamically.
-2.  **Real-World Data:** The system must use an internal algorithmic model (User's Option A) based on real Digital Elevation Models (DEM), NDVI (vegetation index), and human pressure data.
-3.  **BIONIC Engine Integration:** The generation logic must be driven by **9 distinct BIONIC Engines**: Nutrition, Daily Routine, Weather, Disturbance, Movement V9, Phenology, Typology, Learning, and Habitat Enhancement.
-4.  **5-Level Classification:** Corridors must be classified into 5 levels of certainty: Gris (Potential), Jaune (Opportunistic), Orange (Functional), Rouge (Primary), and Rouge rayé (Critical).
-5.  **Strict Constraints:** All corridors must be strictly clipped to the 2km² analysis zone and are forbidden from overlapping habitations or being circular.
-6.  **BCE-4X Compliance:** The entire V9 pipeline must be under the strict control of the BCE-4X quality gate.
+Following several implementation iterations, the user has issued an **ULTRA-CRITICAL COMMAND** for a **Complete Magnetic Resonance** of the entire system. He reports a severe disconnect between the 100% BCE-4X compliant status reported by the agent and the actual visual output on the map. The key problems are:
+1.  Zone categories and colors on the map do not match the UI panel.
+2.  The V9 corridor ribbons are not visible or are rendered as unrecognizable blobs or are crushed by other layers.
+3.  Legacy layers seem to persist despite previous cleanup attempts.
+4.  The right-side information panel is not synchronized with the map display.
 
-The user has also provided an OpenWeatherMap API key: .
+The user demands a complete structural diagnosis (backend pipeline, frontend rendering, data-to-UI mapping) and the implementation of new, stricter BCE-4X rules to enforce visual and data consistency.
 
 **User's preferred language**: French
 
 **what currently exists?**
-The application is in a highly advanced state after a session focused on architectural hardening and preparation for Phase V9.
--   **BCE-4X Engine:** A robust BIONIC Compliance Engine (BCE-4X) is active. It now includes a **Critical Module Registry** that automatically tracks 16 key backend modules (including all 9 BIONIC engines) and blocks execution if any active module lacks a validator. It also features a Git branch compliance checker.
--   **V9 Pipeline Framework:** The complete backend structure for Phase V9 has been built. This includes:
-    -   Placeholder Python classes for all 9 BIONIC engines in .
-    -   A new orchestrator, , to integrate the outputs of these engines.
-    -   Integration of this V9 pipeline into the main  service.
--   **V9 Frontend:** The UI has been updated to support the V9 data structure. The  now displays the 5-level classification and the 9 sub-scores from the BIONIC engines.
--   **OWM Integration:** The provided OpenWeatherMap API key has been securely stored in , and the  is ready for implementation.
--   **Architectural Purity:** The codebase has been audited, refactored, and cleaned of legacy branches and unused components. The right-side panel is now a unified Ecological Intelligence Hub.
+The application has a complex backend featuring the BCE-4X Compliance Engine and a V9 corridor pipeline driven by 9 fully implemented BIONIC engines. This pipeline generates multi-band corridor ribbons as GeoJSON polygons using Shapely. The frontend, built with React and Leaflet, is supposed to render these ribbons and various ecological zones.
+
+However, the system is in a state of visual and data inconsistency. Despite backend tests and  outputs showing correctly generated, multi-band, clipped corridor data, the frontend display is a mix of unrecognizable shapes, incorrect colors, and potential legacy artifacts. The agent has made several attempts to fix this by adjusting band widths, z-indexing, and removing a known legacy layer, but the core problem persists, leading to the user's current demand for a full-scale audit.
 
 **Last working item**:
--   **Last item agent was working:** The agent completed the initial, large-scale implementation of the Phase Corridors V9 framework. It created placeholder BIONIC engines, the V9 orchestrator, and updated the backend and frontend to use this new pipeline. A  test confirmed the V9 data structure (with dynamic scores from placeholder engines) is being returned by the API. A follow-up BCE-4X validation confirmed that the most critical hardcoding violations from V8 were resolved, with only 4 minor continuity gap violations remaining. The agent was preparing for a full visual and functional verification.
--   **Status:** IN PROGRESS
--   **Agent Testing Done:** Y (Partial: backend API  test and BCE-4X validation were successful).
--   **Which testing method agent to use?** Frontend testing agent. The agent should be used to formally verify that the new 5-level classification is rendered correctly on the map and in the panel, the UI reflects all 9 dynamic sub-scores, and no visual regressions have occurred. Screenshots are also required for an avant/après comparison as requested by the user.
+-   **Last item agent was working:** The agent received an ULTRA-CRITICAL COMMAND from the user to perform a Complete Magnetic Resonance — a deep structural audit of all rendering layers, color palettes, and data pipelines for both Zones and Corridors. The user is questioning the entire data-to-UI chain due to major visual discrepancies. The agent began the investigation by listing the frontend components in the  directory.
+-   **Status:** NOT STARTED
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Manual investigation and debugging. The agent must first conduct the full audit requested by the user, producing diagrams and evidence. After implementing corrections, a combination of  tests for data verification and the  tool to provide visual proof (before/after) will be necessary. The existing frontend tests from the testing agent have proven insufficient to catch these visual/data-mapping bugs.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Minor Corridor Continuity Gaps (P1)**
-    -   Description: The BCE-4X validator still detects 4 MEDIUM severity violations because some generated corridor segments have gaps larger than the allowed threshold.
+-   **Issue 1: Complete System Inconsistency (P0)**
+    -   Description: There is a critical disconnect between the data generated by the backend, the data validated by BCE-4X, and the final visual representation in the frontend UI. The user sees blobs and incorrect colors instead of the expected V9 corridor ribbons.
     -   **Issues Detail:**
-        -   **Attempted fixes:** None. The issue was just identified by the new  validator.
-        -   **Next debug checklist:**
-            1.  Examine the corridor path data flagged by the validator.
-            2.  Review the  function in .
-            3.  Investigate the A* path generation logic in  to see why it's producing disjointed segments.
-        -   **Why fix this issue and what will be achieved with the fix?** To achieve 100% BCE-4X compliance and ensure all generated corridors represent valid, uninterrupted paths.
+        -   **Attempted fixes:**
+            1.  Increased corridor band widths and opacity.
+            2.  Used Leaflet Panes to control z-index, placing corridors above zones.
+            3.  Removed a legacy  component.
+            4.  Implemented proportional band widths based on corridor length.
+            These fixes have failed to resolve the root cause, as the user still reports a completely incorrect visual output.
+        -   **Next debug checklist:** The user has provided a detailed Magnetic Resonance plan. The agent MUST follow it:
+            1.  **Layers Audit:** Create a diagram of EVERY layer loaded in the UI (name, type, source, z-index, opacity, palette). Identify all legacy, debug, and active layers.
+            2.  **Palette Audit:** Document the color palettes for each layer and check for consistency with UI panels and normative values.
+            3.  **Pipeline Audit:** Map the full data pipeline for both ZONES and CORRIDORS from backend generation to frontend rendering, identifying points of contamination or data crushing.
+            4.  **Panel Audit:** Trace the data source for the right-side panel and verify its sync (or lack thereof) with the map.
+        -   **Why fix this issue and what will be achieved with the fix?** To resolve the critical discrepancy between the application's data and its visual representation, which is currently blocking all further progress and has broken the user's trust. This will achieve a fully synchronized, compliant, and visually correct rendering of both Zones and V9 Corridors.
         -   **Status:** NOT STARTED
-        -   **Is recurring issue?** N
-        -   **Should Test frontend/backend/both after fix?** Backend.
-        -   **Blocked on other issue:** None.
+        -   **Is recurring issue?** Y
+        -   **Should Test frontend/backend/both after fix?** Both. Backend for data integrity, Frontend for visual proof.
+        -   **Blocked on other issue:** None. This is the primary blocker.
 
 **In progress Task List**:
--   **Task 1: Complete Phase Corridors V9 Implementation (P0)**
-    -   **Where to resume:** The 9 placeholder BIONIC engine files located in  must be implemented.
-    -   **What will be achieved with this?** This is the core of the user's V9 request. The corridors will finally be generated based on complex, realistic ecological models (DEM, NDVI, Human Pressure) instead of placeholder logic, making the BIONIC HUNT tool genuinely predictive.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Both.
-    -   **Blocked on something:** No.
+-   None. The Magnetic Resonance audit is the only active task.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **(P0) Implement BIONIC Engines:** Flesh out the logic for all 9 placeholder engines (, , , etc.) using real data sources as per the user's Option A choice (local algorithmic models for DEM, NDVI, and Human Pressure).
-    -   **(P1) Harmonize Global Scoring:** Verify and refine the logic in  to ensure the main  correctly and logically incorporates the new, dynamic  score.
-    -   **(P2) Generate Maps by Species:** Implement the functionality to generate corridor maps specific to a selected species, a key requirement of the V9 specification.
-    -   **(P3) Formal V9 Validation:** Take before and after screenshots and run the testing agent to produce a final validation report for Phase V9.
-
+    -   **(P0) Implement Magnetic Resonance Corrections:** Based on the audit findings, implement the following fixes mandated by the user:
+        -   Strictly separate Zone and Corridor rendering logic and data flow.
+        -   Implement and enforce a normative, documented color palette for Zones.
+        -   Ensure the V9 Corridor palette is isolated and correctly applied.
+        -   Synchronize the right-side information panel with the map data.
+        -   Perform a final, definitive removal of ALL legacy layers from the build.
+    -   **(P0) Extend BCE-4X Coverage:** Implement the new BCE-4X rules demanded by the user:
+        -   
+        -   
+        -   
+        -   
 -   **Future Tasks:**
-    -   **Hunting Path Engine:** Design and implement the next major feature, which will use the V9 corridors to calculate optimal hunting paths.
-    -   **Learning Engine Implementation:** Fulfill the vision for the  by enabling it to adjust models based on real-world observations (e.g., from camera traps).
+    -   Hunting Path Engine: Design and implement the next major feature.
+    -   Learning Engine Implementation: Fulfill the vision for the  to adjust models based on real-world observations.
 
 **Completed work in this session**
--   **BCE-4X Architectural Hardening (DONE):**
-    -   A **Critical Module Registry** was implemented in , forcing all 16 critical modules (including the 9 BIONIC engines) to have validators.
-    -   A Git branch compliance checker () was created.
-    -   The corridor pipeline was placed under BCE-4X control with 21 new ============================= test session starts ==============================
-platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
-rootdir: /app
-plugins: anyio-4.12.0
-collected 3338 items / 3 errors
-
-==================================== ERRORS ====================================
-______________ ERROR collecting backend/tests/test_auth_engine.py ______________
-backend/tests/test_auth_engine.py:25: in <module>
-    raise ValueError("REACT_APP_BACKEND_URL environment variable not set")
-E   ValueError: REACT_APP_BACKEND_URL environment variable not set
-__________ ERROR collecting backend/tests/test_bionic_p0_beta2_api.py __________
-backend/tests/test_bionic_p0_beta2_api.py:26: in <module>
-    raise ValueError("REACT_APP_BACKEND_URL must be set")
-E   ValueError: REACT_APP_BACKEND_URL must be set
-_______________ ERROR collecting backend/tests/test_bmpe_api.py ________________
-backend/tests/test_bmpe_api.py:21: in <module>
-    BASE_URL = os.environ.get('REACT_APP_BACKEND_URL').rstrip('/')
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E   AttributeError: 'NoneType' object has no attribute 'rstrip'
-=============================== warnings summary ===============================
-backend/tests/integration/test_bionic_data_validation.py:52
-  /app/backend/tests/integration/test_bionic_data_validation.py:52: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:70
-  /app/backend/tests/integration/test_bionic_data_validation.py:70: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:87
-  /app/backend/tests/integration/test_bionic_data_validation.py:87: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:116
-  /app/backend/tests/integration/test_bionic_data_validation.py:116: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:145
-  /app/backend/tests/integration/test_bionic_data_validation.py:145: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:162
-  /app/backend/tests/integration/test_bionic_data_validation.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/tests/integration/test_bionic_data_validation.py:197
-  /app/backend/tests/integration/test_bionic_data_validation.py:197: PytestUnknownMarkWarning: Unknown pytest.mark.asyncio - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
-    @pytest.mark.asyncio
-
-backend/modules/camera_engine/v1/models.py:90
-  /app/backend/modules/camera_engine/v1/models.py:90: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
-    class Camera(CameraBase):
-
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-../root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319
-  /root/.venv/lib/python3.11/site-packages/pydantic/_internal/_generate_schema.py:319: PydanticDeprecatedSince20: `json_encoders` is deprecated. See https://docs.pydantic.dev/2.12/concepts/serialization/#custom-serializers for alternatives. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
-    warnings.warn(
-
-backend/modules/camera_engine/v1/models.py:153
-  /app/backend/modules/camera_engine/v1/models.py:153: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
-    class CameraEvent(CameraEventBase):
-
-../root/.venv/lib/python3.11/site-packages/starlette/formparsers.py:12
-  /root/.venv/lib/python3.11/site-packages/starlette/formparsers.py:12: PendingDeprecationWarning: Please use `import python_multipart` instead.
-    import multipart
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ============================
-ERROR backend/tests/test_auth_engine.py - ValueError: REACT_APP_BACKEND_URL e...
-ERROR backend/tests/test_bionic_p0_beta2_api.py - ValueError: REACT_APP_BACKE...
-ERROR backend/tests/test_bmpe_api.py - AttributeError: 'NoneType' object has ...
-!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!!
-======================== 15 warnings, 3 errors in 6.81s ======================== tests in .
--   **Right-Side Panel Refactor (P2) (DONE):**
-    -   The UI was refactored into the Ecological Intelligence Hub, fusing  and  and adding placeholders for the 9 BIONIC engines.
--   **EcologicalPanel Integration (P1) (DONE):**
-    -   The  was fully integrated with live data, and all mock data was removed.
--   **Phase Prep & Cleanup (DONE):**
-    -   Legacy feature branches were deleted and recreated to be BCE-4X compliant.
-    -   Obsolete components and 25+ dead imports were removed from the codebase.
--   **Audits and Reporting (DONE):**
-    -   Delivered multiple comprehensive audit documents: , , .
+-   V9 corridor generation pipeline implemented with 9 BIONIC engines using real algorithmic logic.
+-   OpenWeatherMap integration with 60-minute caching rule enforced by BCE-4X.
+-   V9 Corridors refactored to generate multi-band ribbon polygons with smoothed centerlines.
+-   Initial BCE-4X geometry and clipping rules implemented and tested.
+-   Frontend updated to use Leaflet Panes for z-index control.
+-   A legacy  was identified and removed from the main page component.
+-   Corridor band widths were made proportional to corridor length to prevent visual blobs.
 
 **Earlier issues found/mentioned but not fixed**
--   None. All previously identified major issues (hardcoded scores, mock data, missing BCE coverage) were the central focus of this session and have been resolved or are being addressed by the current V9 implementation plan.
+-   **Issue 1: Visual vs. Data Mismatch:** The core issue since the introduction of V9 ribbons. The agent's tests pass, but the user's visual verification fails. The agent's fixes have been superficial (adjusting widths, removing one layer) without addressing the systemic problem, which the Magnetic Resonance audit now aims to uncover.
 
 **Known issue recurrence from previous fork**
--   None.
+-   **Issue recurrence in previous fork:** **Visual Contamination by Legacy/Incorrect Layers.** The agent previously identified and removed the , believing it had fixed the visual pollution. The user's latest message and screenshot prove that the problem persists, indicating that either the fix was incomplete or other, unidentified layers are still active and causing issues.
+-   **Recurrence count:** 3+
+-   **Status:** NOT STARTED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **BCE-4X Critical Module Registry:** A mandatory registry in the BCE engine ensuring no critical backend module can be active without a corresponding validator. This is a core architectural guardrail preventing regressions.
--   **BIONIC Engine Framework:** A modular backend design where nine distinct Python classes (engines) are responsible for specific ecological calculations (Nutrition, Weather, etc.), allowing for separation of concerns.
--   **V9 Corridor Orchestrator:** A central pipeline () that gathers scores from all 9 BIONIC engines to compute a final, dynamic corridor score and classification.
+-   **BCE-4X:** A custom, strict quality assurance engine that validates backend logic, data integrity, and now, UI consistency.
+-   **BIONIC Engine Framework:** A modular backend design with nine distinct Python classes for ecological calculations.
+-   **V9 Corridor Ribbons:** The normative representation of corridors, consisting of a smoothed centerline and 5 concentric, proportionally-sized polygon bands generated with Shapely.
+-   **Leaflet Panes:** A Leaflet feature used to control the stacking order (z-index) of different map layers, crucial for rendering corridors on top of zones.
+-   **Magnetic Resonance:** The user's term for a deep, end-to-end structural audit of the entire data-to-visuals pipeline.
 
 **key DB schema**
--   Not applicable. The application continues to use in-memory data structures loaded from Python files.
+-   Not applicable. The application uses in-memory data structures and GeoJSON files.
 
 **changes in tech stack**
 -   None.
 
 **All files of reference**
--   **V9 Implementation:**
-    -    (The V9 orchestrator)
-    -    (Directory with the 9 placeholder engines)
-    -    (The new unified UI panel)
--   **BCE-4X Framework:**
-    -    (The core BCE engine with the module registry)
-    -    (The validator for V9 corridors)
-    -    (The V9 tests)
--   **Documentation:**
+-   **Core V9 Logic & Pipeline:**
     -   
     -   
+-   **V9 Validation:**
     -   
+-   **Frontend Rendering (Primary area for the audit):**
+    -    (Main layout, where all layers are composed)
+    -    (The component that renders zones and V9 ribbons)
+    -    (Renders a single corridor ribbon)
+    -    (Transforms backend data for the frontend)
+-   **Documentation & Test Reports:**
+    -    (Last testing agent report, showing 100% pass rate despite visual bugs)
 
 **Areas that need refactoring**:
--   The core logic within the 9 BIONIC engine files in  is currently placeholder (). This is not tech debt but the main body of planned work to be done.
+-   The entire rendering logic in  and  needs to be audited and likely refactored to eliminate any hardcoded, legacy, or contaminating layers and to ensure a strict, data-driven rendering process for both Zones and Corridors.
 
 **key api endpoints**
--   : The main endpoint, now serves V9 corridor data.
--   : Exposes the health and coverage status of the 16 registered critical modules.
--   : Validates a given set of corridors against BCE-4X rules.
--   : Checks if a git branch is compliant with BCE-4X rules.
+-   : The main endpoint serving all zone and V9 corridor data.
+-   : Endpoint for species-specific data.
+-   : The BCE-4X endpoint for full V9 validation.
 
 **Critical Info for New Agent**
--   **The V9 Specification is Law:** The user's detailed description of a Corridor V9 (Chat Message 305) is the single source of truth for the implementation. All logic must map back to this specification.
--   **BCE-4X Governs Everything:** All new logic for the BIONIC engines *must* be accompanied by corresponding BCE-4X validation rules. The system is designed to block any module that is activated without a validator.
--   **Implement User's Option A:** The user has explicitly chosen an internal, algorithmic model for DEM, NDVI, and Human Pressure data. Do not use external APIs for this; the data must be sourced or calculated locally within the backend.
--   **The Path is Clear:** The highest priority is to implement the real logic inside the 9 placeholder BIONIC engine files. This will bring the V9 vision to life.
+-   **USER TRUST IS ZERO:** Do not trust previous agent reports or passing tests. The user has repeatedly shown that the visual output is wrong. You must start the Magnetic Resonance audit from first principles.
+-   **EVIDENCE IS MANDATORY:** For every step of the audit, you must provide the proof requested by the user: diagrams, GeoJSON snippets, and code extracts. Do not make claims without backing them up.
+-   **THE PROBLEM IS LIKELY IN THE FRONTEND COMPOSITION:** The backend data appears to be correct according to  tests. The bug most likely lies in how multiple layers are composed, styled, and rendered in the  and  components. Look for hidden layers, hardcoded data, incorrect color mappings, or components rendering on top of each other unexpectedly.
+-   **FOLLOW THE USER'S PLAN:** The user's Magnetic Resonance command () is your new, non-negotiable work plan. Address every point in sections A, B, C, D, and E.
 
 **documents and test reports created in this job**
 -   
@@ -211,36 +133,35 @@ ERROR backend/tests/test_bmpe_api.py - AttributeError: 'NoneType' object has ...
 -   
 -   
 -   
--   
--   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (Pending):** Validates all preparatory work (BCE-4X hardening, branch cleanup). Officially launches Phase Corridors V9 and provides a highly detailed, non-negotiable specification for the feature. Provides OWM API key. (Task In Progress)
-2.  **User:** Demanded a full audit and cleanup of all Git branches. (COMPLETED)
-3.  **User:** Requested final confirmation that the BCE-4X module registry is foolproof. (COMPLETED)
-4.  **User:** Commanded all remaining BIONIC engines and critical modules be transferred into the BCE-4X registry before starting V9. (COMPLETED)
-5.  **User:** Asked for a root cause analysis of why BCE-4X failed to catch V8 corridor issues. (COMPLETED)
-6.  **User:** Mandated the corridor pipeline be put under BCE-4X control before any new development. (COMPLETED)
-7.  **User:** Reviewed the corridor audit and declared V8 non-compliant. (COMPLETED)
-8.  **User:** Requested a deep technical audit of the V8 corridor implementation. (COMPLETED)
-9.  **User:** Approved the plan for the Right Panel refactor and formally listed the 9 BIONIC engines. (COMPLETED)
-10. **User:** Approved the initial work plan and added a requirement for a deep analysis of the main page. (COMPLETED)
+1.  **User (LATEST/PENDING):** Issues an ULTRA-CRITIQUE command for a Complete Magnetic Resonance (full structural audit) due to persistent, severe discrepancies between reported compliance and visual reality. Demands a full audit of all layers, palettes, and pipelines, and the creation of new BCE-4X rules to enforce visual consistency. (Task NOT STARTED)
+2.  **User:** Reports that the map still does not show V9 ribbons, but rather massive blobs and provides a screenshot as proof. Demands to know exactly which layers are being displayed. (Issue Partially Addressed - led to latest command)
+3.  **User:** States that the V9 corridors are not rendered as a continuous ribbon with a halo, are appearing outside the active area, and that the BCE-4X root needs strengthening. (Issue Partially Addressed - fixes were insufficient)
+4.  **Agent:** Announces 100% test pass rate after implementing multi-band corridors and new BCE-4X rules. (Incorrectly closed the issue)
+5.  **User:** Acknowledges V9 completion but points out immediate visual flaws needing correction. (Start of the visual bug loop)
+6.  **User:** Restores connection credentials. (COMPLETED)
+7.  **Agent:** Asks for plan confirmation. (COMPLETED)
+8.  **User:** Confirms the plan for V9 implementation with strict requirements for all 9 engines and the OpenWeatherMap caching rule. (COMPLETED)
+9.  **Agent:** Finishes V9 implementation and announces 100% pass rate from testing agent. (COMPLETED)
+10. **Agent:** Updates global score display to V9. (COMPLETED)
 
 **Project Health Check:**
--   **Broken:** None. The application is running with the new V9 pipeline framework.
--   **Mocked:** The core logic of the 9 BIONIC engines in  is mocked with placeholder values. This is the primary focus of the upcoming work.
+-   **Broken:** The core feature, V9 Corridor visualization, is fundamentally broken from the user's perspective. The data-to-UI pipeline is not trusted and produces incorrect results.
+-   **Mocked:** None. All engines have real logic.
 
 **3rd Party Integrations**
--   **OpenWeatherMap (OWM):** Integrated and functional. The API key is in the environment, and the  is ready for implementation.
+-   **OpenWeatherMap (OWM):** Integrated for the , with the API key in . A 60-minute cache rule is enforced by BCE-4X.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. Used successfully to validate the P1 and P2 refactoring phases.
+-   **Testing agent used after significant changes:** YES. It was used multiple times, consistently reporting 100% pass rates ().
 -   **Troubleshoot agent used after agent stuck in loop:** NO.
--   **Test files created:**  (21 new pytest tests).
--   **Known regressions:** None.
+-   **Test files created:** 
+-   **Known regressions:** The testing suite is not catching the critical visual and data-mapping bugs reported by the user. The tests validate backend data in isolation but fail to validate its final, composed appearance in the UI.
 
 **Credentials to test flow:**
--   No credentials are required to run the application. The OWM key is in the environment.
+-   User account for  system:  / 
+-   Main marketplace login (same credentials now registered):  / 
 
 **What agent forgot to execute**
--   The agent has been exceptionally thorough in following the user's explicit and evolving commands, including completing all pre-flight hardening and auditing tasks before starting the main V9 implementation. Nothing was forgotten.</analysis>
+-   The agent failed to perform a holistic diagnosis of the frontend. It adopted a whack-a-mole approach, fixing one symptom at a time (removing one layer, changing one width) without understanding the root cause of the visual contamination. It placed too much trust in its isolated tests and did not adequately investigate why the user's visual reality was so different from the test results. It did not discover all the hidden or legacy layers that are likely still polluting the final render.</analysis>

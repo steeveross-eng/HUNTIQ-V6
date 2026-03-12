@@ -12,7 +12,7 @@ import os
 import pytest
 import requests
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://corridor-ecology-hub.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bce-4x-visual-fix.preview.emergentagent.com')
 
 # V7 corridor color mapping for validation
 V7_CORRIDOR_COLORS = {
