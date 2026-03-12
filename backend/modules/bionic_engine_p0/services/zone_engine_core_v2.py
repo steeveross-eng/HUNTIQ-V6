@@ -71,58 +71,60 @@ def _cache_key(bounds, species, layers, waypoint_center=None) -> str:
 
 def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
     """
-    BCE-MAX x4.1: Genere des corridors ecologiques entre zones fonctionnelles.
-    Connecte alimentation <-> repos, repos <-> rut, alimentation <-> rut, etc.
-    Retourne des corridors au format GeoJSON LineString avec classification WWF.
+    BIONIC 2000% — Corridors 10X avec A* pathfinding réel.
+    Utilise l'algorithme A* de corridor_10x.py pour trouver des chemins optimaux
+    entre zones fonctionnelles, en tenant compte des coûts de terrain.
     """
-    from modules.bionic_engine_p0.services.corridor_10x import corridor_10x_service
+    from modules.bionic_engine_p0.services.corridor_10x import (
+        corridor_10x_service, corridor_pathfinder
+    )
 
-    # Extraire les centroides de chaque zone par couche
-    # Raw zone format: {coordinates: [[lng,lat],...], centroid: {lat, lng}, area_m2, ...}
+    # --- Phase 1: Extraire les centroides par couche fonctionnelle ---
+    STRUCTURAL_LAYERS = {"hydro", "pentes", "orientation", "ensoleillement", "altitude", "ndvi", "peuplements"}
     zone_centroids = {}
+    zone_polygons = []  # Pour construire terrain_data
+
     for layer_id, zones in zones_by_layer.items():
-        if layer_id in ("hydro", "pentes", "orientation", "ensoleillement", "altitude", "ndvi", "peuplements"):
-            continue  # On ne connecte que les zones fonctionnelles
+        is_functional = layer_id not in STRUCTURAL_LAYERS
         for idx, z in enumerate(zones):
             centroid = z.get("centroid", {})
             lat = centroid.get("lat", 0)
             lng = centroid.get("lng", 0)
+            coords = z.get("coordinates", [])
             if lat == 0 or lng == 0:
-                # Fallback: calcul depuis les coordonnees
-                coords = z.get("coordinates", [])
                 if len(coords) >= 3:
                     lng = sum(c[0] for c in coords) / len(coords)
                     lat = sum(c[1] for c in coords) / len(coords)
                 else:
                     continue
-            zone_centroids.setdefault(layer_id, []).append({
-                "lat": lat, "lng": lng,
-                "zone_id": f"{layer_id}_{idx}",
-                "score": 50,
-            })
-    
-    logger.info(f"[Corridor 10X] Zone centroids by layer: { {k: len(v) for k, v in zone_centroids.items()} }")
+            # Stocker le polygone pour le terrain A*
+            if coords:
+                zone_polygons.append({
+                    "layer_id": layer_id,
+                    "coords": coords,
+                    "centroid": (lat, lng),
+                })
+            if is_functional:
+                zone_centroids.setdefault(layer_id, []).append({
+                    "lat": lat, "lng": lng,
+                    "zone_id": f"{layer_id}_{idx}",
+                    "score": 50,
+                })
 
-    # Paires de connexion prioritaires — toutes les combinaisons fonctionnelles
+    logger.info(f"[Corridor A*] Zone centroids: { {k: len(v) for k, v in zone_centroids.items()} }")
+
+    # --- Phase 2: Construire terrain_data pour le A* ---
+    terrain_data = _build_terrain_grid(zone_polygons, bounds)
+
+    # --- Phase 3: Générer les corridors avec A* ---
     CONNECT_PAIRS = [
-        ("alimentation", "repos"),
-        ("alimentation", "rut"),
-        ("repos", "rut"),
-        ("habitats", "alimentation"),
-        ("habitats", "repos"),
-        ("salines", "repos"),
-        ("affuts", "habitats"),
-        ("trajets", "alimentation"),
-        ("affuts", "rut"),
-        ("affuts", "trajets"),
-        ("trajets", "rut"),
-        ("salines", "rut"),
-        ("salines", "affuts"),
-        ("habitats", "rut"),
-        ("habitats", "trajets"),
-        ("salines", "trajets"),
-        ("affuts", "repos"),
-        ("affuts", "alimentation"),
+        ("alimentation", "repos"), ("alimentation", "rut"), ("repos", "rut"),
+        ("habitats", "alimentation"), ("habitats", "repos"), ("salines", "repos"),
+        ("affuts", "habitats"), ("trajets", "alimentation"),
+        ("affuts", "rut"), ("affuts", "trajets"), ("trajets", "rut"),
+        ("salines", "rut"), ("salines", "affuts"), ("habitats", "rut"),
+        ("habitats", "trajets"), ("salines", "trajets"),
+        ("affuts", "repos"), ("affuts", "alimentation"),
     ]
 
     corridors = []
@@ -158,9 +160,14 @@ def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
             wwf_type = corridor_10x_service.classify_corridor_wwf(best_dist * 0.3)
             connectivity = corridor_10x_service.calculate_connectivity_score(from_layer, to_layer)
 
-            corridors.append(_build_corridor_feature(
+            # A* pathfinding
+            path_coords = _find_astar_path(
+                fz, best_tz, terrain_data, corridor_pathfinder, best_dist
+            )
+
+            corridors.append(_build_corridor_feature_astar(
                 corridor_id, fz, best_tz, from_layer, to_layer, best_dist,
-                wwf_type, connectivity, corridor_10x_service
+                wwf_type, connectivity, corridor_10x_service, path_coords
             ))
             corridor_id += 1
 
@@ -169,7 +176,7 @@ def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
         if corridor_id >= 20:
             break
 
-    # Fallback: intra-layer corridors when cross-layer failed
+    # Fallback: intra-layer corridors
     if not corridors and zone_centroids:
         for layer_id, centroids in zone_centroids.items():
             if len(centroids) < 2:
@@ -182,9 +189,12 @@ def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
                     dist = math.sqrt(dlat ** 2 + dlng ** 2)
                     if 50 < dist < 3000:
                         wwf_type = corridor_10x_service.classify_corridor_wwf(dist * 0.3)
-                        corridors.append(_build_corridor_feature(
+                        path_coords = _find_astar_path(
+                            fz, tz, terrain_data, corridor_pathfinder, dist
+                        )
+                        corridors.append(_build_corridor_feature_astar(
                             corridor_id, fz, tz, layer_id, layer_id, dist,
-                            wwf_type, 50, corridor_10x_service
+                            wwf_type, 50, corridor_10x_service, path_coords
                         ))
                         corridor_id += 1
                 if corridor_id >= 10:
@@ -192,13 +202,95 @@ def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
             if corridor_id >= 10:
                 break
 
-    logger.info(f"[Corridor 10X] Generated {len(corridors)} corridors for species={species}")
+    logger.info(f"[Corridor A*] Generated {len(corridors)} corridors for species={species}")
     return corridors
 
 
-def _build_corridor_feature(corridor_id, fz, tz, from_layer, to_layer, dist, wwf_type, connectivity, service):
-    """Build a single corridor GeoJSON Feature."""
-    n_points = max(5, int(dist / 50))
+def _build_terrain_grid(zone_polygons, bounds):
+    """
+    Construit une grille de coûts de terrain pour l'algorithme A*.
+    Optimisé: n'échantillonne que les centroides + voisinage immédiat.
+    """
+    terrain_data = {}
+    from modules.bionic_engine_p0.services.corridor_10x import TERRAIN_COSTS
+
+    LAYER_TO_TERRAIN = {
+        "habitats": "mature_forest", "alimentation": "forest_edge",
+        "repos": "conifer_forest", "rut": "mixed_forest",
+        "affuts": "hedgerow", "trajets": "wooded_strip",
+        "salines": "riparian", "corridors": "valley",
+        "peuplements": "mixed_forest", "hydro": "water_body",
+    }
+
+    step = 0.0015  # ~167m grid resolution
+    max_cells = 2000  # Limite pour performance
+    cell_count = 0
+
+    for zp in zone_polygons:
+        if cell_count >= max_cells:
+            break
+        coords = zp["coords"]
+        layer_id = zp["layer_id"]
+        terrain_type = LAYER_TO_TERRAIN.get(layer_id, "mixed_forest")
+        if len(coords) < 3:
+            continue
+
+        # Bounding box du polygone
+        lats = [c[1] for c in coords]
+        lngs = [c[0] for c in coords]
+        min_lat, max_lat = min(lats), max(lats)
+        min_lng, max_lng = min(lngs), max(lngs)
+
+        # Ajouter une marge autour de la zone
+        margin = step * 2
+        lat = min_lat - margin
+        while lat <= max_lat + margin and cell_count < max_cells:
+            lng = min_lng - margin
+            while lng <= max_lng + margin and cell_count < max_cells:
+                key = f"{lat:.4f},{lng:.4f}"
+                existing = terrain_data.get(key, {})
+                existing_cost = TERRAIN_COSTS.get(existing.get("type", "open_field"), 3.0)
+                new_cost = TERRAIN_COSTS.get(terrain_type, 2.0)
+                if new_cost < existing_cost:
+                    terrain_data[key] = {"type": terrain_type, "slope": 5, "human_pressure": 0.1}
+                    cell_count += 1
+                lng += step
+            lat += step
+
+    return terrain_data
+
+
+def _find_astar_path(fz, tz, terrain_data, pathfinder, distance):
+    """
+    Trouve un chemin A* entre deux zones. Fallback Bezier si échec.
+    """
+    start = (fz["lat"], fz["lng"])
+    end = (tz["lat"], tz["lng"])
+
+    # Ajuster la résolution selon la distance
+    if distance < 300:
+        pathfinder.grid_resolution = 30.0
+        max_iter = 3000
+    elif distance < 800:
+        pathfinder.grid_resolution = 60.0
+        max_iter = 5000
+    elif distance < 1500:
+        pathfinder.grid_resolution = 120.0
+        max_iter = 8000
+    else:
+        pathfinder.grid_resolution = 200.0
+        max_iter = 10000
+
+    try:
+        result = pathfinder.find_corridor_path(start, end, terrain_data, max_iterations=max_iter)
+        if result and result.get("path"):
+            smoothed = pathfinder.smooth_path(result["path"], smoothing_factor=0.3)
+            return [[round(p["lng"], 6), round(p["lat"], 6)] for p in smoothed]
+    except Exception as e:
+        logger.warning(f"[Corridor A*] Pathfinding failed: {e}")
+
+    # Fallback: Bezier quadratique
+    n_points = max(5, int(distance / 50))
     path_coords = []
     for i in range(n_points + 1):
         t = i / n_points
@@ -207,6 +299,12 @@ def _build_corridor_feature(corridor_id, fz, tz, from_layer, to_layer, dist, wwf
         lat = (1 - t) ** 2 * fz["lat"] + 2 * (1 - t) * t * mid_lat + t ** 2 * tz["lat"]
         lng = (1 - t) ** 2 * fz["lng"] + 2 * (1 - t) * t * mid_lng + t ** 2 * tz["lng"]
         path_coords.append([round(lng, 6), round(lat, 6)])
+    return path_coords
+
+
+def _build_corridor_feature_astar(corridor_id, fz, tz, from_layer, to_layer, dist, wwf_type, connectivity, service, path_coords):
+    """Build a corridor GeoJSON Feature with A* path or Bezier fallback."""
+    is_astar = len(path_coords) > 0 and len(path_coords) != max(5, int(dist / 50)) + 1
 
     score = round((connectivity * 0.4 + fz["score"] * 0.3 + tz["score"] * 0.3), 1)
     wwf_colors = {
@@ -215,6 +313,7 @@ def _build_corridor_feature(corridor_id, fz, tz, from_layer, to_layer, dist, wwf
         "conservation_corridor": {"color": "#FFC107", "width": 2.5, "opacity": 0.8},
     }
     style = wwf_colors.get(wwf_type.value, {"color": "#06B6D4", "width": 2.5, "opacity": 0.85})
+    pathfinding_method = "A*" if is_astar else "bezier_fallback"
 
     return {
         "type": "Feature",
@@ -230,13 +329,19 @@ def _build_corridor_feature(corridor_id, fz, tz, from_layer, to_layer, dist, wwf
             "distance_m": round(dist, 1),
             "confidence": min(1.0, score / 100),
             "sex": "both",
+            "pathfinding": pathfinding_method,
             "dem_enhanced": False,
             "in_perimeter": True,
             "style": {"color": style["color"], "width": style["width"], "opacity": style["opacity"], "dasharray": "none"},
             "scoring": {
                 "score": score,
                 "subscores": {"connectivity": round(connectivity, 1), "terrain": 65.0, "habitat": 70.0},
-                "justification": [f"Connecte {from_layer} -> {to_layer}", f"Distance: {round(dist)}m", f"Classification WWF: {wwf_type.value}"],
+                "justification": [
+                    f"Connecte {from_layer} -> {to_layer}",
+                    f"Distance: {round(dist)}m",
+                    f"Classification WWF: {wwf_type.value}",
+                    f"Pathfinding: {pathfinding_method}",
+                ],
             },
             "wwf_classification": {"type": wwf_type.value, "label": service._get_wwf_label(wwf_type)},
         },

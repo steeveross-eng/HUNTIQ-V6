@@ -48,6 +48,7 @@ import { fetchTerrainExclusions, ZONE_LIMITS, LAYER_TYPES } from '@/services/Bio
 import { useZoneOrchestrator } from '@/hooks/useZoneOrchestrator';
 import { useZoneFavorites, AddToFavoritesButton, AlertsPanel, FavoritesList } from '@/components/territoire/ZoneFavorites';
 import { GroupeTab, useGroupeSafety, useGroupeTracking } from '@/modules/groupe';
+import EcologicalPanel from '@/components/territoire/EcologicalPanel';
 import { 
   EcoforestryLayerControl, 
   EcoMapFallbackNotification,

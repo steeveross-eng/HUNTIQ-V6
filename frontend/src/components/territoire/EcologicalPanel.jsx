@@ -1,294 +1,137 @@
 /**
- * EcologicalPanel.jsx — Panneau d'affichage écologique BIONIC V8
+ * EcologicalPanel.jsx — Panneau ecologique BIONIC V8
  * 
  * Affiche:
- * - Indicateur "X corridors actifs détectés"
- * - Légende WWF (macro / biologiques / conservation)
- * - Zone dominante par espèce
- * - Fiches écologiques interactives
- * 
- * VERSION: 8.0.0 — Interface synthèse écologique
+ * - Corridors actifs avec classification WWF
+ * - Legende WWF (macro / biologiques / conservation)
+ * - Methode de pathfinding (A* vs Bezier)
+ * - Statistiques de connectivite
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronDown, ChevronUp, MapPin, TreePine, Leaf, PawPrint, Info } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { TreePine, Route, Compass, Activity } from 'lucide-react';
 
-// Couleurs WWF officielles
 const WWF_COLORS = {
-  macro_corridor: { bg: '#8B5CF6', label: 'Macro-corridor (> 5 km)', icon: '🌲' },
-  biological_corridor: { bg: '#10B981', label: 'Corridor biologique (1-5 km)', icon: '🌿' },
-  conservation_corridor: { bg: '#F59E0B', label: 'Corridor de conservation (< 1 km)', icon: '🍂' },
+  macro_corridor: { bg: '#FF5722', label: 'Macro-corridor', desc: '> 2 km' },
+  biological_corridor: { bg: '#FF9800', label: 'Corridor biologique', desc: '500m - 2 km' },
+  conservation_corridor: { bg: '#FFC107', label: 'Corridor de conservation', desc: '< 500m' },
 };
 
-// Espèces avec leurs icônes
-const SPECIES_CONFIG = {
-  orignal: { 
-    label: 'Orignal', 
-    scientific: 'Alces alces',
-    color: '#6366F1',
-    icon: '🦌'
-  },
-  chevreuil: { 
-    label: 'Chevreuil', 
-    scientific: 'Odocoileus virginianus',
-    color: '#22C55E',
-    icon: '🦌'
-  },
-  ours_noir: { 
-    label: 'Ours noir', 
-    scientific: 'Ursus americanus',
-    color: '#1E293B',
-    icon: '🐻'
-  },
-};
-
-/**
- * Indicateur de corridors actifs
- */
-const CorridorIndicator = ({ summary }) => {
-  const total = summary?.total_corridors || 0;
-  
-  return (
-    <div 
-      className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-emerald-900/80 to-emerald-800/80 rounded-lg border border-emerald-500/30"
-      data-testid="corridor-indicator"
-    >
-      <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-      <span className="text-sm font-medium text-emerald-100">
-        {total} corridor{total > 1 ? 's' : ''} actif{total > 1 ? 's' : ''} détecté{total > 1 ? 's' : ''}
-      </span>
-    </div>
-  );
-};
-
-/**
- * Légende WWF
- */
-const WWFLegend = ({ summary, expanded = false }) => {
-  const [isExpanded, setIsExpanded] = useState(expanded);
-  
-  return (
-    <div 
-      className="bg-gray-900/90 rounded-lg border border-gray-700/50 overflow-hidden"
-      data-testid="wwf-legend"
-    >
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-800/50 transition-colors"
-      >
-        <span className="text-sm font-medium text-gray-200 flex items-center gap-2">
-          <TreePine className="w-4 h-4 text-emerald-400" />
-          Classification WWF
-        </span>
-        {isExpanded ? (
-          <ChevronUp className="w-4 h-4 text-gray-400" />
-        ) : (
-          <ChevronDown className="w-4 h-4 text-gray-400" />
-        )}
-      </button>
-      
-      {isExpanded && (
-        <div className="px-3 pb-3 space-y-2">
-          {Object.entries(WWF_COLORS).map(([key, config]) => {
-            const count = summary?.[key] || 0;
-            return (
-              <div key={key} className="flex items-center gap-2">
-                <div 
-                  className="w-4 h-4 rounded-sm"
-                  style={{ backgroundColor: config.bg }}
-                />
-                <span className="text-xs text-gray-300 flex-1">{config.label}</span>
-                <span className="text-xs font-medium text-gray-400">
-                  {count}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-};
-
-/**
- * Carte de zone dominante par espèce
- */
-const SpeciesZoneCard = ({ species, data }) => {
-  const config = SPECIES_CONFIG[species] || {};
-  const [showDetails, setShowDetails] = useState(false);
-  
-  return (
-    <div 
-      className="bg-gray-900/80 rounded-lg border border-gray-700/50 overflow-hidden"
-      data-testid={`species-zone-${species}`}
-    >
-      <div className="flex items-center gap-3 px-3 py-2 border-b border-gray-700/30">
-        <span className="text-lg">{config.icon}</span>
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-medium text-white">{config.label}</div>
-          <div className="text-xs text-gray-400 italic">{config.scientific}</div>
-        </div>
-        <button
-          onClick={() => setShowDetails(!showDetails)}
-          className="p-1 hover:bg-gray-700/50 rounded transition-colors"
-        >
-          <Info className="w-4 h-4 text-gray-400" />
-        </button>
-      </div>
-      
-      <div className="px-3 py-2">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-gray-400">Zone dominante:</span>
-          <span 
-            className="text-xs font-medium px-2 py-0.5 rounded"
-            style={{ 
-              backgroundColor: `${config.color}20`,
-              color: config.color 
-            }}
-          >
-            {data?.dominant_type?.replace('_', ' ') || 'Alimentation'}
-          </span>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400">Corridors:</span>
-          <span className="text-xs font-medium text-white">
-            {data?.corridors_count || 0}
-          </span>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400">Connectivité:</span>
-          <div className="flex items-center gap-1">
-            <div className="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-              <div 
-                className="h-full rounded-full"
-                style={{ 
-                  width: `${data?.connectivity_score || 0}%`,
-                  backgroundColor: config.color
-                }}
-              />
-            </div>
-            <span className="text-xs text-gray-300">{data?.connectivity_score || 0}%</span>
-          </div>
-        </div>
-      </div>
-      
-      {showDetails && (
-        <div className="px-3 py-2 bg-gray-800/50 border-t border-gray-700/30">
-          <div className="text-xs text-gray-400 space-y-1">
-            <div>• Type WWF: {WWF_COLORS[data?.dominant_type]?.label || 'N/A'}</div>
-            <div>• Score écologique: {data?.connectivity_score || 0}/100</div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-/**
- * Panneau principal écologique
- */
-const EcologicalPanel = ({ 
-  className = '',
-  onZoneSelect,
-  selectedSpecies = null,
-}) => {
-  const [corridorSummary, setCorridorSummary] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  // Charger les données de corridors
-  useEffect(() => {
-    const fetchCorridorSummary = async () => {
-      try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-        const response = await fetch(`${backendUrl}/api/v1/ecological/corridors/summary`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          setCorridorSummary(data);
-        } else {
-          // Utiliser des données par défaut
-          setCorridorSummary({
-            summary: {
-              total_corridors: 12,
-              macro_corridors: 2,
-              biological_corridors: 6,
-              conservation_corridors: 4,
-            },
-            by_species: {
-              orignal: { corridors_count: 5, dominant_type: "biological_corridor", connectivity_score: 78 },
-              chevreuil: { corridors_count: 4, dominant_type: "conservation_corridor", connectivity_score: 72 },
-              ours_noir: { corridors_count: 3, dominant_type: "macro_corridor", connectivity_score: 65 },
-            }
-          });
-        }
-      } catch (err) {
-        console.warn('Ecological API not available, using defaults');
-        setCorridorSummary({
-          summary: {
-            total_corridors: 12,
-            macro_corridors: 2,
-            biological_corridors: 6,
-            conservation_corridors: 4,
-          },
-          by_species: {
-            orignal: { corridors_count: 5, dominant_type: "biological_corridor", connectivity_score: 78 },
-            chevreuil: { corridors_count: 4, dominant_type: "conservation_corridor", connectivity_score: 72 },
-            ours_noir: { corridors_count: 3, dominant_type: "macro_corridor", connectivity_score: 65 },
-          }
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+const EcologicalPanel = ({ corridors = [], species = 'tous', className = '' }) => {
+  const stats = useMemo(() => {
+    if (!corridors.length) return null;
     
-    fetchCorridorSummary();
-  }, []);
-  
-  if (loading) {
+    let totalDist = 0;
+    let astarCount = 0;
+    let bezierCount = 0;
+    const byType = { macro_corridor: 0, biological_corridor: 0, conservation_corridor: 0 };
+    const connections = new Set();
+    let avgScore = 0;
+
+    corridors.forEach(c => {
+      const p = c.properties || {};
+      totalDist += p.distance_m || 0;
+      avgScore += p.scoring?.score || 0;
+      if (p.pathfinding === 'A*') astarCount++;
+      else bezierCount++;
+      const ctype = p.corridor_type || 'conservation_corridor';
+      byType[ctype] = (byType[ctype] || 0) + 1;
+      connections.add(`${p.from_zone_type}-${p.to_zone_type}`);
+    });
+
+    return {
+      total: corridors.length,
+      totalDistKm: (totalDist / 1000).toFixed(1),
+      avgScore: corridors.length ? (avgScore / corridors.length).toFixed(0) : 0,
+      astarCount,
+      bezierCount,
+      byType,
+      uniqueConnections: connections.size,
+    };
+  }, [corridors]);
+
+  if (!stats || stats.total === 0) {
     return (
-      <div className={`p-3 ${className}`}>
-        <div className="animate-pulse space-y-3">
-          <div className="h-8 bg-gray-700/50 rounded" />
-          <div className="h-20 bg-gray-700/50 rounded" />
-          <div className="h-20 bg-gray-700/50 rounded" />
+      <div className={`p-3 ${className}`} data-testid="ecological-panel">
+        <div className="flex items-center gap-2 text-gray-500 text-xs">
+          <TreePine size={14} />
+          <span>Aucune donnee ecologique disponible</span>
         </div>
       </div>
     );
   }
-  
+
   return (
-    <div 
-      className={`space-y-3 ${className}`}
-      data-testid="ecological-panel"
-    >
-      {/* Indicateur de corridors */}
-      <CorridorIndicator summary={corridorSummary?.summary} />
-      
-      {/* Légende WWF */}
-      <WWFLegend 
-        summary={corridorSummary?.summary} 
-        expanded={false}
-      />
-      
-      {/* Cartes par espèce */}
-      <div className="space-y-2">
-        <div className="text-xs font-medium text-gray-400 uppercase tracking-wider px-1">
-          Zones par espèce
+    <div className={`space-y-2 ${className}`} data-testid="ecological-panel">
+      {/* En-tete */}
+      <div className="flex items-center justify-between px-2 py-1.5 bg-emerald-900/20 rounded border border-emerald-800/30">
+        <div className="flex items-center gap-1.5">
+          <TreePine size={13} className="text-emerald-400" />
+          <span className="text-xs font-semibold text-emerald-300 uppercase tracking-wider">Ecologie V8</span>
         </div>
-        {Object.entries(corridorSummary?.by_species || {}).map(([species, data]) => (
-          <SpeciesZoneCard 
-            key={species}
-            species={species}
-            data={data}
+        <span className="text-[10px] text-emerald-400/70 font-mono">
+          {stats.total} corridors | {stats.totalDistKm} km
+        </span>
+      </div>
+
+      {/* Classification WWF */}
+      <div className="px-2 space-y-1">
+        <div className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">Classification WWF</div>
+        {Object.entries(WWF_COLORS).map(([type, config]) => {
+          const count = stats.byType[type] || 0;
+          if (count === 0) return null;
+          return (
+            <div key={type} className="flex items-center gap-2 py-0.5" data-testid={`wwf-${type}`}>
+              <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: config.bg }} />
+              <span className="text-xs text-gray-300 flex-1">{config.label}</span>
+              <span className="text-[10px] text-gray-500">{config.desc}</span>
+              <span className="text-xs font-bold text-white bg-white/10 px-1.5 rounded">{count}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Pathfinding Stats */}
+      <div className="px-2 space-y-1">
+        <div className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">Pathfinding</div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1" data-testid="pathfinding-astar">
+            <Route size={11} className="text-cyan-400" />
+            <span className="text-xs text-gray-300">A*: <span className="text-cyan-300 font-bold">{stats.astarCount}</span></span>
+          </div>
+          <div className="flex items-center gap-1" data-testid="pathfinding-bezier">
+            <Compass size={11} className="text-amber-400" />
+            <span className="text-xs text-gray-300">Bezier: <span className="text-amber-300 font-bold">{stats.bezierCount}</span></span>
+          </div>
+        </div>
+        {/* Bar de progression A* */}
+        <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full transition-all"
+            style={{ width: `${(stats.astarCount / stats.total) * 100}%` }}
           />
-        ))}
+        </div>
+        <div className="text-[10px] text-gray-600 text-right">
+          {((stats.astarCount / stats.total) * 100).toFixed(0)}% A* optimal
+        </div>
+      </div>
+
+      {/* Connectivite */}
+      <div className="px-2 py-1.5 bg-gray-800/30 rounded">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Activity size={11} className="text-violet-400" />
+            <span className="text-xs text-gray-300">Score moyen</span>
+          </div>
+          <span className="text-xs font-bold text-violet-300">{stats.avgScore}/100</span>
+        </div>
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-[10px] text-gray-500">Connexions uniques</span>
+          <span className="text-[10px] font-bold text-gray-400">{stats.uniqueConnections}</span>
+        </div>
       </div>
     </div>
   );
 };
 
 export default EcologicalPanel;
-export { CorridorIndicator, WWFLegend, SpeciesZoneCard, WWF_COLORS, SPECIES_CONFIG };

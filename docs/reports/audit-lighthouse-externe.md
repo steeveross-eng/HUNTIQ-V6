@@ -2,7 +2,7 @@
 ## HUNTIQ-V5 BIONIC — BRANCHE 3 COMPLÈTE
 
 **Date:** 2025-12-20
-**URL Auditée:** https://ecological-zones.preview.emergentagent.com
+**URL Auditée:** https://corridor-analysis.preview.emergentagent.com
 **Protocole:** HTTP/2
 **Environnement:** Preview (non-production)
 **Statut:** ✅ AUDIT COMPLÉTÉ

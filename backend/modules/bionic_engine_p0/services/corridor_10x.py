@@ -610,87 +610,66 @@ class CorridorPathfinder:
     ) -> Optional[Dict[str, Any]]:
         """
         Trouve le chemin optimal entre deux points avec A*.
-        
-        Args:
-            start: Point de départ (lat, lng)
-            end: Point d'arrivée (lat, lng)
-            terrain_data: Données de terrain
-            max_iterations: Nombre maximum d'itérations
-            
-        Returns:
-            Dict avec le chemin et les métadonnées, ou None si aucun chemin
+        Optimisé: O(n log n) avec g_cost_map et grid snapping.
         """
-        # Calcul des bornes avec marge
-        margin = 0.02  # ~2km de marge
+        # Snap to grid
+        def snap(pos):
+            METERS_PER_DEG = 111320.0
+            step_lat = self.grid_resolution / METERS_PER_DEG
+            step_lng = self.grid_resolution / (METERS_PER_DEG * math.cos(math.radians(pos[0])))
+            return (round(pos[0] / step_lat) * step_lat, round(pos[1] / step_lng) * step_lng)
+
+        start = snap(start)
+        end = snap(end)
+
+        margin = 0.02
         bounds = (
             min(start[0], end[0]) - margin,
             min(start[1], end[1]) - margin,
             max(start[0], end[0]) + margin,
             max(start[1], end[1]) + margin,
         )
-        
-        # Initialisation
+
         start_node = AStarNode(start, 0, self._heuristic(start, end))
-        
         open_set: List[AStarNode] = [start_node]
-        closed_set: Set[Tuple[float, float]] = set()
-        
+        g_cost_map: Dict[Tuple[float, float], float] = {start: 0}
+
         iterations = 0
-        
+
         while open_set and iterations < max_iterations:
             iterations += 1
-            
-            # Récupérer le noeud avec le plus petit f_cost
             current = heapq.heappop(open_set)
-            
-            # Vérifier si on est arrivé (tolérance ~50m)
-            if self._heuristic(current.position, end) < 50:
-                # Reconstruire le chemin
+
+            # Skip if we already found a better path to this node
+            if current.g_cost > g_cost_map.get(current.position, float('inf')):
+                continue
+
+            if self._heuristic(current.position, end) < self.grid_resolution * 1.5:
                 path = []
-                total_cost = current.g_cost
                 node = current
                 while node:
                     path.append({"lat": node.position[0], "lng": node.position[1]})
                     node = node.parent
                 path.reverse()
-                
                 return {
                     "path": path,
-                    "total_cost": total_cost,
+                    "total_cost": current.g_cost,
                     "iterations": iterations,
                     "length_m": self._heuristic(start, end),
-                    "efficiency": self._heuristic(start, end) / max(total_cost, 1),
+                    "efficiency": self._heuristic(start, end) / max(current.g_cost, 1),
                 }
-            
-            closed_set.add(current.position)
-            
-            # Explorer les voisins
+
             for neighbor_pos in self._get_neighbors(current, bounds):
-                if neighbor_pos in closed_set:
-                    continue
-                
-                # Calculer le coût
-                terrain_cost = self._get_terrain_cost(neighbor_pos, terrain_data)
-                move_cost = self._heuristic(current.position, neighbor_pos) * terrain_cost
+                snapped = snap(neighbor_pos)
+                terrain_cost = self._get_terrain_cost(snapped, terrain_data)
+                move_cost = self._heuristic(current.position, snapped) * terrain_cost
                 g_cost = current.g_cost + move_cost
-                h_cost = self._heuristic(neighbor_pos, end)
-                
-                neighbor_node = AStarNode(neighbor_pos, g_cost, h_cost, current)
-                
-                # Vérifier si ce voisin est déjà dans open_set avec un meilleur coût
-                skip = False
-                for i, open_node in enumerate(open_set):
-                    if open_node.position == neighbor_pos:
-                        if open_node.g_cost <= g_cost:
-                            skip = True
-                        else:
-                            open_set.pop(i)
-                            heapq.heapify(open_set)
-                        break
-                
-                if not skip:
-                    heapq.heappush(open_set, neighbor_node)
-        
+
+                if g_cost < g_cost_map.get(snapped, float('inf')):
+                    g_cost_map[snapped] = g_cost
+                    h_cost = self._heuristic(snapped, end)
+                    heapq.heappush(open_set, AStarNode(snapped, g_cost, h_cost, current))
+
         self.logger.warning(f"A* failed to find path after {iterations} iterations")
         return None
     
