@@ -4,71 +4,66 @@
 Build a sophisticated ecological analysis tool for hunting (BIONIC HUNT). The tool integrates ecological knowledge, terrain analysis, and wildlife behavior modeling for Quebec-based hunting.
 
 ## Strategie BIONIC 2000%
-- Phase 1-3: DONE (Freeze, Reconstruct, Certify)
-- Phase 4: Branches creees, implementation future
+- Phases 1-3: DONE (Freeze, Reconstruct, Certify)
+- Phase 4: Branches creees
 
 ## Normes Architecturales BIONIC (BCE Permanent)
-- Architecture 100% modulaire
-- Aucun croisement de responsabilites
-- Aucun duplicat, import inutile, hardcoding
-- Chaque composant: autonome, tracable, testable, remplacable
+- Architecture 100% modulaire, zero hardcoding, zero duplication
+- Zero croisement responsabilites, zero artefact legacy
+- Chaque composant: autonome, tracable, testable, remplacable, documente
 
 ## Tech Stack
-- **Frontend**: React, Leaflet.js, TailwindCSS, Shadcn/UI
-- **Backend**: FastAPI (Python)
-- **Database**: MongoDB
+- Frontend: React, Leaflet.js, TailwindCSS, Shadcn/UI
+- Backend: FastAPI (Python), MongoDB
+- DEM/NDVI/Pression: Option A — Modele algorithmique interne (confirme)
 
 ## Completed Tasks
+- P0: A* Corridors DONE
+- P1: EcologicalPanel Integration DONE (6/6 tests)
+- P2: Right Panel Refactoring DONE (12/12 tests)
+- P3: Phase 4 Branches DONE
+- Phase E: Decommission PARTIAL (3/12)
+- BCE-4X Corridors: DONE (21/21 tests, 64 violations V8 detectees)
+- BCE-4X Transfer complet: DONE (16 modules, 8 actifs, 8 planifies, 0 non couverts)
 
-### P0 — A* Corridors (DONE)
-### P1 — EcologicalPanel Integration (DONE, 6/6 tests)
-### P2 — Right Panel Refactoring (DONE, 12/12 tests)
-- CorridorsEcologyPanel.jsx fusionne
-- BionicEngineHub.jsx (9 moteurs)
-- SidePanelZones restructure
-- 25+ imports morts nettoyes
-
-### P3 — Phase 4 Branches (DONE)
-- feature/vent_animation, feature/corridors_dem, feature/comparaison_saisons
-
-### Phase E — Decommission (PARTIAL, 3/12 fichiers)
-
-### BCE-4X Corridors Integration (DONE — 12 Mars 2026)
-- Validateur corridor_v9.py cree avec 8 regles
-- 21/21 tests pytest PASS
-- Endpoint POST /api/bce/validate-corridors operationnel
-- 64 violations detectees sur V8 (40 critical, 24 medium)
-- Status: BLOCKED — confirme necessite Phase V9
-- Rapport complet: /app/docs/RAPPORT_BCE_4X_CORRIDORS.md
+## BCE-4X Coverage (12 Mars 2026)
+| Module | Status | Validateur |
+|--------|--------|------------|
+| corridor_10x | active | corridor_v9 |
+| zone_engine_core | active | spatial_integrity |
+| ecological_database | active | ecological_validators_v8 |
+| movement_engine | active | corridor_v9 |
+| weather_engine | active | WeatherEngineValidator |
+| waypoint_engine | active | WaypointEngineValidator |
+| ui_coherence | active | ui_coherence |
+| scoring_determinism | active | scoring_determinism |
+| nutrition_engine | planned | NutritionEngineValidator |
+| daily_routine_engine | planned | DailyRoutineEngineValidator |
+| disturbance_engine | planned | DisturbanceEngineValidator |
+| phenology_engine | planned | PhenologyEngineValidator |
+| typology_engine | planned | TypologyEngineValidator |
+| learning_engine | planned | LearningEngineValidator |
+| habitat_enhancement | planned | HabitatEnhancementValidator |
+| hunting_path_engine | planned | HuntingPathEngineValidator |
 
 ## Current Priority: Phase Corridors V9
-EN ATTENTE de validation utilisateur apres rapport BCE-4X.
-Corrections a appliquer:
-1. Supprimer subscores hardcodes (terrain=65, habitat=70, zone_score=50)
-2. Appeler enrich_corridor() dans le pipeline
-3. Calculer subscores dynamiquement
-4. Activer clipping post-generation
-5. Integrer 9 moteurs BIONIC dans scoring corridors
+EN ATTENTE validation utilisateur. Corrections:
+1. Supprimer subscores hardcodes
+2. Appeler enrich_corridor() dans pipeline
+3. Scores dynamiques (terrain, habitat)
+4. Clipping strict 2km²
+5. Classification 5 niveaux
+6. Integrer 9 moteurs BIONIC
+7. Option A: DEM/NDVI/pression algorithmique
 
 ## Key API Endpoints
-- `POST /api/v1/bionic/organic-zones` — Zones + corridors A*
-- `GET /api/v1/ecological-knowledge/{species}` — Donnees V8
-- `GET /api/bce/status` — Statut BCE + BCE-4X corridors
-- `POST /api/bce/validate-corridors` — Validation live corridors
-
-## Ecological Intelligence Hub — 9 BIONIC Engines (V9-V10)
-| # | Engine | Status |
-|---|--------|--------|
-| 1 | Nutrition Engine | Planned |
-| 2 | Daily Routine Engine | Planned |
-| 3 | Weather Engine | Partial |
-| 4 | Disturbance Engine | Planned |
-| 5 | Movement Engine | Active (A*) |
-| 6 | Phenology Engine | Planned |
-| 7 | Typology Engine | Planned |
-| 8 | Learning Engine | Planned |
-| 9 | Habitat Enhancement | Planned |
+- POST /api/v1/bionic/organic-zones
+- GET /api/v1/ecological-knowledge/{species}
+- GET /api/bce/status
+- GET /api/bce/registry
+- POST /api/bce/validate-corridors
+- POST /api/bce/validate-engines
 
 ## Known Issues
-- OWM_API_KEY manquante (meteo fallback actif)
-- 64 violations BCE-4X corridors (bloquant, V9 requis)
+- OWM_API_KEY manquante (fallback actif)
+- 64 violations BCE-4X corridors V8 (bloquant, V9 requis)

@@ -17,6 +17,7 @@ from fastapi import APIRouter
 from bce.engine import run_full_validation, run_single_validator, BCE_VERSION
 from bce.validators.golden_state import save_golden_state
 from bce.validators.corridor_v9 import validate_corridor_batch
+from bce.validators.bionic_engine_framework import validate_all_engines, ENGINE_VALIDATORS
 
 logger = logging.getLogger("bce.router")
 
@@ -232,3 +233,33 @@ async def bce_validate_corridors():
             "error": str(e),
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
+
+
+@router.post("/validate-engines")
+async def bce_validate_engines():
+    """
+    BCE-4X Engine Framework — Valide tous les moteurs BIONIC enregistres.
+    Les moteurs sans donnees retourneront des violations "data missing".
+    """
+    report = validate_all_engines()
+    return report
+
+
+@router.get("/registry")
+async def bce_registry():
+    """
+    Retourne le registre complet des modules critiques BCE-4X.
+    """
+    from bce.bce_max_4_1 import CRITICAL_MODULES_REGISTRY, check_critical_module_coverage
+    uncovered = check_critical_module_coverage()
+    return {
+        "total_modules": len(CRITICAL_MODULES_REGISTRY),
+        "uncovered_active": uncovered,
+        "modules": {k: {
+            "status": v["status"],
+            "validator": v.get("validator", "pending"),
+            "since": v.get("since"),
+        } for k, v in CRITICAL_MODULES_REGISTRY.items()},
+        "engine_validators": list(ENGINE_VALIDATORS.keys()),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }

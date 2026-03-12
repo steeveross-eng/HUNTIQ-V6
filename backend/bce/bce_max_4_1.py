@@ -119,7 +119,7 @@ MANDATORY_FEATURES = {
 # Un module non enregistré ici ne peut PAS être déployé en production.
 
 CRITICAL_MODULES_REGISTRY = {
-    # Modules actifs (validateur BCE-4X existe)
+    # ── MODULES ACTIFS (validateur BCE-4X existe) ──
     "corridor_10x": {
         "file": "modules/bionic_engine_p0/services/corridor_10x.py",
         "validator": "bce.validators.corridor_v9",
@@ -138,16 +138,66 @@ CRITICAL_MODULES_REGISTRY = {
         "status": "active",
         "since": "2026-03-01",
     },
-    # Moteurs BIONIC — tous critiques, validateurs a creer avec chaque moteur
-    "movement_engine": {"status": "active", "validator": "bce.validators.corridor_v9"},
-    "weather_engine": {"status": "partial", "validator": "pending"},
-    "nutrition_engine": {"status": "planned", "validator": "pending"},
-    "daily_routine_engine": {"status": "planned", "validator": "pending"},
-    "disturbance_engine": {"status": "planned", "validator": "pending"},
-    "phenology_engine": {"status": "planned", "validator": "pending"},
-    "typology_engine": {"status": "planned", "validator": "pending"},
-    "learning_engine": {"status": "planned", "validator": "pending"},
-    "habitat_enhancement_engine": {"status": "planned", "validator": "pending"},
+    # ── MOTEURS BIONIC (tous critiques) ──
+    "movement_engine": {
+        "validator": "bce.validators.corridor_v9",
+        "status": "active",
+        "since": "2026-03-12",
+    },
+    "weather_engine": {
+        "validator": "bce.validators.bionic_engine_framework.WeatherEngineValidator",
+        "status": "active",
+        "since": "2026-03-12",
+    },
+    "nutrition_engine": {
+        "validator": "bce.validators.bionic_engine_framework.NutritionEngineValidator",
+        "status": "planned",
+    },
+    "daily_routine_engine": {
+        "validator": "bce.validators.bionic_engine_framework.DailyRoutineEngineValidator",
+        "status": "planned",
+    },
+    "disturbance_engine": {
+        "validator": "bce.validators.bionic_engine_framework.DisturbanceEngineValidator",
+        "status": "planned",
+    },
+    "phenology_engine": {
+        "validator": "bce.validators.bionic_engine_framework.PhenologyEngineValidator",
+        "status": "planned",
+    },
+    "typology_engine": {
+        "validator": "bce.validators.bionic_engine_framework.TypologyEngineValidator",
+        "status": "planned",
+    },
+    "learning_engine": {
+        "validator": "bce.validators.bionic_engine_framework.LearningEngineValidator",
+        "status": "planned",
+    },
+    "habitat_enhancement_engine": {
+        "validator": "bce.validators.bionic_engine_framework.HabitatEnhancementValidator",
+        "status": "planned",
+    },
+    # ── MOTEURS SPATIAUX ──
+    "waypoint_engine": {
+        "validator": "bce.validators.bionic_engine_framework.WaypointEngineValidator",
+        "status": "active",
+        "since": "2026-03-12",
+    },
+    "hunting_path_engine": {
+        "validator": "bce.validators.bionic_engine_framework.HuntingPathEngineValidator",
+        "status": "planned",
+    },
+    # ── UI CRITIQUES ──
+    "ui_coherence": {
+        "validator": "bce.validators.ui_coherence",
+        "status": "active",
+        "since": "2026-03-01",
+    },
+    "scoring_determinism": {
+        "validator": "bce.validators.scoring_determinism",
+        "status": "active",
+        "since": "2026-03-01",
+    },
 }
 
 
