@@ -6,6 +6,10 @@
  * - Legende WWF (macro / biologiques / conservation)
  * - Methode de pathfinding (A* vs Bezier)
  * - Statistiques de connectivite
+ * 
+ * Props dynamiques (zero donnees mockees):
+ * - corridors: Array de corridors issus de bionicZonesData.corridors
+ * - species: string (espece selectionnee)
  */
 
 import React, { useMemo } from 'react';
@@ -29,14 +33,13 @@ const EcologicalPanel = ({ corridors = [], species = 'tous', className = '' }) =
     let avgScore = 0;
 
     corridors.forEach(c => {
-      const p = c.properties || {};
-      totalDist += p.distance_m || 0;
-      avgScore += p.scoring?.score || 0;
-      if (p.pathfinding === 'A*') astarCount++;
+      totalDist += c.distanceM || 0;
+      avgScore += c.score || 0;
+      if (c.pathfinding === 'A*') astarCount++;
       else bezierCount++;
-      const ctype = p.corridor_type || 'conservation_corridor';
+      const ctype = c.corridorType || 'conservation_corridor';
       byType[ctype] = (byType[ctype] || 0) + 1;
-      connections.add(`${p.from_zone_type}-${p.to_zone_type}`);
+      connections.add(`${c.fromZoneType}-${c.toZoneType}`);
     });
 
     return {
@@ -73,6 +76,13 @@ const EcologicalPanel = ({ corridors = [], species = 'tous', className = '' }) =
           {stats.total} corridors | {stats.totalDistKm} km
         </span>
       </div>
+
+      {/* Espece active */}
+      {species && species !== 'tous' && (
+        <div className="px-2">
+          <span className="text-[10px] text-amber-400 font-medium capitalize">{species}</span>
+        </div>
+      )}
 
       {/* Classification WWF */}
       <div className="px-2 space-y-1">
@@ -123,11 +133,11 @@ const EcologicalPanel = ({ corridors = [], species = 'tous', className = '' }) =
             <Activity size={11} className="text-violet-400" />
             <span className="text-xs text-gray-300">Score moyen</span>
           </div>
-          <span className="text-xs font-bold text-violet-300">{stats.avgScore}/100</span>
+          <span className="text-xs font-bold text-violet-300" data-testid="ecological-avg-score">{stats.avgScore}/100</span>
         </div>
         <div className="flex items-center justify-between mt-1">
           <span className="text-[10px] text-gray-500">Connexions uniques</span>
-          <span className="text-[10px] font-bold text-gray-400">{stats.uniqueConnections}</span>
+          <span className="text-[10px] font-bold text-gray-400" data-testid="ecological-connections">{stats.uniqueConnections}</span>
         </div>
       </div>
     </div>

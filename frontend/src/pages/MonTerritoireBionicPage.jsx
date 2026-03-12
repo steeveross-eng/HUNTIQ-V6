@@ -1375,6 +1375,7 @@ const MonTerritoireBionicPage = () => {
               rejectionDiagnostics={bionicZonesData.rejection_diagnostics}
               weatherMetadata={weatherMetadata}
               zones={bionicZonesData.zones || []}
+              species={selectedSpecies}
             />
           )}
 

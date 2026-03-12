@@ -189,6 +189,7 @@ export const generateBionicZonesV5 = async (bounds, zoom, layersVisible, species
         fromZoneType: props.from_zone_type,
         toZoneType: props.to_zone_type,
         distanceM: props.distance_m,
+        pathfinding: props.pathfinding || 'unknown',
         score: scoring.score || 0,
         subscores: scoring.subscores || {},
         justification: scoring.justification || [],

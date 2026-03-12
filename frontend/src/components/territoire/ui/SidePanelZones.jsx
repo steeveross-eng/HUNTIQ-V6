@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { Target, X, Trash2, AlertTriangle, ChevronDown, ChevronUp, Droplets, Building, TreePine, Scissors, CloudRain, Wind, Sun, Thermometer } from 'lucide-react';
 import CorridorStatsPanel from '@/components/territoire/CorridorStatsPanel';
+import EcologicalPanel from '@/components/territoire/EcologicalPanel';
 
 const REJECTION_LABELS = {
   'p0_v6_water': 'Hydrographie',
@@ -263,6 +264,7 @@ export const SidePanelZones = React.memo(({
   rejectionDiagnostics,
   weatherMetadata,
   zones,
+  species,
 }) => (
   <div className="p-4 space-y-4" data-testid="panel-zones">
     {/* Zoom */}
@@ -313,6 +315,8 @@ export const SidePanelZones = React.memo(({
     <WeatherInfluencePanel weatherMetadata={weatherMetadata} zones={zones} />
     {/* Corridor Stats V7.1 */}
     <CorridorStatsPanel corridors={corridors} />
+    {/* Ecologie V8 — Panneau dynamique */}
+    <EcologicalPanel corridors={corridors} species={species} />
     {/* Waypoint cible */}
     {selectedWaypointForZones && (
       <div className="bg-[#3CB371]/10 rounded-lg p-3 border border-[#3CB371]/30">
