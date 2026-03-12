@@ -17,7 +17,7 @@ import { MapContainer } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import {
   Crosshair, Target, MapPin, Plus, X, LocateFixed,
-  BookMarked, Users, Edit2, Shield, SplitSquareHorizontal,
+  BookMarked, Users, Shield, SplitSquareHorizontal,
   Map, Binoculars, Layers, Lock, Unlock, BarChart3, CheckCircle, Settings,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -30,12 +30,10 @@ import useBionicWeather from '@/hooks/useBionicWeather';
 import useBionicScoring from '@/hooks/useBionicScoring';
 import { useUserData } from '@/hooks/useUserData';
 import { useNotifications, useHuntingGroups } from '@/hooks/useSharing';
-import { NotificationBell } from '@/components/territoire/ShareComponents';
 import BionicLegend from '@/components/territoire/BionicLegend';
 import WaypointContextMenu from '@/components/territoire/WaypointContextMenu';
 import WaypointUnifiedPanel from '@/components/territoire/WaypointUnifiedPanel';
 import { useAuth } from '@/components/GlobalAuth';
-// MonTerritoireToolbar inlined into unified toolbar (P0 UX refactor)
 import DiagnosticExclusionsPanel from '@/components/territoire/DiagnosticExclusionsPanel';
 import BionicZoneDiagnosticPanel from '@/components/territoire/BionicZoneDiagnosticPanel';
 import PlacesSidePanel from '@/components/territoire/PlacesSidePanel';
@@ -44,35 +42,20 @@ import useSpatialClipping from '@/hooks/useSpatialClipping';
 import CompareWidget from '@/components/territoire/CompareWidget';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { SPECIES_LIST } from '@/core/bionic/speciesConfig';
-import { fetchTerrainExclusions, ZONE_LIMITS, LAYER_TYPES } from '@/services/BionicZoneService';
 import { useZoneOrchestrator } from '@/hooks/useZoneOrchestrator';
-import { useZoneFavorites, AddToFavoritesButton, AlertsPanel, FavoritesList } from '@/components/territoire/ZoneFavorites';
-import { GroupeTab, useGroupeSafety, useGroupeTracking } from '@/modules/groupe';
-import EcologicalPanel from '@/components/territoire/EcologicalPanel';
+import { useZoneFavorites } from '@/components/territoire/ZoneFavorites';
+import { GroupeTab, useGroupeTracking } from '@/modules/groupe';
+// P2: EcologicalPanel fusionne dans CorridorsEcologyPanel via SidePanelZones
 import { 
-  EcoforestryLayerControl, 
-  EcoMapFallbackNotification,
   useEcoMapFallback,
-  BASE_MAPS, 
-  ECOFORESTRY_LAYERS,
-  EcoMapStatus 
 } from '@/components/territoire/EcoforestryLayers';
-import { 
-  BIONIC_LAYERS, 
-  SCORE_CATEGORIES,
-  getScoresForWaypoint, 
-  adaptWaypointData,
-  getWindDirectionText,
-  getWeatherDescription
-} from '@/core/bionic';
 import { toast } from 'sonner';
 // Import BIONIC Map Selector
 import BionicMapSelector from '@/components/maps/BionicMapSelector';
 import useMapType from '@/hooks/useMapType';
-import { MAP_TYPES, getMapConfig } from '@/config/mapSources';
+import { MAP_TYPES } from '@/config/mapSources';
 
-// Import BIONIC Design System
-import { BIONIC_COLORS } from '@/config/bionic-colors';
+// P2: BIONIC_COLORS migrated to component-level CSS variables
 
 // IM1 — Modules extraits
 import { useGeolocation } from '@/hooks/useGeolocation';
@@ -86,7 +69,7 @@ import { useWaypointActions } from '@/hooks/useWaypointActions';
 import { MapContent } from '@/components/territoire/map/MapContent';
 // V8.1 — Saisons biologiques
 import { BiologicalSeasonSelector } from '@/components/territoire/ui/BiologicalSeasonSelector';
-import { getCurrentBiologicalSeason, getBiologicalSeason, mapToBackendSeason } from '@/config/biologicalSeasons';
+import { getCurrentBiologicalSeason } from '@/config/biologicalSeasons';
 // V8.1 — Split View
 import { SplitViewContainer } from '@/components/territoire/map/SplitViewContainer';
 import { useSplitViewZones } from '@/hooks/useSplitViewZones';
@@ -1376,6 +1359,8 @@ const MonTerritoireBionicPage = () => {
               weatherMetadata={weatherMetadata}
               zones={bionicZonesData.zones || []}
               species={selectedSpecies}
+              displayScore={displayScore}
+              rating={rating}
             />
           )}
 
