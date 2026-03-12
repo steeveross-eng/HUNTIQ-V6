@@ -55,20 +55,21 @@ CLASSIFICATION_V9 = {
 
 # Band buffer widths in degrees (outer to inner)
 # At Quebec ~46.8N: 0.001 deg lat ≈ 111m, 0.001 deg lng ≈ 76m
+# WIDTHS CALIBRATED for visibility at zoom 14-15 (2km² view)
 BAND_WIDTHS = {
-    "gris":       0.00055,   # ~55m buffer radius (outermost halo)
-    "jaune":      0.00040,   # ~40m
-    "orange":     0.00028,   # ~28m
-    "rouge":      0.00016,   # ~16m
-    "rouge_raye": 0.00007,   # ~7m (innermost core)
+    "gris":       0.0028,    # ~310m buffer radius (outermost halo)
+    "jaune":      0.0020,    # ~220m
+    "orange":     0.0014,    # ~155m
+    "rouge":      0.0008,    # ~90m
+    "rouge_raye": 0.0004,    # ~44m (innermost core)
 }
 
 BAND_COLORS = {
-    "gris":       {"color": "#9E9E9E", "opacity": 0.20, "fillOpacity": 0.15},
-    "jaune":      {"color": "#FFC107", "opacity": 0.35, "fillOpacity": 0.25},
-    "orange":     {"color": "#FF9800", "opacity": 0.50, "fillOpacity": 0.40},
-    "rouge":      {"color": "#F44336", "opacity": 0.70, "fillOpacity": 0.55},
-    "rouge_raye": {"color": "#B71C1C", "opacity": 0.90, "fillOpacity": 0.75},
+    "gris":       {"color": "#9E9E9E", "opacity": 0.40, "fillOpacity": 0.25},
+    "jaune":      {"color": "#FFC107", "opacity": 0.55, "fillOpacity": 0.40},
+    "orange":     {"color": "#FF9800", "opacity": 0.70, "fillOpacity": 0.55},
+    "rouge":      {"color": "#F44336", "opacity": 0.85, "fillOpacity": 0.65},
+    "rouge_raye": {"color": "#B71C1C", "opacity": 0.95, "fillOpacity": 0.80},
 }
 
 
@@ -148,15 +149,8 @@ def generate_corridor_bands(centerline_coords, bounds=None, score=50):
         style = BAND_COLORS[level]
         level_config = CLASSIFICATION_V9[level]
 
-        # Only generate inner bands if score is high enough
-        if level == "rouge_raye" and score < 80:
-            continue
-        if level == "rouge" and score < 65:
-            continue
-        if level == "orange" and score < 45:
-            continue
-        if level == "jaune" and score < 25:
-            continue
+        # V9-GEOM-003: ALL 5 bands MUST be generated — no score filtering
+        # The visual gradient from gris (halo) to rouge_raye (core) is MANDATORY
 
         try:
             buffered = line.buffer(width, cap_style=2, join_style=2, resolution=8)

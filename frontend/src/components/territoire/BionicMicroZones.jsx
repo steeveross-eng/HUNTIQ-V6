@@ -17,7 +17,7 @@
  */
 
 import React, { useMemo, useState, useCallback, useRef } from 'react';
-import { Polygon, Polyline, Tooltip, useMap } from 'react-leaflet';
+import { Polygon, Polyline, Tooltip, useMap, Pane } from 'react-leaflet';
 import { BIONIC_MODULES } from '@/core/bionic';
 import SmartMapTooltip from './SmartMapTooltip';
 
@@ -276,6 +276,7 @@ const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
   );
 
   // Render multi-band polygons (outer to inner for z-ordering)
+  // IMPORTANT: Bands must be visually dominant — rendered on Pane with high z-index
   if (hasBands) {
     return (
       <>
@@ -285,16 +286,17 @@ const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
           const rings = band.coordinates.map(ring =>
             ring.map(c => [c[1], c[0]])
           );
+          const isInnermost = bIdx === bands.length - 1;
           return rings.map((ring, rIdx) => (
             <Polygon
               key={`corridor-band-${corridorIndex}-${band.level}-${rIdx}`}
               positions={ring}
               pathOptions={{
                 color: band.color,
-                weight: isHovered && bIdx === bands.length - 1 ? 2 : 0.5,
-                opacity: isHovered ? Math.min(1, band.opacity + 0.2) : band.opacity,
+                weight: isHovered ? 2.5 : (isInnermost ? 1.5 : 0.8),
+                opacity: isHovered ? Math.min(1, band.opacity + 0.25) : band.opacity,
                 fillColor: band.color,
-                fillOpacity: isHovered ? Math.min(0.9, band.fillOpacity + 0.15) : band.fillOpacity,
+                fillOpacity: isHovered ? Math.min(0.95, band.fillOpacity + 0.2) : band.fillOpacity,
               }}
               eventHandlers={{
                 mouseover: () => setIsHovered(true),
@@ -302,7 +304,7 @@ const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
               }}
               data-testid={`corridor-v9-band-${corridorIndex}-${band.level}`}
             >
-              {bIdx === bands.length - 1 && (
+              {isInnermost && (
                 <Tooltip sticky direction="top" offset={[0, -8]}>
                   {tooltipContent}
                 </Tooltip>
@@ -310,15 +312,15 @@ const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
             </Polygon>
           ));
         })}
-        {/* Centerline overlay for definition */}
+        {/* Centerline: strong visible line on top */}
         {centerline && centerline.length >= 2 && (
           <Polyline
             positions={centerline.map(c => [c[1], c[0]])}
             pathOptions={{
-              color: classificationV9?.color || '#F44336',
-              weight: isHovered ? 2.5 : 1.5,
-              opacity: isHovered ? 0.8 : 0.5,
-              dashArray: level === 'rouge_raye' ? '8,3,2,3' : level === 'gris' ? '6,4' : null,
+              color: '#FFFFFF',
+              weight: isHovered ? 3 : 2,
+              opacity: isHovered ? 0.9 : 0.6,
+              dashArray: null,
               lineCap: 'round',
               lineJoin: 'round',
             }}
@@ -327,6 +329,21 @@ const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
               mouseout: () => setIsHovered(false),
             }}
             data-testid={`corridor-v9-centerline-${corridorIndex}`}
+          />
+        )}
+        {/* Classification line on top of white centerline */}
+        {centerline && centerline.length >= 2 && (
+          <Polyline
+            positions={centerline.map(c => [c[1], c[0]])}
+            pathOptions={{
+              color: classificationV9?.color || '#F44336',
+              weight: isHovered ? 2 : 1.2,
+              opacity: isHovered ? 0.8 : 0.5,
+              dashArray: level === 'rouge_raye' ? '6,2,2,2' : level === 'gris' ? '4,3' : null,
+              lineCap: 'round',
+              lineJoin: 'round',
+            }}
+            data-testid={`corridor-v9-classline-${corridorIndex}`}
           />
         )}
       </>
@@ -467,29 +484,7 @@ const BionicMicroZones = ({
         />
       ))}
 
-      {/* COUCHE 3b: Corridors V9 — Rubans ecologiques multicouches */}
-      {showCorridors &&
-        corridors.map((c, idx) =>
-          c.positions || c.bands ? (
-            <V9CorridorRibbon
-              key={c.id || `corridor-v9-${idx}`}
-              corridor={c}
-              corridorIndex={idx}
-            />
-          ) : (
-            <CorridorLine
-              key={`corridor-${idx}`}
-              start={c.start}
-              end={c.end}
-              moduleId="corridors"
-              percentage={c.percentage}
-              label={c.label}
-              corridorIndex={idx}
-            />
-          )
-        )}
-
-      {/* COUCHE 4: core.nodes — Contours uniques, TOUJOURS au-dessus */}
+      {/* COUCHE 4: core.nodes — Contours uniques */}
       {nodeZones.map((zone, idx) => (
         <NormalizedZone
           key={zone.id}
@@ -502,6 +497,32 @@ const BionicMicroZones = ({
           onToggleFavorite={toggleFavorite}
         />
       ))}
+
+      {/* COUCHE 5: Corridors V9 — Rubans ecologiques multicouches
+          TOUJOURS AU-DESSUS des zones pour visibilite maximale
+          Rendu: 5 bandes concentriques gris→jaune→orange→rouge→rouge_raye */}
+      <Pane name="corridors-v9-pane" style={{ zIndex: 650 }}>
+        {showCorridors &&
+          corridors.map((c, idx) =>
+            c.positions || c.bands ? (
+              <V9CorridorRibbon
+                key={c.id || `corridor-v9-${idx}`}
+                corridor={c}
+                corridorIndex={idx}
+              />
+            ) : (
+              <CorridorLine
+                key={`corridor-${idx}`}
+                start={c.start}
+                end={c.end}
+                moduleId="corridors"
+                percentage={c.percentage}
+                label={c.label}
+                corridorIndex={idx}
+              />
+            )
+          )}
+      </Pane>
     </>
   );
 };
