@@ -250,7 +250,7 @@ async def bce_registry():
     """
     Retourne le registre complet des modules critiques BCE-4X.
     """
-    from bce.bce_max_4_1 import CRITICAL_MODULES_REGISTRY, check_critical_module_coverage
+    from bce.bce_max_4_1 import CRITICAL_MODULES_REGISTRY, check_critical_module_coverage, validate_branch_compliance
     uncovered = check_critical_module_coverage()
     return {
         "total_modules": len(CRITICAL_MODULES_REGISTRY),
@@ -263,3 +263,29 @@ async def bce_registry():
         "engine_validators": list(ENGINE_VALIDATORS.keys()),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@router.get("/branch-compliance/{branch_name:path}")
+async def bce_branch_compliance(branch_name: str):
+    """
+    BCE-4X Branch Protection — Verifie si une branche est conforme pour merge.
+    """
+    from bce.bce_max_4_1 import validate_branch_compliance
+    report = validate_branch_compliance(branch_name)
+    return report
+
+
+@router.get("/branch-compliance")
+async def bce_branch_compliance_current():
+    """
+    BCE-4X Branch Protection — Verifie la branche courante.
+    """
+    import subprocess
+    from bce.bce_max_4_1 import validate_branch_compliance
+    try:
+        result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, cwd="/app")
+        branch = result.stdout.strip()
+    except Exception:
+        branch = "unknown"
+    report = validate_branch_compliance(branch)
+    return report

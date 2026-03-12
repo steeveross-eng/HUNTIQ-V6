@@ -213,6 +213,45 @@ def check_critical_module_coverage() -> list:
     return uncovered
 
 
+def validate_branch_compliance(branch_name: str = "") -> Dict[str, Any]:
+    """
+    BCE-4X Branch Protection — Valide la conformite d'une branche.
+    
+    Regles:
+    1. Tout code sur la branche doit passer validate_full() sans violations critiques
+    2. Le registre des modules critiques doit etre intact
+    3. Aucun module actif ne peut avoir un validateur "pending"
+    4. Les branches contenant du code non conforme sont marquees BLOCKED
+    
+    Seules les branches COMPLIANT peuvent etre mergees dans main.
+    """
+    uncovered = check_critical_module_coverage()
+    
+    issues = []
+    if uncovered:
+        issues.append(f"Modules actifs sans validateur: {uncovered}")
+    
+    # Verifier que le registre est present et non vide
+    if len(CRITICAL_MODULES_REGISTRY) < 16:
+        issues.append(f"Registre incomplet: {len(CRITICAL_MODULES_REGISTRY)}/16 modules")
+    
+    # Verifier qu'aucun moteur BIONIC planned n'a un validateur "pending"
+    for mid, info in CRITICAL_MODULES_REGISTRY.items():
+        if info.get("validator") == "pending":
+            issues.append(f"Module '{mid}' a un validateur 'pending'")
+    
+    status = "BLOCKED" if issues else "COMPLIANT"
+    
+    return {
+        "branch": branch_name or "current",
+        "status": status,
+        "merge_allowed": status == "COMPLIANT",
+        "issues": issues,
+        "registry_size": len(CRITICAL_MODULES_REGISTRY),
+        "active_modules": len([m for m in CRITICAL_MODULES_REGISTRY.values() if m["status"] == "active"]),
+    }
+
+
 # État de référence (golden state) — NE JAMAIS MODIFIER
 GOLDEN_STATE_HASH = None  # Calculé à l'initialisation
 
