@@ -1,8 +1,14 @@
 """
-BIONIC V9 Backend Tests — Phase Corridors V9
-=============================================
-Tests BCE-4X weather compliance, V9 corridor validation, 
-9 BIONIC engine evaluation, and species-specific corridors.
+BIONIC V9 Backend Tests — Phase Corridors V9 (Second Iteration)
+================================================================
+Tests:
+- BCE-4X weather compliance (60-minute OWM cache)
+- BCE-4X new rules: GEOM-001 (shape), GEOM-002 (continuity), GEOM-003 (gradient), CLIP-001 (outside area), VISUAL-001 (migration look)
+- V9 corridor validation with 5-level gradient bands
+- Shapely-based polygon band generation (5 concentric bands per corridor)
+- Chaikin-smoothed centerline
+- 9 BIONIC engine evaluation
+- Species-specific corridors (moose/deer/bear)
 """
 
 import pytest
@@ -95,7 +101,7 @@ class TestBCE4XRegistry:
 
 
 class TestV9CorridorValidation:
-    """V9 Corridor BCE validation tests"""
+    """V9 Corridor BCE validation tests with BCE-4X new rules"""
     
     def test_validate_corridors_v9_100_percent_compliance(self):
         """POST /api/bce/validate-corridors-v9 should return 100% compliance"""
@@ -109,6 +115,26 @@ class TestV9CorridorValidation:
         assert data["total_violations"] == 0
         
         print(f"V9 Compliance: {data['compliance_rate']}%, total_corridors={data['total_corridors']}")
+    
+    def test_bce4x_rules_validated(self):
+        """Validate BCE-4X rules: GEOM-001, GEOM-002, GEOM-003, CLIP-001, VISUAL-001"""
+        response = requests.post(f"{BASE_URL}/api/bce/validate-corridors-v9", timeout=60)
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Check that results include BCE-4X rule validation
+        for result in data["results"]:
+            violations = result.get("violations", [])
+            # No violations for new rules
+            rule_violations = [v for v in violations if v.get("rule", "").startswith("BCE-4X")]
+            assert len(rule_violations) == 0, f"BCE-4X violations found: {rule_violations}"
+            
+            # Check bands and centerline presence (GEOM-003, VISUAL-001)
+            assert "has_bands" in result, f"Missing 'has_bands' in validation result"
+            assert result["has_bands"] == True, f"Corridor {result['corridor_id']} missing bands"
+            assert result.get("band_count", 0) > 0, f"Corridor {result['corridor_id']} has 0 bands"
+        
+        print(f"All {len(data['results'])} corridors pass BCE-4X rules (GEOM/CLIP/VISUAL)")
     
     def test_corridors_have_9_engines_evaluated(self):
         """Each corridor should have all 9 engines evaluated"""
@@ -146,15 +172,33 @@ class TestV9CorridorValidation:
         circular_violations = []
         for result in data["results"]:
             for v in result.get("violations", []):
-                if v.get("rule") == "non_circular":
+                if v.get("rule") == "BCE-4X-GEOM-001":
                     circular_violations.append(result["corridor_id"])
         
         assert len(circular_violations) == 0, f"Circular corridors found: {circular_violations}"
-        print("No circular corridors detected")
+        print("No circular corridors detected (GEOM-001)")
+    
+    def test_continuity_validation(self):
+        """Corridors should pass continuity check (no gaps > 150m)"""
+        response = requests.post(f"{BASE_URL}/api/bce/validate-corridors-v9", timeout=60)
+        assert response.status_code == 200
+        data = response.json()
+        
+        continuity_violations = []
+        for result in data["results"]:
+            if not result.get("continuity_valid", True):
+                continuity_violations.append(result["corridor_id"])
+            for v in result.get("violations", []):
+                if v.get("rule") == "BCE-4X-GEOM-002":
+                    continuity_violations.append(result["corridor_id"])
+        
+        # Allow some corridors with minor gaps that were fixed
+        assert len(continuity_violations) == 0, f"Continuity violations: {continuity_violations}"
+        print("All corridors pass continuity validation (GEOM-002)")
 
 
 class TestSpeciesCorridors:
-    """Species-specific corridor generation tests"""
+    """Species-specific corridor generation tests with V9 bands and centerline"""
     
     TEST_BOUNDS = {
         "north": 46.96, "south": 46.93,
@@ -184,6 +228,95 @@ class TestSpeciesCorridors:
         # Verify all 9 engines have averages
         assert len(data["engine_averages"]) == 9
         print(f"Moose: {data['total_corridors']} corridors, classification: {data['classification_v9']}")
+    
+    def test_corridors_have_bands_array(self):
+        """Each corridor should have 'bands' array with polygon data"""
+        response = requests.post(
+            f"{BASE_URL}/api/v1/bionic/corridors-v9/by-species",
+            json={
+                "bounds": self.TEST_BOUNDS,
+                "species": "moose",
+                "resolution": 40
+            },
+            timeout=60
+        )
+        assert response.status_code == 200
+        data = response.json()
+        
+        corridors_with_bands = 0
+        total_bands = 0
+        for corridor in data["corridors"]:
+            props = corridor.get("properties", {})
+            bands = props.get("bands", [])
+            if len(bands) > 0:
+                corridors_with_bands += 1
+                total_bands += len(bands)
+                # Verify band structure
+                for band in bands:
+                    assert "level" in band, f"Band missing 'level' in corridor {corridor.get('id')}"
+                    assert "color" in band, f"Band missing 'color' in corridor {corridor.get('id')}"
+                    assert "opacity" in band, f"Band missing 'opacity' in corridor {corridor.get('id')}"
+                    assert "fillOpacity" in band, f"Band missing 'fillOpacity' in corridor {corridor.get('id')}"
+                    assert "coordinates" in band, f"Band missing 'coordinates' in corridor {corridor.get('id')}"
+        
+        # At least some corridors should have bands (high-scoring corridors)
+        assert corridors_with_bands > 0, "No corridors have bands array"
+        print(f"Corridors with bands: {corridors_with_bands}/{len(data['corridors'])}, total bands: {total_bands}")
+    
+    def test_corridors_have_centerline(self):
+        """Each corridor should have 'centerline' for Chaikin-smoothed axis"""
+        response = requests.post(
+            f"{BASE_URL}/api/v1/bionic/corridors-v9/by-species",
+            json={
+                "bounds": self.TEST_BOUNDS,
+                "species": "moose",
+                "resolution": 40
+            },
+            timeout=60
+        )
+        assert response.status_code == 200
+        data = response.json()
+        
+        corridors_with_centerline = 0
+        for corridor in data["corridors"]:
+            props = corridor.get("properties", {})
+            centerline = props.get("centerline", [])
+            if len(centerline) >= 2:
+                corridors_with_centerline += 1
+                # Verify centerline is array of [lng, lat] coords
+                for coord in centerline[:3]:  # Check first 3
+                    assert isinstance(coord, list) and len(coord) == 2, f"Invalid centerline coord: {coord}"
+        
+        # Most corridors should have centerline
+        assert corridors_with_centerline > 0, "No corridors have centerline"
+        print(f"Corridors with centerline: {corridors_with_centerline}/{len(data['corridors'])}")
+    
+    def test_band_levels_are_valid(self):
+        """Band levels should be one of: gris, jaune, orange, rouge, rouge_raye"""
+        valid_levels = {"gris", "jaune", "orange", "rouge", "rouge_raye"}
+        
+        response = requests.post(
+            f"{BASE_URL}/api/v1/bionic/corridors-v9/by-species",
+            json={
+                "bounds": self.TEST_BOUNDS,
+                "species": "moose",
+                "resolution": 40
+            },
+            timeout=60
+        )
+        assert response.status_code == 200
+        data = response.json()
+        
+        levels_found = set()
+        for corridor in data["corridors"]:
+            props = corridor.get("properties", {})
+            bands = props.get("bands", [])
+            for band in bands:
+                level = band.get("level")
+                assert level in valid_levels, f"Invalid band level: {level}"
+                levels_found.add(level)
+        
+        print(f"Band levels found: {levels_found}")
     
     def test_deer_corridors_generation(self):
         """POST /api/v1/bionic/corridors-v9/by-species for deer"""
@@ -222,6 +355,37 @@ class TestSpeciesCorridors:
         assert data["total_corridors"] > 0
         assert data["bce_validation"]["status"] == "COMPLIANT"
         print(f"Bear: {data['total_corridors']} corridors, classification: {data['classification_v9']}")
+    
+    def test_corridors_clipped_within_bounds(self):
+        """Corridors must be clipped within the 2km2 active perimeter bounds"""
+        response = requests.post(
+            f"{BASE_URL}/api/v1/bionic/corridors-v9/by-species",
+            json={
+                "bounds": self.TEST_BOUNDS,
+                "species": "moose",
+                "resolution": 40
+            },
+            timeout=60
+        )
+        assert response.status_code == 200
+        data = response.json()
+        
+        margin = 0.0005  # ~50m tolerance
+        out_of_bounds_count = 0
+        for corridor in data["corridors"]:
+            coords = corridor.get("geometry", {}).get("coordinates", [])
+            for coord in coords:
+                lng, lat = coord[0], coord[1]
+                if (lat < self.TEST_BOUNDS["south"] - margin or 
+                    lat > self.TEST_BOUNDS["north"] + margin or
+                    lng < self.TEST_BOUNDS["west"] - margin or 
+                    lng > self.TEST_BOUNDS["east"] + margin):
+                    out_of_bounds_count += 1
+                    break  # Count corridor once
+        
+        # All corridors should be clipped within bounds
+        assert out_of_bounds_count == 0, f"{out_of_bounds_count} corridors have coordinates outside bounds"
+        print(f"All {len(data['corridors'])} corridors clipped within bounds")
     
     def test_corridors_have_v9_subscores(self):
         """Each corridor should have subscores for all 9 engines"""

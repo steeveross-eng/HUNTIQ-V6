@@ -167,13 +167,17 @@ export const generateBionicZonesV5 = async (bounds, zoom, layersVisible, species
       };
     });
 
-    // V7 Corridors — Backend-driven LineStrings (A*, terrain-aware, DEM SRTM)
+    // V9 Corridors — Multi-band ribbon polygons with 5-level gradient
     const corridors = (geojson.corridors || []).map((corridor) => {
       const props = corridor.properties || {};
       const coords = corridor.geometry?.coordinates || [];
       const positions = coords.map(c => [c[1], c[0]]);
       const style = props.style || {};
       const scoring = props.scoring || {};
+
+      // V9: Extract polygon bands and smoothed centerline
+      const bands = props.bands || [];
+      const centerline = props.centerline || null;
 
       return {
         id: corridor.id || `corridor-${props.from_zone_id}-${props.to_zone_id}`,
@@ -201,6 +205,11 @@ export const generateBionicZonesV5 = async (bounds, zoom, layersVisible, species
         v9Pipeline: props.v9_pipeline || false,
         continuityValid: props.continuity_valid,
         scores10x: props.scores_10x || null,
+        // V9: Band data for multi-layer polygon rendering
+        bands,
+        centerline,
+        hasBands: bands.length > 0,
+        bandCount: props.band_count || bands.length,
       };
     });
 

@@ -2,13 +2,12 @@
 BCE Corridor V9 Validator — Validation des corridors V9
 =========================================================
 Regles:
-  1. Corridors non circulaires
-  2. Corridors dans le perimetre 2km2
-  3. Continuite (aucun gap > seuil)
-  4. Classification V9 valide (5 niveaux)
-  5. 9 moteurs BIONIC evalues
-  6. Aucun chevauchement habitations
-  7. Weather Engine: cache 60 min, bloque < 60 min
+  BCE-4X-GEOM-001: CorridorShapeViolation — pas de polygones massifs/circulaires
+  BCE-4X-GEOM-002: CorridorContinuityViolation — ruban continu sans trous
+  BCE-4X-GEOM-003: CorridorGradientViolation — gradient 5 niveaux obligatoire
+  BCE-4X-CLIP-001: CorridorOutsideActiveArea — geometrie hors perimetre = BLOQUE
+  BCE-4X-VISUAL-001: CorridorMigrationLook — rendu migration ecologique
+  + regles existantes (non-circulaire, classification V9, 9 moteurs, etc.)
 """
 
 import logging
@@ -18,73 +17,116 @@ from datetime import datetime, timezone
 
 logger = logging.getLogger("bce.corridor_v9")
 
-# Classification V9 niveaux valides
 VALID_LEVELS = {"gris", "jaune", "orange", "rouge", "rouge_raye"}
 REQUIRED_ENGINES = {
     "nutrition", "daily_routine", "weather", "disturbance",
     "movement", "phenology", "typology", "learning", "habitat_enhancement",
 }
-
-# Weather engine: 60-minute minimum interval
+REQUIRED_BAND_LEVELS = {"gris", "jaune", "orange", "rouge", "rouge_raye"}
 WEATHER_MIN_INTERVAL_S = 3600
 
 
 def validate_corridor_v9(corridor: Dict, bounds: Dict = None) -> Dict[str, Any]:
-    """
-    Validation complete BCE-4X d'un corridor V9.
-    Retourne un rapport avec violations.
-    """
+    """Validation complete BCE-4X d'un corridor V9."""
     violations = []
     props = corridor.get("properties", {})
     coords = corridor.get("geometry", {}).get("coordinates", [])
 
-    # Rule 1: Non-circular
+    # GEOM-001: CorridorShapeViolation — pas de polygones massifs/circulaires
     if len(coords) >= 2:
         start = coords[0]
         end = coords[-1]
         dist = _haversine(start[1], start[0], end[1], end[0])
-        if dist < 50:  # Less than 50m between start and end = circular
+        if dist < 50:
             violations.append({
-                "rule": "non_circular",
+                "rule": "BCE-4X-GEOM-001",
                 "severity": "HIGH",
-                "message": f"Corridor circulaire detecte (start-end: {dist:.0f}m)",
+                "message": f"Corridor circulaire (start-end: {dist:.0f}m < 50m)",
             })
 
-    # Rule 2: Within perimeter
-    if bounds and coords:
-        margin = 0.001
-        for c in coords:
-            lng, lat = c[0], c[1]
-            if lat < bounds.get("south", -90) - margin or lat > bounds.get("north", 90) + margin:
-                violations.append({
-                    "rule": "in_perimeter",
-                    "severity": "HIGH",
-                    "message": f"Coordonnee hors perimetre: lat={lat}",
-                })
-                break
-            if lng < bounds.get("west", -180) - margin or lng > bounds.get("east", 180) + margin:
-                violations.append({
-                    "rule": "in_perimeter",
-                    "severity": "HIGH",
-                    "message": f"Coordonnee hors perimetre: lng={lng}",
-                })
-                break
+    # GEOM-001: Shape ratio (must be elongated, not isotropic)
+    if len(coords) >= 3:
+        total_length = 0
+        for i in range(len(coords) - 1):
+            c1, c2 = coords[i], coords[i + 1]
+            total_length += _haversine(c1[1], c1[0], c2[1], c2[0])
 
-    # Rule 3: Continuity (no gaps > 150m)
+        if len(coords) >= 2:
+            direct_dist = _haversine(coords[0][1], coords[0][0], coords[-1][1], coords[-1][0])
+            if direct_dist > 0:
+                sinuosity = total_length / direct_dist
+                if sinuosity > 5.0:
+                    violations.append({
+                        "rule": "BCE-4X-GEOM-001",
+                        "severity": "MEDIUM",
+                        "message": f"Sinuosite excessive ({sinuosity:.1f}x) — forme non-lineaire",
+                    })
+
+    # GEOM-002: CorridorContinuityViolation — ruban continu sans trous
     max_gap_m = 150
+    continuity_valid = True
     for i in range(len(coords) - 1):
         c1, c2 = coords[i], coords[i + 1]
         gap = _haversine(c1[1], c1[0], c2[1], c2[0])
         if gap > max_gap_m:
             violations.append({
-                "rule": "continuity",
-                "severity": "MEDIUM",
+                "rule": "BCE-4X-GEOM-002",
+                "severity": "HIGH",
                 "message": f"Gap de {gap:.0f}m entre points {i} et {i+1} (max: {max_gap_m}m)",
                 "gap_m": round(gap, 1),
                 "segment_index": i,
             })
+            continuity_valid = False
 
-    # Rule 4: Valid V9 classification
+    # GEOM-003: CorridorGradientViolation — 5 bandes obligatoires pour corridors de haut score
+    bands = props.get("bands", [])
+    score = props.get("scoring", {}).get("score", 0)
+    has_bands = len(bands) > 0
+
+    if not has_bands:
+        violations.append({
+            "rule": "BCE-4X-GEOM-003",
+            "severity": "HIGH",
+            "message": "Aucune bande polygonale generee (gradient V9 absent)",
+        })
+    else:
+        band_levels = {b.get("level") for b in bands}
+        # For high-scoring corridors, expect more bands
+        if score >= 80 and len(band_levels) < 4:
+            violations.append({
+                "rule": "BCE-4X-GEOM-003",
+                "severity": "MEDIUM",
+                "message": f"Score {score:.0f} mais seulement {len(band_levels)} niveaux de bandes (attendu: 4-5)",
+            })
+
+    # CLIP-001: CorridorOutsideActiveArea
+    if bounds and coords:
+        margin = 0.0005  # ~50m tolerance
+        out_of_bounds = False
+        for c in coords:
+            lng, lat = c[0], c[1]
+            if (lat < bounds.get("south", -90) - margin or lat > bounds.get("north", 90) + margin or
+                    lng < bounds.get("west", -180) - margin or lng > bounds.get("east", 180) + margin):
+                out_of_bounds = True
+                break
+        if out_of_bounds:
+            violations.append({
+                "rule": "BCE-4X-CLIP-001",
+                "severity": "HIGH",
+                "message": "Corridor contient des points hors du perimetre actif 2km2",
+            })
+
+    # VISUAL-001: CorridorMigrationLook
+    if has_bands:
+        has_centerline = props.get("centerline") is not None and len(props.get("centerline", [])) >= 2
+        if not has_centerline:
+            violations.append({
+                "rule": "BCE-4X-VISUAL-001",
+                "severity": "MEDIUM",
+                "message": "Axe central (centerline) lisse absent — rendu migration compromis",
+            })
+
+    # Existing rules
     classification = props.get("classification_v9", {})
     level = classification.get("level", "")
     if level not in VALID_LEVELS:
@@ -94,7 +136,6 @@ def validate_corridor_v9(corridor: Dict, bounds: Dict = None) -> Dict[str, Any]:
             "message": f"Classification invalide: '{level}' (attendu: {VALID_LEVELS})",
         })
 
-    # Rule 5: All 9 engines evaluated
     scores_10x = props.get("scores_10x", {})
     evaluated_engines = set(scores_10x.keys())
     missing_engines = REQUIRED_ENGINES - evaluated_engines
@@ -105,7 +146,6 @@ def validate_corridor_v9(corridor: Dict, bounds: Dict = None) -> Dict[str, Any]:
             "message": f"Moteurs manquants: {missing_engines}",
         })
 
-    # Rule 6: V9 pipeline active
     if not props.get("v9_pipeline"):
         violations.append({
             "rule": "v9_pipeline",
@@ -113,13 +153,12 @@ def validate_corridor_v9(corridor: Dict, bounds: Dict = None) -> Dict[str, Any]:
             "message": "Pipeline V9 non active sur ce corridor",
         })
 
-    # Rule 7: Score in valid range
-    score = props.get("scoring", {}).get("score", -1)
-    if score < 0 or score > 100:
+    score_val = props.get("scoring", {}).get("score", -1)
+    if score_val < 0 or score_val > 100:
         violations.append({
             "rule": "score_range",
             "severity": "HIGH",
-            "message": f"Score hors limites: {score} (attendu: 0-100)",
+            "message": f"Score hors limites: {score_val} (attendu: 0-100)",
         })
 
     # Verdict
@@ -142,7 +181,10 @@ def validate_corridor_v9(corridor: Dict, bounds: Dict = None) -> Dict[str, Any]:
         "violation_count": len(violations),
         "engines_evaluated": len(evaluated_engines),
         "classification_level": level,
-        "score": score,
+        "score": score_val,
+        "has_bands": has_bands,
+        "band_count": len(bands),
+        "continuity_valid": continuity_valid,
         "validated_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -175,9 +217,7 @@ def validate_corridors_batch(corridors: List[Dict], bounds: Dict = None) -> Dict
 
 
 def validate_weather_cache_compliance() -> Dict[str, Any]:
-    """
-    BCE-4X: Valide que le Weather Engine respecte la regle 60 min.
-    """
+    """BCE-4X: Valide que le Weather Engine respecte la regle 60 min."""
     try:
         from modules.bionic_engine_p0.engines.weather_engine_v9 import get_owm_cache_status
         cache = get_owm_cache_status()
@@ -192,42 +232,30 @@ def validate_weather_cache_compliance() -> Dict[str, Any]:
             "next_update_in_s": cache["next_update_in_s"],
         }
     except Exception as e:
-        return {
-            "rule": "weather_60min",
-            "compliant": False,
-            "error": str(e),
-        }
+        return {"rule": "weather_60min", "compliant": False, "error": str(e)}
 
 
 def enrich_corridor(corridor: Dict) -> Dict:
-    """
-    Enrichit un corridor avec des metadonnees ecologiques.
-    Ajoute: estimation largeur, qualite habitat, potentiel genetique.
-    """
+    """Enrichit un corridor avec des metadonnees ecologiques."""
     props = corridor.get("properties", {})
     coords = corridor.get("geometry", {}).get("coordinates", [])
 
     if len(coords) < 2:
         return corridor
 
-    # Estimate corridor length
     total_length = 0
     for i in range(len(coords) - 1):
         c1, c2 = coords[i], coords[i + 1]
         total_length += _haversine(c1[1], c1[0], c2[1], c2[0])
 
-    # Estimate width based on classification
     level = props.get("classification_v9", {}).get("level", "gris")
     width_estimates = {
         "rouge_raye": 200, "rouge": 150, "orange": 100, "jaune": 60, "gris": 30,
     }
     estimated_width = width_estimates.get(level, 50)
-
-    # Genetic exchange potential
     score = props.get("scoring", {}).get("score", 50)
     genetic_potential = min(100, score * 1.2) if total_length > 500 else score * 0.8
 
-    # Climate adaptation value
     engines = props.get("scores_10x", {})
     movement_score = engines.get("movement", {}).get("score", 50)
     phenology_score = engines.get("phenology", {}).get("score", 50)

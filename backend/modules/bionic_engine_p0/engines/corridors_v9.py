@@ -5,15 +5,18 @@ Pipeline complet:
   1. Generer corridor A* (via corridor_10x)
   2. Evaluer avec 9 moteurs BIONIC
   3. Classifier (5 niveaux)
-  4. Valider (BCE-4X)
-  5. Enrichir et retourner
+  4. Lisser (Chaikin)
+  5. Generer bandes polygonales (5 niveaux concentrques)
+  6. Clipper au perimetre 2km2
+  7. Valider (BCE-4X)
+  8. Enrichir et retourner
 
 Classification 5 niveaux:
-  - gris    (potentiel)     : score 0-30
+  - gris    (potentiel)     : score 0-30   — bande externe (halo)
   - jaune   (opportuniste)  : score 31-50
   - orange  (fonctionnel)   : score 51-70
   - rouge   (primaire)      : score 71-85
-  - rouge_raye (critique)   : score 86-100
+  - rouge_raye (critique)   : score 86-100 — bande centrale (coeur)
 
 Zero hardcoding. Scores 100% dynamiques.
 """
@@ -22,6 +25,9 @@ import logging
 import math
 from datetime import datetime, timezone
 from typing import Dict, List, Any
+
+from shapely.geometry import LineString as ShapelyLine, Polygon as ShapelyPolygon, box as shapely_box
+from shapely.ops import unary_union
 
 from modules.bionic_engine_p0.engines.nutrition_engine import NutritionEngine
 from modules.bionic_engine_p0.engines.daily_routine_engine import DailyRoutineEngine
@@ -47,6 +53,24 @@ CLASSIFICATION_V9 = {
     "rouge_raye": {"min": 86, "max": 100, "label": "Critique", "color": "#B71C1C", "width": 4.5, "opacity": 0.95, "dash": "12,3,3,3"},
 }
 
+# Band buffer widths in degrees (outer to inner)
+# At Quebec ~46.8N: 0.001 deg lat ≈ 111m, 0.001 deg lng ≈ 76m
+BAND_WIDTHS = {
+    "gris":       0.00055,   # ~55m buffer radius (outermost halo)
+    "jaune":      0.00040,   # ~40m
+    "orange":     0.00028,   # ~28m
+    "rouge":      0.00016,   # ~16m
+    "rouge_raye": 0.00007,   # ~7m (innermost core)
+}
+
+BAND_COLORS = {
+    "gris":       {"color": "#9E9E9E", "opacity": 0.20, "fillOpacity": 0.15},
+    "jaune":      {"color": "#FFC107", "opacity": 0.35, "fillOpacity": 0.25},
+    "orange":     {"color": "#FF9800", "opacity": 0.50, "fillOpacity": 0.40},
+    "rouge":      {"color": "#F44336", "opacity": 0.70, "fillOpacity": 0.55},
+    "rouge_raye": {"color": "#B71C1C", "opacity": 0.90, "fillOpacity": 0.75},
+}
+
 
 def classify_corridor_v9(score: float, classification_impacts: List[int] = None) -> Dict[str, Any]:
     """Classifie un corridor selon son score composite + impacts moteurs."""
@@ -57,17 +81,128 @@ def classify_corridor_v9(score: float, classification_impacts: List[int] = None)
     for level, config in CLASSIFICATION_V9.items():
         if config["min"] <= adjusted_score <= config["max"]:
             return {
-                "level": level,
-                "label": config["label"],
-                "color": config["color"],
-                "width": config["width"],
-                "opacity": config["opacity"],
-                "dash": config["dash"],
-                "base_score": round(score, 1),
-                "adjusted_score": round(adjusted_score, 1),
+                "level": level, "label": config["label"], "color": config["color"],
+                "width": config["width"], "opacity": config["opacity"], "dash": config["dash"],
+                "base_score": round(score, 1), "adjusted_score": round(adjusted_score, 1),
                 "impact_sum": total_impact,
             }
-    return {"level": "gris", "label": "Potentiel", "color": "#9E9E9E", "width": 1.5, "opacity": 0.5, "dash": "8,4", "base_score": round(score, 1), "adjusted_score": round(adjusted_score, 1), "impact_sum": total_impact}
+    return {"level": "gris", "label": "Potentiel", "color": "#9E9E9E", "width": 1.5, "opacity": 0.5,
+            "dash": "8,4", "base_score": round(score, 1), "adjusted_score": round(adjusted_score, 1), "impact_sum": total_impact}
+
+
+def chaikin_smooth(coords, iterations=2):
+    """Lissage Chaikin sur une liste de coordonnees [lng, lat]."""
+    for _ in range(iterations):
+        if len(coords) < 3:
+            return coords
+        new_coords = [coords[0]]
+        for i in range(len(coords) - 1):
+            p0 = coords[i]
+            p1 = coords[i + 1]
+            q = [0.75 * p0[0] + 0.25 * p1[0], 0.75 * p0[1] + 0.25 * p1[1]]
+            r = [0.25 * p0[0] + 0.75 * p1[0], 0.25 * p0[1] + 0.75 * p1[1]]
+            new_coords.extend([q, r])
+        new_coords.append(coords[-1])
+        coords = new_coords
+    return coords
+
+
+def generate_corridor_bands(centerline_coords, bounds=None, score=50):
+    """
+    Genere 5 bandes polygonales concentriques autour de l'axe central.
+    Utilise Shapely pour le buffering + clipping.
+    
+    Returns: list of band dicts with GeoJSON polygon coordinates
+    """
+    if len(centerline_coords) < 2:
+        return []
+
+    # Smooth the centerline
+    smoothed = chaikin_smooth(centerline_coords, iterations=2)
+
+    try:
+        line = ShapelyLine(smoothed)
+    except Exception:
+        return []
+
+    if line.is_empty or line.length < 0.00001:
+        return []
+
+    # Create clip box from bounds
+    clip_box = None
+    if bounds:
+        clip_box = shapely_box(
+            bounds.get("west", -180),
+            bounds.get("south", -90),
+            bounds.get("east", 180),
+            bounds.get("north", 90),
+        )
+
+    # Determine which bands to generate based on score
+    # Higher score = more bands visible (core bands only for high-scoring corridors)
+    bands = []
+    band_levels = list(BAND_WIDTHS.keys())  # gris, jaune, orange, rouge, rouge_raye
+
+    for level in band_levels:
+        width = BAND_WIDTHS[level]
+        style = BAND_COLORS[level]
+        level_config = CLASSIFICATION_V9[level]
+
+        # Only generate inner bands if score is high enough
+        if level == "rouge_raye" and score < 80:
+            continue
+        if level == "rouge" and score < 65:
+            continue
+        if level == "orange" and score < 45:
+            continue
+        if level == "jaune" and score < 25:
+            continue
+
+        try:
+            buffered = line.buffer(width, cap_style=2, join_style=2, resolution=8)
+            if buffered.is_empty:
+                continue
+
+            # Clip to bounds
+            if clip_box and not clip_box.is_empty:
+                buffered = buffered.intersection(clip_box)
+                if buffered.is_empty:
+                    continue
+
+            # Extract polygon coordinates
+            polys = _extract_polygon_coords(buffered)
+            if polys:
+                bands.append({
+                    "level": level,
+                    "label": level_config["label"],
+                    "color": style["color"],
+                    "opacity": style["opacity"],
+                    "fillOpacity": style["fillOpacity"],
+                    "coordinates": polys,
+                    "width_m": round(width * 111000, 0),
+                })
+        except Exception as e:
+            logger.debug(f"Band {level} generation failed: {e}")
+
+    return bands
+
+
+def _extract_polygon_coords(geom):
+    """Extract polygon ring coordinates from a Shapely geometry."""
+    if geom.is_empty:
+        return None
+
+    if geom.geom_type == 'Polygon':
+        exterior = list(geom.exterior.coords)
+        return [[[round(c[0], 6), round(c[1], 6)] for c in exterior]]
+    elif geom.geom_type == 'MultiPolygon':
+        # Merge or take the largest
+        all_coords = []
+        for poly in geom.geoms:
+            exterior = list(poly.exterior.coords)
+            all_coords.append([[round(c[0], 6), round(c[1], 6)] for c in exterior])
+        return all_coords
+    return None
 
 
 # =====================================================================
@@ -155,11 +290,8 @@ class CorridorEngineV9:
         engine_justifications = []
         for r in results:
             engine_scores[r.engine_id] = {
-                "score": r.score,
-                "weight": r.weight,
-                "certainty": r.certainty,
-                "classification_impact": r.classification_impact,
-                "details": r.details,
+                "score": r.score, "weight": r.weight, "certainty": r.certainty,
+                "classification_impact": r.classification_impact, "details": r.details,
             }
             engine_justifications.append(f"[{r.engine_id}] {r.justification}")
 
@@ -183,25 +315,44 @@ class CorridorEngineV9:
         return corridor_feature
 
     def validate_and_clip(self, corridor: Dict, bounds: Dict) -> Dict:
-        """Applique clipping strict 2km² et validation."""
+        """Applique clipping strict 2km2 via Shapely intersection."""
         coords = corridor.get("geometry", {}).get("coordinates", [])
         if not coords or not bounds:
             return corridor
 
-        margin = 0.0005
-        south = bounds.get("south", -90) - margin
-        north = bounds.get("north", 90) + margin
-        west = bounds.get("west", -180) - margin
-        east = bounds.get("east", 180) + margin
+        try:
+            clip_box = shapely_box(
+                bounds.get("west", -180), bounds.get("south", -90),
+                bounds.get("east", 180), bounds.get("north", 90),
+            )
+            line = ShapelyLine(coords)
+            clipped = line.intersection(clip_box)
+            if clipped.is_empty:
+                corridor["properties"]["clipped"] = True
+                corridor["properties"]["in_perimeter"] = False
+                return corridor
 
-        clipped = []
-        for c in coords:
-            lng, lat = c[0], c[1]
-            clng = max(west, min(east, lng))
-            clat = max(south, min(north, lat))
-            clipped.append([clng, clat])
+            if clipped.geom_type == 'LineString':
+                corridor["geometry"]["coordinates"] = [
+                    [round(c[0], 6), round(c[1], 6)] for c in clipped.coords
+                ]
+            elif clipped.geom_type == 'MultiLineString':
+                # Take the longest segment
+                longest = max(clipped.geoms, key=lambda g: g.length)
+                corridor["geometry"]["coordinates"] = [
+                    [round(c[0], 6), round(c[1], 6)] for c in longest.coords
+                ]
+        except Exception as e:
+            logger.debug(f"Shapely clipping failed: {e}")
+            # Fallback: simple coordinate clamping
+            south = bounds.get("south", -90)
+            north = bounds.get("north", 90)
+            west = bounds.get("west", -180)
+            east = bounds.get("east", 180)
+            corridor["geometry"]["coordinates"] = [
+                [max(west, min(east, c[0])), max(south, min(north, c[1]))] for c in coords
+            ]
 
-        corridor["geometry"]["coordinates"] = clipped
         corridor["properties"]["clipped"] = True
         corridor["properties"]["in_perimeter"] = True
         return corridor
@@ -217,10 +368,7 @@ class CorridorEngineV9:
         return True
 
     def fix_continuity_gaps(self, corridor: Dict, max_gap_m: float = 150) -> Dict:
-        """
-        Repare les gaps de continuite en interpolant des points intermediaires.
-        BCE-4X: Corrige les 4 violations de continuite identifiees.
-        """
+        """Repare les gaps de continuite en interpolant des points intermediaires."""
         coords = corridor.get("geometry", {}).get("coordinates", [])
         if len(coords) < 2:
             return corridor
@@ -233,18 +381,13 @@ class CorridorEngineV9:
             dist = self._haversine(c1[1], c1[0], c2[1], c2[0])
 
             if dist > max_gap_m:
-                # Interpolate intermediate points
                 n_intermediate = max(1, int(dist / (max_gap_m * 0.8)))
                 for j in range(1, n_intermediate + 1):
                     t = j / (n_intermediate + 1)
                     inter_lng = c1[0] + t * (c2[0] - c1[0])
                     inter_lat = c1[1] + t * (c2[1] - c1[1])
-                    # Add slight natural curve
                     offset = 0.00005 * math.sin(t * math.pi)
-                    fixed_coords.append([
-                        round(inter_lng + offset, 6),
-                        round(inter_lat + offset, 6),
-                    ])
+                    fixed_coords.append([round(inter_lng + offset, 6), round(inter_lat + offset, 6)])
                 gaps_fixed += 1
 
             fixed_coords.append(c2)
@@ -252,15 +395,30 @@ class CorridorEngineV9:
         corridor["geometry"]["coordinates"] = fixed_coords
         if gaps_fixed > 0:
             corridor["properties"]["continuity_gaps_fixed"] = gaps_fixed
-            logger.info(f"[V9-Continuity] Fixed {gaps_fixed} gaps in corridor {corridor.get('id', '?')}")
+
+        return corridor
+
+    def generate_bands(self, corridor: Dict, bounds: Dict = None) -> Dict:
+        """
+        Genere les 5 bandes polygonales concentriques (ruban ecologique).
+        Chaque bande: gris (halo) → jaune → orange → rouge → rouge_raye (coeur).
+        """
+        coords = corridor.get("geometry", {}).get("coordinates", [])
+        score = corridor.get("properties", {}).get("scoring", {}).get("score", 50)
+
+        bands = generate_corridor_bands(coords, bounds, score)
+        corridor["properties"]["bands"] = bands
+        corridor["properties"]["has_bands"] = len(bands) > 0
+        corridor["properties"]["band_count"] = len(bands)
+
+        # Also store smoothed centerline
+        smoothed = chaikin_smooth(coords, iterations=2)
+        corridor["properties"]["centerline"] = [[round(c[0], 6), round(c[1], 6)] for c in smoothed]
 
         return corridor
 
     def enrich_corridor(self, corridor: Dict) -> Dict:
-        """
-        Enrichit un corridor avec des metadonnees ecologiques avancees.
-        Appele apres evaluation et validation.
-        """
+        """Enrichit un corridor avec des metadonnees ecologiques avancees."""
         try:
             from bce.bce_corridor_v9 import enrich_corridor as bce_enrich
             corridor = bce_enrich(corridor)
@@ -273,24 +431,28 @@ class CorridorEngineV9:
         Pipeline V9 complet pour un corridor:
         1. Evaluate (9 engines)
         2. Fix continuity gaps
-        3. Clip to bounds
-        4. Enrich
-        5. Validate
+        3. Clip to bounds (Shapely)
+        4. Generate bands (5-level polygon ribbon)
+        5. Enrich
+        6. Validate
         """
         # Step 1: Evaluate with 9 BIONIC engines
         corridor = self.evaluate_corridor(corridor_feature, global_context)
 
-        # Step 2: Fix continuity gaps BEFORE validation
+        # Step 2: Fix continuity gaps
         corridor = self.fix_continuity_gaps(corridor)
 
-        # Step 3: Clip to bounds
+        # Step 3: Clip to bounds (strict Shapely intersection)
         if bounds:
             corridor = self.validate_and_clip(corridor, bounds)
 
-        # Step 4: Enrich with ecological metadata
+        # Step 4: Generate 5-level polygon bands (the ribbon)
+        corridor = self.generate_bands(corridor, bounds)
+
+        # Step 5: Enrich with ecological metadata
         corridor = self.enrich_corridor(corridor)
 
-        # Step 5: Final continuity validation
+        # Step 6: Final continuity validation
         corridor["properties"]["continuity_valid"] = self.validate_continuity(corridor)
 
         return corridor

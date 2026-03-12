@@ -230,23 +230,113 @@ const CORRIDOR_STYLES = {
   ai:     { male: '#38BDF8', female: '#C084FC' },
 };
 
-const V7CorridorLine = ({ corridor, corridorIndex }) => {
+// V9 Corridor Ribbon — Multi-band polygon rendering (5-level gradient)
+const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const { positions, source, sex, score, distanceM, fromZoneType, toZoneType, demEnhanced } = corridor;
+  const { positions, source, sex, score, distanceM, fromZoneType, toZoneType, demEnhanced, bands, centerline, classificationV9 } = corridor;
+  const hasBands = bands && bands.length > 0;
 
-  if (!positions || positions.length < 2) return null;
+  if (!hasBands && (!positions || positions.length < 2)) return null;
 
-  // Couleur par source × sexe, fallback sur les données backend
-  const styleColor = CORRIDOR_STYLES[source]?.[sex] || corridor.color || '#06B6D4';
-  // IA = pointillé, réel = plein
-  const dashArray = source === 'ai' ? '6, 4' : corridor.dashArray || null;
+  const sourceLabel = source === 'real' ? 'Reel' : 'IA';
+  const sexLabel = sex === 'male' ? 'Male' : 'Femelle';
+  const distanceLabel = distanceM ? `${(distanceM / 1000).toFixed(1)} km` : '';
+  const level = classificationV9?.level || corridor.corridorType || 'gris';
+  const levelLabel = classificationV9?.label || level;
+
+  const tooltipContent = (
+    <div className="bg-gray-900/95 border border-gray-700 rounded-lg p-2.5 min-w-[220px] shadow-xl">
+      <div className="flex items-center gap-2 mb-1.5">
+        <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: classificationV9?.color || '#9E9E9E' }} />
+        <span className="font-semibold text-white text-sm">Corridor V9 {levelLabel}</span>
+      </div>
+      <div className="space-y-1 text-xs">
+        <div className="flex justify-between text-gray-400">
+          <span>Score V9</span>
+          <span className="font-bold" style={{ color: classificationV9?.color || '#06B6D4' }}>{score}%</span>
+        </div>
+        <div className="flex justify-between text-gray-400">
+          <span>Distance</span>
+          <span className="text-gray-200">{distanceLabel}</span>
+        </div>
+        <div className="flex justify-between text-gray-400">
+          <span>Trajet</span>
+          <span className="text-gray-200">{fromZoneType || '?'} &rarr; {toZoneType || '?'}</span>
+        </div>
+        <div className="flex justify-between text-gray-400">
+          <span>Bandes</span>
+          <span className="text-gray-200">{bands?.length || 0} niveaux</span>
+        </div>
+        {demEnhanced && (
+          <div className="text-[10px] text-emerald-400 text-center mt-1">DEM terrain-aware + 9 moteurs BIONIC</div>
+        )}
+      </div>
+    </div>
+  );
+
+  // Render multi-band polygons (outer to inner for z-ordering)
+  if (hasBands) {
+    return (
+      <>
+        {bands.map((band, bIdx) => {
+          if (!band.coordinates) return null;
+          // Convert [lng, lat] to [lat, lng] for Leaflet
+          const rings = band.coordinates.map(ring =>
+            ring.map(c => [c[1], c[0]])
+          );
+          return rings.map((ring, rIdx) => (
+            <Polygon
+              key={`corridor-band-${corridorIndex}-${band.level}-${rIdx}`}
+              positions={ring}
+              pathOptions={{
+                color: band.color,
+                weight: isHovered && bIdx === bands.length - 1 ? 2 : 0.5,
+                opacity: isHovered ? Math.min(1, band.opacity + 0.2) : band.opacity,
+                fillColor: band.color,
+                fillOpacity: isHovered ? Math.min(0.9, band.fillOpacity + 0.15) : band.fillOpacity,
+              }}
+              eventHandlers={{
+                mouseover: () => setIsHovered(true),
+                mouseout: () => setIsHovered(false),
+              }}
+              data-testid={`corridor-v9-band-${corridorIndex}-${band.level}`}
+            >
+              {bIdx === bands.length - 1 && (
+                <Tooltip sticky direction="top" offset={[0, -8]}>
+                  {tooltipContent}
+                </Tooltip>
+              )}
+            </Polygon>
+          ));
+        })}
+        {/* Centerline overlay for definition */}
+        {centerline && centerline.length >= 2 && (
+          <Polyline
+            positions={centerline.map(c => [c[1], c[0]])}
+            pathOptions={{
+              color: classificationV9?.color || '#F44336',
+              weight: isHovered ? 2.5 : 1.5,
+              opacity: isHovered ? 0.8 : 0.5,
+              dashArray: level === 'rouge_raye' ? '8,3,2,3' : level === 'gris' ? '6,4' : null,
+              lineCap: 'round',
+              lineJoin: 'round',
+            }}
+            eventHandlers={{
+              mouseover: () => setIsHovered(true),
+              mouseout: () => setIsHovered(false),
+            }}
+            data-testid={`corridor-v9-centerline-${corridorIndex}`}
+          />
+        )}
+      </>
+    );
+  }
+
+  // Fallback: render as simple polyline if no bands
+  const styleColor = classificationV9?.color || CORRIDOR_STYLES[source]?.[sex] || corridor.color || '#06B6D4';
   const weight = isHovered ? 5 : (corridor.weight || 2.5);
   const opacity = isHovered ? 1.0 : (corridor.opacity || 0.85);
-
-  const sourceLabel = source === 'real' ? 'Réel' : 'IA';
-  const sexLabel = sex === 'male' ? 'Mâle' : 'Femelle';
-  const distanceLabel = distanceM ? `${(distanceM / 1000).toFixed(1)} km` : '—';
 
   return (
     <Polyline
@@ -255,7 +345,6 @@ const V7CorridorLine = ({ corridor, corridorIndex }) => {
         color: styleColor,
         weight,
         opacity,
-        dashArray,
         lineCap: 'round',
         lineJoin: 'round',
       }}
@@ -263,39 +352,10 @@ const V7CorridorLine = ({ corridor, corridorIndex }) => {
         mouseover: () => setIsHovered(true),
         mouseout: () => setIsHovered(false),
       }}
-      data-testid={`corridor-v7-${corridorIndex}`}
+      data-testid={`corridor-v9-fallback-${corridorIndex}`}
     >
       <Tooltip sticky direction="top" offset={[0, -8]}>
-        <div className="bg-gray-900/95 border border-gray-700 rounded-lg p-2.5 min-w-[200px] shadow-xl">
-          <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-6 h-0.5 rounded" style={{ backgroundColor: styleColor, opacity: dashArray ? 0.7 : 1 }} />
-            <span className="font-semibold text-white text-sm">Corridor {sourceLabel}</span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded" style={{
-              backgroundColor: sex === 'male' ? 'rgba(6,182,212,0.15)' : 'rgba(244,114,182,0.15)',
-              color: styleColor,
-              border: `1px solid ${styleColor}30`,
-            }}>
-              {sexLabel}
-            </span>
-          </div>
-          <div className="space-y-1 text-xs">
-            <div className="flex justify-between text-gray-400">
-              <span>Score</span>
-              <span className="font-bold" style={{ color: styleColor }}>{score}%</span>
-            </div>
-            <div className="flex justify-between text-gray-400">
-              <span>Distance</span>
-              <span className="text-gray-200">{distanceLabel}</span>
-            </div>
-            <div className="flex justify-between text-gray-400">
-              <span>Trajet</span>
-              <span className="text-gray-200">{fromZoneType || '?'} → {toZoneType || '?'}</span>
-            </div>
-            {demEnhanced && (
-              <div className="text-[10px] text-emerald-400 text-center mt-1">DEM/SRTM terrain-aware</div>
-            )}
-          </div>
-        </div>
+        {tooltipContent}
       </Tooltip>
     </Polyline>
   );
@@ -407,12 +467,12 @@ const BionicMicroZones = ({
         />
       ))}
 
-      {/* COUCHE 3b: Corridors V7 — Pathfinding A*, terrain-aware */}
+      {/* COUCHE 3b: Corridors V9 — Rubans ecologiques multicouches */}
       {showCorridors &&
         corridors.map((c, idx) =>
-          c.positions ? (
-            <V7CorridorLine
-              key={c.id || `corridor-v7-${idx}`}
+          c.positions || c.bands ? (
+            <V9CorridorRibbon
+              key={c.id || `corridor-v9-${idx}`}
               corridor={c}
               corridorIndex={idx}
             />
