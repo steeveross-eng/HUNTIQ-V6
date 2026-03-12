@@ -1162,13 +1162,10 @@ const MonTerritoireBionicPage = () => {
                   <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Affichage</div>
                   <div className="space-y-2 bg-gray-900/50 rounded-lg p-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-300">Corridors V7</span>
-                      <Switch checked={showCorridors} onCheckedChange={setShowCorridors} className="scale-75 data-[state=checked]:bg-cyan-500" />
+                      <span className="text-xs text-gray-300">Corridors V9</span>
+                      <Switch checked={showCorridors} onCheckedChange={setShowCorridors} className="scale-75 data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-v9" />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-300">Déplacements V1</span>
-                      <Switch checked={showCorridorsV1} onCheckedChange={setShowCorridorsV1} className="scale-75 data-[state=checked]:bg-teal-500" data-testid="toggle-corridors-v1" />
-                    </div>
+                    {/* LEGACY: Deplacements V1 — SUPPRIME definitvement. BCE-4X-UI-003 */}
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-300">Seuil minimum</span>

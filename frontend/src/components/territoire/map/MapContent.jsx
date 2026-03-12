@@ -119,9 +119,12 @@ const MapContentInner = React.memo(({
         if (favId) removeFavorite(favId);
       }}
     />
-    {showCorridorsV1 && classificationToggles.corridorsReels && (
-      <MovementCorridorsLayer species={selectedSpecies} showReal={true} showEstimated={true} timeOfDay={temporalHourMT} />
-    )}
+    {/* LEGACY MovementCorridorsLayer — DESACTIVE DEFINITIVEMENT
+        Raison: Contamination visuelle. Les corridors V9 (BionicMicroZones / V9CorridorRibbon)
+        remplacent integralement ce moteur legacy.
+        BCE-4X-UI-003: Aucune couche legacy ne doit polluer le rendu V9.
+    */}
+    {/* <MovementCorridorsLayer /> — REMOVED: replaced by V9 corridor bands */}
 
     {/* BIONIC Zone 2 km² — Carré unique centré sur le waypoint actif */}
     {selectedWaypointForZones && (

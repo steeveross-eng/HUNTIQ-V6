@@ -287,13 +287,14 @@ const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
             ring.map(c => [c[1], c[0]])
           );
           const isInnermost = bIdx === bands.length - 1;
+          const isOutermost = bIdx === 0;
           return rings.map((ring, rIdx) => (
             <Polygon
               key={`corridor-band-${corridorIndex}-${band.level}-${rIdx}`}
               positions={ring}
               pathOptions={{
                 color: band.color,
-                weight: isHovered ? 2.5 : (isInnermost ? 1.5 : 0.8),
+                weight: isHovered ? 2.5 : (isInnermost ? 2 : isOutermost ? 1.2 : 0.6),
                 opacity: isHovered ? Math.min(1, band.opacity + 0.25) : band.opacity,
                 fillColor: band.color,
                 fillOpacity: isHovered ? Math.min(0.95, band.fillOpacity + 0.2) : band.fillOpacity,

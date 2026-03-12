@@ -53,21 +53,24 @@ CLASSIFICATION_V9 = {
     "rouge_raye": {"min": 86, "max": 100, "label": "Critique", "color": "#B71C1C", "width": 4.5, "opacity": 0.95, "dash": "12,3,3,3"},
 }
 
-# Band buffer widths in degrees (outer to inner)
-# At Quebec ~46.8N: 0.001 deg lat ≈ 111m, 0.001 deg lng ≈ 76m
-# WIDTHS CALIBRATED for visibility at zoom 14-15 (2km² view)
-BAND_WIDTHS = {
-    "gris":       0.0028,    # ~310m buffer radius (outermost halo)
-    "jaune":      0.0020,    # ~220m
-    "orange":     0.0014,    # ~155m
-    "rouge":      0.0008,    # ~90m
-    "rouge_raye": 0.0004,    # ~44m (innermost core)
+# Band buffer ratios (fraction of corridor length) + absolute limits
+# The buffer is PROPORTIONAL to corridor length to ensure ribbon shape
+# Short corridor (500m) → thin ribbon / Long corridor (2000m) → wider ribbon
+BAND_RATIO = {
+    "gris":       {"ratio": 0.055, "min_m": 25, "max_m": 120},  # outermost halo
+    "jaune":      {"ratio": 0.038, "min_m": 18, "max_m": 80},
+    "orange":     {"ratio": 0.024, "min_m": 12, "max_m": 50},
+    "rouge":      {"ratio": 0.014, "min_m": 7,  "max_m": 30},
+    "rouge_raye": {"ratio": 0.007, "min_m": 4,  "max_m": 15},   # innermost core
 }
 
+# Conversion: meters to degrees at Quebec latitude (~46.8N)
+METERS_PER_DEG = 111000  # approximate
+
 BAND_COLORS = {
-    "gris":       {"color": "#9E9E9E", "opacity": 0.40, "fillOpacity": 0.25},
-    "jaune":      {"color": "#FFC107", "opacity": 0.55, "fillOpacity": 0.40},
-    "orange":     {"color": "#FF9800", "opacity": 0.70, "fillOpacity": 0.55},
+    "gris":       {"color": "#9E9E9E", "opacity": 0.45, "fillOpacity": 0.20},
+    "jaune":      {"color": "#FFC107", "opacity": 0.60, "fillOpacity": 0.35},
+    "orange":     {"color": "#FF9800", "opacity": 0.75, "fillOpacity": 0.50},
     "rouge":      {"color": "#F44336", "opacity": 0.85, "fillOpacity": 0.65},
     "rouge_raye": {"color": "#B71C1C", "opacity": 0.95, "fillOpacity": 0.80},
 }
@@ -111,6 +114,7 @@ def chaikin_smooth(coords, iterations=2):
 def generate_corridor_bands(centerline_coords, bounds=None, score=50):
     """
     Genere 5 bandes polygonales concentriques autour de l'axe central.
+    Largeurs PROPORTIONNELLES a la longueur du corridor (ruban, pas blob).
     Utilise Shapely pour le buffering + clipping.
     
     Returns: list of band dicts with GeoJSON polygon coordinates
@@ -129,6 +133,9 @@ def generate_corridor_bands(centerline_coords, bounds=None, score=50):
     if line.is_empty or line.length < 0.00001:
         return []
 
+    # Estimate corridor length in meters
+    corridor_length_m = line.length * METERS_PER_DEG
+
     # Create clip box from bounds
     clip_box = None
     if bounds:
@@ -139,21 +146,22 @@ def generate_corridor_bands(centerline_coords, bounds=None, score=50):
             bounds.get("north", 90),
         )
 
-    # Determine which bands to generate based on score
-    # Higher score = more bands visible (core bands only for high-scoring corridors)
     bands = []
-    band_levels = list(BAND_WIDTHS.keys())  # gris, jaune, orange, rouge, rouge_raye
+    band_levels = list(BAND_RATIO.keys())  # gris, jaune, orange, rouge, rouge_raye
 
     for level in band_levels:
-        width = BAND_WIDTHS[level]
+        config = BAND_RATIO[level]
         style = BAND_COLORS[level]
         level_config = CLASSIFICATION_V9[level]
 
         # V9-GEOM-003: ALL 5 bands MUST be generated — no score filtering
+        # Width proportional to corridor length, clamped to min/max
+        width_m = max(config["min_m"], min(config["max_m"], corridor_length_m * config["ratio"]))
+        width_deg = width_m / METERS_PER_DEG
         # The visual gradient from gris (halo) to rouge_raye (core) is MANDATORY
 
         try:
-            buffered = line.buffer(width, cap_style=2, join_style=2, resolution=8)
+            buffered = line.buffer(width_deg, cap_style=2, join_style=2, resolution=8)
             if buffered.is_empty:
                 continue
 
@@ -173,7 +181,7 @@ def generate_corridor_bands(centerline_coords, bounds=None, score=50):
                     "opacity": style["opacity"],
                     "fillOpacity": style["fillOpacity"],
                     "coordinates": polys,
-                    "width_m": round(width * 111000, 0),
+                    "width_m": round(width_m, 0),
                 })
         except Exception as e:
             logger.debug(f"Band {level} generation failed: {e}")

@@ -111,3 +111,4 @@ backups/temp_huntiq_archive_20260311.tar.gz
 *.env
 *.env.*
 frontend/node_modules/.cache/default-development/3.pack
+frontend/node_modules/.cache/default-development/6.pack
