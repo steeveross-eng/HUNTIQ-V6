@@ -359,3 +359,52 @@ async def validate_color_contract_endpoint():
             "status": "ERROR",
             "error": str(e),
         }
+
+
+
+@router.post("/validate-geometry-compliance")
+async def validate_geometry_compliance_endpoint():
+    """
+    STEVE-MAX: BCE-4X Geometry + Clipping validation.
+    Rules: GEOM-004, GEOM-005, CLIP-002, PIPE-002
+    """
+    try:
+        from bce.validators.geometry_compliance import validate as validate_gc
+        result = validate_gc()
+        return {
+            "module": "bce_4x_geometry_compliance",
+            "branch": "steve-max",
+            **result,
+        }
+    except Exception as e:
+        logger.error(f"Geometry compliance validation error: {e}")
+        return {
+            "module": "bce_4x_geometry_compliance",
+            "status": "ERROR",
+            "error": str(e),
+        }
+
+
+@router.post("/validate-corridors-runtime")
+async def validate_corridors_runtime_endpoint(request: dict):
+    """
+    STEVE-MAX: Runtime validation of corridor data against 2km bounds.
+    Send corridors + bounds to validate GEOM-004 and GEOM-005.
+    """
+    try:
+        from bce.validators.geometry_compliance import validate_corridor_data
+        corridors = request.get("corridors", [])
+        bounds = request.get("bounds", {})
+        result = validate_corridor_data(corridors, bounds)
+        return {
+            "module": "bce_4x_geometry_runtime",
+            "branch": "steve-max",
+            **result,
+        }
+    except Exception as e:
+        logger.error(f"Runtime corridor validation error: {e}")
+        return {
+            "module": "bce_4x_geometry_runtime",
+            "status": "ERROR",
+            "error": str(e),
+        }

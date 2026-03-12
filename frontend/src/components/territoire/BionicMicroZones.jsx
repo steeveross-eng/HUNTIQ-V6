@@ -509,7 +509,9 @@ const BionicMicroZones = ({
           Rendu: 5 bandes concentriques gris→jaune→orange→rouge→rouge_raye */}
       <Pane name="corridors-v9-pane" style={{ zIndex: 650 }}>
         {showCorridors &&
-          corridors.map((c, idx) =>
+          corridors
+            .filter(c => c.inPerimeter !== false && c.hasBands)
+            .map((c, idx) =>
             c.positions || c.bands ? (
               <V9CorridorRibbon
                 key={c.id || `corridor-v9-${idx}`}

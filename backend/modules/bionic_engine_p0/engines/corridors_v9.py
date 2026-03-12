@@ -54,14 +54,15 @@ CLASSIFICATION_V9 = {
 }
 
 # Band buffer ratios (fraction of corridor length) + absolute limits
+# STEVE-MAX: REDUCTION GLOBALE 40% — toutes les largeurs x0.6
 # The buffer is PROPORTIONAL to corridor length to ensure ribbon shape
 # Short corridor (500m) → thin ribbon / Long corridor (2000m) → wider ribbon
 BAND_RATIO = {
-    "gris":       {"ratio": 0.055, "min_m": 25, "max_m": 120},  # outermost halo
-    "jaune":      {"ratio": 0.038, "min_m": 18, "max_m": 80},
-    "orange":     {"ratio": 0.024, "min_m": 12, "max_m": 50},
-    "rouge":      {"ratio": 0.014, "min_m": 7,  "max_m": 30},
-    "rouge_raye": {"ratio": 0.007, "min_m": 4,  "max_m": 15},   # innermost core
+    "gris":       {"ratio": 0.033, "min_m": 15, "max_m": 72},   # outermost halo (was 0.055/25/120)
+    "jaune":      {"ratio": 0.023, "min_m": 11, "max_m": 48},   # (was 0.038/18/80)
+    "orange":     {"ratio": 0.014, "min_m": 7,  "max_m": 30},   # (was 0.024/12/50)
+    "rouge":      {"ratio": 0.008, "min_m": 4,  "max_m": 18},   # (was 0.014/7/30)
+    "rouge_raye": {"ratio": 0.004, "min_m": 2,  "max_m": 9},    # innermost core (was 0.007/4/15)
 }
 
 # Conversion: meters to degrees at Quebec latitude (~46.8N)
@@ -113,30 +114,23 @@ def chaikin_smooth(coords, iterations=2):
 
 def generate_corridor_bands(centerline_coords, bounds=None, score=50):
     """
-    Genere 5 bandes polygonales concentriques autour de l'axe central.
-    Largeurs PROPORTIONNELLES a la longueur du corridor (ruban, pas blob).
-    Utilise Shapely pour le buffering + clipping.
+    STEVE-MAX: Genere 5 bandes polygonales concentriques autour de l'axe central.
+    
+    Pipeline STRICT anti-overflow:
+      1. CLIP centerline au perimetre 2km
+      2. SMOOTH la centerline clippee (Chaikin)
+      3. BUFFER chaque bande (largeurs reduites 40%)
+      4. RE-CLIP chaque bande au perimetre 2km
+    
+    BCE-4X-GEOM-004: Aucun pixel hors du carre 2km.
+    BCE-4X-CLIP-002: Smoothing ne peut jamais creer de depassement.
     
     Returns: list of band dicts with GeoJSON polygon coordinates
     """
     if len(centerline_coords) < 2:
         return []
 
-    # Smooth the centerline
-    smoothed = chaikin_smooth(centerline_coords, iterations=2)
-
-    try:
-        line = ShapelyLine(smoothed)
-    except Exception:
-        return []
-
-    if line.is_empty or line.length < 0.00001:
-        return []
-
-    # Estimate corridor length in meters
-    corridor_length_m = line.length * METERS_PER_DEG
-
-    # Create clip box from bounds
+    # Create clip box from bounds FIRST
     clip_box = None
     if bounds:
         clip_box = shapely_box(
@@ -146,6 +140,42 @@ def generate_corridor_bands(centerline_coords, bounds=None, score=50):
             bounds.get("north", 90),
         )
 
+    try:
+        raw_line = ShapelyLine(centerline_coords)
+    except Exception:
+        return []
+
+    if raw_line.is_empty or raw_line.length < 0.00001:
+        return []
+
+    # STEP 1: CLIP centerline BEFORE smoothing (BCE-4X-CLIP-002)
+    if clip_box and not clip_box.is_empty:
+        clipped_line = raw_line.intersection(clip_box)
+        if clipped_line.is_empty:
+            return []
+        # If MultiLineString, take the longest segment
+        if clipped_line.geom_type == 'MultiLineString':
+            clipped_line = max(clipped_line.geoms, key=lambda g: g.length)
+        elif clipped_line.geom_type != 'LineString':
+            return []
+        line_for_smooth = list(clipped_line.coords)
+    else:
+        line_for_smooth = centerline_coords
+
+    # STEP 2: SMOOTH the CLIPPED centerline (Chaikin)
+    smoothed = chaikin_smooth(line_for_smooth, iterations=2)
+
+    try:
+        line = ShapelyLine(smoothed)
+    except Exception:
+        return []
+
+    if line.is_empty or line.length < 0.00001:
+        return []
+
+    # Estimate corridor length in meters (from clipped line)
+    corridor_length_m = line.length * METERS_PER_DEG
+
     bands = []
     band_levels = list(BAND_RATIO.keys())  # gris, jaune, orange, rouge, rouge_raye
 
@@ -154,18 +184,18 @@ def generate_corridor_bands(centerline_coords, bounds=None, score=50):
         style = BAND_COLORS[level]
         level_config = CLASSIFICATION_V9[level]
 
-        # V9-GEOM-003: ALL 5 bands MUST be generated — no score filtering
+        # V9-GEOM-003: ALL 5 bands MUST be generated
         # Width proportional to corridor length, clamped to min/max
+        # STEVE-MAX: Values already reduced 40% in BAND_RATIO
         width_m = max(config["min_m"], min(config["max_m"], corridor_length_m * config["ratio"]))
         width_deg = width_m / METERS_PER_DEG
-        # The visual gradient from gris (halo) to rouge_raye (core) is MANDATORY
 
         try:
             buffered = line.buffer(width_deg, cap_style=2, join_style=2, resolution=8)
             if buffered.is_empty:
                 continue
 
-            # Clip to bounds
+            # STEP 4: RE-CLIP buffer to bounds (BCE-4X-GEOM-004)
             if clip_box and not clip_box.is_empty:
                 buffered = buffered.intersection(clip_box)
                 if buffered.is_empty:
@@ -430,13 +460,17 @@ class CorridorEngineV9:
 
     def process_corridor_full(self, corridor_feature: Dict, global_context: Dict, bounds: Dict = None) -> Dict:
         """
-        Pipeline V9 complet pour un corridor:
+        STEVE-MAX: Pipeline V9 complet pour un corridor:
         1. Evaluate (9 engines)
         2. Fix continuity gaps
-        3. Clip to bounds (Shapely)
-        4. Generate bands (5-level polygon ribbon)
-        5. Enrich
-        6. Validate
+        3. Compute STRICT 2km analysis box from waypoint center
+        4. Clip centerline to 2km box (Shapely)
+        5. Generate bands (5-level polygon ribbon) with 2km box clipping
+        6. Enrich
+        7. Validate
+
+        BCE-4X-GEOM-004: Tous les corridors DANS le carre 2km. Zero pixel dehors.
+        BCE-4X-PIPE-002: Frontend ne modifie pas la geometrie clippee.
         """
         # Step 1: Evaluate with 9 BIONIC engines
         corridor = self.evaluate_corridor(corridor_feature, global_context)
@@ -444,17 +478,35 @@ class CorridorEngineV9:
         # Step 2: Fix continuity gaps
         corridor = self.fix_continuity_gaps(corridor)
 
-        # Step 3: Clip to bounds (strict Shapely intersection)
-        if bounds:
-            corridor = self.validate_and_clip(corridor, bounds)
+        # Step 3: Compute STRICT 2km analysis box from waypoint center
+        # STEVE-MAX: Use the ANALYSIS perimeter (2km), NOT the API request bounds
+        analysis_bounds = bounds  # fallback
+        waypoint_lat = global_context.get("waypoint_lat")
+        waypoint_lng = global_context.get("waypoint_lng")
+        if waypoint_lat and waypoint_lng:
+            import math as _math
+            half_m = 1000  # 2km / 2 = 1000m per side
+            lat_rad = _math.radians(waypoint_lat)
+            delta_lat = half_m / 111320
+            delta_lng = half_m / (111320 * _math.cos(lat_rad))
+            analysis_bounds = {
+                "south": waypoint_lat - delta_lat,
+                "north": waypoint_lat + delta_lat,
+                "west": waypoint_lng - delta_lng,
+                "east": waypoint_lng + delta_lng,
+            }
 
-        # Step 4: Generate 5-level polygon bands (the ribbon)
-        corridor = self.generate_bands(corridor, bounds)
+        # Step 4: Clip centerline to STRICT 2km bounds
+        if analysis_bounds:
+            corridor = self.validate_and_clip(corridor, analysis_bounds)
 
-        # Step 5: Enrich with ecological metadata
+        # Step 5: Generate 5-level polygon bands with STRICT 2km clipping
+        corridor = self.generate_bands(corridor, analysis_bounds)
+
+        # Step 6: Enrich with ecological metadata
         corridor = self.enrich_corridor(corridor)
 
-        # Step 6: Final continuity validation
+        # Step 7: Final continuity validation
         corridor["properties"]["continuity_valid"] = self.validate_continuity(corridor)
 
         return corridor

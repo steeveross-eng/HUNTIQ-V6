@@ -218,6 +218,12 @@ CRITICAL_MODULES_REGISTRY = {
         "status": "active",
         "since": "2026-03-20",
     },
+    # ── STEVE-MAX: GEOMETRY COMPLIANCE + CLIPPING ──
+    "geometry_compliance": {
+        "validator": "bce.validators.geometry_compliance",
+        "status": "active",
+        "since": "2026-03-20",
+    },
 }
 
 
@@ -252,8 +258,8 @@ def validate_branch_compliance(branch_name: str = "") -> Dict[str, Any]:
         issues.append(f"Modules actifs sans validateur: {uncovered}")
     
     # Verifier que le registre est present et non vide
-    if len(CRITICAL_MODULES_REGISTRY) < 17:
-        issues.append(f"Registre incomplet: {len(CRITICAL_MODULES_REGISTRY)}/17 modules")
+    if len(CRITICAL_MODULES_REGISTRY) < 18:
+        issues.append(f"Registre incomplet: {len(CRITICAL_MODULES_REGISTRY)}/18 modules")
     
     # Verifier qu'aucun moteur BIONIC planned n'a un validateur "pending"
     for mid, info in CRITICAL_MODULES_REGISTRY.items():
@@ -522,6 +528,23 @@ class BCEMaxEngine:
                     ))
         except Exception as e:
             self.logger.warning(f"[BCE-MAX] Color contract validation error: {e}")
+
+        # Check 8: STEVE-MAX Geometry Compliance + Clipping
+        try:
+            from bce.validators.geometry_compliance import validate as validate_geometry
+            geom_result = validate_geometry()
+            if geom_result["status"] == "FAIL":
+                for err in geom_result.get("errors", []):
+                    self.violations.append(BCEMaxViolation(
+                        type=ViolationType.REGRESSION_DETECTED,
+                        severity="high",
+                        message=err,
+                        component="GeometryCompliance_STEVE_MAX",
+                        expected="PASS",
+                        actual="FAIL",
+                    ))
+        except Exception as e:
+            self.logger.warning(f"[BCE-MAX] Geometry compliance validation error: {e}")
         
         # Calculer le statut final
         critical_count = len([v for v in self.violations if v.severity == "critical"])
@@ -541,7 +564,7 @@ class BCEMaxEngine:
             deployment_allowed = True
         
         # Score
-        total_checks = 7  # STEVE-MAX: +1 for color contract
+        total_checks = 8  # STEVE-MAX: +2 for color contract + geometry compliance
         failed_checks = len(set(v.component for v in self.violations))
         passed_checks = total_checks - failed_checks
         score = (passed_checks / total_checks) * 100 if total_checks > 0 else 0

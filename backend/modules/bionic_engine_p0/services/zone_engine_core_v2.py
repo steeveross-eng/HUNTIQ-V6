@@ -344,6 +344,9 @@ def _build_corridor_feature_astar(corridor_id, fz, tz, from_layer, to_layer, dis
             "month": datetime.now(timezone.utc).month,
             "hour": datetime.now(timezone.utc).hour,
             "weather": getattr(service, '_current_weather', {}),
+            # STEVE-MAX: Waypoint center for STRICT 2km analysis box computation
+            "waypoint_lat": getattr(service, '_current_waypoint_lat', None),
+            "waypoint_lng": getattr(service, '_current_waypoint_lng', None),
         }
 
         # Full V9 pipeline: evaluate + fix gaps + clip + enrich + validate
@@ -1057,6 +1060,10 @@ async def generate_organic_zones(
             corridor_10x_service._current_season = season if 'season' in dir() else 'automne'
             corridor_10x_service._current_bounds = bounds
             corridor_10x_service._current_weather = weather_metadata if 'weather_metadata' in dir() else {}
+            # STEVE-MAX: Pass waypoint center for STRICT 2km analysis box
+            if waypoint_center:
+                corridor_10x_service._current_waypoint_lat = waypoint_center.get('lat')
+                corridor_10x_service._current_waypoint_lng = waypoint_center.get('lng')
             corridors = _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds)
         except Exception as e:
             logger.warning(f"Corridor 10X fallback failed: {e}")
