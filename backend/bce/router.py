@@ -16,6 +16,7 @@ from fastapi import APIRouter
 
 from bce.engine import run_full_validation, run_single_validator, BCE_VERSION
 from bce.validators.golden_state import save_golden_state
+from bce.validators.corridor_v9 import validate_corridor_batch
 
 logger = logging.getLogger("bce.router")
 
@@ -64,6 +65,20 @@ async def bce_status():
                 "bce_corridor_wwf_classification_valid",
                 "bce_corridor_human_pressure_respected",
                 "bce_corridor_stopover_detection_valid",
+            ],
+        },
+        "bce_4x_corridor": {
+            "module": "corridor_v9",
+            "critical": True,
+            "rules": [
+                "hardcoded_score_detection",
+                "geometry_linestring_valid",
+                "circular_corridor_detection",
+                "continuity_gap_check",
+                "bounds_clipping_2km",
+                "classification_valid",
+                "scoring_range_check",
+                "enrichment_check",
             ],
         },
         "auto_run": autorun_status,
@@ -173,5 +188,47 @@ async def bce_certify():
             "reason": f"Cannot certify — {len(non_golden_failures)} non-golden validators failed",
             "failed_validators": [v["name"] for v in non_golden_failures],
             "validation_report": report,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+
+@router.post("/validate-corridors")
+async def bce_validate_corridors():
+    """
+    BCE-4X Corridor Validator — Module critique.
+    Genere des corridors pour une zone test et execute toutes les validations.
+    """
+    try:
+        from modules.bionic_engine_p0.services.zone_engine_core_v2 import (
+            generate_organic_zones,
+        )
+
+        test_bounds = {
+            "north": 46.96,
+            "south": 46.93,
+            "east": -71.27,
+            "west": -71.33,
+        }
+        test_layers = ["habitats", "alimentation", "repos", "rut", "trajets"]
+
+        geojson = await generate_organic_zones(
+            bounds=test_bounds,
+            layers=test_layers,
+            species="moose",
+            resolution=40,
+            max_zones_per_layer=5,
+        )
+
+        raw_corridors = geojson.get("corridors", [])
+        report = validate_corridor_batch(raw_corridors, test_bounds)
+        report["test_area"] = test_bounds
+        return report
+
+    except Exception as e:
+        logger.error(f"BCE-4X corridor validation failed: {e}")
+        return {
+            "module": "bce_4x_corridor_validator",
+            "status": "ERROR",
+            "error": str(e),
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
