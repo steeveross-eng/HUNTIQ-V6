@@ -34,8 +34,7 @@ import CursorBionicLayer from '../../../components/territoire/CursorBionicLayer'
 import RoutePlannerLayer from '../../../components/territoire/RoutePlannerLayer';
 // REPLAY: Route animation
 import RouteReplayLayer from '../../../components/territoire/RouteReplayLayer';
-// MOVEMENT CORRIDORS: Real vs Estimated
-import MovementCorridorsLayer from '../../../components/territoire/MovementCorridorsLayer';
+// STEVE-MAX: MovementCorridorsLayer LEGACY V1 — SUPPRIME DEFINITIVEMENT (BCE-4X-UI-003)
 // FUNCTIONAL ZONES: Organic zone polygons (semi-static)
 import BionicMicroZones from '../../../components/territoire/BionicMicroZones';
 import TerritoryShell from '../../../components/territoire/TerritoryShell';
@@ -842,10 +841,7 @@ export const WaypointMap = ({
                     <RouteReplayLayer species="moose" />
                   )}
                   
-                  {/* MOVEMENT CORRIDORS: Real vs Estimated */}
-                  {showMovementCorridors && (
-                    <MovementCorridorsLayer species="moose" showReal={true} showEstimated={true} timeOfDay={temporalHour} />
-                  )}
+                  {/* STEVE-MAX: Legacy MovementCorridorsLayer PURGE — BCE-4X-UI-003 */}
                   
                   {/* BIONIC V5: Couches organiques injectées par le parent */}
                   {children}

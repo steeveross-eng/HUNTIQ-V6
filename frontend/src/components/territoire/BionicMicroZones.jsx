@@ -24,32 +24,34 @@ import SmartMapTooltip from './SmartMapTooltip';
 export { BIONIC_MODULES };
 
 // ============================================
-// NORMALISATION VISUELLE V5 300% — Couleurs uniques
+// STEVE-MAX — PALETTE NORMATIVE ZONES (BCE-4X-COLOR-001)
+// Couleurs FIXES par layer_id — IDENTIQUES backend, carte, panneau
+// AUCUNE generation dynamique. Contrat strict.
 // ============================================
-
-// Palette de base par type de couche (hue HSL)
-const LAYER_HUE_MAP = {
-  habitats: 130,    // vert
-  rut: 30,          // orange/ambre
-  repos: 215,       // bleu
-  alimentation: 50, // or
-  corridors: 180,   // cyan
-  salines: 340,     // rose/magenta
-  affuts: 5,        // rouge
-  trajets: 275,     // violet
+const ZONE_NORMATIVE_COLORS = {
+  habitats:       '#10B981',
+  rut:            '#FF4D6D',
+  repos:          '#8B5CF6',
+  alimentation:   '#22C55E',
+  corridors:      '#06B6D4',
+  peuplements:    '#15803D',
+  ndvi:           '#66BB6A',
+  hydro:          '#3B82F6',
+  pentes:         '#FF7043',
+  orientation:    '#2196F3',
+  ensoleillement: '#FCD34D',
+  salines:        '#FFFF00',
+  affuts:         '#F5A623',
+  trajets:        '#FF9800',
+  altitude:       '#78909C',
 };
 
 /**
- * Génère une couleur HSL unique par zone.
- * Utilise le hue de base du layer + un décalage par angle d'or (137.508°)
- * pour garantir que chaque zone a une couleur distincte.
+ * STEVE-MAX: Retourne la couleur normative pour un layerId.
+ * BCE-4X-COLOR-001: Aucune variation par index. Couleur fixe par couche.
  */
-function generateZoneColor(layerId, zoneIndex) {
-  const baseHue = LAYER_HUE_MAP[layerId] ?? ((zoneIndex * 137.508) % 360);
-  // Décalage déterministe par index pour zones du même layer
-  const offset = (zoneIndex * 37) % 40 - 20; // ±20° variation
-  const hue = (baseHue + offset + 360) % 360;
-  return `hsl(${hue}, 80%, 58%)`;
+function getZoneColor(layerId) {
+  return ZONE_NORMATIVE_COLORS[layerId] || '#9E9E9E';
 }
 
 /**
@@ -90,7 +92,7 @@ const getInterpretation = (moduleId, score) => {
 const NormalizedZone = ({ zone, tier, zoneIndex, isHovered, onHover, onLeave, onToggleFavorite }) => {
   const { positions, layerId, score, areaM2 } = zone;
   const mod = BIONIC_MODULES[layerId] || BIONIC_MODULES.habitats;
-  const color = generateZoneColor(layerId, zoneIndex);
+  const color = getZoneColor(layerId);
   const weight = getDynamicWeight(score, isHovered);
   const tierLabel = tier === 'core.nodes' ? 'Noyau' : 'Comportemental';
   const map = useMap();
@@ -383,7 +385,7 @@ const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
 const CorridorLine = ({ start, end, moduleId, percentage, label, corridorIndex }) => {
   const mod = BIONIC_MODULES[moduleId] || BIONIC_MODULES.corridors;
   const [isHovered, setIsHovered] = useState(false);
-  const color = generateZoneColor('corridors', corridorIndex);
+  const color = getZoneColor('corridors');
   const weight = getDynamicWeight(percentage, isHovered);
 
   return (
@@ -471,36 +473,39 @@ const BionicMicroZones = ({
 
   return (
     <>
-      {/* COUCHE 3: behavior.cells — Contours uniques, centre transparent */}
-      {cellZones.map((zone, idx) => (
-        <NormalizedZone
-          key={zone.id}
-          zone={zone}
-          tier="behavior.cells"
-          zoneIndex={idx}
-          isHovered={hoveredZoneId === zone.id}
-          onHover={handleHover}
-          onLeave={handleLeave}
-          onToggleFavorite={toggleFavorite}
-        />
-      ))}
+      {/* STEVE-MAX: COUCHE ZONES — Pane dedie z-index 400 (SOUS les corridors) */}
+      <Pane name="bionic-zones-pane" style={{ zIndex: 400 }}>
+        {/* behavior.cells — Score faible en arriere-plan */}
+        {cellZones.map((zone, idx) => (
+          <NormalizedZone
+            key={zone.id}
+            zone={zone}
+            tier="behavior.cells"
+            zoneIndex={idx}
+            isHovered={hoveredZoneId === zone.id}
+            onHover={handleHover}
+            onLeave={handleLeave}
+            onToggleFavorite={toggleFavorite}
+          />
+        ))}
 
-      {/* COUCHE 4: core.nodes — Contours uniques */}
-      {nodeZones.map((zone, idx) => (
-        <NormalizedZone
-          key={zone.id}
-          zone={zone}
-          tier="core.nodes"
-          zoneIndex={cellZones.length + idx}
-          isHovered={hoveredZoneId === zone.id}
-          onHover={handleHover}
-          onLeave={handleLeave}
-          onToggleFavorite={toggleFavorite}
-        />
-      ))}
+        {/* core.nodes — Score eleve au-dessus */}
+        {nodeZones.map((zone, idx) => (
+          <NormalizedZone
+            key={zone.id}
+            zone={zone}
+            tier="core.nodes"
+            zoneIndex={cellZones.length + idx}
+            isHovered={hoveredZoneId === zone.id}
+            onHover={handleHover}
+            onLeave={handleLeave}
+            onToggleFavorite={toggleFavorite}
+          />
+        ))}
+      </Pane>
 
-      {/* COUCHE 5: Corridors V9 — Rubans ecologiques multicouches
-          TOUJOURS AU-DESSUS des zones pour visibilite maximale
+      {/* STEVE-MAX: COUCHE CORRIDORS V9 — Pane dedie z-index 650 (AU-DESSUS des zones)
+          BCE-4X-COLOR-003: Palette corridors ISOLEE des zones
           Rendu: 5 bandes concentriques gris→jaune→orange→rouge→rouge_raye */}
       <Pane name="corridors-v9-pane" style={{ zIndex: 650 }}>
         {showCorridors &&

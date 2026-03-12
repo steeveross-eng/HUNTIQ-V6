@@ -335,3 +335,27 @@ async def bce_validate_corridors_v9():
             "status": "ERROR",
             "error": str(e),
         }
+
+
+
+@router.post("/validate-color-contract")
+async def validate_color_contract_endpoint():
+    """
+    STEVE-MAX: BCE-4X Color Contract validation.
+    Rules: COLOR-001, COLOR-002, COLOR-003, UI-004, UI-005, UI-006
+    """
+    try:
+        from bce.validators.color_contract import validate as validate_cc
+        result = validate_cc()
+        return {
+            "module": "bce_4x_color_contract",
+            "branch": "steve-max",
+            **result,
+        }
+    except Exception as e:
+        logger.error(f"Color contract validation error: {e}")
+        return {
+            "module": "bce_4x_color_contract",
+            "status": "ERROR",
+            "error": str(e),
+        }

@@ -257,9 +257,9 @@ export const SidePanelZones = React.memo(({
         {isLoadingZones ? (
           <span className="text-gray-400">Calcul en cours...</span>
         ) : zoneSource === 'backend' ? (
-          <span className="text-green-400">V7 {weatherMetadata?.applied ? '+ Meteo' : ''}</span>
+          <span className="text-green-400">V9 {weatherMetadata?.applied ? '+ Meteo' : ''}</span>
         ) : zoneSource === 'cache' ? (
-          <span className="text-cyan-400">Cache V7</span>
+          <span className="text-cyan-400">Cache V9</span>
         ) : (
           <span className="text-gray-600">En attente</span>
         )}
@@ -269,7 +269,7 @@ export const SidePanelZones = React.memo(({
           Recharger zones
         </button>
       )}
-      <div className="text-[8px] text-gray-600 mt-1" data-testid="pipeline-version">Pipeline V7 + Meteo V8.2.1</div>
+      <div className="text-[8px] text-gray-600 mt-1" data-testid="pipeline-version">Pipeline V9 + Meteo V8.2.1 + 9 Moteurs BIONIC</div>
     </div>
 
     {/* ══ 3. Rejection Diagnostics (conditional) ══ */}

@@ -13,7 +13,7 @@ import ExclusionOverlayLayer from '@/components/territoire/ExclusionOverlayLayer
 import WindFlowLayer from '@/components/territoire/WindFlowLayer';
 import StructureContrastLayer from '@/components/territoire/StructureContrastLayer';
 import BionicMicroZones from '@/components/territoire/BionicMicroZones';
-import MovementCorridorsLayer from '@/components/territoire/MovementCorridorsLayer';
+// STEVE-MAX: MovementCorridorsLayer SUPPRIME DEFINITIVEMENT — BCE-4X-UI-003
 import { ShootingZones, SessionHeatmap } from '@/modules/groupe';
 import CursorBionicLayer from '@/components/territoire/CursorBionicLayer';
 import BionicAntiDoublesGuard from '@/components/territoire/BionicAntiDoublesGuard';
@@ -119,12 +119,7 @@ const MapContentInner = React.memo(({
         if (favId) removeFavorite(favId);
       }}
     />
-    {/* LEGACY MovementCorridorsLayer — DESACTIVE DEFINITIVEMENT
-        Raison: Contamination visuelle. Les corridors V9 (BionicMicroZones / V9CorridorRibbon)
-        remplacent integralement ce moteur legacy.
-        BCE-4X-UI-003: Aucune couche legacy ne doit polluer le rendu V9.
-    */}
-    {/* <MovementCorridorsLayer /> — REMOVED: replaced by V9 corridor bands */}
+    {/* STEVE-MAX: MovementCorridorsLayer PURGE DEFINITIVE — BCE-4X-UI-003 */}
 
     {/* BIONIC Zone 2 km² — Carré unique centré sur le waypoint actif */}
     {selectedWaypointForZones && (

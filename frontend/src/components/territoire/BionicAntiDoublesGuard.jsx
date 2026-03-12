@@ -21,7 +21,8 @@ import { useMapEvents } from 'react-leaflet';
 const STYLE_ID = 'bionic-anti-doubles-css';
 
 const SUPPRESSION_CSS = `
-/* BIONIC Anti-Doublons — Suppression tooltips/popups parasites */
+/* STEVE-MAX: Anti-Doublons CSS — tooltips BIONIC uniquement */
+/* BCE-4X-UI-004: Aucune suppression globale des panneaux Leaflet */
 .bionic-smart-tooltip {
   display: none !important;
   visibility: hidden !important;
@@ -30,17 +31,7 @@ const SUPPRESSION_CSS = `
 .bionic-smart-tooltip-arrow {
   display: none !important;
 }
-.leaflet-tooltip-pane {
-  display: none !important;
-}
-.leaflet-popup-pane .leaflet-popup {
-  display: none !important;
-}
-/* BIONIC V5 300% — Zone Hover Premium Effect (P2)
-   - Transition fluide 120ms sur entrée ET sortie
-   - +20% luminosité sur le contour au survol
-   - Aucun changement de couleur de remplissage perceptible
-   - Compatible zones adjacentes (120ms = retour quasi-instantané) */
+/* STEVE-MAX: Zone Hover Premium Effect */
 .leaflet-overlay-pane path.leaflet-interactive {
   transition: stroke-width 120ms ease-out, filter 120ms ease-out !important;
 }
