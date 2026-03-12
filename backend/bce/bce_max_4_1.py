@@ -111,6 +111,58 @@ MANDATORY_FEATURES = {
     },
 }
 
+# =====================================================================
+# REGISTRE MODULES CRITIQUES — BCE-4X OBLIGATOIRE
+# =====================================================================
+# Tout module ajouté ici DOIT avoir un validateur BCE-4X correspondant.
+# Tout nouveau moteur BIONIC est AUTOMATIQUEMENT critique.
+# Un module non enregistré ici ne peut PAS être déployé en production.
+
+CRITICAL_MODULES_REGISTRY = {
+    # Modules actifs (validateur BCE-4X existe)
+    "corridor_10x": {
+        "file": "modules/bionic_engine_p0/services/corridor_10x.py",
+        "validator": "bce.validators.corridor_v9",
+        "status": "active",
+        "since": "2026-03-12",
+    },
+    "zone_engine_core": {
+        "file": "modules/bionic_engine_p0/services/zone_engine_core_v2.py",
+        "validator": "bce.validators.spatial_integrity",
+        "status": "active",
+        "since": "2026-03-01",
+    },
+    "ecological_database": {
+        "file": "modules/bionic_engine_p0/knowledge/ecological_database_v8.py",
+        "validator": "bce.validators.ecological_validators_v8",
+        "status": "active",
+        "since": "2026-03-01",
+    },
+    # Moteurs BIONIC — tous critiques, validateurs a creer avec chaque moteur
+    "movement_engine": {"status": "active", "validator": "bce.validators.corridor_v9"},
+    "weather_engine": {"status": "partial", "validator": "pending"},
+    "nutrition_engine": {"status": "planned", "validator": "pending"},
+    "daily_routine_engine": {"status": "planned", "validator": "pending"},
+    "disturbance_engine": {"status": "planned", "validator": "pending"},
+    "phenology_engine": {"status": "planned", "validator": "pending"},
+    "typology_engine": {"status": "planned", "validator": "pending"},
+    "learning_engine": {"status": "planned", "validator": "pending"},
+    "habitat_enhancement_engine": {"status": "planned", "validator": "pending"},
+}
+
+
+def check_critical_module_coverage() -> list:
+    """
+    Verifie que tous les modules critiques ont un validateur BCE-4X actif.
+    Retourne la liste des modules non couverts.
+    """
+    uncovered = []
+    for module_id, info in CRITICAL_MODULES_REGISTRY.items():
+        if info.get("status") == "active" and info.get("validator") == "pending":
+            uncovered.append(module_id)
+    return uncovered
+
+
 # État de référence (golden state) — NE JAMAIS MODIFIER
 GOLDEN_STATE_HASH = None  # Calculé à l'initialisation
 
@@ -333,6 +385,18 @@ class BCEMaxEngine:
         if session_data:
             self.violations.extend(self.check_session_persistence(session_data))
         
+        # Check 6: Couverture modules critiques
+        uncovered = check_critical_module_coverage()
+        for module_id in uncovered:
+            self.violations.append(BCEMaxViolation(
+                type=ViolationType.REGRESSION_DETECTED,
+                severity="high",
+                message=f"Module critique '{module_id}' actif sans validateur BCE-4X",
+                component="CriticalModuleRegistry",
+                expected="Validateur BCE-4X actif",
+                actual="pending",
+            ))
+        
         # Calculer le statut final
         critical_count = len([v for v in self.violations if v.severity == "critical"])
         high_count = len([v for v in self.violations if v.severity == "high"])
@@ -351,7 +415,7 @@ class BCEMaxEngine:
             deployment_allowed = True
         
         # Score
-        total_checks = 5
+        total_checks = 6
         failed_checks = len(set(v.component for v in self.violations))
         passed_checks = total_checks - failed_checks
         score = (passed_checks / total_checks) * 100 if total_checks > 0 else 0
@@ -379,6 +443,7 @@ class BCEMaxEngine:
     def get_status(self) -> Dict[str, Any]:
         """Retourne le statut actuel de BCE-MAX x4.1."""
         can_deploy, deploy_reason = self.can_deploy()
+        uncovered = check_critical_module_coverage()
         
         return {
             "version": "bce_max_4.1",
@@ -392,6 +457,12 @@ class BCEMaxEngine:
             "baseline_hash": self._hash_state(self.baseline_state),
             "mandatory_layers": MANDATORY_LAYERS,
             "mandatory_features": list(MANDATORY_FEATURES.keys()),
+            "critical_modules": {
+                "total": len(CRITICAL_MODULES_REGISTRY),
+                "active": len([m for m in CRITICAL_MODULES_REGISTRY.values() if m["status"] == "active"]),
+                "uncovered": uncovered,
+                "registry": {k: v["status"] for k, v in CRITICAL_MODULES_REGISTRY.items()},
+            },
         }
 
 
