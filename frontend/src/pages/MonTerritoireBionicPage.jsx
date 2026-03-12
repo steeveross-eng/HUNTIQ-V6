@@ -728,18 +728,34 @@ const MonTerritoireBionicPage = () => {
     return bionicZones.filter(z => z.score >= minPercentageFilter).length;
   }, [bionicZones, minPercentageFilter]);
   
-  // Score global — P0 FIX: Compute from zone data when scoring hook has no result
+  // Score global V9 — Integre zones (65%) + corridors V9 (35%)
   const displayScore = useMemo(() => {
     if (globalScore) return globalScore;
-    // Derive score from bionicZones average (zones have score 0-100)
+    const corridors = bionicZonesData.corridors || [];
+    
+    let zoneAvg = 0;
     if (bionicZones.length > 0) {
       const validScores = bionicZones.map(z => z.score || 0).filter(s => s > 0);
       if (validScores.length > 0) {
-        return Math.round(validScores.reduce((a, b) => a + b, 0) / validScores.length);
+        zoneAvg = validScores.reduce((a, b) => a + b, 0) / validScores.length;
       }
     }
-    return null;
-  }, [globalScore, bionicZones]);
+    
+    let corridorAvg = 0;
+    if (corridors.length > 0) {
+      const corridorScores = corridors.map(c => c.score || 0).filter(s => s > 0);
+      if (corridorScores.length > 0) {
+        corridorAvg = corridorScores.reduce((a, b) => a + b, 0) / corridorScores.length;
+      }
+    }
+    
+    if (zoneAvg === 0 && corridorAvg === 0) return null;
+    if (corridorAvg === 0) return Math.round(zoneAvg);
+    if (zoneAvg === 0) return Math.round(corridorAvg);
+    
+    // V9: corridors weighted at 35% (up from 30%) due to 9-engine precision
+    return Math.round(zoneAvg * 0.65 + corridorAvg * 0.35);
+  }, [globalScore, bionicZones, bionicZonesData.corridors]);
   
   const getScoreRating = (score) => {
     if (!score) return { label: 'En attente', color: 'bg-gray-700', textColor: 'text-gray-400' };

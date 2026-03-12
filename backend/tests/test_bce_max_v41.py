@@ -8,7 +8,7 @@ import requests
 import os
 import json
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://corridor-analysis.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://corridor-ecology-hub.preview.emergentagent.com')
 
 # Known waypoint for testing
 WAYPOINT_CENTER = {"lat": 46.8068, "lng": -71.1118}

@@ -213,10 +213,10 @@ export const SidePanelZones = React.memo(({
 }) => (
   <div className="p-3 space-y-3" data-testid="panel-zones">
 
-    {/* ══ 1. SCORE GLOBAL V8 ══ */}
+    {/* ══ 1. SCORE GLOBAL V9 ══ */}
     <div className="bg-[#111118] rounded-lg p-3 border border-[#1a1a2e]" data-testid="score-global-panel">
       <div className="flex items-center justify-between mb-1.5">
-        <div className="text-[10px] text-gray-500 uppercase tracking-wider">Score Global V8</div>
+        <div className="text-[10px] text-gray-500 uppercase tracking-wider">Score Global V9</div>
         <Shield className="h-3 w-3 text-emerald-500" />
       </div>
       <div className="flex items-baseline gap-2">

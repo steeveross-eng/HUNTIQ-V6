@@ -18,6 +18,7 @@ from bce.engine import run_full_validation, run_single_validator, BCE_VERSION
 from bce.validators.golden_state import save_golden_state
 from bce.validators.corridor_v9 import validate_corridor_batch
 from bce.validators.bionic_engine_framework import validate_all_engines, ENGINE_VALIDATORS
+from bce.bce_corridor_v9 import validate_corridors_batch, validate_weather_cache_compliance
 
 logger = logging.getLogger("bce.router")
 
@@ -289,3 +290,48 @@ async def bce_branch_compliance_current():
         branch = "unknown"
     report = validate_branch_compliance(branch)
     return report
+
+
+@router.get("/weather-compliance")
+async def bce_weather_compliance():
+    """
+    BCE-4X: Statut de conformite du Weather Engine (regle 60 min OWM).
+    """
+    return validate_weather_cache_compliance()
+
+
+@router.post("/validate-corridors-v9")
+async def bce_validate_corridors_v9():
+    """
+    BCE-4X Corridor V9 Validator — Pipeline complet.
+    Genere corridors V9 et valide avec le nouveau systeme 5 niveaux.
+    """
+    try:
+        from modules.bionic_engine_p0.services.zone_engine_core_v2 import generate_organic_zones
+
+        test_bounds = {
+            "north": 46.96, "south": 46.93,
+            "east": -71.27, "west": -71.33,
+        }
+
+        geojson = await generate_organic_zones(
+            bounds=test_bounds,
+            layers=["habitats", "alimentation", "repos", "rut", "trajets"],
+            species="moose",
+            resolution=40,
+            max_zones_per_layer=5,
+        )
+
+        raw_corridors = geojson.get("corridors", [])
+        report = validate_corridors_batch(raw_corridors, test_bounds)
+        report["test_area"] = test_bounds
+        report["weather_compliance"] = validate_weather_cache_compliance()
+        return report
+
+    except Exception as e:
+        logger.error(f"BCE-4X V9 corridor validation failed: {e}")
+        return {
+            "module": "bce_4x_corridor_v9",
+            "status": "ERROR",
+            "error": str(e),
+        }

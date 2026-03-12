@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://corridor-analysis.preview.emergentagent.com",
+                "url": "https://corridor-ecology-hub.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],

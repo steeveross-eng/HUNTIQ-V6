@@ -221,6 +221,9 @@ def validate_clipping(corridor: Dict, bounds: Dict) -> List[CorridorViolation]:
 # =====================================================================
 
 VALID_CLASSIFICATIONS = {
+    # V9 classification (5 niveaux)
+    "gris", "jaune", "orange", "rouge", "rouge_raye",
+    # Legacy WWF (backward compatibility)
     "macro_corridor", "biological_corridor", "conservation_corridor",
 }
 

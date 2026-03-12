@@ -108,7 +108,7 @@ def _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds):
                 zone_centroids.setdefault(layer_id, []).append({
                     "lat": lat, "lng": lng,
                     "zone_id": f"{layer_id}_{idx}",
-                    "score": 50,
+                    "score": z.get("score", z.get("zoneScore", 0)),
                 })
 
     logger.info(f"[Corridor A*] Zone centroids: { {k: len(v) for k, v in zone_centroids.items()} }")
@@ -303,49 +303,75 @@ def _find_astar_path(fz, tz, terrain_data, pathfinder, distance):
 
 
 def _build_corridor_feature_astar(corridor_id, fz, tz, from_layer, to_layer, dist, wwf_type, connectivity, service, path_coords):
-    """Build a corridor GeoJSON Feature with A* path or Bezier fallback."""
+    """Build a corridor GeoJSON Feature — V9 Pipeline with 9 BIONIC engines."""
     is_astar = len(path_coords) > 0 and len(path_coords) != max(5, int(dist / 50)) + 1
-
-    score = round((connectivity * 0.4 + fz["score"] * 0.3 + tz["score"] * 0.3), 1)
-    wwf_colors = {
-        "macro_corridor": {"color": "#FF5722", "width": 5, "opacity": 0.9},
-        "biological_corridor": {"color": "#FF9800", "width": 3.5, "opacity": 0.85},
-        "conservation_corridor": {"color": "#FFC107", "width": 2.5, "opacity": 0.8},
-    }
-    style = wwf_colors.get(wwf_type.value, {"color": "#06B6D4", "width": 2.5, "opacity": 0.85})
     pathfinding_method = "A*" if is_astar else "bezier_fallback"
 
-    return {
+    # V9: Build base feature, scoring will be computed by engines
+    feature = {
         "type": "Feature",
         "id": f"corridor-10x-{corridor_id}",
         "geometry": {"type": "LineString", "coordinates": path_coords},
         "properties": {
             "source": "corridor_10x",
-            "corridor_type": wwf_type.value,
+            "corridor_type": wwf_type.value,  # Will be overridden by V9 classification
             "from_zone_type": from_layer,
             "to_zone_type": to_layer,
             "from_zone_id": fz["zone_id"],
             "to_zone_id": tz["zone_id"],
             "distance_m": round(dist, 1),
-            "confidence": min(1.0, score / 100),
             "sex": "both",
             "pathfinding": pathfinding_method,
             "dem_enhanced": False,
             "in_perimeter": True,
-            "style": {"color": style["color"], "width": style["width"], "opacity": style["opacity"], "dasharray": "none"},
             "scoring": {
-                "score": score,
-                "subscores": {"connectivity": round(connectivity, 1), "terrain": 65.0, "habitat": 70.0},
-                "justification": [
-                    f"Connecte {from_layer} -> {to_layer}",
-                    f"Distance: {round(dist)}m",
-                    f"Classification WWF: {wwf_type.value}",
-                    f"Pathfinding: {pathfinding_method}",
-                ],
+                "score": 0,  # Placeholder — V9 engines will compute
+                "subscores": {"connectivity": round(connectivity, 1)},
+                "justification": [],
             },
             "wwf_classification": {"type": wwf_type.value, "label": service._get_wwf_label(wwf_type)},
         },
     }
+
+    # V9: Evaluate with full pipeline (9 engines + continuity fix + enrichment)
+    try:
+        from modules.bionic_engine_p0.engines.corridors_v9 import corridor_engine_v9, CLASSIFICATION_V9
+        from datetime import datetime, timezone
+
+        global_context = {
+            "species": getattr(service, '_current_species', 'moose'),
+            "season": getattr(service, '_current_season', 'automne'),
+            "month": datetime.now(timezone.utc).month,
+            "hour": datetime.now(timezone.utc).hour,
+            "weather": getattr(service, '_current_weather', {}),
+        }
+
+        # Full V9 pipeline: evaluate + fix gaps + clip + enrich + validate
+        bounds = getattr(service, '_current_bounds', None)
+        feature = corridor_engine_v9.process_corridor_full(feature, global_context, bounds)
+
+        # Apply V9 classification styling
+        classification = feature["properties"].get("classification_v9", {})
+        level = classification.get("level", "gris")
+        config = CLASSIFICATION_V9.get(level, CLASSIFICATION_V9["gris"])
+        feature["properties"]["style"] = {
+            "color": config["color"],
+            "width": config["width"],
+            "opacity": config["opacity"],
+            "dasharray": config.get("dash") or "none",
+        }
+        feature["properties"]["confidence"] = feature["properties"].get("certainty", 0.5)
+
+    except Exception as e:
+        logger.warning(f"[Corridor V9] Engine evaluation failed, using fallback: {e}")
+        # Fallback: basic scoring without engines
+        score = round(connectivity * 0.6 + 20, 1)
+        feature["properties"]["scoring"]["score"] = score
+        feature["properties"]["confidence"] = 0.3
+        feature["properties"]["style"] = {"color": "#9E9E9E", "width": 1.5, "opacity": 0.5, "dasharray": "8,4"}
+        feature["properties"]["v9_pipeline"] = False
+
+    return feature
 
 
 
@@ -1025,9 +1051,38 @@ async def generate_organic_zones(
     # BCE-MAX x4.1: Fallback corridor generation for non-v7 engines
     if not corridors and zones_by_layer:
         try:
+            # V9: Set context for BIONIC engines
+            from modules.bionic_engine_p0.services.corridor_10x import corridor_10x_service
+            corridor_10x_service._current_species = species
+            corridor_10x_service._current_season = season if 'season' in dir() else 'automne'
+            corridor_10x_service._current_bounds = bounds
+            corridor_10x_service._current_weather = weather_metadata if 'weather_metadata' in dir() else {}
             corridors = _generate_corridors_10x(zones_by_layer, species, waypoint_center, bounds)
         except Exception as e:
             logger.warning(f"Corridor 10X fallback failed: {e}")
+
+    # V9: Filter out circular corridors (start-end < 50m is circular)
+    if corridors:
+        pre_filter = len(corridors)
+        filtered_corridors = []
+        for c in corridors:
+            coords = c.get("geometry", {}).get("coordinates", [])
+            if len(coords) >= 2:
+                start_c = coords[0]
+                end_c = coords[-1]
+                dist = math.sqrt(
+                    ((start_c[1] - end_c[1]) * METERS_PER_DEG_LAT) ** 2
+                    + ((start_c[0] - end_c[0]) * METERS_PER_DEG_LAT * math.cos(math.radians(start_c[1]))) ** 2
+                )
+                if dist >= 50:
+                    filtered_corridors.append(c)
+                else:
+                    logger.info(f"[V9-Filter] Removed circular corridor (start-end: {dist:.0f}m)")
+            else:
+                filtered_corridors.append(c)
+        corridors = filtered_corridors
+        if pre_filter != len(corridors):
+            logger.info(f"[V9-Filter] Removed {pre_filter - len(corridors)} circular corridors")
 
     elapsed = round((time.time() - start) * 1000, 1)
 

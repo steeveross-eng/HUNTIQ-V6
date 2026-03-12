@@ -18,7 +18,7 @@ import os
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 if not BASE_URL:
-    BASE_URL = "https://corridor-analysis.preview.emergentagent.com"
+    BASE_URL = "https://corridor-ecology-hub.preview.emergentagent.com"
 
 # Laurentides territory (ONLY use this to conserve rate limits)
 LAURENTIDES_BOUNDS = {

@@ -186,6 +186,7 @@ export const generateBionicZonesV5 = async (bounds, zoom, layersVisible, species
         sex: props.sex,
         confidence: props.confidence,
         corridorType: props.corridor_type,
+        classificationV9: props.classification_v9 || null,
         fromZoneType: props.from_zone_type,
         toZoneType: props.to_zone_type,
         distanceM: props.distance_m,
@@ -195,6 +196,11 @@ export const generateBionicZonesV5 = async (bounds, zoom, layersVisible, species
         justification: scoring.justification || [],
         demEnhanced: props.dem_enhanced || false,
         inPerimeter: props.in_perimeter || false,
+        certainty: props.certainty || 0,
+        enginesEvaluated: props.engines_evaluated || 0,
+        v9Pipeline: props.v9_pipeline || false,
+        continuityValid: props.continuity_valid,
+        scores10x: props.scores_10x || null,
       };
     });
 

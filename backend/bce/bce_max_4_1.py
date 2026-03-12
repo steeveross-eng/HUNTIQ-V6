@@ -150,32 +150,46 @@ CRITICAL_MODULES_REGISTRY = {
         "since": "2026-03-12",
     },
     "nutrition_engine": {
+        "file": "modules/bionic_engine_p0/engines/nutrition_engine.py",
         "validator": "bce.validators.bionic_engine_framework.NutritionEngineValidator",
-        "status": "planned",
+        "status": "active",
+        "since": "2026-03-15",
     },
     "daily_routine_engine": {
+        "file": "modules/bionic_engine_p0/engines/daily_routine_engine.py",
         "validator": "bce.validators.bionic_engine_framework.DailyRoutineEngineValidator",
-        "status": "planned",
+        "status": "active",
+        "since": "2026-03-15",
     },
     "disturbance_engine": {
+        "file": "modules/bionic_engine_p0/engines/disturbance_engine.py",
         "validator": "bce.validators.bionic_engine_framework.DisturbanceEngineValidator",
-        "status": "planned",
+        "status": "active",
+        "since": "2026-03-15",
     },
     "phenology_engine": {
+        "file": "modules/bionic_engine_p0/engines/phenology_engine.py",
         "validator": "bce.validators.bionic_engine_framework.PhenologyEngineValidator",
-        "status": "planned",
+        "status": "active",
+        "since": "2026-03-15",
     },
     "typology_engine": {
+        "file": "modules/bionic_engine_p0/engines/typology_engine.py",
         "validator": "bce.validators.bionic_engine_framework.TypologyEngineValidator",
-        "status": "planned",
+        "status": "active",
+        "since": "2026-03-15",
     },
     "learning_engine": {
+        "file": "modules/bionic_engine_p0/engines/learning_engine.py",
         "validator": "bce.validators.bionic_engine_framework.LearningEngineValidator",
-        "status": "planned",
+        "status": "active",
+        "since": "2026-03-15",
     },
     "habitat_enhancement_engine": {
+        "file": "modules/bionic_engine_p0/engines/habitat_enhancement_engine.py",
         "validator": "bce.validators.bionic_engine_framework.HabitatEnhancementValidator",
-        "status": "planned",
+        "status": "active",
+        "since": "2026-03-15",
     },
     # ── MOTEURS SPATIAUX ──
     "waypoint_engine": {

@@ -16,7 +16,7 @@ import os
 import json
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://corridor-analysis.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://corridor-ecology-hub.preview.emergentagent.com')
 
 # Test bounds around Quebec City area (46.81, -71.21) - small bbox for reliability
 # Using 0.04° lat x 0.05° lng as recommended

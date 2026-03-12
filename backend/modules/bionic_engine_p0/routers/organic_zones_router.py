@@ -273,3 +273,77 @@ async def list_available_layers():
             for s in get_supported_species()
         ]
     }
+
+
+
+class SpeciesCorridorRequest(BaseModel):
+    bounds: OrganicZoneBounds
+    species: str = "moose"
+    resolution: int = Field(default=40, ge=30, le=80)
+
+
+@router.post("/corridors-v9/by-species")
+async def generate_corridors_by_species(request: SpeciesCorridorRequest):
+    """
+    V9: Genere les corridors ecologiques pour une espece specifique.
+    Retourne uniquement les corridors avec classification V9 et scores des 9 moteurs.
+    """
+    try:
+        from modules.bionic_engine_p0.services.zone_engine_core_v2 import generate_organic_zones
+        from bce.bce_corridor_v9 import validate_corridors_batch
+
+        bounds = {
+            "north": request.bounds.north, "south": request.bounds.south,
+            "east": request.bounds.east, "west": request.bounds.west,
+        }
+
+        # Generate full zone data to extract corridors
+        geojson = await generate_organic_zones(
+            bounds=bounds,
+            species=request.species,
+            resolution=request.resolution,
+            max_zones_per_layer=6,
+        )
+
+        corridors = geojson.get("corridors", [])
+
+        # V9 classification stats
+        classification_counts = {}
+        engine_averages = {}
+        engine_totals = {}
+        for c in corridors:
+            props = c.get("properties", {})
+            level = props.get("classification_v9", {}).get("level", "gris")
+            classification_counts[level] = classification_counts.get(level, 0) + 1
+
+            scores_10x = props.get("scores_10x", {})
+            for eng_id, eng_data in scores_10x.items():
+                if isinstance(eng_data, dict):
+                    engine_totals[eng_id] = engine_totals.get(eng_id, 0) + eng_data.get("score", 0)
+                    engine_averages[eng_id] = engine_averages.get(eng_id, 0) + 1
+
+        for eng_id in engine_totals:
+            count = engine_averages.get(eng_id, 1)
+            engine_averages[eng_id] = round(engine_totals[eng_id] / count, 1)
+
+        # BCE validation
+        bce_report = validate_corridors_batch(corridors, bounds)
+
+        return {
+            "species": request.species,
+            "corridors": corridors,
+            "total_corridors": len(corridors),
+            "classification_v9": classification_counts,
+            "engine_averages": engine_averages,
+            "bce_validation": {
+                "status": bce_report["status"],
+                "compliance_rate": bce_report["compliance_rate"],
+                "total_violations": bce_report["total_violations"],
+            },
+            "bounds": bounds,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+    except Exception as e:
+        logger.error(f"Species corridor generation failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
