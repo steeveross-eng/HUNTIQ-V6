@@ -59,11 +59,11 @@ const MainLayout = ({ children, cart = [], onLanguageChange }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2" style={{ perspective: '1000px' }}>
               <img 
                 src="/logo192.png" 
                 alt="Logo" 
-                className="h-10 w-10 object-contain"
+                className="h-10 w-10 object-contain bionic-logo-3d-rotate"
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
             </Link>

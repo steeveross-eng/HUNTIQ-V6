@@ -32,7 +32,8 @@ export const BionicLogoGlobal = () => {
         zIndex: 50,
         width: `${logoSize}px`,
         height: `${logoSize}px`,
-        display: 'block'
+        display: 'block',
+        perspective: '1000px',
       }}
       data-testid="bionic-logo-global"
       aria-label="BIONIC - Retour à l'accueil"
@@ -42,6 +43,7 @@ export const BionicLogoGlobal = () => {
         alt="BIONIC Chasse / Hunt"
         width={logoSize}
         height={logoSize}
+        className="bionic-logo-3d-rotate"
         loading={isHomePage ? 'eager' : 'lazy'}
         fetchpriority={isHomePage ? 'high' : undefined}
         style={{
@@ -62,7 +64,7 @@ const BionicLogo = ({ className = '' }) => {
       alt="BIONIC"
       width={32}
       height={32}
-      className={className}
+      className={`bionic-logo-3d-rotate ${className}`}
       style={{ 
         width: '32px', 
         height: '32px',

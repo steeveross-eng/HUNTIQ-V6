@@ -1,4 +1,21 @@
 /* ============================================
+   BIONIC LOGO 3D ROTATION — GLOBAL CLASS
+   Rotation continue 360° sur axe Y
+   Vitesse: moyenne-faible (10s par cycle)
+   ============================================ */
+@keyframes rotate3d360 {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(360deg); }
+}
+
+.bionic-logo-3d-rotate {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    animation: rotate3d360 10s linear infinite;
+}
+
+
+/* ============================================
    BIONIC TACTICAL Design System Variables
    ============================================ */
 
