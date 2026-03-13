@@ -74,6 +74,7 @@ const FieldObservationForm = lazy(() => import("@/pages/FieldObservationForm"));
 const CalibrationDashboard = lazy(() => import("@/pages/CalibrationDashboard"));
 const ReportsPage = lazy(() => import("@/pages/ReportsPage"));
 const SpeciesComparisonPage = lazy(() => import("@/pages/SpeciesComparisonPage"));
+const AdminHotspotsPage = lazy(() => import("@/ui/administration/admin_hotspots/AdminHotspots"));
 import { 
   ShoppingCart, FlaskConical, GitCompare, Star, DollarSign, ThumbsUp, Heart, Eye,
   Shield, MousePointer, TrendingUp, CheckCircle, ChevronRight, Menu, X, ArrowLeft,
@@ -1065,6 +1066,7 @@ function App() {
                 <Route path="/referral" element={<ReferralModule />} />
                 <Route path="/admin" element={<AdminPage onProductsUpdate={fetchProducts} />} />
                 <Route path="/admin/geo" element={<AdminGeoPage />} />
+                <Route path="/admin/hotspots" element={<AdminHotspotsPage />} />
                 <Route path="/networking" element={<NetworkingHub />} />
                 <Route path="/lands" element={<LandsRental />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />

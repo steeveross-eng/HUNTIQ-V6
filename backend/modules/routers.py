@@ -243,6 +243,11 @@ from modules.bionic_engine_p0.weather_router import router as bionic_weather_rou
 # ==============================================
 from modules.bionic_engine_p0.scoring_router import router as bionic_scoring_router
 
+# ==============================================
+# BIONIC HOTSPOT ADMIN ENGINE (COMMANDE ADMIN V3)
+# ==============================================
+from modules.bionic_engine_p0.hotspots.hotspot_router import router as hotspot_admin_router
+
 
 # List of all available routers with their metadata
 CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
@@ -861,7 +866,17 @@ CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
         "name": "bionic_scoring_engine",
         "version": "1.0.0",
         "phase": "P1-SCORE",
-        "description": "📊 BIONIC Scoring Engine - Dynamic Scoring, Behavioral Analysis, Weather Integration"
+        "description": "BIONIC Scoring Engine - Dynamic Scoring, Behavioral Analysis, Weather Integration"
+    }),
+
+    # ==========================================
+    # BIONIC HOTSPOT ADMIN ENGINE (COMMANDE ADMIN V3)
+    # ==========================================
+    (hotspot_admin_router, {
+        "name": "hotspot_admin_engine",
+        "version": "1.0.0",
+        "phase": "ADMIN-V3",
+        "description": "BIONIC V3 Hotspot Extraction & Scoring Admin Engine"
     }),
 ]
 
