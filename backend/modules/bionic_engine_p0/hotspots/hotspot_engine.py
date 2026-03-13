@@ -22,6 +22,7 @@ import logging
 import hashlib
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
+from modules.bionic_engine_p0.hotspots.territory_data import enrich_hotspot_territory
 
 logger = logging.getLogger("bionic.hotspots")
 
@@ -336,6 +337,18 @@ def extract_hotspots_for_region(
             "corridor_nearby": has_corridor_nearby,
             "extracted_at": datetime.now(timezone.utc).isoformat(),
         })
+
+    # Enrich with territorial data
+    for h in hotspots:
+        territory = enrich_hotspot_territory(h)
+        h["ville"] = territory["ville"]
+        h["code_postal"] = territory["code_postal"]
+        h["altitude_m"] = territory["altitude_m"]
+        h["territory_type"] = territory["territory_type"]
+        h["access_status"] = territory["access_status"]
+        h["gestionnaire"] = territory["gestionnaire"]
+        h["lot_info"] = territory["lot_info"]
+        h["gps"] = territory["gps"]
 
     # Keep top 25 hotspots per region, sorted by score descending
     hotspots.sort(key=lambda h: h["score"], reverse=True)

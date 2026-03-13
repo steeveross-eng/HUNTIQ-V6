@@ -16,6 +16,7 @@ Endpoints:
 """
 
 import logging
+import asyncio
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 from fastapi import APIRouter, Query
@@ -30,6 +31,7 @@ from modules.bionic_engine_p0.hotspots.hotspot_engine import (
     HOTSPOT_THRESHOLDS,
     HOTSPOT_CATEGORIES,
 )
+from modules.bionic_engine_p0.hotspots.territory_data import TERRITORY_TYPES, ACCESS_STATUSES
 
 logger = logging.getLogger("bionic.hotspots.router")
 
@@ -38,6 +40,13 @@ router = APIRouter(prefix="/api/v1/admin/bionic-hotspots", tags=["Admin BIONIC H
 # In-memory store for latest extraction (also stored in MongoDB)
 _latest_extraction = None
 _extraction_history = []  # Last 3 days
+_scheduler_config = {
+    "enabled": True,
+    "frequency": "annual",
+    "last_run": None,
+    "next_run": None,
+    "total_runs": 0,
+}
 
 
 def _get_db_collection():
@@ -160,9 +169,11 @@ async def list_hotspots(
     category: Optional[str] = Query(None),
     min_score: Optional[float] = Query(None),
     classification: Optional[str] = Query(None),
+    territory_type: Optional[str] = Query(None),
+    access_status: Optional[str] = Query(None),
     limit: int = Query(100, le=500),
 ):
-    """List stored hotspots with filters."""
+    """List stored hotspots with filters including territory data."""
     if _latest_extraction is None:
         return {"hotspots": [], "total": 0, "message": "No extraction performed yet. Call POST /extract first."}
 
@@ -182,12 +193,22 @@ async def list_hotspots(
         filtered = [h for h in filtered if h["score"] >= min_score]
     if classification:
         filtered = [h for h in filtered if h["classification"] == classification]
+    if territory_type:
+        filtered = [h for h in filtered if h.get("territory_type") == territory_type]
+    if access_status:
+        filtered = [h for h in filtered if h.get("access_status") == access_status]
 
     filtered = sorted(filtered, key=lambda h: h["score"], reverse=True)[:limit]
 
     return {
         "total": len(filtered),
-        "filters": {"region_id": region_id, "species": species, "category": category, "min_score": min_score, "classification": classification},
+        "filters": {
+            "region_id": region_id, "species": species, "category": category,
+            "min_score": min_score, "classification": classification,
+            "territory_type": territory_type, "access_status": access_status,
+        },
+        "territory_types_available": TERRITORY_TYPES,
+        "access_statuses_available": ACCESS_STATUSES,
         "hotspots": filtered,
     }
 
@@ -294,4 +315,117 @@ async def hotspot_stats():
         "scoring_weights": HOTSPOT_WEIGHTS,
         "thresholds": HOTSPOT_THRESHOLDS,
         "categories_available": HOTSPOT_CATEGORIES,
+    }
+
+
+# ══════════════════════════════════════════════════════════
+# SCHEDULER ANNUEL
+# ══════════════════════════════════════════════════════════
+
+@router.get("/scheduler/status")
+async def scheduler_status():
+    """Get annual extraction scheduler status."""
+    return {
+        **_scheduler_config,
+        "extraction_available": _latest_extraction is not None,
+        "last_extraction_at": _latest_extraction["extracted_at"] if _latest_extraction else None,
+        "total_hotspots": _latest_extraction["total_hotspots"] if _latest_extraction else 0,
+    }
+
+
+@router.post("/scheduler/run")
+async def scheduler_run_now():
+    """Manually trigger the annual extraction. Also runs BCE-4X report."""
+    global _latest_extraction, _scheduler_config
+
+    context = {"season": "automne", "hour": 6}
+    result = extract_all_regions(context)
+    _latest_extraction = result
+
+    # Update scheduler state
+    now = datetime.now(timezone.utc)
+    _scheduler_config["last_run"] = now.isoformat()
+    _scheduler_config["next_run"] = (now.replace(year=now.year + 1)).isoformat()
+    _scheduler_config["total_runs"] += 1
+
+    # Store history
+    _extraction_history.append({
+        "timestamp": result["extracted_at"],
+        "total_hotspots": result["total_hotspots"],
+        "regions_count": result["total_regions"],
+        "trigger": "manual",
+    })
+
+    # Store in MongoDB
+    collection = _get_db_collection()
+    if collection is not None:
+        try:
+            all_hotspots = []
+            for region_data in result["regions"]:
+                for h in region_data["hotspots"]:
+                    doc = {k: v for k, v in h.items() if k != "_id"}
+                    doc["_extraction_batch"] = result["extracted_at"]
+                    doc["_scheduler_run"] = _scheduler_config["total_runs"]
+                    all_hotspots.append(doc)
+            if all_hotspots:
+                await collection.delete_many({"_extraction_batch": {"$exists": True}})
+                await collection.insert_many(all_hotspots)
+        except Exception as e:
+            logger.warning(f"MongoDB storage failed: {e}")
+
+    # Auto BCE-4X report
+    all_hs = []
+    for rd in result["regions"]:
+        all_hs.extend(rd["hotspots"])
+    bce_report = validate_hotspots_bce4x(all_hs)
+
+    return {
+        "success": True,
+        "scheduler_run": _scheduler_config["total_runs"],
+        "total_hotspots": result["total_hotspots"],
+        "total_regions": result["total_regions"],
+        "next_scheduled": _scheduler_config["next_run"],
+        "bce4x_report": {
+            "overall": bce_report["overall"],
+            "total_checks": bce_report["total_checks"],
+            "passed": bce_report["passed"],
+            "failed": bce_report["failed"],
+        },
+        "regions_summary": [
+            {
+                "region_id": r["region"]["id"],
+                "region_name": r["region"]["name"],
+                "hotspots": r["total_hotspots"],
+                "majeur": r["by_classification"]["MAJEUR"],
+                "fort": r["by_classification"]["FORT"],
+            }
+            for r in result["regions"]
+        ],
+        "extracted_at": result["extracted_at"],
+    }
+
+
+@router.get("/territory-types")
+async def get_territory_types():
+    """Get available territory types and access statuses."""
+    if _latest_extraction is None:
+        return {"territory_types": TERRITORY_TYPES, "access_statuses": ACCESS_STATUSES, "distribution": {}}
+
+    all_hotspots = []
+    for rd in _latest_extraction["regions"]:
+        all_hotspots.extend(rd["hotspots"])
+
+    by_type = {}
+    by_access = {}
+    for h in all_hotspots:
+        tt = h.get("territory_type", "Inconnu")
+        by_type[tt] = by_type.get(tt, 0) + 1
+        acc = h.get("access_status", "Inconnu")
+        by_access[acc] = by_access.get(acc, 0) + 1
+
+    return {
+        "territory_types": TERRITORY_TYPES,
+        "access_statuses": ACCESS_STATUSES,
+        "distribution_by_type": dict(sorted(by_type.items(), key=lambda x: x[1], reverse=True)),
+        "distribution_by_access": dict(sorted(by_access.items(), key=lambda x: x[1], reverse=True)),
     }
