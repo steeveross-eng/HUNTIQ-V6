@@ -6,6 +6,7 @@
 import React from 'react';
 import { BarChart3 } from 'lucide-react';
 import { Badge } from '../ui/badge';
+import { ZONE_COLORS } from '@/core/bionic/bionicColorsConfig';
 
 const AnalysisSidePanel = ({
   displayScore,
@@ -34,17 +35,20 @@ const AnalysisSidePanel = ({
     {/* Scores par categorie */}
     <div className="space-y-2">
       <div className="text-[10px] text-gray-500 uppercase tracking-wider">Scores par categorie</div>
-      {Object.entries(categoryScores).map(([key, value]) => (
+      {Object.entries(categoryScores).map(([key, value]) => {
+        const barColor = ZONE_COLORS[key] || (value >= 80 ? '#3CB371' : value >= 60 ? '#f5a623' : '#ef4444');
+        return (
         <div key={key} className="bg-[#111118] rounded-lg p-2.5 border border-[#1a1a2e]">
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-gray-300 capitalize">{key}</span>
             <span className="text-xs font-bold text-white">{Math.min(100, value)}%</span>
           </div>
           <div className="h-1.5 bg-[#1a1a2e] rounded-full overflow-hidden">
-            <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, value)}%`, backgroundColor: value >= 80 ? '#3CB371' : value >= 60 ? '#f5a623' : '#ef4444' }} />
+            <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, value)}%`, backgroundColor: barColor }} />
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
     {/* Stats zones */}
     <div className="bg-[#111118] rounded-lg p-3 border border-[#1a1a2e]">

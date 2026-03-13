@@ -99,16 +99,17 @@ const PANEL_CSS = `
    CONFIGURATION
    ══════════════════════════════════════════ */
 
-const LAYER_HUE = { habitats:130, rut:30, repos:215, alimentation:50, corridors:180, salines:340, affuts:5, trajets:275 };
-const zc = lid => { const h = LAYER_HUE[lid] ?? 200; return `hsl(${h},80%,58%)`; };
+// STEVE-MAX++ HARMONISATION: Couleurs normatives depuis la config centralisee
+import { ZONE_COLORS, FACTOR_COLORS } from '@/core/bionic/bionicColorsConfig';
+const zc = lid => ZONE_COLORS[lid] || '#9E9E9E';
 
 const FACTORS = [
-  { key:'ndvi',      label:'NDVI / Vegetation',  icon:TreePine,  color:'#66BB6A', offset:3 },
-  { key:'relief',    label:'Relief / Pente',      icon:Mountain,  color:'#78909C', offset:7 },
-  { key:'eau',       label:'Proximite eau',       icon:Droplets,  color:'#42A5F5', offset:11 },
-  { key:'pression',  label:'Pression humaine',    icon:Shield,    color:'#E91E63', offset:5, invert:true },
-  { key:'structure', label:'Structure forestiere', icon:Layers,    color:'#AB47BC', offset:9 },
-  { key:'densite',   label:'Densite couvert',     icon:Wind,      color:'#26A69A', offset:13 },
+  { key:'ndvi',      label:'NDVI / Vegetation',  icon:TreePine,  color:FACTOR_COLORS.ndvi,      offset:3 },
+  { key:'relief',    label:'Relief / Pente',      icon:Mountain,  color:FACTOR_COLORS.relief,    offset:7 },
+  { key:'eau',       label:'Proximite eau',       icon:Droplets,  color:FACTOR_COLORS.eau,       offset:11 },
+  { key:'pression',  label:'Pression humaine',    icon:Shield,    color:FACTOR_COLORS.pression,  offset:5, invert:true },
+  { key:'structure', label:'Structure forestiere', icon:Layers,    color:FACTOR_COLORS.structure,  offset:9 },
+  { key:'densite',   label:'Densite couvert',     icon:Wind,      color:FACTOR_COLORS.densite,   offset:13 },
 ];
 
 function computeFactors(id, score) {
@@ -360,11 +361,11 @@ const BionicZoneDiagnosticPanel = React.memo(({ zone, onClose, onAddWaypoint }) 
           <SectionTitle delay={0.6}>Donnees terrain</SectionTitle>
           <div className="grid grid-cols-2 gap-1.5">
             {[
-              {label:'SUPERFICIE', value:areaM2?`~${areaM2.toLocaleString('fr-FR')} m2`:'---', c:'#f5a623'},
-              {label:'ALTITUDE EST.', value:`~${terrain.altitude} m`, c:'#78909C'},
-              {label:'PENTE MOY.', value:`${terrain.pente} deg`, c:'#AB47BC'},
-              {label:'DIST. EAU', value:`~${terrain.distEau} m`, c:'#42A5F5'},
-              {label:'PRESSION LOC.', value:`${terrain.pressionLocale}%`, c:'#E91E63'},
+              {label:'SUPERFICIE', value:areaM2?`~${areaM2.toLocaleString('fr-FR')} m2`:'---', c:ZONE_COLORS.affuts},
+              {label:'ALTITUDE EST.', value:`~${terrain.altitude} m`, c:ZONE_COLORS.altitude},
+              {label:'PENTE MOY.', value:`${terrain.pente} deg`, c:ZONE_COLORS.pentes},
+              {label:'DIST. EAU', value:`~${terrain.distEau} m`, c:ZONE_COLORS.hydro},
+              {label:'PRESSION LOC.', value:`${terrain.pressionLocale}%`, c:FACTOR_COLORS.pression},
               {label:'CLASSIFICATION', value:tier, c:color},
             ].map((d,i)=>(
               <div key={d.label} className="bg-black/40 rounded-md px-2 py-1.5 border border-[#1a1a2e]/50 bionic-seq-reveal" style={{animationDelay:`${0.65+i*0.06}s`}}>

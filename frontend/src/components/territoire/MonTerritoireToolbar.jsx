@@ -197,9 +197,9 @@ const MonTerritoireToolbar = ({
               <span className="text-[9px] text-gray-600 ml-auto">statique</span>
             </div>
             {[
-              { key: 'relief', label: 'Relief / Altitude', color: '#78909C' },
-              { key: 'hydro', label: 'Hydrographie', color: '#42A5F5' },
-              { key: 'foret', label: 'Type de forêt', color: '#66BB6A' },
+              { key: 'relief', label: 'Relief / Altitude', color: '#FF7043' },
+              { key: 'hydro', label: 'Hydrographie', color: '#3B82F6' },
+              { key: 'foret', label: 'Type de foret', color: '#66BB6A' },
               { key: 'anthropique', label: 'Zones anthropiques', color: '#EF5350' },
             ].map(item => (
               <div key={item.key} className="flex items-center justify-between gap-2 px-2 py-1 rounded text-[10px] bg-gray-900/30" data-testid={`classification-toggle-${item.key}`}>

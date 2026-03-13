@@ -181,31 +181,38 @@ const adaptHabitatLayer = (data) => ({
   label: `Habitat: ${data.score}%`
 });
 
+// STEVE-MAX++ HARMONISATION: Couleurs normatives pour tous les adaptateurs
+const NORM_COLORS = {
+  rut: '#FF4D6D', salines: '#FFFF00', affuts: '#F5A623', trajets: '#FF9800',
+  hydro: '#3B82F6', alimentation: '#22C55E', repos: '#8B5CF6', corridors: '#06B6D4',
+  peuplements: '#15803D',
+};
+
 const adaptRutLayer = (data) => ({
   ...data,
-  color: '#e91e63',
+  color: NORM_COLORS.rut,
   opacity: 0.5,
   label: `Rut: ${data.score}%`
 });
 
 const adaptSalinesLayer = (data) => ({
   ...data,
-  color: '#00bcd4',
+  color: NORM_COLORS.salines,
   opacity: 0.5,
   label: `Saline: ${data.score}%`
 });
 
 const adaptAffutsLayer = (data) => ({
   ...data,
-  color: '#9c27b0',
+  color: NORM_COLORS.affuts,
   opacity: 0.6,
   icon: 'crosshair',
-  label: `Affût: ${data.score}%`
+  label: `Affut: ${data.score}%`
 });
 
 const adaptTrajetsLayer = (data) => ({
   ...data,
-  color: '#ff9800',
+  color: NORM_COLORS.trajets,
   weight: 3,
   dashArray: '10, 5',
   label: 'Trajet'
@@ -220,7 +227,7 @@ const adaptPeuplementsLayer = (data) => ({
 
 const adaptSunLayer = (data) => ({
   ...data,
-  color: getColorForValue(data.exposure, 0, 100, '#2196f3', '#ffeb3b'),
+  color: getColorForValue(data.exposure, 0, 100, '#2196F3', '#FCD34D'),
   opacity: 0.5
 });
 
@@ -232,21 +239,21 @@ const adaptOrientationLayer = (data) => ({
 
 const adaptHydroLayer = (data) => ({
   ...data,
-  color: '#1976d2',
+  color: NORM_COLORS.hydro,
   weight: data.type === 'river' ? 4 : 2,
   opacity: 0.8
 });
 
 const adaptFeedingLayer = (data) => ({
   ...data,
-  color: '#4caf50',
+  color: NORM_COLORS.alimentation,
   opacity: 0.5,
   icon: 'leaf'
 });
 
 const adaptRestingLayer = (data) => ({
   ...data,
-  color: '#795548',
+  color: NORM_COLORS.repos,
   opacity: 0.5,
   icon: 'moon'
 });
@@ -271,7 +278,7 @@ const adaptAltitudeLayer = (data) => ({
 
 const adaptCorridorsLayer = (data) => ({
   ...data,
-  color: '#ff5722',
+  color: NORM_COLORS.corridors,
   weight: 4,
   opacity: 0.7,
   dashArray: null

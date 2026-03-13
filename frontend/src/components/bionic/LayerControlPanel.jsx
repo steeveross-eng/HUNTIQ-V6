@@ -170,14 +170,14 @@ const LAYER_FAMILIES = {
         id: 'slopes',
         label: 'Pentes',
         icon: TrendingUp,
-        color: '#9C27B0',
+        color: '#FF7043',
         description: 'Analyse des pentes'
       },
       {
         id: 'altitude_relative',
         label: 'Altitude',
         icon: Mountain,
-        color: '#673AB7',
+        color: '#78909C',
         description: 'Altitude relative'
       },
       {

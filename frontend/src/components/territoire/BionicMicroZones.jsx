@@ -19,40 +19,14 @@
 import React, { useMemo, useState, useCallback, useRef } from 'react';
 import { Polygon, Polyline, Tooltip, useMap, Pane } from 'react-leaflet';
 import { BIONIC_MODULES } from '@/core/bionic';
+import { ZONE_COLORS, getZoneColor } from '@/core/bionic/bionicColorsConfig';
 import SmartMapTooltip from './SmartMapTooltip';
 
 export { BIONIC_MODULES };
 
-// ============================================
-// STEVE-MAX — PALETTE NORMATIVE ZONES (BCE-4X-COLOR-001)
-// Couleurs FIXES par layer_id — IDENTIQUES backend, carte, panneau
-// AUCUNE generation dynamique. Contrat strict.
-// ============================================
-const ZONE_NORMATIVE_COLORS = {
-  habitats:       '#10B981',
-  rut:            '#FF4D6D',
-  repos:          '#8B5CF6',
-  alimentation:   '#22C55E',
-  corridors:      '#06B6D4',
-  peuplements:    '#15803D',
-  ndvi:           '#66BB6A',
-  hydro:          '#3B82F6',
-  pentes:         '#FF7043',
-  orientation:    '#2196F3',
-  ensoleillement: '#FCD34D',
-  salines:        '#FFFF00',
-  affuts:         '#F5A623',
-  trajets:        '#FF9800',
-  altitude:       '#78909C',
-};
-
-/**
- * STEVE-MAX: Retourne la couleur normative pour un layerId.
- * BCE-4X-COLOR-001: Aucune variation par index. Couleur fixe par couche.
- */
-function getZoneColor(layerId) {
-  return ZONE_NORMATIVE_COLORS[layerId] || '#9E9E9E';
-}
+// STEVE-MAX++: Palette normative importee depuis bionicColorsConfig.js
+// BCE-4X-COLOR-001: Source unique de verite
+const ZONE_NORMATIVE_COLORS = ZONE_COLORS;
 
 /**
  * Épaisseur dynamique BIONIC V7.3:
@@ -173,9 +147,9 @@ const NormalizedZone = ({ zone, tier, zoneIndex, isHovered, onHover, onLeave, on
           {/* Facteurs dominants */}
           <div className="mt-2 space-y-1">
             {[
-              { label: 'NDVI / Végétation', offset: 3, color: '#66BB6A' },
-              { label: 'Relief / Pente', offset: 7, color: '#78909C' },
-              { label: 'Proximité eau', offset: 11, color: '#42A5F5' },
+              { label: 'NDVI / Vegetation', offset: 3, color: ZONE_COLORS.ndvi },
+              { label: 'Relief / Pente', offset: 7, color: ZONE_COLORS.pentes },
+              { label: 'Proximite eau', offset: 11, color: ZONE_COLORS.hydro },
               { label: 'Pression humaine', offset: 5, color: '#E91E63', invert: true },
             ].map(f => {
               const seed = (zone.id || '').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) + f.offset;
