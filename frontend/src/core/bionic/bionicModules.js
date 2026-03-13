@@ -49,7 +49,7 @@ export const BIONIC_MODULES = {
     interpretation: { high: 'Exposition maximale', medium: 'Mi-ombre', low: 'Zone ombragée' }
   },
   orientation: {
-    color: '#2196f3', label: 'Orientation', iconName: 'compass',
+    color: '#2196F3', label: 'Orientation', iconName: 'compass',
     category: 'environmental',
     interpretation: { high: 'Orientation sud idéale', medium: 'Orientation mixte', low: 'Orientation nord' }
   },
@@ -64,12 +64,12 @@ export const BIONIC_MODULES = {
     interpretation: { high: 'Peuplement mature', medium: 'Forêt mixte', low: 'Régénération' }
   },
   ndvi: {
-    color: '#66bb6a', label: 'NDVI / Densité végétale', iconName: 'sprout',
+    color: '#66BB6A', label: 'NDVI / Densité végétale', iconName: 'sprout',
     category: 'environmental',
     interpretation: { high: 'Végétation très dense', medium: 'Couvert moyen', low: 'Végétation clairsemée' }
   },
   pentes: {
-    color: '#ff7043', label: 'Pentes', iconName: 'mountain',
+    color: '#FF7043', label: 'Pentes', iconName: 'mountain',
     category: 'environmental',
     interpretation: { high: 'Pente abrupte', medium: 'Pente modérée', low: 'Terrain plat' }
   },

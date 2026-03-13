@@ -27,13 +27,13 @@ VALIDATOR_NAME = "geometry_compliance_steve_max"
 FRONTEND_SRC = "/app/frontend/src"
 BACKEND_SRC = "/app/backend"
 
-# STEVE-MAX V2 P1: Reduced 40% additional max widths
+# STEVE-MAX++ Corrections Finales: +20% corridor widths
 NORMATIVE_MAX_WIDTHS = {
-    "gris": 22,
-    "jaune": 14,
-    "orange": 9,
-    "rouge": 5,
-    "rouge_raye": 3,
+    "gris": 26,
+    "jaune": 17,
+    "orange": 11,
+    "rouge": 6,
+    "rouge_raye": 4,
 }
 
 
@@ -224,22 +224,22 @@ def validate() -> Dict[str, Any]:
     if not pipe_002_pass:
         errors.append("BCE-4X-PIPE-002: Frontend reconstructs corridor geometry")
 
-    # BCE-4X-GEOM-005: Check that BAND_RATIO has V2 reduced values
-    has_reduced_gris = "0.010" in corridors_v9 and '"max_m": 22' in corridors_v9
-    has_reduced_rouge_raye = "0.001" in corridors_v9 and '"max_m": 3' in corridors_v9
+    # BCE-4X-GEOM-005: Check that BAND_RATIO has +20% widened values
+    has_reduced_gris = "0.012" in corridors_v9 and '"max_m": 26' in corridors_v9
+    has_reduced_rouge_raye = "0.001" in corridors_v9 and '"max_m": 4' in corridors_v9
     geom_005_code_pass = has_reduced_gris and has_reduced_rouge_raye
 
     checks.append({
         "name": "BCE-4X-GEOM-005_CorridorWidthNormalization_Code",
         "status": "PASS" if geom_005_code_pass else "FAIL",
         "detail": (
-            "BAND_RATIO values confirm V2 reduction (gris=0.010/22m, rouge_raye=0.001/3m)"
+            "BAND_RATIO values confirm +20% widening (gris=0.012/26m, rouge_raye=0.001/4m)"
             if geom_005_code_pass
-            else f"BAND_RATIO not properly reduced: gris={has_reduced_gris}, rouge_raye={has_reduced_rouge_raye}"
+            else f"BAND_RATIO not properly widened: gris={has_reduced_gris}, rouge_raye={has_reduced_rouge_raye}"
         ),
     })
     if not geom_005_code_pass:
-        errors.append("BCE-4X-GEOM-005: BAND_RATIO not at 40% reduction")
+        errors.append("BCE-4X-GEOM-005: BAND_RATIO not at +20% widening")
 
     status = "PASS" if all(c["status"] == "PASS" for c in checks) else "FAIL"
     return {

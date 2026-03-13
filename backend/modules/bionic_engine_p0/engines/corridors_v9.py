@@ -56,11 +56,11 @@ CLASSIFICATION_V9 = {
 # Band buffer ratios (fraction of corridor length) + absolute limits
 # STEVE-MAX V2 P1: REDUCTION VISUELLE 40% SUPPLEMENTAIRE sur valeurs precedentes
 BAND_RATIO = {
-    "gris":       {"ratio": 0.010, "min_m": 5,  "max_m": 22},   # halo externe (was 36)
-    "jaune":      {"ratio": 0.007, "min_m": 4,  "max_m": 14},   # (was 24)
-    "orange":     {"ratio": 0.004, "min_m": 2,  "max_m": 9},    # (was 15)
-    "rouge":      {"ratio": 0.003, "min_m": 1,  "max_m": 5},    # (was 9)
-    "rouge_raye": {"ratio": 0.001, "min_m": 1,  "max_m": 3},    # coeur (was 5)
+    "gris":       {"ratio": 0.012, "min_m": 6,  "max_m": 26},   # +20% (was 22)
+    "jaune":      {"ratio": 0.008, "min_m": 5,  "max_m": 17},   # +20% (was 14)
+    "orange":     {"ratio": 0.005, "min_m": 2,  "max_m": 11},   # +20% (was 9)
+    "rouge":      {"ratio": 0.004, "min_m": 1,  "max_m": 6},    # +20% (was 5)
+    "rouge_raye": {"ratio": 0.001, "min_m": 1,  "max_m": 4},    # +20% (was 3)
 }
 
 # Conversion: meters to degrees at Quebec latitude (~46.8N)
