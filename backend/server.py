@@ -233,6 +233,9 @@ except Exception as e:
 try:
     from modules.bionic_engine_p0.routers.engines_v2_router import router as engines_v2_router
     app.include_router(engines_v2_router, prefix="/api")
+
+    from modules.bionic_engine_p0.routers.engines_v3_router import router as engines_v3_router
+    app.include_router(engines_v3_router, prefix="/api")
     logger.info("✓ BIONIC Engines V2 registered (12 engines)")
 except Exception as e:
     logger.warning(f"Engines V2 not loaded: {e}")
