@@ -10,6 +10,26 @@
 
 ## Implemente
 
+### Phase 7 — Optimisation UI Onglet OUTIL (2026-03-13)
+- Suppression du popover "Outils" de la barre d'outils principale
+- Repositionnement individuel de 3 controles directement dans la toolbar:
+  - **Corridors V9**: Toggle switch inline (cyan)
+  - **Seuil minimum**: Bouton avec valeur affichee + popover slider (min 10%, max 80%, step 5%)
+  - **Curseur BIONIC**: Toggle switch inline (violet)
+- Suppression des controles especes redondants de la zone OUTIL
+- Nettoyage de l'import `Settings` (lucide-react) devenu inutile
+- MonTerritoireToolbar.jsx (composant orphelin) mis a jour: slider min=10
+
+### Phase 6 — BCE-4X CI/CD Enforcement (2026-03-13)
+- Document `/app/docs/BCE-4X-CI-Pipeline.md` cree avec:
+  - Schema complet du pipeline CI (5 etapes: Lint, Tests, BCE-4X Gate, Build, Merge)
+  - Regles de blocage HIGH/MEDIUM/LOW/SKIP
+  - Implementation GitHub Actions (bce-4x-gate.yml)
+  - Exemple reel de merge bloque (PR #142)
+  - Configuration branch protection GitHub
+  - 13 validateurs documentes
+  - Garanties: zero bypass, audit trail, reproductibilite
+
 ### BIONIC V3 Integration Totale (2026-03-13)
 - **27 engines actifs** (12 V2 + 12 V3 + 3 IA)
 - **V3 engines**: EcologicalHierarchy, Interaction, GeoPedology, Connectivity, TemporalDynamics, Hotspot, ForestStructureV2, FoodScoreV2, WetnessScoreV2, GeoFormScoreV2, BehaviorV2, GlobalAttractivenessV2
@@ -31,6 +51,7 @@
 - Wind logic removed from hunting path pipeline
 
 ## Tests
+- Iteration 17: 12/12 PASS (Phase 7 UI + Phase 6 doc + regressions)
 - Iteration 16: 20/20 PASS (V3 Integration, species differentiation, AI predictions)
 - Iteration 15: 19/19 PASS (color harmonization)
 - Iteration 14: 20/20 PASS (corrections finales)
@@ -43,6 +64,7 @@
 - POST /api/v1/bionic/engines-v3/predictions — predictions IA 24h/72h/7d
 - POST /api/v1/bionic/engines-v2/compute — backward compatible
 - GET /api/v1/bionic/engines-v2/status — backward compatible
+- POST /api/bce/validate — BCE-4X full validation gate
 
 ## Backlog
 ### P1 - Export GeoJSON/KML avec metadata engines
