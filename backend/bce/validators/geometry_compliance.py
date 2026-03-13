@@ -27,13 +27,13 @@ VALIDATOR_NAME = "geometry_compliance_steve_max"
 FRONTEND_SRC = "/app/frontend/src"
 BACKEND_SRC = "/app/backend"
 
-# STEVE-MAX P1: Reduced 50% max widths (from 40% reduction values)
+# STEVE-MAX V2 P1: Reduced 40% additional max widths
 NORMATIVE_MAX_WIDTHS = {
-    "gris": 36,
-    "jaune": 24,
-    "orange": 15,
-    "rouge": 9,
-    "rouge_raye": 5,
+    "gris": 22,
+    "jaune": 14,
+    "orange": 9,
+    "rouge": 5,
+    "rouge_raye": 3,
 }
 
 
@@ -224,16 +224,16 @@ def validate() -> Dict[str, Any]:
     if not pipe_002_pass:
         errors.append("BCE-4X-PIPE-002: Frontend reconstructs corridor geometry")
 
-    # BCE-4X-GEOM-005: Check that BAND_RATIO has 50% reduced values
-    has_reduced_gris = "0.016" in corridors_v9 and "36" in corridors_v9
-    has_reduced_rouge_raye = "0.002" in corridors_v9 and '"max_m": 5' in corridors_v9
+    # BCE-4X-GEOM-005: Check that BAND_RATIO has V2 reduced values
+    has_reduced_gris = "0.010" in corridors_v9 and '"max_m": 22' in corridors_v9
+    has_reduced_rouge_raye = "0.001" in corridors_v9 and '"max_m": 3' in corridors_v9
     geom_005_code_pass = has_reduced_gris and has_reduced_rouge_raye
 
     checks.append({
         "name": "BCE-4X-GEOM-005_CorridorWidthNormalization_Code",
         "status": "PASS" if geom_005_code_pass else "FAIL",
         "detail": (
-            "BAND_RATIO values confirm 50% reduction (gris=0.016/36m, rouge_raye=0.002/5m)"
+            "BAND_RATIO values confirm V2 reduction (gris=0.010/22m, rouge_raye=0.001/3m)"
             if geom_005_code_pass
             else f"BAND_RATIO not properly reduced: gris={has_reduced_gris}, rouge_raye={has_reduced_rouge_raye}"
         ),

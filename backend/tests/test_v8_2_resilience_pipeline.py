@@ -15,7 +15,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bce-4x-visual-fix.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://steve-max-plus.preview.emergentagent.com')
 
 # Test coordinates (forest zone in Quebec)
 TEST_BOUNDS = {

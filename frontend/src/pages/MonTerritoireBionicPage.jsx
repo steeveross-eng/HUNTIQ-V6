@@ -778,8 +778,6 @@ const MonTerritoireBionicPage = () => {
   useEffect(() => {
     if (!bionicZones.length || !selectedWaypointForZones) return;
     const corridors = bionicZonesData.corridors || [];
-    const windDir = weather?.wind?.deg || 270;
-    const windSpeed = weather?.wind?.speed ? weather.wind.speed * 3.6 : 10;
     const wp = selectedWaypointForZones;
     const wpc = { lat: wp.lat || wp.latitude, lng: wp.lng || wp.longitude };
 
@@ -796,8 +794,6 @@ const MonTerritoireBionicPage = () => {
       body: JSON.stringify({
         zones: zoneFeatures,
         corridors,
-        wind_direction: windDir,
-        wind_speed: windSpeed,
         waypoint_center: wpc,
       }),
     })

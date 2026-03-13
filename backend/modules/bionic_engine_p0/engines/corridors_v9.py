@@ -54,25 +54,24 @@ CLASSIFICATION_V9 = {
 }
 
 # Band buffer ratios (fraction of corridor length) + absolute limits
-# STEVE-MAX P1: REDUCTION VISUELLE 50% SUPPLEMENTAIRE — rubans fins et discrets
-# Pipeline: ratio x0.5 sur valeurs STEVE-MAX precedentes
+# STEVE-MAX V2 P1: REDUCTION VISUELLE 40% SUPPLEMENTAIRE sur valeurs precedentes
 BAND_RATIO = {
-    "gris":       {"ratio": 0.016, "min_m": 8,  "max_m": 36},   # halo externe
-    "jaune":      {"ratio": 0.012, "min_m": 6,  "max_m": 24},
-    "orange":     {"ratio": 0.007, "min_m": 4,  "max_m": 15},
-    "rouge":      {"ratio": 0.004, "min_m": 2,  "max_m": 9},
-    "rouge_raye": {"ratio": 0.002, "min_m": 1,  "max_m": 5},    # coeur central
+    "gris":       {"ratio": 0.010, "min_m": 5,  "max_m": 22},   # halo externe (was 36)
+    "jaune":      {"ratio": 0.007, "min_m": 4,  "max_m": 14},   # (was 24)
+    "orange":     {"ratio": 0.004, "min_m": 2,  "max_m": 9},    # (was 15)
+    "rouge":      {"ratio": 0.003, "min_m": 1,  "max_m": 5},    # (was 9)
+    "rouge_raye": {"ratio": 0.001, "min_m": 1,  "max_m": 3},    # coeur (was 5)
 }
 
 # Conversion: meters to degrees at Quebec latitude (~46.8N)
 METERS_PER_DEG = 111000  # approximate
 
 BAND_COLORS = {
-    "gris":       {"color": "#9E9E9E", "opacity": 0.30, "fillOpacity": 0.10},
-    "jaune":      {"color": "#FFC107", "opacity": 0.40, "fillOpacity": 0.15},
-    "orange":     {"color": "#FF9800", "opacity": 0.50, "fillOpacity": 0.22},
-    "rouge":      {"color": "#F44336", "opacity": 0.70, "fillOpacity": 0.40},
-    "rouge_raye": {"color": "#B71C1C", "opacity": 0.85, "fillOpacity": 0.55},
+    "gris":       {"color": "#9E9E9E", "opacity": 0.25, "fillOpacity": 0.06},
+    "jaune":      {"color": "#FFC107", "opacity": 0.35, "fillOpacity": 0.09},
+    "orange":     {"color": "#FF9800", "opacity": 0.45, "fillOpacity": 0.13},
+    "rouge":      {"color": "#F44336", "opacity": 0.60, "fillOpacity": 0.30},
+    "rouge_raye": {"color": "#B71C1C", "opacity": 0.75, "fillOpacity": 0.45},
 }
 
 

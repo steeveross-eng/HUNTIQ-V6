@@ -116,18 +116,18 @@ def _smooth_path(coords: List[List[float]], iterations: int = 2) -> List[List[fl
 def generate_hunting_path(
     zones: List[Dict],
     corridors: List[Dict],
-    wind_direction: float = 270,
-    wind_speed: float = 10,
     waypoint_center: Optional[Dict] = None,
     bounds: Optional[Dict] = None,
 ) -> Dict[str, Any]:
     """
-    STEVE-MAX P3: Generate an optimal hunting path.
+    STEVE-MAX V2: Generate an optimal hunting path.
+    P0: Logique vent SUPPRIMEE du pipeline decisionnel.
+    Le Wind Intelligence Engine (#4) sera integre separement.
 
     Algorithm:
     1. Extract zone centroids with priorities
-    2. Start from the DOWNWIND edge (approach zones from downwind)
-    3. Use nearest-neighbor heuristic weighted by wind + priority
+    2. Start from center of analysis area
+    3. Use nearest-neighbor heuristic weighted by zone PRIORITY ONLY
     4. Generate waypoints for saline, cache, secondary feeding
     5. Smooth the path for natural rendering
 
@@ -165,12 +165,7 @@ def generate_hunting_path(
     if len(zone_points) < 2:
         return {"path": [], "waypoints": [], "analysis": {"error": "Insufficient zones for path"}}
 
-    # 2. Determine start point (downwind edge of analysis area)
-    wind_from = wind_direction  # wind blows FROM this direction
-    # We want to START downwind (where wind blows TO) and walk TOWARD upwind zones
-    # This way we approach animals from downwind
-    start_bearing = (wind_from + 180) % 360  # direction wind goes TO
-
+    # 2. Determine start point (center of analysis area)
     if waypoint_center:
         center_lat = waypoint_center.get("lat", 46.815)
         center_lng = waypoint_center.get("lng", -71.205)
@@ -178,12 +173,13 @@ def generate_hunting_path(
         center_lat = sum(p["lat"] for p in zone_points) / len(zone_points)
         center_lng = sum(p["lng"] for p in zone_points) / len(zone_points)
 
-    # Start 800m downwind from center
-    start_lat, start_lng = _offset_point(center_lat, center_lng, start_bearing, 800)
+    # Start from highest-priority zone closest to center
+    zone_points.sort(key=lambda p: -p["priority"] + _haversine_m(center_lat, center_lng, p["lat"], p["lng"]) / 500)
+    start_zone = zone_points[0]
 
-    # 3. Nearest-neighbor TSP with wind penalty
+    # 3. Nearest-neighbor TSP weighted by priority ONLY (no wind)
     visited = []
-    current = {"lat": start_lat, "lng": start_lng, "layer_id": "start", "label": "Depart", "priority": 0}
+    current = {"lat": start_zone["lat"], "lng": start_zone["lng"], "layer_id": "start", "label": "Depart", "priority": 0}
     remaining = list(zone_points)
 
     visited.append(current)
@@ -192,11 +188,8 @@ def generate_hunting_path(
         best_idx = 0
         for idx, candidate in enumerate(remaining):
             dist = _haversine_m(current["lat"], current["lng"], candidate["lat"], candidate["lng"])
-            move_bearing = _bearing(current["lat"], current["lng"], candidate["lat"], candidate["lng"])
-            wind_pen = _wind_penalty(move_bearing, wind_from)
-
-            # Score: distance + wind penalty - zone priority bonus
-            score = dist * (1 + wind_pen * 0.5) - candidate["priority"] * 30
+            # Score: distance - priority bonus (pure ecological routing)
+            score = dist - candidate["priority"] * 40
             if score < best_score:
                 best_score = score
                 best_idx = idx
@@ -220,44 +213,44 @@ def generate_hunting_path(
             clipped.append([round(lng, 6), round(lat, 6)])
         smoothed = clipped
 
-    # 5. Generate strategic waypoints
+    # 5. Generate strategic waypoints (P0: sans logique vent — ecologique pur)
     waypoints = []
 
     # Start waypoint
     waypoints.append({
         "type": "start",
         "position": [visited[0]["lng"], visited[0]["lat"]],
-        "label": "Depart (sous le vent)",
+        "label": "Depart (zone prioritaire)",
         **WAYPOINT_TYPES["start"],
     })
 
-    # Saline suggestion — between feeding and habitat zones
+    # Saline suggestion — near feeding/habitat zones (offset 80m from centroid)
     feeding_zones = [p for p in visited if p["layer_id"] in ("alimentation", "habitats")]
     if feeding_zones:
         sz = feeding_zones[0]
-        salt_lat, salt_lng = _offset_point(sz["lat"], sz["lng"], wind_from, 80)
+        salt_lat, salt_lng = _offset_point(sz["lat"], sz["lng"], 45, 80)
         waypoints.append({
             "type": "saline",
             "position": [round(salt_lng, 6), round(salt_lat, 6)],
-            "label": "Saline suggeree (80m sous le vent de l'alimentation)",
+            "label": "Saline suggeree (80m de la zone d'alimentation)",
             **WAYPOINT_TYPES["saline"],
         })
 
-    # Cache suggestion — near rut/repos zones
+    # Cache suggestion — near rut/repos zones (offset 60m)
     high_activity = [p for p in visited if p["layer_id"] in ("rut", "repos")]
     if high_activity:
         hz = high_activity[0]
-        cache_lat, cache_lng = _offset_point(hz["lat"], hz["lng"], (wind_from + 180) % 360, 60)
+        cache_lat, cache_lng = _offset_point(hz["lat"], hz["lng"], 135, 60)
         waypoints.append({
             "type": "cache",
             "position": [round(cache_lng, 6), round(cache_lat, 6)],
-            "label": "Cache suggeree (60m sous le vent du rut/repos)",
+            "label": "Cache suggeree (60m de la zone de rut/repos)",
             **WAYPOINT_TYPES["cache"],
         })
 
-    # Secondary feeding suggestion
+    # Secondary feeding suggestion (offset 300m from center)
     if waypoint_center:
-        sec_lat, sec_lng = _offset_point(center_lat, center_lng, (wind_from + 90) % 360, 300)
+        sec_lat, sec_lng = _offset_point(center_lat, center_lng, 225, 300)
         waypoints.append({
             "type": "alimentation_sec",
             "position": [round(sec_lng, 6), round(sec_lat, 6)],
@@ -279,32 +272,22 @@ def generate_hunting_path(
     for i in range(len(visited) - 1):
         total_dist += _haversine_m(visited[i]["lat"], visited[i]["lng"], visited[i+1]["lat"], visited[i+1]["lng"])
 
-    # Zones visited in order
     zone_sequence = [{"layer_id": p["layer_id"], "label": p.get("label", p["layer_id"]), "priority": p["priority"]} for p in visited if p["layer_id"] != "start"]
 
-    # Wind analysis
-    wind_analysis = {
-        "direction": wind_from,
-        "speed_kmh": wind_speed,
-        "approach": "sous le vent" if True else "face au vent",
-        "quality": "optimal" if wind_speed < 25 else "acceptable" if wind_speed < 40 else "difficile",
-    }
-
-    # Build analysis report
+    # Build analysis report (P0: aucune reference vent dans le pipeline)
     analysis = {
         "total_distance_m": round(total_dist, 0),
         "total_distance_km": round(total_dist / 1000, 2),
         "zones_visited": len(zone_sequence),
         "zone_sequence": zone_sequence,
-        "wind": wind_analysis,
         "path_points": len(smoothed),
-        "start_strategy": f"Depart {round(total_dist, 0)}m en aval du vent ({wind_from} deg)",
+        "start_strategy": f"Depart depuis zone prioritaire ({zone_sequence[0]['layer_id'] if zone_sequence else 'n/a'})",
+        "note": "Wind Intelligence Engine (#4) sera integre separement",
         "recommendations": [
-            f"Approcher les zones depuis le {_wind_cardinal(wind_from)} (direction du vent: {wind_from} deg)",
             f"Priorite aux zones de {zone_sequence[0]['layer_id'] if zone_sequence else 'n/a'}",
             f"Distance totale estimee: {round(total_dist/1000, 1)} km",
-            "Placer la saline 80m sous le vent de la zone d'alimentation",
-            "Installer la cache 60m sous le vent de la zone de rut/repos",
+            "Placer la saline 80m de la zone d'alimentation",
+            "Installer la cache 60m de la zone de rut/repos",
         ],
     }
 
@@ -326,8 +309,6 @@ def generate_amenagement_report(
     zones: List[Dict],
     corridors: List[Dict],
     hunting_path: Dict,
-    wind_direction: float = 270,
-    wind_speed: float = 10,
     waypoint_center: Optional[Dict] = None,
 ) -> Dict[str, Any]:
     """
@@ -394,11 +375,8 @@ def generate_amenagement_report(
             },
             "5_vents_dominants": {
                 "title": "Analyse des vents dominants",
-                "direction_deg": wind_direction,
-                "direction_cardinal": _wind_cardinal(wind_direction),
-                "vitesse_kmh": wind_speed,
-                "qualite": "optimal" if wind_speed < 25 else "acceptable",
-                "approche_recommandee": f"Approcher depuis le {_wind_cardinal((wind_direction + 180) % 360)}",
+                "status": "En attente Wind Intelligence Engine (#4)",
+                "note": "Le moteur vent sera integre via ENGINE #4 — aucune logique vent dans le pipeline actuel",
             },
             "6_zones_cles": {
                 "title": "Analyse des zones cles",

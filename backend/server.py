@@ -229,6 +229,14 @@ try:
 except Exception as e:
     logger.warning(f"Hunting Path Engine not loaded: {e}")
 
+# STEVE-MAX: Register BIONIC Engines V2 router
+try:
+    from modules.bionic_engine_p0.routers.engines_v2_router import router as engines_v2_router
+    app.include_router(engines_v2_router, prefix="/api")
+    logger.info("✓ BIONIC Engines V2 registered (12 engines)")
+except Exception as e:
+    logger.warning(f"Engines V2 not loaded: {e}")
+
 
 # 9. Register SSE Engine router (Phase Optimisation #1)
 try:

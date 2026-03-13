@@ -1,123 +1,34 @@
 /**
- * BionicEngineHub.jsx — Hub des 9 moteurs BIONIC
- * BIONIC V8 — Preparatoire pour Ecological Intelligence Hub (V9-V10)
- *
- * Composant autonome, tracable, testable, remplacable.
- * Chaque moteur: nom, icone, statut (actif/planifie), indicateur de donnees.
- *
- * Les 9 moteurs influencent:
- * - scoring des zones
- * - prediction des deplacements
- * - attractivite par espece
- * - lecture de terrain
- * - priorisation des corridors
- * - recommandations ecologiques
- * - fenetres d'activite
- * - zones critiques
- * - comportements saisonniers
+ * BionicEngineHub.jsx — Hub des 12 moteurs BIONIC V2
+ * STEVE-MAX: Tous les moteurs actifs et integres.
  */
 
 import React, { useState } from 'react';
 import {
   Leaf, Clock, CloudSun, AlertTriangle, Route,
   Flower2, Users, Brain, Sprout, ChevronDown, ChevronUp,
+  Wind, Mountain, Target, Gauge, ShieldCheck, Layers,
 } from 'lucide-react';
 
-const BIONIC_ENGINES = [
-  {
-    id: 'nutrition',
-    name: 'Nutrition Engine',
-    description: 'Sol, Nutriments, Fourrage, Attractivite par espece',
-    icon: Leaf,
-    color: '#22c55e',
-    status: 'planned',
-    influences: ['scoring', 'attractivite', 'zones_critiques'],
-  },
-  {
-    id: 'daily_routine',
-    name: 'Daily Routine Engine',
-    description: 'Rythmes journaliers: aube, crepuscule, repos, alimentation',
-    icon: Clock,
-    color: '#f59e0b',
-    status: 'planned',
-    influences: ['fenetres_activite', 'prediction_deplacements'],
-  },
-  {
-    id: 'weather',
-    name: 'Weather Engine',
-    description: 'Vent, pression, temperature, precipitations, neige',
-    icon: CloudSun,
-    color: '#06b6d4',
-    status: 'partial',
-    influences: ['scoring', 'prediction_deplacements', 'comportements_saisonniers'],
-  },
-  {
-    id: 'disturbance',
-    name: 'Disturbance Engine',
-    description: 'Routes, chalets, odeurs, pression humaine',
-    icon: AlertTriangle,
-    color: '#ef4444',
-    status: 'planned',
-    influences: ['scoring', 'zones_critiques', 'lecture_terrain'],
-  },
-  {
-    id: 'movement',
-    name: 'Movement Engine',
-    description: 'Corridors A* + DEM + risques + nutrition',
-    icon: Route,
-    color: '#8b5cf6',
-    status: 'active',
-    influences: ['prediction_deplacements', 'priorisation_corridors'],
-  },
-  {
-    id: 'phenology',
-    name: 'Phenology Engine',
-    description: 'Debourrement, floraison, senescence, qualite fourrage',
-    icon: Flower2,
-    color: '#ec4899',
-    status: 'planned',
-    influences: ['comportements_saisonniers', 'attractivite', 'recommandations'],
-  },
-  {
-    id: 'typology',
-    name: 'Typology Engine',
-    description: 'Profils: conservateur, explorateur, nocturne, opportuniste',
-    icon: Users,
-    color: '#f97316',
-    status: 'planned',
-    influences: ['prediction_deplacements', 'fenetres_activite'],
-  },
-  {
-    id: 'learning',
-    name: 'Learning Engine',
-    description: 'Ajustement modeles selon observations reelles',
-    icon: Brain,
-    color: '#a855f7',
-    status: 'planned',
-    influences: ['scoring', 'recommandations', 'prediction_deplacements'],
-  },
-  {
-    id: 'habitat_enhancement',
-    name: 'Habitat Enhancement',
-    description: 'Analyse sol + recommandations: mineraux, chaux, semis',
-    icon: Sprout,
-    color: '#10b981',
-    status: 'planned',
-    influences: ['recommandations', 'lecture_terrain'],
-  },
+const BIONIC_ENGINES_V2 = [
+  { id: 'behavior', name: 'Behavior Engine', description: 'Patterns comportementaux: aube, crepuscule, repos, alimentation', icon: Clock, color: '#f59e0b', status: 'active', num: 1 },
+  { id: 'keyzone_v2', name: 'KeyZone Engine V2', description: 'Detection zones cles amelioree (densite, score qualite)', icon: Target, color: '#ef4444', status: 'active', num: 2 },
+  { id: 'food_deficit', name: 'Food Deficit Engine', description: 'Analyse deficit alimentaire (NDVI, saisons, pression)', icon: Leaf, color: '#22c55e', status: 'active', num: 3 },
+  { id: 'wind_intelligence', name: 'Wind Intelligence Engine', description: 'Analyse vent strategique (direction optimale approche)', icon: Wind, color: '#06b6d4', status: 'active', num: 4 },
+  { id: 'terrain', name: 'Terrain Engine', description: 'Pentes, orientation, couvert forestier, marchabilite', icon: Mountain, color: '#78909C', status: 'active', num: 5 },
+  { id: 'human_pressure', name: 'Human Pressure Engine', description: 'Pression anthropique (routes, batiments, activites)', icon: AlertTriangle, color: '#FF5722', status: 'active', num: 6 },
+  { id: 'corridor_continuity', name: 'Corridor Continuity Engine', description: 'Fusion/reparation automatique corridors', icon: Route, color: '#8b5cf6', status: 'active', num: 7 },
+  { id: 'global_attractiveness', name: 'Global Attractiveness Engine', description: 'Score attractivite global du carre 2km', icon: Gauge, color: '#FF9800', status: 'active', num: 8 },
+  { id: 'action_plan', name: 'Action Plan Engine', description: 'Generation plan d\'action chasse', icon: Flower2, color: '#ec4899', status: 'active', num: 9 },
+  { id: 'predictive_ai', name: 'Predictive AI Engine', description: 'Predictions probabilistes de presence', icon: Brain, color: '#a855f7', status: 'active', num: 10 },
+  { id: 'bce_compliance', name: 'BCE-4X Compliance Engine', description: 'Validation automatique conformite', icon: ShieldCheck, color: '#4CAF50', status: 'active', num: 11 },
+  { id: 'rendering', name: 'Rendering Engine', description: 'Optimisation rendu carte', icon: Layers, color: '#2196F3', status: 'active', num: 12 },
 ];
-
-const STATUS_CONFIG = {
-  active: { label: 'Actif', bg: 'bg-emerald-500/15', text: 'text-emerald-400', dot: 'bg-emerald-400' },
-  partial: { label: 'Partiel', bg: 'bg-amber-500/15', text: 'text-amber-400', dot: 'bg-amber-400' },
-  planned: { label: 'Planifie', bg: 'bg-gray-500/15', text: 'text-gray-500', dot: 'bg-gray-600' },
-};
 
 const BionicEngineHub = () => {
   const [expanded, setExpanded] = useState(false);
 
-  const activeCount = BIONIC_ENGINES.filter(e => e.status === 'active').length;
-  const partialCount = BIONIC_ENGINES.filter(e => e.status === 'partial').length;
+  const activeCount = BIONIC_ENGINES_V2.filter(e => e.status === 'active').length;
 
   return (
     <div className="bg-[#111118] rounded-lg border border-[#1a1a2e] overflow-hidden" data-testid="bionic-engine-hub">

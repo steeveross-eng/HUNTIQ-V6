@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://bce-4x-visual-fix.preview.emergentagent.com",
+                "url": "https://steve-max-plus.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],

@@ -30,8 +30,6 @@ async def generate_hunting_path_endpoint(request: dict):
 
         zones = request.get("zones", [])
         corridors = request.get("corridors", [])
-        wind_dir = request.get("wind_direction", 270)
-        wind_speed = request.get("wind_speed", 10)
         waypoint_center = request.get("waypoint_center")
         bounds = request.get("bounds")
 
@@ -52,8 +50,6 @@ async def generate_hunting_path_endpoint(request: dict):
         result = generate_hunting_path(
             zones=zones,
             corridors=corridors,
-            wind_direction=wind_dir,
-            wind_speed=wind_speed,
             waypoint_center=waypoint_center,
             bounds=analysis_bounds,
         )
@@ -80,8 +76,6 @@ async def generate_amenagement_report_endpoint(request: dict):
 
         zones = request.get("zones", [])
         corridors = request.get("corridors", [])
-        wind_dir = request.get("wind_direction", 270)
-        wind_speed = request.get("wind_speed", 10)
         waypoint_center = request.get("waypoint_center")
         bounds = request.get("bounds")
 
@@ -99,12 +93,10 @@ async def generate_amenagement_report_endpoint(request: dict):
                 "east": waypoint_center["lng"] + delta_lng,
             }
 
-        # First generate hunting path
+        # First generate hunting path (P0: no wind in decisional pipeline)
         hunting_path = generate_hunting_path(
             zones=zones,
             corridors=corridors,
-            wind_direction=wind_dir,
-            wind_speed=wind_speed,
             waypoint_center=waypoint_center,
             bounds=analysis_bounds,
         )
@@ -114,8 +106,6 @@ async def generate_amenagement_report_endpoint(request: dict):
             zones=zones,
             corridors=corridors,
             hunting_path=hunting_path,
-            wind_direction=wind_dir,
-            wind_speed=wind_speed,
             waypoint_center=waypoint_center,
         )
 
