@@ -221,6 +221,15 @@ try:
 except Exception as e:
     logger.warning(f"Seasonal Conditions not loaded: {e}")
 
+# STEVE-MAX: Register Hunting Path & Amenagement router
+try:
+    from modules.bionic_engine_p0.routers.hunting_path_router import router as hunting_path_router
+    app.include_router(hunting_path_router, prefix="/api")
+    logger.info("✓ Hunting Path Engine registered (/api/v1/bionic/hunting-path, /api/v1/bionic/amenagement-report)")
+except Exception as e:
+    logger.warning(f"Hunting Path Engine not loaded: {e}")
+
+
 # 9. Register SSE Engine router (Phase Optimisation #1)
 try:
     from modules.bionic_engine_p0.routers.sse_router import router as sse_router

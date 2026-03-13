@@ -27,13 +27,13 @@ VALIDATOR_NAME = "geometry_compliance_steve_max"
 FRONTEND_SRC = "/app/frontend/src"
 BACKEND_SRC = "/app/backend"
 
-# STEVE-MAX: Reduced 40% max widths
+# STEVE-MAX P1: Reduced 50% max widths (from 40% reduction values)
 NORMATIVE_MAX_WIDTHS = {
-    "gris": 72,
-    "jaune": 48,
-    "orange": 30,
-    "rouge": 18,
-    "rouge_raye": 9,
+    "gris": 36,
+    "jaune": 24,
+    "orange": 15,
+    "rouge": 9,
+    "rouge_raye": 5,
 }
 
 
@@ -105,13 +105,59 @@ def validate_corridor_data(corridors: list, bounds: dict) -> Dict[str, Any]:
         "name": "BCE-4X-GEOM-005_CorridorWidthNormalization",
         "status": "PASS" if geom_005_pass else "FAIL",
         "detail": (
-            "All band widths within 40%-reduced normative limits"
+            "All band widths within 50%-reduced normative limits"
             if geom_005_pass
             else f"Violations: {', '.join(width_violations[:3])}"
         ),
     })
     if not geom_005_pass:
         errors.append(f"BCE-4X-GEOM-005: Band width violations: {', '.join(width_violations[:3])}")
+
+    # BCE-4X-COR-006: CorridorContinuity
+    continuity_failures = 0
+    total_with_bands = 0
+    for corridor in corridors:
+        props = corridor.get("properties", {})
+        if props.get("has_bands") or len(props.get("bands", [])) > 0:
+            total_with_bands += 1
+            if not props.get("continuity_valid", True):
+                continuity_failures += 1
+
+    cor_006_pass = continuity_failures == 0
+    checks.append({
+        "name": "BCE-4X-COR-006_CorridorContinuity",
+        "status": "PASS" if cor_006_pass else "FAIL",
+        "detail": (
+            f"All {total_with_bands} corridors have valid continuity"
+            if cor_006_pass
+            else f"{continuity_failures}/{total_with_bands} corridors have broken continuity"
+        ),
+    })
+    if not cor_006_pass:
+        errors.append(f"BCE-4X-COR-006: {continuity_failures} corridors have broken continuity")
+
+    # BCE-4X-VIS-007: CorridorVisualBalance
+    opacity_violations = []
+    for corridor in corridors:
+        props = corridor.get("properties", {})
+        for band in props.get("bands", []):
+            fill_op = band.get("fillOpacity", 0)
+            level = band.get("level", "")
+            if level in ("jaune", "orange") and fill_op > 0.30:
+                opacity_violations.append(f"{level}: fillOpacity={fill_op} > 0.30")
+
+    vis_007_pass = len(opacity_violations) == 0
+    checks.append({
+        "name": "BCE-4X-VIS-007_CorridorVisualBalance",
+        "status": "PASS" if vis_007_pass else "FAIL",
+        "detail": (
+            "Yellow/orange bands have balanced visual opacity"
+            if vis_007_pass
+            else f"Violations: {', '.join(opacity_violations[:3])}"
+        ),
+    })
+    if not vis_007_pass:
+        errors.append(f"BCE-4X-VIS-007: Corridor visual imbalance: {', '.join(opacity_violations[:3])}")
 
     status = "PASS" if all(c["status"] == "PASS" for c in checks) else "FAIL"
     return {
@@ -178,16 +224,16 @@ def validate() -> Dict[str, Any]:
     if not pipe_002_pass:
         errors.append("BCE-4X-PIPE-002: Frontend reconstructs corridor geometry")
 
-    # BCE-4X-GEOM-005: Check that BAND_RATIO has 40% reduced values
-    has_reduced_gris = "0.033" in corridors_v9 and "72" in corridors_v9
-    has_reduced_rouge_raye = "0.004" in corridors_v9 and '"max_m": 9' in corridors_v9
+    # BCE-4X-GEOM-005: Check that BAND_RATIO has 50% reduced values
+    has_reduced_gris = "0.016" in corridors_v9 and "36" in corridors_v9
+    has_reduced_rouge_raye = "0.002" in corridors_v9 and '"max_m": 5' in corridors_v9
     geom_005_code_pass = has_reduced_gris and has_reduced_rouge_raye
 
     checks.append({
         "name": "BCE-4X-GEOM-005_CorridorWidthNormalization_Code",
         "status": "PASS" if geom_005_code_pass else "FAIL",
         "detail": (
-            "BAND_RATIO values confirm 40% reduction (gris=0.033/72m, rouge_raye=0.004/9m)"
+            "BAND_RATIO values confirm 50% reduction (gris=0.016/36m, rouge_raye=0.002/5m)"
             if geom_005_code_pass
             else f"BAND_RATIO not properly reduced: gris={has_reduced_gris}, rouge_raye={has_reduced_rouge_raye}"
         ),

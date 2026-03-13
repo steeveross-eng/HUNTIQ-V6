@@ -60,11 +60,11 @@ export const LAYER_TYPES = [
 ];
 
 const SPECIES_LAYERS = {
-  moose:       ['habitats', 'rut', 'repos', 'alimentation', 'corridors', 'hydro', 'salines', 'peuplements', 'pentes'],
-  deer:        ['habitats', 'rut', 'repos', 'alimentation', 'corridors', 'affuts', 'peuplements', 'ensoleillement'],
-  bear:        ['habitats', 'repos', 'alimentation', 'corridors', 'hydro', 'peuplements', 'ndvi', 'pentes'],
-  wild_turkey: ['habitats', 'alimentation', 'repos', 'affuts', 'peuplements', 'ensoleillement', 'ndvi'],
-  elk:         ['habitats', 'rut', 'repos', 'alimentation', 'corridors', 'peuplements', 'pentes', 'altitude'],
+  moose:       ['habitats', 'rut', 'repos', 'alimentation', 'corridors', 'hydro', 'salines', 'peuplements', 'pentes', 'affuts', 'trajets'],
+  deer:        ['habitats', 'rut', 'repos', 'alimentation', 'corridors', 'affuts', 'peuplements', 'ensoleillement', 'trajets', 'salines'],
+  bear:        ['habitats', 'repos', 'alimentation', 'corridors', 'hydro', 'peuplements', 'ndvi', 'pentes', 'trajets'],
+  wild_turkey: ['habitats', 'alimentation', 'repos', 'affuts', 'peuplements', 'ensoleillement', 'ndvi', 'trajets'],
+  elk:         ['habitats', 'rut', 'repos', 'alimentation', 'corridors', 'peuplements', 'pentes', 'altitude', 'trajets', 'affuts'],
 };
 
 export const getSpeciesLayers = (speciesId) => {
@@ -106,7 +106,7 @@ export const generateBionicZonesV5 = async (bounds, zoom, layersVisible, species
   const backendSpecies = speciesMap[speciesId] || speciesId || 'moose';
 
   const resolution = zoom >= 16 ? 100 : zoom >= 14 ? 80 : 60;
-  const maxPerLayer = zoom >= 16 ? 10 : zoom >= 14 ? 8 : 5;
+  const maxPerLayer = zoom >= 16 ? 12 : zoom >= 14 ? 10 : 8;
 
   try {
     const requestBody = {

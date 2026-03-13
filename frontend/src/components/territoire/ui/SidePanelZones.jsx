@@ -25,6 +25,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import CorridorsEcologyPanel from '@/components/territoire/CorridorsEcologyPanel';
 import BionicEngineHub from '@/components/territoire/BionicEngineHub';
+import { LAYER_TYPES } from '@/services/BionicZoneService';
+import AmenagementPanel from '@/components/territoire/AmenagementPanel';
 
 // ── Rejection Diagnostics (inline, no external dependency) ──
 const REJECTION_LABELS = {
@@ -210,6 +212,9 @@ export const SidePanelZones = React.memo(({
   species,
   displayScore,
   rating,
+  amenagementReport,
+  showHuntingPath,
+  setShowHuntingPath,
 }) => (
   <div className="p-3 space-y-3" data-testid="panel-zones">
 
@@ -272,6 +277,31 @@ export const SidePanelZones = React.memo(({
       <div className="text-[8px] text-gray-600 mt-1" data-testid="pipeline-version">Pipeline V9 + Meteo V8.2.1 + 9 Moteurs BIONIC</div>
     </div>
 
+    {/* ══ 2b. LEGENDE ZONES — PALETTE NORMATIVE 1:1 ══ */}
+    {!isLoadingZones && visibleZonesCount > 0 && (
+      <div className="bg-[#111118] rounded-lg p-3 border border-[#1a1a2e]" data-testid="zone-legend-panel">
+        <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">Zones par type</div>
+        <div className="space-y-1">
+          {(() => {
+            const layerCounts = {};
+            (zones || []).forEach(z => {
+              const lid = z.layerId || z.layer_id || '';
+              layerCounts[lid] = (layerCounts[lid] || 0) + 1;
+            });
+            return LAYER_TYPES
+              .filter(lt => layerCounts[lt.id])
+              .map(lt => (
+                <div key={lt.id} className="flex items-center gap-2 text-[10px]" data-testid={`zone-legend-${lt.id}`}>
+                  <div className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: lt.color, border: `1px solid ${lt.color}` }} />
+                  <span className="text-gray-300 flex-1 truncate">{lt.label}</span>
+                  <span className="font-mono text-gray-500">{layerCounts[lt.id]}</span>
+                </div>
+              ));
+          })()}
+        </div>
+      </div>
+    )}
+
     {/* ══ 3. Rejection Diagnostics (conditional) ══ */}
     {!isLoadingZones && visibleZonesCount === 0 && rejectionDiagnostics && (
       <RejectionDiagnosticsPanel diagnostics={rejectionDiagnostics} />
@@ -279,6 +309,23 @@ export const SidePanelZones = React.memo(({
 
     {/* ══ 4. CORRIDORS & ECOLOGIE V8 (panneau fusionne) ══ */}
     <CorridorsEcologyPanel corridors={corridors} species={species} />
+
+    {/* ══ 4b. STEVE-MAX: TRAJET DE CHASSE + AMENAGEMENT ══ */}
+    {amenagementReport && (
+      <div className="bg-[#111118] rounded-lg p-3 border border-[#1a1a2e]">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[10px] text-amber-400 uppercase tracking-wider font-bold">Trajet & Amenagement</div>
+          <button
+            onClick={() => setShowHuntingPath?.(!showHuntingPath)}
+            className={`text-[8px] px-2 py-0.5 rounded border ${showHuntingPath ? 'border-orange-500 text-orange-400 bg-orange-500/10' : 'border-gray-700 text-gray-500'}`}
+            data-testid="toggle-hunting-path"
+          >
+            {showHuntingPath ? 'Visible' : 'Masque'}
+          </button>
+        </div>
+        <AmenagementPanel report={amenagementReport} isLoading={false} />
+      </div>
+    )}
 
     {/* ══ 5. METEO INFLUENCE V8.2 ══ */}
     <WeatherInfluencePanel weatherMetadata={weatherMetadata} />

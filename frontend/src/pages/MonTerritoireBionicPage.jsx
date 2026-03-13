@@ -766,7 +766,51 @@ const MonTerritoireBionicPage = () => {
   };
   
   const rating = getScoreRating(displayScore);
-  
+
+  // ============================================
+  // STEVE-MAX: Hunting Path + Amenagement Engine
+  // ============================================
+  const [huntingPathData, setHuntingPathData] = useState(null);
+  const [amenagementReport, setAmenagementReport] = useState(null);
+  const [showHuntingPath, setShowHuntingPath] = useState(true);
+
+  // Auto-fetch hunting path when zones are loaded
+  useEffect(() => {
+    if (!bionicZones.length || !selectedWaypointForZones) return;
+    const corridors = bionicZonesData.corridors || [];
+    const windDir = weather?.wind?.deg || 270;
+    const windSpeed = weather?.wind?.speed ? weather.wind.speed * 3.6 : 10;
+    const wp = selectedWaypointForZones;
+    const wpc = { lat: wp.lat || wp.latitude, lng: wp.lng || wp.longitude };
+
+    const API = process.env.REACT_APP_BACKEND_URL;
+    // Build zone features for API
+    const zoneFeatures = bionicZones.map(z => ({
+      geometry: z.geometry || { type: 'Polygon', coordinates: z.coordinates ? [z.coordinates] : [] },
+      properties: { layer_id: z.layerId, score: z.score, label: z.label },
+    }));
+
+    fetch(`${API}/api/v1/bionic/amenagement-report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        zones: zoneFeatures,
+        corridors,
+        wind_direction: windDir,
+        wind_speed: windSpeed,
+        waypoint_center: wpc,
+      }),
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          setHuntingPathData(data.hunting_path);
+          setAmenagementReport(data.amenagement_report);
+        }
+      })
+      .catch(() => {});
+  }, [bionicZones.length, selectedWaypointForZones, bionicZonesData.corridors]);
+
   // BIONIC V5 300% INVARIANT: Snapshot Territoire handler
   const handleGenerateSnapshot = useCallback(async (format) => {
     if (!selectedWaypointForZones) return;
@@ -1308,6 +1352,8 @@ const MonTerritoireBionicPage = () => {
               syncToBackend={syncToBackend}
               groupMembersPositions={groupMembersPositions}
               isGroupeTrackingActive={isGroupeTrackingActive}
+              huntingPathData={huntingPathData}
+              showHuntingPath={showHuntingPath}
             />
           </MapContainer>
 
@@ -1374,6 +1420,9 @@ const MonTerritoireBionicPage = () => {
               species={selectedSpecies}
               displayScore={displayScore}
               rating={rating}
+              amenagementReport={amenagementReport}
+              showHuntingPath={showHuntingPath}
+              setShowHuntingPath={setShowHuntingPath}
             />
           )}
 

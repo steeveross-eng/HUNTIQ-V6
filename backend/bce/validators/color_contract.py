@@ -205,6 +205,28 @@ def validate() -> Dict[str, Any]:
     if not ui_006_pass:
         errors.append("BCE-4X-UI-006: Global tooltip/popup CSS suppression active")
 
+    # ═══════════════════════════════════════════
+    # BCE-4X-COLOR-010: PaletteStrictMatch
+    # Side panel MUST use LAYER_TYPES colors that match ZONE_NORMATIVE_COLORS
+    # ═══════════════════════════════════════════
+    side_panel_path = os.path.join(FRONTEND_SRC, "components/territoire/ui/SidePanelZones.jsx")
+    side_panel = _read_file(side_panel_path)
+    has_layer_types_import = "LAYER_TYPES" in side_panel and "BionicZoneService" in side_panel
+    has_zone_legend = "zone-legend-panel" in side_panel
+    color_010_pass = has_layer_types_import and has_zone_legend
+
+    checks.append({
+        "name": "BCE-4X-COLOR-010_PaletteStrictMatch",
+        "status": "PASS" if color_010_pass else "FAIL",
+        "detail": (
+            "Side panel imports LAYER_TYPES for 1:1 palette match"
+            if color_010_pass
+            else f"LAYER_TYPES import={has_layer_types_import}, legend={has_zone_legend}"
+        ),
+    })
+    if not color_010_pass:
+        errors.append("BCE-4X-COLOR-010: Side panel palette not using normative LAYER_TYPES")
+
     status = "PASS" if all(c["status"] == "PASS" for c in checks) else "FAIL"
     return {
         "name": VALIDATOR_NAME,

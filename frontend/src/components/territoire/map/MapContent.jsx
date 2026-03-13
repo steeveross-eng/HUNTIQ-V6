@@ -18,6 +18,7 @@ import { ShootingZones, SessionHeatmap } from '@/modules/groupe';
 import CursorBionicLayer from '@/components/territoire/CursorBionicLayer';
 import BionicAntiDoublesGuard from '@/components/territoire/BionicAntiDoublesGuard';
 import { BionicZone2kmLayer } from '@/components/territoire/BionicZone2km';
+import HuntingPathLayer from '@/components/territoire/HuntingPathLayer';
 import { MapInteractionLayer } from '@/modules/map_interaction';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { PLACE_TYPES } from '@/config/placeTypes';
@@ -74,6 +75,9 @@ const MapContentInner = React.memo(({
   // Groupe
   groupMembersPositions,
   isGroupeTrackingActive,
+  // STEVE-MAX: Hunting Path
+  huntingPathData,
+  showHuntingPath,
 }) => (
   <>
     <EcoforestryLayers
@@ -120,6 +124,11 @@ const MapContentInner = React.memo(({
       }}
     />
     {/* STEVE-MAX: MovementCorridorsLayer PURGE DEFINITIVE — BCE-4X-UI-003 */}
+
+    {/* STEVE-MAX P3: Hunting Path Layer — z-index 700 (above corridors) */}
+    {showHuntingPath && huntingPathData && (
+      <HuntingPathLayer huntingPath={huntingPathData} />
+    )}
 
     {/* BIONIC Zone 2 km² — Carré unique centré sur le waypoint actif */}
     {selectedWaypointForZones && (

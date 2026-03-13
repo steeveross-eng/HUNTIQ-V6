@@ -54,26 +54,25 @@ CLASSIFICATION_V9 = {
 }
 
 # Band buffer ratios (fraction of corridor length) + absolute limits
-# STEVE-MAX: REDUCTION GLOBALE 40% — toutes les largeurs x0.6
-# The buffer is PROPORTIONAL to corridor length to ensure ribbon shape
-# Short corridor (500m) → thin ribbon / Long corridor (2000m) → wider ribbon
+# STEVE-MAX P1: REDUCTION VISUELLE 50% SUPPLEMENTAIRE — rubans fins et discrets
+# Pipeline: ratio x0.5 sur valeurs STEVE-MAX precedentes
 BAND_RATIO = {
-    "gris":       {"ratio": 0.033, "min_m": 15, "max_m": 72},   # outermost halo (was 0.055/25/120)
-    "jaune":      {"ratio": 0.023, "min_m": 11, "max_m": 48},   # (was 0.038/18/80)
-    "orange":     {"ratio": 0.014, "min_m": 7,  "max_m": 30},   # (was 0.024/12/50)
-    "rouge":      {"ratio": 0.008, "min_m": 4,  "max_m": 18},   # (was 0.014/7/30)
-    "rouge_raye": {"ratio": 0.004, "min_m": 2,  "max_m": 9},    # innermost core (was 0.007/4/15)
+    "gris":       {"ratio": 0.016, "min_m": 8,  "max_m": 36},   # halo externe
+    "jaune":      {"ratio": 0.012, "min_m": 6,  "max_m": 24},
+    "orange":     {"ratio": 0.007, "min_m": 4,  "max_m": 15},
+    "rouge":      {"ratio": 0.004, "min_m": 2,  "max_m": 9},
+    "rouge_raye": {"ratio": 0.002, "min_m": 1,  "max_m": 5},    # coeur central
 }
 
 # Conversion: meters to degrees at Quebec latitude (~46.8N)
 METERS_PER_DEG = 111000  # approximate
 
 BAND_COLORS = {
-    "gris":       {"color": "#9E9E9E", "opacity": 0.45, "fillOpacity": 0.20},
-    "jaune":      {"color": "#FFC107", "opacity": 0.60, "fillOpacity": 0.35},
-    "orange":     {"color": "#FF9800", "opacity": 0.75, "fillOpacity": 0.50},
-    "rouge":      {"color": "#F44336", "opacity": 0.85, "fillOpacity": 0.65},
-    "rouge_raye": {"color": "#B71C1C", "opacity": 0.95, "fillOpacity": 0.80},
+    "gris":       {"color": "#9E9E9E", "opacity": 0.30, "fillOpacity": 0.10},
+    "jaune":      {"color": "#FFC107", "opacity": 0.40, "fillOpacity": 0.15},
+    "orange":     {"color": "#FF9800", "opacity": 0.50, "fillOpacity": 0.22},
+    "rouge":      {"color": "#F44336", "opacity": 0.70, "fillOpacity": 0.40},
+    "rouge_raye": {"color": "#B71C1C", "opacity": 0.85, "fillOpacity": 0.55},
 }
 
 
@@ -458,6 +457,36 @@ class CorridorEngineV9:
             logger.warning(f"Enrichment failed: {e}")
         return corridor
 
+    def densify_corridor(self, corridor: Dict, target_spacing_m: float = 30) -> Dict:
+        """
+        STEVE-MAX P0: Densifie un corridor en ajoutant des points intermediaires
+        pour garantir un rendu continu et fluide. Aucun segment > target_spacing_m.
+        """
+        coords = corridor.get("geometry", {}).get("coordinates", [])
+        if len(coords) < 2:
+            return corridor
+
+        dense_coords = [coords[0]]
+        for i in range(len(coords) - 1):
+            c1, c2 = coords[i], coords[i + 1]
+            dist = self._haversine(c1[1], c1[0], c2[1], c2[0])
+            if dist > target_spacing_m:
+                n_pts = max(1, int(dist / target_spacing_m))
+                for j in range(1, n_pts + 1):
+                    t = j / (n_pts + 1)
+                    lng = c1[0] + t * (c2[0] - c1[0])
+                    lat = c1[1] + t * (c2[1] - c1[1])
+                    # Small natural curve offset
+                    offset = 0.000015 * math.sin(t * math.pi * 2)
+                    dense_coords.append([round(lng + offset, 6), round(lat + offset, 6)])
+            dense_coords.append(c2)
+
+        corridor["geometry"]["coordinates"] = dense_coords
+        corridor["properties"]["densified"] = True
+        corridor["properties"]["original_pts"] = len(coords)
+        corridor["properties"]["dense_pts"] = len(dense_coords)
+        return corridor
+
     def process_corridor_full(self, corridor_feature: Dict, global_context: Dict, bounds: Dict = None) -> Dict:
         """
         STEVE-MAX: Pipeline V9 complet pour un corridor:
@@ -475,7 +504,10 @@ class CorridorEngineV9:
         # Step 1: Evaluate with 9 BIONIC engines
         corridor = self.evaluate_corridor(corridor_feature, global_context)
 
-        # Step 2: Fix continuity gaps
+        # Step 2: Densify corridor for smooth continuous rendering
+        corridor = self.densify_corridor(corridor, target_spacing_m=30)
+
+        # Step 3: Fix continuity gaps
         corridor = self.fix_continuity_gaps(corridor)
 
         # Step 3: Compute STRICT 2km analysis box from waypoint center
