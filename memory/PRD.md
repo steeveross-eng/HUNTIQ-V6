@@ -3,38 +3,51 @@
 ## Branche: steve-max
 
 ## Architecture
-- **Frontend**: React + Leaflet + Shadcn/UI — 42 composants territoire
-- **Backend**: FastAPI + 9 Moteurs V1 (corridors) + 12 Moteurs V2 (territoire) + Pipeline V9
+- **Frontend**: React + Leaflet + Shadcn/UI
+- **Backend**: FastAPI + 12 V1 (corridors) + 12 V2 + 12 V3 + 3 IA engines + 3 modeles fauniques
 - **Weather**: OpenWeatherMap (cache 60min)
 - **Quality Gate**: BCE-4X (12+ regles, 100% PASS)
 
-## Implemente (resume)
-- 15 couches ecologiques normatives
-- 9 moteurs V1 (corridor scoring V9)
-- 12 moteurs V2 (territoire scoring global)
-- Corridor continuity graph-based
-- Hunting path TSP (vent supprime)
-- Amenagement 2km report
-- BionicEngineHub frontend (12 moteurs temps reel)
-- BCE-4X: 12+ regles PASS
-- BAND_RATIO +20%
-- **HARMONISATION TOTALE COULEURS** (2026-03-13):
-  - Module centralise: bionicColorsConfig.js (source unique de verite)
-  - 15/15 couleurs identiques sur 7 fichiers sources
-  - Diagnostic panel FACTORS alignes (Relief=#FF7043, Structure=#15803D, Eau=#3B82F6)
-  - Analyse panel barres alignees (Rut=#FF4D6D, Salines=#FFFF00, Trajets=#FF9800)
-  - BIONIC_LAYERS legacy corrige (rut, salines, affuts, hydro, peuplements, repos, corridors)
-  - bionicDataAdapter NORM_COLORS harmonise
+## Implemente
+
+### BIONIC V3 Integration Totale (2026-03-13)
+- **27 engines actifs** (12 V2 + 12 V3 + 3 IA)
+- **V3 engines**: EcologicalHierarchy, Interaction, GeoPedology, Connectivity, TemporalDynamics, Hotspot, ForestStructureV2, FoodScoreV2, WetnessScoreV2, GeoFormScoreV2, BehaviorV2, GlobalAttractivenessV2
+- **IA engines**: PredictiveModels (24h/72h/7d), DynamicScoring (temps reel), TemporalAnalysis (trends)
+- **Modeles fauniques**: Moose (ponderations specifiques), Deer, Bear — scores differencies
+- **Pipeline integre**: Phase 1 (independants) → Phase 2 (dependants) → Phase 3 (IA) → Phase 4 (faunique) → Phase 5 (score final)
+- **API V3**: /engines-v3/compute, /engines-v3/status, /engines-v3/species/{id}, /engines-v3/predictions
+- **Frontend**: BionicEngineHub V3 avec 4 onglets (V2, V3, IA, Faune)
+
+### Harmonisation Couleurs (2026-03-13)
+- Module centralise bionicColorsConfig.js
+- 15/15 couleurs harmonisees sur 7 fichiers sources
+- Diagnostic panel FACTORS + barres analyse alignes
+
+### Corrections Precedentes
+- 12 moteurs V2 (backend + API + frontend)
+- Corridor continuity graph-based, BAND_RATIO +20%
+- BCE-4X: COR-006, VIS-007, GEOM-005 PASS
+- Wind logic removed from hunting path pipeline
 
 ## Tests
-- Iteration 15: 19/19 backend + 100% frontend UI verified (Color Harmonization TOTAL)
+- Iteration 16: 20/20 PASS (V3 Integration, species differentiation, AI predictions)
+- Iteration 15: 19/19 PASS (color harmonization)
 - Iteration 14: 20/20 PASS (corrections finales)
 - Iteration 13: 18/18 PASS (V2 integration)
 
+## API Endpoints
+- POST /api/v1/bionic/engines-v3/compute — 27 engines + 3 species + final score
+- GET /api/v1/bionic/engines-v3/status — statut 27 engines
+- POST /api/v1/bionic/engines-v3/species/{moose|deer|bear} — scoring par espece
+- POST /api/v1/bionic/engines-v3/predictions — predictions IA 24h/72h/7d
+- POST /api/v1/bionic/engines-v2/compute — backward compatible
+- GET /api/v1/bionic/engines-v2/status — backward compatible
+
 ## Backlog
-### P1 - Differencier scores par espece dans Engines V2
-### P2 - Supprimer MovementCorridorsLayer.jsx, Export GeoJSON/KML
-### P3 - DEM/NDVI reels, Multi-territoire, Analytics dashboard
+### P1 - Export GeoJSON/KML avec metadata engines
+### P2 - Dashboard analytics, apprentissage machine
+### P3 - Multi-territoire
 
 ## Credentials
 - Steeve.ross@gmail.com / Saturn5858*
