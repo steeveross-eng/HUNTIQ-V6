@@ -8,7 +8,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://steve-max-plus.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-toolbar-slim.preview.emergentagent.com').rstrip('/')
 
 # Test user ID for all tests
 TEST_USER_ID = "pytest-test-user"

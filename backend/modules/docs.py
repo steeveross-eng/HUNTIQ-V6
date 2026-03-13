@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://steve-max-plus.preview.emergentagent.com",
+                "url": "https://bionic-toolbar-slim.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],

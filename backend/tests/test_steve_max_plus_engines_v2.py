@@ -17,7 +17,7 @@ import os
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 if not BASE_URL:
-    BASE_URL = "https://steve-max-plus.preview.emergentagent.com"
+    BASE_URL = "https://bionic-toolbar-slim.preview.emergentagent.com"
 
 # Test bounds (Quebec region)
 TEST_BOUNDS = {

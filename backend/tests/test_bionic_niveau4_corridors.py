@@ -26,7 +26,7 @@ import os
 from datetime import datetime, timezone
 
 # Base URL from environment
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://steve-max-plus.preview.emergentagent.com")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://bionic-toolbar-slim.preview.emergentagent.com")
 
 # Expected styles per corridor type
 EXPECTED_STYLES = {

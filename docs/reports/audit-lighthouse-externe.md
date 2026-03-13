@@ -2,7 +2,7 @@
 ## HUNTIQ-V5 BIONIC — BRANCHE 3 COMPLÈTE
 
 **Date:** 2025-12-20
-**URL Auditée:** https://steve-max-plus.preview.emergentagent.com
+**URL Auditée:** https://bionic-toolbar-slim.preview.emergentagent.com
 **Protocole:** HTTP/2
 **Environnement:** Preview (non-production)
 **Statut:** ✅ AUDIT COMPLÉTÉ

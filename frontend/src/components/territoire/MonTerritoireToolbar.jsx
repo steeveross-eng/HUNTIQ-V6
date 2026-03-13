@@ -375,7 +375,7 @@ const MonTerritoireToolbar = ({
             </div>
             <input
               type="range"
-              min="30"
+              min="10"
               max="80"
               step="5"
               value={minPercentageFilter}

@@ -1,9 +1,9 @@
 {
   "lighthouseVersion": "13.0.3",
-  "requestedUrl": "https://steve-max-plus.preview.emergentagent.com/login",
-  "mainDocumentUrl": "https://steve-max-plus.preview.emergentagent.com/login",
-  "finalDisplayedUrl": "https://steve-max-plus.preview.emergentagent.com/login",
-  "finalUrl": "https://steve-max-plus.preview.emergentagent.com/login",
+  "requestedUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
+  "mainDocumentUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
+  "finalDisplayedUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
+  "finalUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
   "fetchTime": "2026-02-19T21:22:26.749Z",
   "gatherMode": "navigation",
   "runWarnings": [],
@@ -232,7 +232,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://steve-max-plus.preview.emergentagent.com/api/seo/meta/login",
+              "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/seo/meta/login",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -243,7 +243,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://steve-max-plus.preview.emergentagent.com/api/seo/meta/login",
+              "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/seo/meta/login",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -254,7 +254,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://steve-max-plus.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -265,7 +265,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://steve-max-plus.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -303,7 +303,7 @@
         ],
         "items": [
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/login",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
             "responseTime": 78
           }
         ],
@@ -830,7 +830,7 @@
         ],
         "items": [
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "total": 878.9049999999916,
             "scripting": 574.2869999999915,
             "scriptParseCompile": 238.264
@@ -842,7 +842,7 @@
             "scriptParseCompile": 24.752
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/login",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
             "total": 155.38900000000004,
             "scripting": 17.986,
             "scriptParseCompile": 0.626
@@ -963,7 +963,7 @@
         ],
         "items": [
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/login",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 0,
@@ -997,7 +997,7 @@
             "entity": "emergent.sh"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 161.8510000705719,
@@ -1116,7 +1116,7 @@
             "entity": "Google Fonts"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/api/products/top?limit=10",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/products/top?limit=10",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1415.005000114441,
@@ -1133,7 +1133,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/api/products/top?limit=10",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/products/top?limit=10",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1416.9750001430511,
@@ -1218,7 +1218,7 @@
             "entity": "posthog.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/manifest.json",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/manifest.json",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1428.1460001468658,
@@ -1235,7 +1235,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/favicon.ico",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/favicon.ico",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1429.2160000801086,
@@ -1252,7 +1252,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "blob:https://steve-max-plus.preview.emergentagent.com/417ae58d-6b9d-492b-892f-3b32892da9b3",
+            "url": "blob:https://bionic-toolbar-slim.preview.emergentagent.com/417ae58d-6b9d-492b-892f-3b32892da9b3",
             "sessionTargetType": "worker",
             "protocol": "blob",
             "rendererStartTime": 1517.9540002346039,
@@ -1267,7 +1267,7 @@
             "priority": "VeryLow"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/api/seo/meta/login",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/seo/meta/login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1667.75200009346,
@@ -1284,7 +1284,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/api/auth/auto-login",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/auth/auto-login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1700.2890000343323,
@@ -1301,7 +1301,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/api/seo/meta/login",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/seo/meta/login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1703.888000011444,
@@ -1318,7 +1318,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/api/auth/auto-login",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/auth/auto-login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1720.3220002651215,
@@ -1335,7 +1335,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/logos/bionic-logo-official.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1736.574000120163,
@@ -1352,7 +1352,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1737.0529999732971,
@@ -1369,7 +1369,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1737.3570001125336,
@@ -1386,7 +1386,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/logos/bionic-logo.svg",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/logos/bionic-logo.svg",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1765.4460000991821,
@@ -1409,19 +1409,19 @@
           "initiators": [
             {
               "type": "parser",
-              "url": "https://steve-max-plus.preview.emergentagent.com/login",
+              "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
               "lineNumber": 26,
               "columnNumber": 74
             },
             {
               "type": "parser",
-              "url": "https://steve-max-plus.preview.emergentagent.com/login",
+              "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
               "lineNumber": 50,
               "columnNumber": 45
             },
             {
               "type": "parser",
-              "url": "https://steve-max-plus.preview.emergentagent.com/login",
+              "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
               "lineNumber": 94,
               "columnNumber": 18
             },
@@ -1433,7 +1433,7 @@
             },
             {
               "type": "other",
-              "url": "https://steve-max-plus.preview.emergentagent.com/login"
+              "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login"
             }
           ]
         }
@@ -1481,7 +1481,7 @@
             "rtt": 12.125999999999998
           },
           {
-            "origin": "https://steve-max-plus.preview.emergentagent.com",
+            "origin": "https://bionic-toolbar-slim.preview.emergentagent.com",
             "rtt": 11.559
           },
           {
@@ -1520,7 +1520,7 @@
         ],
         "items": [
           {
-            "origin": "https://steve-max-plus.preview.emergentagent.com",
+            "origin": "https://bionic-toolbar-slim.preview.emergentagent.com",
             "serverResponseTime": 70.1605
           },
           {
@@ -1881,7 +1881,7 @@
         ],
         "items": [
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "duration": 631,
             "startTime": 3060.0675
           },
@@ -1896,12 +1896,12 @@
             "startTime": 739.2855000000002
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "duration": 69,
             "startTime": 3709.0675
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "duration": 60,
             "startTime": 3778.0675
           },
@@ -1920,7 +1920,7 @@
         "debugData": {
           "type": "debugdata",
           "urls": [
-            "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "https://us-assets.i.posthog.com/static/posthog-recorder.js?v=1.347.2",
             "https://us-assets.i.posthog.com/static/array.js"
           ],
@@ -2049,8 +2049,8 @@
         ],
         "items": [
           {
-            "scriptUrl": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
-            "sourceMapUrl": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js.map",
+            "scriptUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
+            "sourceMapUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js.map",
             "subItems": {
               "type": "subitems",
               "items": [
@@ -2313,7 +2313,7 @@
             "unusedBytes": 2104
           },
           {
-            "name": "https://steve-max-plus.preview.emergentagent.com/login",
+            "name": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
             "resourceBytes": 5076,
             "encodedBytes": 1666,
             "unusedBytes": 945,
@@ -2865,7 +2865,7 @@
             "unusedBytes": 0
           },
           {
-            "name": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "name": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "resourceBytes": 25633012,
             "encodedBytes": 2712418,
             "unusedBytes": 16534805,
@@ -20308,11 +20308,11 @@
         ],
         "items": [
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2712551
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/logos/bionic-logo-official.png",
             "totalBytes": 822428
           },
           {
@@ -20340,7 +20340,7 @@
             "totalBytes": 4170
           },
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/login",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
             "totalBytes": 3602
           },
           {
@@ -20456,7 +20456,7 @@
         ],
         "items": [
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2712418,
             "wastedBytes": 891192,
             "wastedPercent": 32.85600615331511
@@ -20576,7 +20576,7 @@
         ],
         "items": [
           {
-            "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2711387,
             "wastedBytes": 1834958,
             "wastedPercent": 67.67599921538678,
@@ -21035,7 +21035,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://steve-max-plus.preview.emergentagent.com/login"
+                  "frameUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login"
                 }
               ]
             },
@@ -21048,7 +21048,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://steve-max-plus.preview.emergentagent.com/login"
+                  "frameUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login"
                 }
               ]
             },
@@ -21061,7 +21061,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://steve-max-plus.preview.emergentagent.com/login"
+                  "frameUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login"
                 }
               ]
             },
@@ -21074,7 +21074,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://steve-max-plus.preview.emergentagent.com/login"
+                  "frameUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login"
                 }
               ]
             },
@@ -21087,7 +21087,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://steve-max-plus.preview.emergentagent.com/login"
+                  "frameUrl": "https://bionic-toolbar-slim.preview.emergentagent.com/login"
                 }
               ]
             },
@@ -21461,7 +21461,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+                  "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
                   "urlProvider": "network",
                   "line": 232728,
                   "column": 36
@@ -21489,7 +21489,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://steve-max-plus.preview.emergentagent.com/static/js/bundle.js",
+                  "url": "https://bionic-toolbar-slim.preview.emergentagent.com/static/js/bundle.js",
                   "urlProvider": "network",
                   "line": 336953,
                   "column": 27
@@ -21573,7 +21573,7 @@
               "snippet": "<img alt=\"BIONIC Chasse / Hunt\" x-file-name=\"BionicLogo\" x-line-number=\"35\" x-component=\"img\" x-id=\"BionicLogo_35\" x-dynamic=\"false\" src=\"/logos/bionic-logo-official.png\" style=\"width: 96px; height: 96px; object-fit: contain; mix-blend-mode: screen;\">",
               "nodeLabel": "BIONIC Chasse / Hunt"
             },
-            "url": "https://steve-max-plus.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://bionic-toolbar-slim.preview.emergentagent.com/logos/bionic-logo-official.png",
             "totalBytes": 821393,
             "wastedBytes": 819910,
             "subItems": {
@@ -21814,7 +21814,7 @@
               "type": "network-tree",
               "chains": {
                 "F0B0A21032239E03E0B4706684829A1B": {
-                  "url": "https://steve-max-plus.preview.emergentagent.com/login",
+                  "url": "https://bionic-toolbar-slim.preview.emergentagent.com/login",
                   "navStartToEndTime": 167,
                   "transferSize": 3602,
                   "isLongest": true,
@@ -22922,7 +22922,7 @@
     {
       "name": "emergentagent.com",
       "origins": [
-        "https://steve-max-plus.preview.emergentagent.com"
+        "https://bionic-toolbar-slim.preview.emergentagent.com"
       ],
       "isFirstParty": true,
       "isUnrecognized": true

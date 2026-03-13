@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Crosshair, Target, MapPin, Plus, X, LocateFixed,
   BookMarked, Users, Shield, SplitSquareHorizontal,
-  Map, Binoculars, Layers, Lock, Unlock, BarChart3, CheckCircle, Settings,
+  Map, Binoculars, Layers, Lock, Unlock, BarChart3, CheckCircle,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -1161,73 +1161,47 @@ const MonTerritoireBionicPage = () => {
           </button>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-          {/* ═══ 8. OUTILS SECONDAIRES ═══ */}
+          {/* ═══ 8a. CORRIDORS V9 — contrôle individuel inline ═══ */}
+          <div className="h-8 px-2 flex items-center gap-1.5 rounded-md" data-testid="toolbar-corridors-v9">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 hidden sm:inline">Corridors V9</span>
+            <Switch checked={showCorridors} onCheckedChange={setShowCorridors} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-v9" />
+          </div>
+          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+
+          {/* ═══ 8b. SEUIL MINIMUM — contrôle individuel inline avec popover slider ═══ */}
           <Popover>
             <PopoverTrigger asChild>
-              <button className="h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider text-gray-400 hover:text-white hover:bg-white/5 transition-all" data-testid="toolbar-outils-btn" title="Outils secondaires">
-                <Settings className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Outils</span>
+              <button className="h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all" data-testid="toolbar-seuil-btn" title="Seuil minimum">
+                <span className="text-gray-400">Seuil</span>
+                <span className="text-[#f5a623] font-bold">{minPercentageFilter}%</span>
               </button>
             </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={8} className="w-80 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-0 shadow-xl shadow-black/40">
-              <div className="px-3 py-2 border-b border-gray-800 flex items-center gap-2">
-                <Settings className="h-3.5 w-3.5 text-gray-400" />
-                <span className="text-xs font-semibold text-white">Outils secondaires</span>
-              </div>
-              <div className="p-3 max-h-[70vh] overflow-y-auto space-y-4">
-                {/* Espèce cible */}
-                <div>
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Espèce cible</div>
-                  <div className="space-y-1">
-                    {SPECIES_LIST.map(sp => (
-                      <button
-                        key={sp.id}
-                        onClick={() => setSelectedSpecies(sp.id)}
-                        data-testid={`species-btn-${sp.id}`}
-                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-all ${
-                          selectedSpecies === sp.id
-                            ? 'bg-amber-500/20 text-white border border-amber-500/40'
-                            : 'bg-gray-900/50 text-gray-400 hover:bg-gray-800/50'
-                        }`}
-                      >
-                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: sp.color }} />
-                        <span className="flex-1 text-left">{sp.name}</span>
-                        {selectedSpecies === sp.id && <CheckCircle className="h-3 w-3 text-amber-400" />}
-                      </button>
-                    ))}
-                  </div>
+            <PopoverContent align="end" sideOffset={8} className="w-56 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-300 font-medium">Seuil minimum</span>
+                  <span className="text-xs font-bold text-[#f5a623]">{minPercentageFilter}%</span>
                 </div>
-                {/* Affichage */}
-                <div>
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Affichage</div>
-                  <div className="space-y-2 bg-gray-900/50 rounded-lg p-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-300">Corridors V9</span>
-                      <Switch checked={showCorridors} onCheckedChange={setShowCorridors} className="scale-75 data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-v9" />
-                    </div>
-                    {/* LEGACY: Deplacements V1 — SUPPRIME definitvement. BCE-4X-UI-003 */}
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-300">Seuil minimum</span>
-                        <span className="text-xs font-semibold text-[#f5a623]">{minPercentageFilter}%</span>
-                      </div>
-                      <input
-                        type="range" min="30" max="80" step="5"
-                        value={minPercentageFilter}
-                        onChange={(e) => setMinPercentageFilter(parseInt(e.target.value))}
-                        className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#f5a623]"
-                        data-testid="min-percentage-slider"
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-300">Curseur BIONIC</span>
-                      <Switch checked={showCursorBionic} onCheckedChange={setShowCursorBionic} className="scale-75 data-[state=checked]:bg-violet-500" />
-                    </div>
-                  </div>
+                <input
+                  type="range" min="10" max="80" step="5"
+                  value={minPercentageFilter}
+                  onChange={(e) => setMinPercentageFilter(parseInt(e.target.value))}
+                  className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#f5a623]"
+                  data-testid="min-percentage-slider"
+                />
+                <div className="flex justify-between text-[8px] text-gray-600">
+                  <span>10%</span><span>30%</span><span>50%</span><span>80%</span>
                 </div>
               </div>
             </PopoverContent>
           </Popover>
+          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+
+          {/* ═══ 8c. CURSEUR BIONIC — contrôle individuel inline ═══ */}
+          <div className="h-8 px-2 flex items-center gap-1.5 rounded-md" data-testid="toolbar-curseur-bionic">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-violet-400 hidden sm:inline">Curseur</span>
+            <Switch checked={showCursorBionic} onCheckedChange={setShowCursorBionic} className="scale-[0.6] data-[state=checked]:bg-violet-500" data-testid="toggle-curseur-bionic" />
+          </div>
         </div>
       </nav>
 
