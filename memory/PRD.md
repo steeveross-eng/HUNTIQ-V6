@@ -4,73 +4,70 @@
 
 ## Architecture
 - **Frontend**: React + Leaflet + Shadcn/UI
-- **Backend**: FastAPI + 12 V1 (corridors) + 12 V2 + 12 V3 + 3 IA engines + 3 modeles fauniques
+- **Backend**: FastAPI + 27 Engines (12 V2, 12 V3, 3 IA) + 3 modeles fauniques + Hotspot Engine V3
 - **Weather**: OpenWeatherMap (cache 60min)
 - **Quality Gate**: BCE-4X (12+ regles, 100% PASS)
+- **Database**: MongoDB (admin_hotspots collection)
 
 ## Implemente
 
+### Indicateur BCE-4X temps reel (2026-03-13)
+- Composant `BCE4XIndicator.jsx` dans le header territoire
+- Affiche: statut PASS/WARNING/FAIL, timestamp, validateurs actifs, violations HIGH/MEDIUM/LOW
+- Popover interactif avec details et bouton refresh
+- Appel automatique `POST /api/bce/validate` au montage
+
+### Moteur d'extraction Hotspots BIONIC V3 (2026-03-13)
+- **Backend** `/backend/modules/bionic_engine_p0/hotspots/`:
+  - `hotspot_engine.py`: Scoring pondere officiel (9 engines), grille 50m, DBSCAN clustering, filtrage
+  - `hotspot_router.py`: 9 API endpoints admin (`/api/v1/admin/bionic-hotspots/*`)
+  - 12 regions officielles Quebec (Laurentides, Outaouais, Lanaudiere, Mauricie, Estrie, Saguenay, Capitale-Nationale, Chaudiere-Appalaches, Bas-Saint-Laurent, Abitibi, Cote-Nord, Gaspesie)
+  - 300 hotspots extraits (25/region), dont ~24 MAJEUR (80+) et ~276 FORT (60-79)
+  - Ponderations: Corridors 20%, FoodScore 15%, ForestStructure 15%, Wetness 10%, GeoForm 10%, Temporal 10%, Behavior 10%, Disturbance 5%, GlobalAttractiveness 5%
+  - Validation BCE-4X integree (GEOM-001, GEOM-002, CLIP-001, VISUAL-001)
+  - Export GeoJSON + JSON
+  - Stockage MongoDB (collection `admin_hotspots`)
+- **Frontend** `AdminHotspots.jsx`:
+  - Section admin "Hotspots V3" avec onglet dedie
+  - Extraction toutes regions en un clic
+  - Tableau complet (ID, Region, Score, Classification, Categorie, Espece, Accessibilite, Coordonnees)
+  - Filtres (region, espece, categorie, classification)
+  - Export GeoJSON/JSON
+  - Rapport BCE-4X
+  - Stats agregees
+
 ### Phase 7 — Optimisation UI Onglet OUTIL (2026-03-13)
-- Suppression du popover "Outils" de la barre d'outils principale
-- Repositionnement individuel de 3 controles directement dans la toolbar:
-  - **Corridors V9**: Toggle switch inline (cyan)
-  - **Seuil minimum**: Bouton avec valeur affichee + popover slider (min 10%, max 80%, step 5%)
-  - **Curseur BIONIC**: Toggle switch inline (violet)
-- Suppression des controles especes redondants de la zone OUTIL
-- Nettoyage de l'import `Settings` (lucide-react) devenu inutile
-- MonTerritoireToolbar.jsx (composant orphelin) mis a jour: slider min=10
+- Popover "Outils" remplace par 3 controles inline: Corridors V9, Seuil (min 10%), Curseur BIONIC
 
 ### Phase 6 — BCE-4X CI/CD Enforcement (2026-03-13)
-- Document `/app/docs/BCE-4X-CI-Pipeline.md` cree avec:
-  - Schema complet du pipeline CI (5 etapes: Lint, Tests, BCE-4X Gate, Build, Merge)
-  - Regles de blocage HIGH/MEDIUM/LOW/SKIP
-  - Implementation GitHub Actions (bce-4x-gate.yml)
-  - Exemple reel de merge bloque (PR #142)
-  - Configuration branch protection GitHub
-  - 13 validateurs documentes
-  - Garanties: zero bypass, audit trail, reproductibilite
+- Document `/app/docs/BCE-4X-CI-Pipeline.md`: schema pipeline, GitHub Actions, merge bloque
 
 ### BIONIC V3 Integration Totale (2026-03-13)
-- **27 engines actifs** (12 V2 + 12 V3 + 3 IA)
-- **V3 engines**: EcologicalHierarchy, Interaction, GeoPedology, Connectivity, TemporalDynamics, Hotspot, ForestStructureV2, FoodScoreV2, WetnessScoreV2, GeoFormScoreV2, BehaviorV2, GlobalAttractivenessV2
-- **IA engines**: PredictiveModels (24h/72h/7d), DynamicScoring (temps reel), TemporalAnalysis (trends)
-- **Modeles fauniques**: Moose (ponderations specifiques), Deer, Bear — scores differencies
-- **Pipeline integre**: Phase 1 (independants) → Phase 2 (dependants) → Phase 3 (IA) → Phase 4 (faunique) → Phase 5 (score final)
-- **API V3**: /engines-v3/compute, /engines-v3/status, /engines-v3/species/{id}, /engines-v3/predictions
-- **Frontend**: BionicEngineHub V3 avec 4 onglets (V2, V3, IA, Faune)
-
-### Harmonisation Couleurs (2026-03-13)
-- Module centralise bionicColorsConfig.js
-- 15/15 couleurs harmonisees sur 7 fichiers sources
-- Diagnostic panel FACTORS + barres analyse alignes
-
-### Corrections Precedentes
-- 12 moteurs V2 (backend + API + frontend)
-- Corridor continuity graph-based, BAND_RATIO +20%
-- BCE-4X: COR-006, VIS-007, GEOM-005 PASS
-- Wind logic removed from hunting path pipeline
-
-## Tests
-- Iteration 17: 12/12 PASS (Phase 7 UI + Phase 6 doc + regressions)
-- Iteration 16: 20/20 PASS (V3 Integration, species differentiation, AI predictions)
-- Iteration 15: 19/19 PASS (color harmonization)
-- Iteration 14: 20/20 PASS (corrections finales)
-- Iteration 13: 18/18 PASS (V2 integration)
+- 27 engines actifs, 3 modeles fauniques, pipeline integre, API V3, BionicEngineHub V3
 
 ## API Endpoints
-- POST /api/v1/bionic/engines-v3/compute — 27 engines + 3 species + final score
-- GET /api/v1/bionic/engines-v3/status — statut 27 engines
-- POST /api/v1/bionic/engines-v3/species/{moose|deer|bear} — scoring par espece
-- POST /api/v1/bionic/engines-v3/predictions — predictions IA 24h/72h/7d
-- POST /api/v1/bionic/engines-v2/compute — backward compatible
-- GET /api/v1/bionic/engines-v2/status — backward compatible
-- POST /api/bce/validate — BCE-4X full validation gate
+- POST /api/v1/admin/bionic-hotspots/extract — Extraction complete 12 regions
+- POST /api/v1/admin/bionic-hotspots/extract/{region_id} — Extraction region specifique
+- GET /api/v1/admin/bionic-hotspots/regions — Liste 12 regions
+- GET /api/v1/admin/bionic-hotspots/list — Liste filtrable (region, espece, categorie, classification)
+- GET /api/v1/admin/bionic-hotspots/stats — Statistiques agregees
+- GET /api/v1/admin/bionic-hotspots/export/geojson — Export GeoJSON
+- GET /api/v1/admin/bionic-hotspots/export/json — Export JSON
+- GET /api/v1/admin/bionic-hotspots/report/bce4x — Rapport BCE-4X
+- GET /api/v1/admin/bionic-hotspots/report/daily — Rapport quotidien
+- POST /api/bce/validate — Validation BCE-4X globale
+
+## Tests
+- Iteration 20: 13/13 backend PASS + frontend 95% (BCE-4X indicator + Admin Hotspots V3 + regressions)
+- Iteration 17: 12/12 PASS (Phase 7 UI + Phase 6 doc)
 
 ## Backlog
-### P1 - Export GeoJSON/KML avec metadata engines
-### P2 - Dashboard analytics, apprentissage machine
+### P1 - Export GeoJSON/KML avec metadata engines complet
+### P2 - Dashboard analytics / apprentissage machine
 ### P3 - Multi-territoire
+### P3 - Extraction automatique 24h (scheduler)
 
 ## Credentials
 - Steeve.ross@gmail.com / Saturn5858*
+- Admin: admin123 (admin@huntiq.ca)
 - OWM_API_KEY dans backend/.env
