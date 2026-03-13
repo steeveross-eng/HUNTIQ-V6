@@ -4,63 +4,77 @@
 
 ## Architecture
 - **Frontend**: React + Leaflet + Shadcn/UI
-- **Backend**: FastAPI + 27 Engines (12 V2, 12 V3, 3 IA) + 3 modeles fauniques + Hotspot Engine V3
+- **Backend**: FastAPI + 27 Engines + Hotspot Engine V3 + Scheduler annuel
+- **Database**: MongoDB (admin_hotspots)
 - **Weather**: OpenWeatherMap (cache 60min)
-- **Quality Gate**: BCE-4X (12+ regles, 100% PASS)
-- **Database**: MongoDB (admin_hotspots collection)
+- **Quality Gate**: BCE-4X (12+ regles, 1200/1200 PASS)
 
-## Implemente
+## Implemente — Certification Finale BIONIC V3
 
-### Rotation 3D Logos BIONIC (2026-03-13)
-- Classe CSS globale `.bionic-logo-3d-rotate` dans App.css
-- Keyframes `rotate3d360`: rotateY 0deg -> 360deg, linear, 10s, infinite
-- Applique sur: BionicLogoGlobal (toutes pages), BionicLogo (header), MainLayout logo
-- perspective: 1000px, preserve-3d, aucune distorsion
-- Compatible desktop + mobile, aucun conflit animations existantes
-- Valide sur: Territoire, Admin, Dashboard
+### Tache P0-1: Carte Leaflet interactive (2026-03-13) PASS
+- Carte CartoDB dark tiles avec 300 polygones hotspots
+- Couleurs: rouge=MAJEUR (80+), orange=FORT (60-79)
+- Popup: score, espece, justification engines, type territoire, acces, ville, altitude, GPS
+- Zoom automatique par region, controles zoom
+- Bascule Carte/Tableau
 
-### Indicateur BCE-4X temps reel (2026-03-13)
-- Composant BCE4XIndicator.jsx dans le header territoire
-- Statut PASS/WARNING/FAIL, timestamp, validateurs, violations HIGH/MEDIUM/LOW
+### Tache P0-2: Liste complete enrichie (2026-03-13) PASS
+- GPS (lat/lng), ville, code postal, altitude
+- 7 types territoire: Prive, Public, Gouvernemental, ZEC, Pourvoirie, Reserve faunique, Territoire autochtone
+- 4 statuts acces: Libre, Restreint, Payant, Permission requise
+- Espece dominante, ScoreHotspot, justification engines, accessibilite, corridors V9
+- 6 filtres: region, espece, classification, type territoire, acces, categorie
+- 12 regions Quebec avec donnees realistes (villes, codes postaux, altitudes)
 
-### Moteur d'extraction Hotspots BIONIC V3 (2026-03-13)
-- Backend: 9 API endpoints /api/v1/admin/bionic-hotspots/*
-- 12 regions Quebec, 300 hotspots (25/region), scoring pondere 9 engines
-- Frontend: Admin tab "Hotspots V3", tableau, filtres, exports GeoJSON/JSON
+### Tache P0-3: Acces proprietaire/gestionnaire (2026-03-13) PASS
+- ZEC: nom reel, tel, courriel, site web (ex: ZEC Normandie, ZEC Martin-Valin...)
+- Pourvoiries: nom, tel, courriel, web (ex: Pourvoirie du Lac Oscar, Kanawata...)
+- Reserves fauniques: SEPAQ avec coordonnees (ex: Rouge-Matawin, Mastigouche...)
+- Gouvernemental: MELCCFP, 1-800-561-1616, reglements acces
+- Autochtone: Nations innue, algonquine, mi'gmaq avec coordonnees
+- Terres privees: numero lot, cadastre, lien registre foncier, message contact
+- Bouton "Contacter le gestionnaire du territoire"
+- Panneau modal avec details complets
 
-### Phase 7 — Optimisation UI Onglet OUTIL (2026-03-13)
-- 3 controles inline: Corridors V9, Seuil (min 10%), Curseur BIONIC
+### Tache P0-4: Extraction automatique ANNUELLE (2026-03-13) PASS
+- POST /scheduler/run declenche extraction complete
+- Retourne: run number, total_hotspots, next_scheduled (annee+1)
+- Rapport BCE-4X automatique (PASS 1200/1200)
+- Stockage MongoDB avec batch tracking
+- Historique extractions (3 jours)
 
-### Phase 6 — BCE-4X CI/CD Enforcement (2026-03-13)
-- Document /app/docs/BCE-4X-CI-Pipeline.md
-
-### BIONIC V3 Integration Totale (2026-03-13)
-- 27 engines actifs, 3 modeles fauniques, pipeline integre
+### Modules precedents
+- Indicateur BCE-4X temps reel dans header territoire
+- Rotation 3D logos BIONIC (10s, preserve-3d)
+- Phase 7: 3 controles inline toolbar (Corridors V9, Seuil 10%, Curseur)
+- Phase 6: Document CI/CD BCE-4X
+- BIONIC V3: 27 engines, 3 modeles fauniques
+- Harmonisation couleurs, corridors V9 continuity
 
 ## Tests
-- Iteration 20: 13/13 backend + frontend 95% (Hotspots + BCE-4X indicator)
+- Iteration 21: 14/14 backend + 100% frontend (4 P0 features certified)
+- Iteration 20: 13/13 backend + 95% frontend (BCE-4X + Hotspots basic)
 - Iteration 17: 12/12 PASS (Phase 7 + Phase 6)
-- Logo 3D: Valide par screenshots sur 3 pages (Territoire, Admin, Dashboard)
 
 ## API Endpoints
-- POST /api/v1/admin/bionic-hotspots/extract
-- GET /api/v1/admin/bionic-hotspots/regions
-- GET /api/v1/admin/bionic-hotspots/list
-- GET /api/v1/admin/bionic-hotspots/stats
-- GET /api/v1/admin/bionic-hotspots/export/geojson
-- GET /api/v1/admin/bionic-hotspots/export/json
-- GET /api/v1/admin/bionic-hotspots/report/bce4x
-- GET /api/v1/admin/bionic-hotspots/report/daily
-- POST /api/bce/validate
+- POST /api/v1/admin/bionic-hotspots/scheduler/run — Extraction annuelle + BCE-4X
+- GET /api/v1/admin/bionic-hotspots/scheduler/status — Statut scheduler
+- GET /api/v1/admin/bionic-hotspots/territory-types — Types + distribution
+- POST /api/v1/admin/bionic-hotspots/extract — Extraction standard
+- GET /api/v1/admin/bionic-hotspots/list — Liste filtrable enrichie
+- GET /api/v1/admin/bionic-hotspots/stats — Stats agregees
+- GET /api/v1/admin/bionic-hotspots/export/geojson — Export GeoJSON
+- GET /api/v1/admin/bionic-hotspots/export/json — Export JSON
+- GET /api/v1/admin/bionic-hotspots/report/bce4x — Rapport BCE-4X
+- GET /api/v1/admin/bionic-hotspots/report/daily — Rapport quotidien
 
 ## Backlog
-### P1 - Carte interactive Leaflet dans Admin Hotspots V3
-### P1 - Export GeoJSON/KML avec metadata engines
+### P1 - Conditions meteo locales OWM par hotspot
+### P1 - Distance depuis waypoint utilisateur
 ### P2 - Dashboard analytics / apprentissage machine
 ### P3 - Multi-territoire
-### P3 - Extraction automatique 24h (scheduler)
 
 ## Credentials
 - Steeve.ross@gmail.com / Saturn5858*
-- Admin: admin123 (admin@huntiq.ca)
+- Admin: admin123
 - OWM_API_KEY dans backend/.env
