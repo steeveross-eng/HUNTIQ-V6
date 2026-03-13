@@ -497,14 +497,25 @@ class RenderingEngine(BionicEngineV2Base):
         corridors = context.get("corridors", [])
 
         total_features = len(zones) + len(corridors)
-        # Estimate rendering complexity
+        # Estimate rendering complexity from feature count
         total_coords = 0
         for c in corridors:
-            for band in c.get("properties", {}).get("bands", []):
-                total_coords += sum(len(ring) for ring in band.get("coordinates", []))
+            bands = c.get("properties", {}).get("bands", [])
+            if isinstance(bands, list):
+                for band in bands:
+                    if isinstance(band, dict):
+                        coords = band.get("coordinates", [])
+                        if isinstance(coords, list):
+                            total_coords += sum(len(ring) if isinstance(ring, list) else 0 for ring in coords)
 
         complexity = "faible" if total_features < 20 else "moyenne" if total_features < 50 else "elevee"
-        perf_score = max(30, 100 - total_coords / 50)
+        # Base score on feature count — fewer features = better performance
+        if total_features == 0:
+            perf_score = 80  # default good
+        elif total_coords > 0:
+            perf_score = max(30, 100 - total_coords / 50)
+        else:
+            perf_score = max(40, 100 - total_features * 2)
 
         return {
             "score": round(min(100, perf_score)),

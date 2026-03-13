@@ -1,21 +1,20 @@
 """
 BIONIC HUNT — Hunting Path Engine V1
-STEVE-MAX: Moteur de generation de trajet de chasse optimal.
+STEVE-MAX++: Moteur de generation de trajet de chasse optimal.
 
 Le trajet:
 - Relie les zones cles dans un ordre strategique
-- Suit la topographie et la logique ecologique  
-- Tient compte des vents dominants (approche sous le vent)
+- Suit la topographie et la logique ecologique
 - Maximise les chances de rencontre
 - Est lineaire, continu et marchable
 
 Algorithme:
-1. Collecte les centroïdes des zones cles (habitats, rut, repos, alimentation, affuts)
-2. Calcule la direction du vent dominant
-3. Ordonne les zones pour approcher SOUS LE VENT (downwind)
-4. Genere un chemin optimal (nearest-neighbor TSP heuristique avec vent)
-5. Smooth le trajet pour un rendu natural
-6. Ajoute des waypoints strategiques (saline, cache, alimentation secondaire)
+1. Collecte les centroides des zones cles (habitats, rut, repos, alimentation, affuts)
+2. Ordonne les zones par priorite ecologique (nearest-neighbor TSP)
+3. Smooth le trajet pour un rendu naturel
+4. Ajoute des waypoints strategiques (saline, cache, alimentation secondaire)
+
+Note: Le vent est gere separement par Wind Intelligence Engine (#4).
 """
 
 import logging
@@ -71,18 +70,6 @@ def _bearing(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
     y = math.cos(lat1_r) * math.sin(lat2_r) - math.sin(lat1_r) * math.cos(lat2_r) * math.cos(dlng)
     return (math.degrees(math.atan2(x, y)) + 360) % 360
 
-
-def _wind_penalty(move_bearing: float, wind_dir: float) -> float:
-    """
-    Penalty for moving INTO the wind (upwind = bad for hunting).
-    Approaching downwind is optimal (animal can't smell you).
-    Returns 0.0 (optimal) to 1.0 (worst).
-    """
-    diff = abs(move_bearing - wind_dir) % 360
-    if diff > 180:
-        diff = 360 - diff
-    # 0 = moving WITH wind (downwind, optimal), 180 = moving INTO wind (upwind, worst)
-    return diff / 180.0
 
 
 def _offset_point(lat: float, lng: float, bearing_deg: float, distance_m: float) -> Tuple[float, float]:
@@ -299,11 +286,6 @@ def generate_hunting_path(
     }
 
 
-def _wind_cardinal(deg: float) -> str:
-    dirs = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"]
-    idx = round(deg / 45) % 8
-    return dirs[idx]
-
 
 def generate_amenagement_report(
     zones: List[Dict],
@@ -319,7 +301,7 @@ def generate_amenagement_report(
     - Secondary feeding site
     - Cache location
     - Optimal path
-    - Dominant wind analysis
+    - Wind Intelligence (via Engine #4)
     - Key zones analysis
     - Corridors analysis
     - Action plan

@@ -330,8 +330,19 @@ export const SidePanelZones = React.memo(({
     {/* ══ 5. METEO INFLUENCE V8.2 ══ */}
     <WeatherInfluencePanel weatherMetadata={weatherMetadata} />
 
-    {/* ══ 6. ECOLOGICAL INTELLIGENCE HUB ══ */}
-    <BionicEngineHub />
+    {/* ══ 6. ECOLOGICAL INTELLIGENCE HUB — 12 MOTEURS BIONIC V2 ══ */}
+    <BionicEngineHub
+      zones={zones}
+      corridors={corridors}
+      weather={weatherMetadata}
+      season={species === 'moose' ? 'automne' : 'automne'}
+      bounds={selectedWaypointForZones ? {
+        north: selectedWaypointForZones.lat + 0.009,
+        south: selectedWaypointForZones.lat - 0.009,
+        east: selectedWaypointForZones.lng + 0.012,
+        west: selectedWaypointForZones.lng - 0.012,
+      } : undefined}
+    />
 
     {/* ══ 7. WAYPOINT CIBLE + EXPORT ══ */}
     {selectedWaypointForZones && (

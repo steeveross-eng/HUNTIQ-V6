@@ -552,3 +552,204 @@ class CorridorEngineV9:
 
 # Singleton
 corridor_engine_v9 = CorridorEngineV9()
+
+
+# =====================================================================
+# CORRIDOR NETWORK CONTINUITY — GRAPH-BASED POST-PROCESSING
+# STEVE-MAX++ P0: 100% topological continuity
+# =====================================================================
+
+def _haversine_quick(lat1, lng1, lat2, lng2):
+    """Fast haversine distance in meters."""
+    dlat = math.radians(lat2 - lat1)
+    dlng = math.radians(lng2 - lng1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlng / 2) ** 2
+    return 6371000 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+def ensure_corridor_network_continuity(
+    corridors: List[Dict],
+    zones: List[Dict],
+    bounds: Dict = None,
+    max_connection_m: float = 800,
+    proximity_threshold_m: float = 150,
+) -> List[Dict]:
+    """
+    STEVE-MAX++ P0: Ensure 100% topological continuity for the corridor network.
+
+    Algorithm (graph-based):
+    1. Collect all nodes: zone centroids + corridor start/end points
+    2. Build adjacency: a corridor endpoint is "connected" if within proximity_threshold_m
+       of a zone centroid or another corridor endpoint
+    3. Identify dead-end corridor endpoints (not near any zone or other corridor)
+    4. For each dead-end, generate a new connecting corridor segment to the nearest valid node
+    5. Process the new connecting corridors through the standard pipeline
+
+    BCE-4X-COR-006: No isolated segments in the final output.
+    """
+    if not corridors:
+        return corridors
+
+    # --- Step 1: Collect zone centroids ---
+    zone_nodes = []
+    for z in zones:
+        geom = z.get("geometry", {})
+        props = z.get("properties", {})
+        coords = geom.get("coordinates", [])
+        if not coords:
+            continue
+        if geom.get("type") == "Polygon" and coords:
+            ring = coords[0] if isinstance(coords[0][0], (list, tuple)) else coords
+            if ring:
+                avg_lng = sum(c[0] for c in ring) / len(ring)
+                avg_lat = sum(c[1] for c in ring) / len(ring)
+                zone_nodes.append({
+                    "lat": avg_lat, "lng": avg_lng,
+                    "type": "zone",
+                    "layer_id": props.get("layer_id", "unknown"),
+                })
+
+    # --- Step 2: Collect corridor endpoints ---
+    corridor_endpoints = []
+    for idx, c in enumerate(corridors):
+        coords = c.get("geometry", {}).get("coordinates", [])
+        if len(coords) < 2:
+            continue
+        start = coords[0]   # [lng, lat]
+        end = coords[-1]    # [lng, lat]
+        corridor_endpoints.append({"lat": start[1], "lng": start[0], "type": "corridor_start", "corridor_idx": idx})
+        corridor_endpoints.append({"lat": end[1], "lng": end[0], "type": "corridor_end", "corridor_idx": idx})
+
+    all_nodes = zone_nodes + corridor_endpoints
+
+    if not zone_nodes or not corridor_endpoints:
+        return corridors
+
+    # --- Step 3: Identify dead-end endpoints ---
+    dead_ends = []
+    for ep in corridor_endpoints:
+        connected = False
+        for node in all_nodes:
+            if node is ep:
+                continue
+            # Skip endpoints of same corridor
+            if node.get("corridor_idx") == ep.get("corridor_idx"):
+                continue
+            dist = _haversine_quick(ep["lat"], ep["lng"], node["lat"], node["lng"])
+            if dist < proximity_threshold_m:
+                connected = True
+                break
+        if not connected:
+            dead_ends.append(ep)
+
+    if not dead_ends:
+        # All endpoints are connected — mark all corridors as topology-valid
+        for c in corridors:
+            c["properties"]["topology_connected"] = True
+        logger.info(f"[Continuity] All {len(corridors)} corridors are topologically connected")
+        return corridors
+
+    logger.info(f"[Continuity] Found {len(dead_ends)} dead-end endpoints, generating connecting segments")
+
+    # --- Step 4: Connect each dead-end to the nearest valid node ---
+    new_corridors = []
+    connected_dead_ends = set()
+
+    for de in dead_ends:
+        de_key = f"{de['lat']:.6f},{de['lng']:.6f}"
+        if de_key in connected_dead_ends:
+            continue
+
+        best_dist = float("inf")
+        best_node = None
+
+        # Find nearest zone centroid or corridor endpoint (not from same corridor)
+        for node in all_nodes:
+            if node is de:
+                continue
+            if node.get("corridor_idx") == de.get("corridor_idx"):
+                continue
+            dist = _haversine_quick(de["lat"], de["lng"], node["lat"], node["lng"])
+            if dist < best_dist and dist < max_connection_m:
+                best_dist = dist
+                best_node = node
+
+        if best_node is None:
+            # No valid target within range — connect to nearest zone as fallback
+            for zn in zone_nodes:
+                dist = _haversine_quick(de["lat"], de["lng"], zn["lat"], zn["lng"])
+                if dist < best_dist:
+                    best_dist = dist
+                    best_node = zn
+
+        if best_node is None:
+            continue
+
+        # Generate a connecting corridor segment
+        connecting_coords = _generate_connecting_path(
+            de["lat"], de["lng"],
+            best_node["lat"], best_node["lng"],
+            best_dist,
+        )
+
+        new_corridor = {
+            "type": "Feature",
+            "id": f"connect_{len(corridors) + len(new_corridors)}",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": connecting_coords,
+            },
+            "properties": {
+                "from_zone_type": de.get("layer_id", "corridor"),
+                "to_zone_type": best_node.get("layer_id", "corridor"),
+                "distance_m": round(best_dist, 1),
+                "connection_type": "continuity_bridge",
+                "topology_connected": True,
+                "continuity_valid": True,
+                "densified": True,
+                "in_perimeter": True,
+                "scoring": {"score": 35, "subscores": {"connectivity": 40}, "justification": ["Connection de continuite topologique"]},
+                "classification_v9": classify_corridor_v9(35),
+                "corridor_type": "gris",
+                "style": {"color": "#9E9E9E", "width": 1.5, "opacity": 0.5, "dasharray": "8,4"},
+            },
+        }
+
+        # Generate bands for the connecting corridor
+        conn_bands = generate_corridor_bands(connecting_coords, bounds, 35)
+        new_corridor["properties"]["bands"] = conn_bands
+        new_corridor["properties"]["has_bands"] = len(conn_bands) > 0
+        new_corridor["properties"]["band_count"] = len(conn_bands)
+        new_corridor["properties"]["centerline"] = connecting_coords
+
+        new_corridors.append(new_corridor)
+        connected_dead_ends.add(de_key)
+
+    # Mark original corridors as topology-connected
+    for c in corridors:
+        c["properties"]["topology_connected"] = True
+
+    all_corridors = corridors + new_corridors
+    logger.info(f"[Continuity] Added {len(new_corridors)} connecting segments. Total: {len(all_corridors)} corridors")
+    return all_corridors
+
+
+def _generate_connecting_path(lat1, lng1, lat2, lng2, dist_m):
+    """
+    Generate a smooth connecting path between two points.
+    Uses Chaikin smoothing for natural rendering.
+    """
+    # Generate intermediate points (densified)
+    n_pts = max(3, int(dist_m / 50))
+    raw = []
+    for i in range(n_pts + 1):
+        t = i / n_pts
+        lng = lng1 + t * (lng2 - lng1)
+        lat = lat1 + t * (lat2 - lat1)
+        # Small natural curve offset (avoid straight lines)
+        offset = 0.00003 * math.sin(t * math.pi)
+        raw.append([round(lng + offset, 6), round(lat + offset, 6)])
+
+    # Smooth
+    smoothed = chaikin_smooth(raw, iterations=1)
+    return smoothed

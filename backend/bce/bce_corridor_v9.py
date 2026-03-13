@@ -325,3 +325,108 @@ def _haversine(lat1, lon1, lat2, lon2):
     dlon = math.radians(lon2 - lon1)
     a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
     return 6371000 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+# ═══════════════════════════════════════════════════════════════
+# BCE-4X-COR-006: CorridorNetworkContinuity
+# Validates that no corridor endpoint is isolated (dead-end)
+# ═══════════════════════════════════════════════════════════════
+def validate_corridor_network_continuity(
+    corridors: List[Dict],
+    zones: List[Dict] = None,
+    proximity_threshold_m: float = 200,
+) -> Dict[str, Any]:
+    """
+    BCE-4X-COR-006: Validates topological continuity of the corridor network.
+    Every corridor endpoint must be within proximity_threshold_m of another
+    corridor endpoint or a zone centroid.
+    """
+    if not corridors:
+        return {"rule": "BCE-4X-COR-006", "status": "PASS", "message": "No corridors to validate"}
+
+    zone_centroids = []
+    for z in (zones or []):
+        geom = z.get("geometry", {})
+        coords = geom.get("coordinates", [])
+        if geom.get("type") == "Polygon" and coords:
+            ring = coords[0] if isinstance(coords[0][0], (list, tuple)) else coords
+            if ring:
+                zone_centroids.append({
+                    "lat": sum(c[1] for c in ring) / len(ring),
+                    "lng": sum(c[0] for c in ring) / len(ring),
+                })
+
+    # Collect all corridor endpoints
+    endpoints = []
+    for idx, c in enumerate(corridors):
+        coords = c.get("geometry", {}).get("coordinates", [])
+        if len(coords) >= 2:
+            endpoints.append({"lat": coords[0][1], "lng": coords[0][0], "idx": idx, "end": "start"})
+            endpoints.append({"lat": coords[-1][1], "lng": coords[-1][0], "idx": idx, "end": "end"})
+
+    isolated = []
+    for ep in endpoints:
+        connected = False
+        for other in endpoints:
+            if other["idx"] == ep["idx"]:
+                continue
+            if _haversine(ep["lat"], ep["lng"], other["lat"], other["lng"]) < proximity_threshold_m:
+                connected = True
+                break
+        if not connected:
+            for zc in zone_centroids:
+                if _haversine(ep["lat"], ep["lng"], zc["lat"], zc["lng"]) < proximity_threshold_m:
+                    connected = True
+                    break
+        if not connected:
+            isolated.append(ep)
+
+    total_endpoints = len(endpoints)
+    connected_count = total_endpoints - len(isolated)
+    pct = (connected_count / total_endpoints * 100) if total_endpoints > 0 else 100
+
+    return {
+        "rule": "BCE-4X-COR-006",
+        "name": "CorridorNetworkContinuity",
+        "status": "PASS" if pct >= 95 else "WARN" if pct >= 80 else "FAIL",
+        "continuity_pct": round(pct, 1),
+        "total_endpoints": total_endpoints,
+        "connected": connected_count,
+        "isolated": len(isolated),
+        "threshold_m": proximity_threshold_m,
+    }
+
+
+# ═══════════════════════════════════════════════════════════════
+# BCE-4X-VIS-007: CorridorVisualBalance
+# Validates that corridor bands don't visually dominate the map
+# ═══════════════════════════════════════════════════════════════
+def validate_corridor_visual_balance(corridors: List[Dict]) -> Dict[str, Any]:
+    """
+    BCE-4X-VIS-007: Validates visual balance of corridor rendering.
+    Checks that band widths and opacities are within the reduced limits.
+    """
+    from modules.bionic_engine_p0.engines.corridors_v9 import BAND_RATIO, BAND_COLORS
+
+    violations = []
+    for idx, c in enumerate(corridors):
+        bands = c.get("properties", {}).get("bands", [])
+        for band in bands:
+            level = band.get("level", "gris")
+            width = band.get("width_m", 0)
+            opacity = band.get("fillOpacity", 0)
+            max_width = BAND_RATIO.get(level, {}).get("max_m", 100)
+            max_opacity = BAND_COLORS.get(level, {}).get("fillOpacity", 1.0)
+
+            if width > max_width * 1.1:  # 10% tolerance
+                violations.append(f"Corridor {idx}, band {level}: width {width}m > max {max_width}m")
+            if opacity > max_opacity * 1.2:  # 20% tolerance
+                violations.append(f"Corridor {idx}, band {level}: fillOpacity {opacity} > max {max_opacity}")
+
+    return {
+        "rule": "BCE-4X-VIS-007",
+        "name": "CorridorVisualBalance",
+        "status": "PASS" if not violations else "FAIL",
+        "violations": violations[:10],  # limit output
+        "total_violations": len(violations),
+    }

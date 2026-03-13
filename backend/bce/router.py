@@ -408,3 +408,37 @@ async def validate_corridors_runtime_endpoint(request: dict):
             "status": "ERROR",
             "error": str(e),
         }
+
+
+
+@router.post("/validate-corridor-continuity")
+async def validate_corridor_continuity_endpoint(request: dict):
+    """
+    STEVE-MAX++: BCE-4X-COR-006 — Corridor Network Continuity validation.
+    Checks that no corridor endpoint is isolated.
+    """
+    try:
+        from bce.bce_corridor_v9 import validate_corridor_network_continuity
+        corridors = request.get("corridors", [])
+        zones = request.get("zones", [])
+        result = validate_corridor_network_continuity(corridors, zones)
+        return {"module": "bce_4x_cor_006", "branch": "steve-max", **result}
+    except Exception as e:
+        logger.error(f"COR-006 validation error: {e}")
+        return {"module": "bce_4x_cor_006", "status": "ERROR", "error": str(e)}
+
+
+@router.post("/validate-visual-balance")
+async def validate_visual_balance_endpoint(request: dict):
+    """
+    STEVE-MAX++: BCE-4X-VIS-007 — Corridor Visual Balance validation.
+    Checks that corridor band widths and opacities are within reduced limits.
+    """
+    try:
+        from bce.bce_corridor_v9 import validate_corridor_visual_balance
+        corridors = request.get("corridors", [])
+        result = validate_corridor_visual_balance(corridors)
+        return {"module": "bce_4x_vis_007", "branch": "steve-max", **result}
+    except Exception as e:
+        logger.error(f"VIS-007 validation error: {e}")
+        return {"module": "bce_4x_vis_007", "status": "ERROR", "error": str(e)}

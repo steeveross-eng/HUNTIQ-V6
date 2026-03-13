@@ -1091,6 +1091,22 @@ async def generate_organic_zones(
         if pre_filter != len(corridors):
             logger.info(f"[V9-Filter] Removed {pre_filter - len(corridors)} circular corridors")
 
+    # STEVE-MAX++ P0: Ensure 100% topological continuity via graph-based post-processing
+    if corridors:
+        try:
+            from modules.bionic_engine_p0.engines.corridors_v9 import ensure_corridor_network_continuity
+            all_zone_features = []
+            for layer_id, zone_list in zones_by_layer.items():
+                for z in zone_list:
+                    all_zone_features.append(z)
+            corridors = ensure_corridor_network_continuity(
+                corridors=corridors,
+                zones=all_zone_features,
+                bounds=bounds,
+            )
+        except Exception as e:
+            logger.warning(f"[Continuity] Network continuity post-processing failed: {e}")
+
     elapsed = round((time.time() - start) * 1000, 1)
 
     # BIONIC V7.3: Diagnostic — provide zero_zones_reason when all zones are filtered
