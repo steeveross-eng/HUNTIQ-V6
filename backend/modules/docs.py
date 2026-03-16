@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://bionic-toolbar-slim.preview.emergentagent.com",
+                "url": "https://hotspots-admin-final.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],

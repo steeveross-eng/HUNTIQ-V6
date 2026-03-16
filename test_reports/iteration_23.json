@@ -1,0 +1,117 @@
+{
+  "summary": "BIONIC V3 REGRESSION TEST - All features stable. Backend: 16/16 tests pass. Frontend: All security features verified. BCE-4X removed from /territoire, Admin + Admin Premium secured with Saturn5858*, Hotspots V3 tab removed from /admin, Full Hotspots module accessible via Terres/Hotspots in Admin Premium sidebar.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/admin/*",
+        "issue": "Some legacy admin endpoints (e.g., /api/admin/stats, /api/admin/products) return 404 - admin data uses v1 endpoints. This is expected behavior, not a bug.",
+        "priority": "INFO"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api_tests": {
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "test_file": "/app/backend/tests/test_bionic_v3_certification.py",
+      "junit_xml": "/app/test_reports/pytest/bionic_v3_regression_results.xml",
+      "tests": [
+        "TestAdminAuthentication::test_new_password_login_success - PASS (Saturn5858* works)",
+        "TestAdminAuthentication::test_old_password_login_rejected - PASS (admin123 returns 401)",
+        "TestAdminAuthentication::test_wrong_email_rejected - PASS",
+        "TestHotspotSchedulerEndpoint::test_scheduler_run_returns_success - PASS (300 hotspots, 12 regions)",
+        "TestHotspotSchedulerEndpoint::test_scheduler_run_returns_bce4x_report - PASS (1200/1200 checks)",
+        "TestHotspotSchedulerEndpoint::test_scheduler_run_returns_next_year - PASS (2027 next run)",
+        "TestHotspotSchedulerEndpoint::test_scheduler_run_returns_regions_summary - PASS",
+        "TestTerritoryTypesEndpoint::test_territory_types_returns_available_types - PASS (7 types, 4 access)",
+        "TestTerritoryTypesEndpoint::test_territory_types_returns_distribution - PASS",
+        "TestHotspotListEndpoint::test_list_returns_hotspots_with_territory_fields - PASS",
+        "TestHotspotListEndpoint::test_list_filter_by_territory_type - PASS",
+        "TestHotspotListEndpoint::test_list_filter_by_access_status - PASS",
+        "TestGestionnaireData::test_gestionnaire_has_contact_info - PASS",
+        "TestBCE4XReport::test_bce4x_report_returns_pass - PASS",
+        "TestHotspotExports::test_export_geojson_valid_structure - PASS",
+        "TestHotspotExports::test_export_json_returns_data - PASS"
+      ]
+    },
+    "frontend_tests": {
+      "bce4x_removed_from_territoire": "PASS - data-testid='bce4x-indicator-btn' NOT found on /territoire page",
+      "admin_login_gate": "PASS - Password input and 'Se connecter' button visible",
+      "admin_old_password_rejected": "PASS - admin123 rejected, stays on login page",
+      "admin_new_password_accepted": "PASS - Saturn5858* logs in successfully",
+      "admin_tabs_count": "PASS - 7 tabs visible: Dashboard, Sales, Products, Partners, Customers, Commissions, Performance",
+      "admin_hotspots_v3_tab_removed": "PASS - 'Hotspots V3' tab NOT present in Admin page",
+      "admin_premium_login_gate": "PASS - Password input with 'Acces securise' text visible",
+      "admin_premium_new_password_accepted": "PASS - Saturn5858* logs in successfully",
+      "admin_premium_sidebar_hotspots": "PASS - 'Terres/Hotspots' sidebar item found (data-testid='sidebar-hotspots')",
+      "admin_premium_hotspots_section": "PASS - Hotspots BIONIC V3 / Terres a louer section loaded",
+      "admin_premium_extraction_button": "PASS - 'Extraction annuelle' button present",
+      "admin_premium_map_table_toggle": "PASS - Carte/Tableau buttons present",
+      "admin_premium_filters": "PASS - Filtres dropdown present",
+      "admin_premium_exports": "PASS - GeoJSON and JSON export buttons present",
+      "admin_premium_bce4x_button": "PASS - BCE-4X button present"
+    }
+  },
+  "p0_tasks_verified": {
+    "task_1_bce4x_removed_from_territoire": {
+      "status": "PASS",
+      "details": "BCE-4X indicator (data-testid='bce4x-indicator-btn') NOT present on /territoire page"
+    },
+    "task_2_admin_secured_with_password": {
+      "status": "PASS",
+      "details": "/admin requires password. Saturn5858* works, admin123 rejected with 401"
+    },
+    "task_3_admin_premium_secured_with_password": {
+      "status": "PASS",
+      "details": "/admin-premium requires password. Saturn5858* logs in successfully"
+    },
+    "task_4_hotspots_v3_tab_removed_from_admin": {
+      "status": "PASS",
+      "details": "Only 7 tabs in Admin page - Hotspots V3 tab removed"
+    },
+    "task_5_hotspots_in_admin_premium_sidebar": {
+      "status": "PASS",
+      "details": "Terres/Hotspots navigation item present in Admin Premium sidebar"
+    },
+    "task_6_hotspots_section_components": {
+      "status": "PASS",
+      "details": "Extraction button, Carte/Tableau toggle, Filtres, GeoJSON/JSON exports, BCE-4X button all present"
+    },
+    "task_7_scheduler_returns_300_hotspots": {
+      "status": "PASS",
+      "details": "POST /api/v1/admin/bionic-hotspots/scheduler/run returns 300 hotspots with BCE-4X PASS"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_bionic_v3_certification.py",
+    "/app/test_reports/pytest/bionic_v3_regression_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (16/16 tests passed)",
+    "frontend": "100% (all UI checks passed)"
+  },
+  "test_credentials": {
+    "admin_password": "Saturn5858*",
+    "admin_email": "admin@huntiq.ca",
+    "frontend_url": "https://hotspots-admin-final.preview.emergentagent.com",
+    "admin_url": "/admin",
+    "admin_premium_url": "/admin-premium",
+    "territoire_url": "/territoire"
+  },
+  "seed_data_creation": "None - hotspots extracted on-demand via POST /scheduler/run",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BIONIC V3 regression test complete. All 7 P0 security tasks verified stable: BCE-4X removed from public territory page, Admin + Admin Premium password gates work with Saturn5858*, Hotspots V3 tab removed from /admin, full Hotspots module accessible in Admin Premium via Terres/Hotspots sidebar. Backend extracts 300 hotspots from 12 Quebec regions with BCE-4X PASS (1200/1200). MOCKED: territory_data_provider.py generates realistic mock data for Quebec regions.",
+  "mocked_api_note": "territory_data_provider.py generates realistic territorial data for Quebec - not connected to live registries. Approved by user.",
+  "verification_date": "2026-03-16"
+}
