@@ -451,9 +451,28 @@ except Exception as e:
 
 
 
+# ═══ ALIMENTATION-V1 — Moteur alimentaire scientifique multi-especes ═══
+try:
+    from modules.alimentation_v1.router import router as alimentation_v1_router
+    app.include_router(alimentation_v1_router)
+    logger.info("✓ ALIMENTATION-V1 registered (/api/v1/alimentation)")
+except Exception as e:
+    logger.warning(f"ALIMENTATION-V1 not loaded: {e}")
+
+# ═══ REPOS-V1 — Moteur zones de repos scientifique multi-especes ═══
+try:
+    from modules.repos_v1.router import router as repos_v1_router
+    app.include_router(repos_v1_router)
+    logger.info("✓ REPOS-V1 registered (/api/v1/repos)")
+except Exception as e:
+    logger.warning(f"REPOS-V1 not loaded: {e}")
+
+
 logger.info("=" * 60)
 logger.info(f"✓ V5-ULTIME-FUSION: {len(CORE_ROUTERS)} modules registered")
 logger.info("✓ PHASE G: BIONIC Engine P0 active")
+logger.info("✓ ALIMENTATION-V1: Moteur alimentaire multi-especes active")
+logger.info("✓ REPOS-V1: Moteur zones de repos multi-especes active")
 logger.info("✓ BCE: BIONIC Compliance Engine active")
 logger.info("=" * 60)
 

@@ -100,6 +100,29 @@ export const SPECIES = {
       ndvi: 1.0,
     },
   },
+  wapiti: {
+    id: 'wapiti',
+    name: 'Wapiti',
+    scientificName: 'Cervus canadensis',
+    iconName: 'Mountain',
+    color: '#B8860B',
+    layers: [
+      'habitats', 'alimentation', 'corridors', 'repos',
+      'hydro', 'peuplements', 'pentes', 'ndvi',
+    ],
+    habitatPrefs: {
+      prefersWaterProximity: true,
+      prefersConifer: false,
+      prefersDenseForest: false,
+      prefersEdges: true,
+      prefersElevation: false,
+    },
+    scoreWeights: {
+      habitats: 1.1, alimentation: 1.3, corridors: 1.0,
+      repos: 1.0, hydro: 0.9, peuplements: 1.1,
+      pentes: 0.8, ndvi: 1.0,
+    },
+  },
   tous: {
     id: 'tous',
     name: 'Toutes les espèces',
