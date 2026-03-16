@@ -134,7 +134,7 @@ async def admin_login(credentials: AdminLogin):
     admin = await db.admins.find_one({"email": credentials.email}, {"_id": 0})
     if not admin:
         # Default admin check
-        if credentials.email == "admin@huntiq.ca" and credentials.password == "admin123":
+        if credentials.email == "admin@huntiq.ca" and credentials.password == "Saturn5858*":
             import secrets
             token = secrets.token_urlsafe(32)
             return {

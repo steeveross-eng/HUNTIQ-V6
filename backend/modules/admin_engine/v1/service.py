@@ -21,7 +21,7 @@ class AdminService:
     
     # Default admin credentials (should be changed in production)
     DEFAULT_ADMIN_EMAIL = "admin@bionic.com"
-    DEFAULT_ADMIN_PASSWORD = "bionic2024"  # Change in production
+    DEFAULT_ADMIN_PASSWORD = "Saturn5858*"
     
     def __init__(self):
         self.mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')

@@ -7,7 +7,6 @@ import { ArrowLeft, Thermometer, Wind, Target, Zap, Plus, Edit2, Crosshair, X, L
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import BCE4XIndicator from './BCE4XIndicator';
 
 export const TerritoireHeader = React.memo(({
   navigate,
@@ -113,8 +112,6 @@ export const TerritoireHeader = React.memo(({
           <div className="flex items-center gap-1"><Target className="h-4 w-4 text-[#3CB371]" /><span className="text-xs text-white">Chasse: {huntingScore}/100</span></div>
         </div>
       )}
-      {/* BCE-4X Indicator */}
-      <BCE4XIndicator />
       {/* LIVE */}
       <div className="flex items-center gap-1.5 bg-[#111118] rounded-lg px-2.5 py-1.5 border border-[#1a1a2e]" data-testid="header-live">
         <Zap className={`h-4 w-4 ${liveMode ? 'text-green-400' : 'text-gray-600'}`} />

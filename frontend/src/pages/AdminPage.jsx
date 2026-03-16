@@ -76,7 +76,6 @@ import SiteAccessControl from "@/components/SiteAccessControl";
 import MaintenanceControl from "@/components/MaintenanceControl";
 import LandsPricingAdmin from "@/components/LandsPricingAdmin";
 import AdminHotspotsPanel from "@/components/AdminHotspotsPanel";
-import AdminHotspotsV3 from "@/ui/administration/admin_hotspots/AdminHotspots";
 import NetworkingAdmin from "@/components/NetworkingAdmin";
 import EmailAdmin from "@/components/EmailAdmin";
 import FeatureControlsAdmin from "@/components/FeatureControlsAdmin";
@@ -374,10 +373,6 @@ const AdminPage = ({ onProductsUpdate }) => {
             </TabsTrigger>
             <TabsTrigger value="performance" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
               <Award className="h-4 w-4 mr-2" />{t('admin_performance')}
-            </TabsTrigger>
-            {/* Hotspots V3 Tab - Active */}
-            <TabsTrigger value="hotspots-v3" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black" data-testid="admin-tab-hotspots-v3">
-              <MapPin className="h-4 w-4 mr-2" />Hotspots V3
             </TabsTrigger>
             {/* PRÉ-GO LIVE: Modules redondants masqués - Disponibles dans /admin-premium 
             <TabsTrigger value="categories">Catégories</TabsTrigger>
@@ -1124,9 +1119,6 @@ const AdminPage = ({ onProductsUpdate }) => {
           {/* V5-ULTIME-FUSION: Analytics - Module activé */}
           <TabsContent value="analytics" className="space-y-6">
             <AnalyticsDashboard />
-          </TabsContent>
-          <TabsContent value="hotspots-v3" className="space-y-6">
-            <AdminHotspotsV3 />
           </TabsContent>
         </Tabs>
       </div>

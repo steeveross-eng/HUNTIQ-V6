@@ -15,17 +15,19 @@
  * BIONIC Knowledge Layer: Espèces, règles, modèles saisonniers
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import axios from 'axios';
 import {
   Crown, ArrowLeft, LayoutDashboard, CreditCard, Layers, 
   Zap, Target, BookOpen, Settings, BarChart3, Users, 
   FileText, Shield, ShoppingCart, FolderTree, Archive,
   Wrench, Contact, Trees, Network, Mail, Sparkles,
   Handshake, Palette, Brain, Search, ToggleLeft, Activity,
-  FlaskConical, Power, Store, UserCheck, Megaphone, LayoutGrid
+  FlaskConical, Power, Store, UserCheck, Megaphone, LayoutGrid, Lock
 } from 'lucide-react';
 
 // Import all admin modules
@@ -108,6 +110,66 @@ const navItems = [
 const AdminPremiumPage = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+  useEffect(() => {
+    const auth = localStorage.getItem('admin_premium_authenticated');
+    if (auth === 'true') setIsAuthenticated(true);
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    try {
+      await axios.post(`${BACKEND_URL}/api/v1/admin/login`, {
+        email: "admin@huntiq.ca",
+        password,
+      });
+      localStorage.setItem('admin_premium_authenticated', 'true');
+      setIsAuthenticated(true);
+      toast.success("Connexion Admin Premium reussie!");
+    } catch {
+      toast.error("Mot de passe incorrect");
+    }
+    setLoginLoading(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_premium_authenticated');
+    setIsAuthenticated(false);
+    navigate('/');
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-[#050510] flex items-center justify-center">
+        <Card className="w-full max-w-md bg-[#0a0a15] border-[#F5A623]/20 p-8">
+          <div className="text-center mb-6">
+            <Lock className="h-12 w-12 text-[#F5A623] mx-auto mb-3" />
+            <h2 className="text-xl font-bold text-white">Admin Premium</h2>
+            <p className="text-gray-500 text-sm mt-1">Acces securise — mot de passe requis</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Mot de passe administrateur"
+              className="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-[#F5A623] focus:outline-none"
+              data-testid="admin-premium-password-input"
+            />
+            <Button type="submit" className="w-full bg-[#F5A623] text-black font-bold" disabled={loginLoading} data-testid="admin-premium-login-btn">
+              {loginLoading ? 'Connexion...' : 'Se connecter'}
+            </Button>
+          </form>
+        </Card>
+      </main>
+    );
+  }
 
   const renderContent = () => {
     switch (activeSection) {
