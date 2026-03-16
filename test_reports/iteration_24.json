@@ -1,0 +1,101 @@
+{
+  "summary": "CARTE BUTTON FEATURE - All tests PASSED. The 'Carte' button has been successfully added to the ACTION column of the admin hotspots table. All 10 verification points confirmed: (1) Carte button exists alongside Contact button in ACTION column, (2) Correct href format /mon-territoire?lat={lat}&lng={lng}&zoom=15&layer=satellite&hotspot={id}, (3) target=_blank for new tab, (4) data-testid='carte-btn-{id}' present, (5) Satellite preview 300x180 appears on hover after ~250ms, (6) Preview disappears on mouse leave, (7) Deep link to Mon Territoire works, (8) Map centers on correct coordinates, (9) Satellite layer loads, (10) Hotspot highlight (orange circle + marker) visible.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "carte_button_tests": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "tests": [
+        "Carte button exists in ACTION column - PASS (300 buttons found)",
+        "Carte button href format correct - PASS (/mon-territoire?lat=46.288933&lng=-75.300449&zoom=15&layer=satellite&hotspot=HS-5d1fc8cc59d6)",
+        "target=_blank attribute - PASS",
+        "data-testid='carte-btn-{id}' format - PASS",
+        "Contact button exists alongside Carte - PASS (300 Contact buttons found)",
+        "Satellite preview appears on hover after 250ms - PASS",
+        "Satellite preview dimensions 300x180 - PASS",
+        "Preview disappears on mouse leave - PASS",
+        "Deep link to Mon Territoire loads - PASS",
+        "Hotspot highlight (circle + marker) visible on map - PASS"
+      ]
+    },
+    "deep_link_tests": {
+      "url_parameters_preserved": true,
+      "map_centered_correctly": true,
+      "satellite_layer_active": true,
+      "hotspot_highlight_visible": true,
+      "highlight_elements": "5 SVG overlay elements (circles + marker)"
+    }
+  },
+  "features_verified": {
+    "carte_button_in_action_column": {
+      "status": "PASS",
+      "count": 300,
+      "location": "Side by side with Contact button"
+    },
+    "href_format": {
+      "status": "PASS",
+      "example": "/mon-territoire?lat=46.288933&lng=-75.300449&zoom=15&layer=satellite&hotspot=HS-5d1fc8cc59d6",
+      "contains_all_params": ["lat", "lng", "zoom=15", "layer=satellite", "hotspot"]
+    },
+    "new_tab_opening": {
+      "status": "PASS",
+      "attribute": "target=_blank"
+    },
+    "data_testid": {
+      "status": "PASS",
+      "format": "carte-btn-{hotspot_id}"
+    },
+    "satellite_preview_on_hover": {
+      "status": "PASS",
+      "delay": "~250ms",
+      "dimensions": "300x180px",
+      "disappears_on_leave": true
+    },
+    "deep_link_functionality": {
+      "status": "PASS",
+      "map_centers_on_coords": true,
+      "satellite_layer_enabled": true,
+      "hotspot_highlight_shown": true
+    },
+    "auto_load_on_mount": {
+      "status": "PASS",
+      "details": "Hotspots table loads automatically on mount (300 hotspots)"
+    },
+    "table_layout": {
+      "status": "PASS",
+      "columns": ["ID", "REGION", "VILLE", "SCORE", "CLASS.", "ESPECE", "TERRITOIRE", "ACCES", "ALT.", "GPS", "CORR. V9", "ACTION"],
+      "action_buttons": ["Contact", "Carte"]
+    }
+  },
+  "test_report_links": [
+    ".screenshots/hotspots_table_with_carte.jpeg",
+    ".screenshots/carte_satellite_preview.jpeg",
+    ".screenshots/mon_territoire_deep_link.jpeg"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only test)",
+    "frontend": "100% (10/10 tests passed)"
+  },
+  "test_credentials": {
+    "admin_password": "Saturn5858*",
+    "admin_premium_url": "/admin-premium",
+    "mon_territoire_url": "/mon-territoire"
+  },
+  "seed_data_creation": "None - used existing 300 hotspots from previous extraction",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Carte button feature fully implemented and tested. Admin hotspots table at /admin-premium > Terres/Hotspots contains both Contact and Carte buttons in ACTION column. Each Carte button links to Mon Territoire page with deep link params (lat, lng, zoom=15, layer=satellite, hotspot ID). Satellite preview (300x180) appears on hover after 250ms delay. Mon Territoire page correctly centers map on coords with satellite layer and shows hotspot highlight (orange dashed circle ~2km² + central marker).",
+  "verification_date": "2026-03-16"
+}

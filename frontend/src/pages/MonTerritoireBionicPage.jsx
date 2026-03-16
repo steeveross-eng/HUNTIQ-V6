@@ -13,8 +13,9 @@
 
 import React, { useState, useCallback, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import { MapContainer } from 'react-leaflet';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Crosshair, Target, MapPin, Plus, X, LocateFixed,
   BookMarked, Users, Shield, SplitSquareHorizontal,
@@ -79,7 +80,18 @@ const LAST_WAYPOINT_KEY = 'bionic_last_active_waypoint_id';
 
 const MonTerritoireBionicPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t } = useLanguage();
+
+  // ═══ HOTSPOT DEEP LINK — lecture des query params ═══
+  const hotspotDeepLink = useRef({
+    lat: searchParams.get('lat') ? parseFloat(searchParams.get('lat')) : null,
+    lng: searchParams.get('lng') ? parseFloat(searchParams.get('lng')) : null,
+    zoom: searchParams.get('zoom') ? parseInt(searchParams.get('zoom'), 10) : null,
+    layer: searchParams.get('layer') || null,
+    hotspotId: searchParams.get('hotspot') || null,
+  });
+  const deepLinkAppliedRef = useRef(false);
   
   // ============================================
   // BCE-MAX x4.1 — SESSION (SOURCE DE VERITE UNIQUE)
@@ -111,6 +123,10 @@ const MonTerritoireBionicPage = () => {
   
   // BIONIC V5 300% — Ref directe vers l'instance Leaflet map
   const mapRef = useRef(null);
+
+  // ═══ HOTSPOT DEEP LINK — état du highlight ═══
+  const [hotspotHighlight, setHotspotHighlight] = useState(null);
+  const hotspotHighlightLayerRef = useRef(null);
   
   // Onglet actif — restaure depuis la session BCE-MAX
   const [activeTab, setActiveTab] = useState(savedActiveTab || 'carte');
@@ -279,6 +295,26 @@ const MonTerritoireBionicPage = () => {
     if (initialCenterDoneRef.current) return;
     if (!mapRef.current) return;
 
+    // Priorite ABSOLUE: Deep link hotspot depuis Admin
+    const dl = hotspotDeepLink.current;
+    if (!deepLinkAppliedRef.current && dl.lat && dl.lng) {
+      deepLinkAppliedRef.current = true;
+      initialCenterDoneRef.current = true;
+      const dlZoom = dl.zoom || 15;
+      mapRef.current.setView([dl.lat, dl.lng], dlZoom);
+
+      // Activer fond Satellite si demandé
+      if (dl.layer === 'satellite') {
+        setMapType(MAP_TYPES.SATELLITE);
+      }
+
+      // Highlight du hotspot — cercle ~2km² + marker
+      setHotspotHighlight({ lat: dl.lat, lng: dl.lng, id: dl.hotspotId });
+
+      console.log(`[DEEP-LINK] Hotspot ${dl.hotspotId}: [${dl.lat}, ${dl.lng}] zoom ${dlZoom} layer=${dl.layer}`);
+      return;
+    }
+
     // Priorite 0: Session BCE-MAX x4.1 (position exacte de la derniere session)
     if (hasPreviousSession && savedPosition?.lat && savedPosition?.lng && savedPosition?.zoom) {
       initialCenterDoneRef.current = true;
@@ -298,6 +334,63 @@ const MonTerritoireBionicPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWaypointForZones?.id, hasPreviousSession, savedPosition]);
+
+  // ═══ HOTSPOT DEEP LINK — Rendu du highlight sur la carte ═══
+  useEffect(() => {
+    if (!hotspotHighlight || !mapRef.current) return;
+
+    // Nettoyer l'ancien layer
+    if (hotspotHighlightLayerRef.current) {
+      mapRef.current.removeLayer(hotspotHighlightLayerRef.current);
+    }
+
+    const group = L.layerGroup();
+
+    // Cercle externe pulsant ~2km² (rayon 800m)
+    L.circle([hotspotHighlight.lat, hotspotHighlight.lng], {
+      radius: 800,
+      color: '#f5a623',
+      fillColor: '#f5a623',
+      fillOpacity: 0.08,
+      weight: 2,
+      dashArray: '10,6',
+      className: 'hotspot-highlight-pulse',
+    }).addTo(group);
+
+    // Cercle interne
+    L.circle([hotspotHighlight.lat, hotspotHighlight.lng], {
+      radius: 200,
+      color: '#FF6F00',
+      fillColor: '#FF6F00',
+      fillOpacity: 0.15,
+      weight: 2,
+    }).addTo(group);
+
+    // Marker central
+    L.circleMarker([hotspotHighlight.lat, hotspotHighlight.lng], {
+      radius: 8,
+      color: '#fff',
+      fillColor: '#f5a623',
+      fillOpacity: 1,
+      weight: 3,
+    }).bindPopup(
+      `<div style="font-family:system-ui;color:#e5e5e5;background:#1a1a2e;padding:10px;border-radius:8px;min-width:180px;">
+        <div style="font-weight:800;font-size:13px;color:#f5a623;margin-bottom:4px;">Hotspot ${hotspotHighlight.id || ''}</div>
+        <div style="font-size:11px;color:#aaa;">${hotspotHighlight.lat.toFixed(5)}, ${hotspotHighlight.lng.toFixed(5)}</div>
+        <div style="margin-top:6px;font-size:10px;color:#888;">Zone de 2 km² — Fond Satellite</div>
+      </div>`,
+      { className: 'bionic-popup', maxWidth: 250 }
+    ).openPopup().addTo(group);
+
+    group.addTo(mapRef.current);
+    hotspotHighlightLayerRef.current = group;
+
+    return () => {
+      if (hotspotHighlightLayerRef.current && mapRef.current) {
+        try { mapRef.current.removeLayer(hotspotHighlightLayerRef.current); } catch (e) {}
+      }
+    };
+  }, [hotspotHighlight]);
 
   // BCE-MAX x4.1: Sauvegarde automatique UNIFIEE du contexte utilisateur
   const contextSaveTimerRef = useRef(null);

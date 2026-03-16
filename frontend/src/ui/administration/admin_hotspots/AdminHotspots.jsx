@@ -3,7 +3,7 @@
  * Carte Leaflet + Tableau enrichi + Filtres + Export + Scheduler + Gestionnaire
  */
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { MapPin, Download, RefreshCw, Filter, ChevronDown, Shield, BarChart3, Clock, MapIcon, List, Phone, Globe, Mail, ExternalLink, Mountain, Navigation } from 'lucide-react';
+import { MapPin, Download, RefreshCw, Filter, ChevronDown, Shield, BarChart3, Clock, MapIcon, List, Phone, Globe, Mail, ExternalLink, Mountain, Navigation, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import L from 'leaflet';
@@ -26,6 +26,124 @@ const TT_BADGES = {
   'Public': 'bg-gray-500/20 text-gray-400',
   'Prive': 'bg-amber-500/20 text-amber-400',
   'Territoire autochtone': 'bg-rose-500/20 text-rose-400',
+};
+
+/* ═══════════════════════════════════════════
+   SATELLITE PREVIEW (300×180) — Au survol du bouton Carte
+   ═══════════════════════════════════════════ */
+const SatellitePreview = ({ lat, lng, visible, anchorRef }) => {
+  const containerRef = useRef(null);
+  const miniMapRef = useRef(null);
+
+  useEffect(() => {
+    if (!visible || !containerRef.current) {
+      if (miniMapRef.current) { miniMapRef.current.remove(); miniMapRef.current = null; }
+      return;
+    }
+    if (miniMapRef.current) return;
+
+    const map = L.map(containerRef.current, {
+      zoomControl: false,
+      attributionControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      boxZoom: false,
+      keyboard: false,
+    }).setView([lat, lng], 14);
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Cercle de highlight ~2km² (rayon ≈ 800m)
+    L.circle([lat, lng], {
+      radius: 800,
+      color: '#f5a623',
+      fillColor: '#f5a623',
+      fillOpacity: 0.15,
+      weight: 2,
+      dashArray: '6,4',
+    }).addTo(map);
+
+    // Point central
+    L.circleMarker([lat, lng], {
+      radius: 5,
+      color: '#fff',
+      fillColor: '#f5a623',
+      fillOpacity: 1,
+      weight: 2,
+    }).addTo(map);
+
+    miniMapRef.current = map;
+
+    return () => {
+      if (miniMapRef.current) { miniMapRef.current.remove(); miniMapRef.current = null; }
+    };
+  }, [visible, lat, lng]);
+
+  if (!visible) return null;
+
+  return (
+    <div
+      className="absolute z-[9999] rounded-lg overflow-hidden border-2 border-[#f5a623]/60 shadow-2xl shadow-black/60"
+      style={{ width: 300, height: 180, bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: 8 }}
+      data-testid="satellite-preview"
+    >
+      <div ref={containerRef} style={{ width: 300, height: 180 }} />
+      <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm px-2 py-1 flex items-center justify-between">
+        <span className="text-[9px] text-gray-300 font-mono">{lat.toFixed(4)}, {lng.toFixed(4)}</span>
+        <span className="text-[9px] text-[#f5a623] font-bold">Satellite</span>
+      </div>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════
+   BOUTON CARTE — Ouvre Mon Territoire dans un nouvel onglet
+   ═══════════════════════════════════════════ */
+const CarteButton = ({ hotspot }) => {
+  const [showPreview, setShowPreview] = useState(false);
+  const timerRef = useRef(null);
+  const btnRef = useRef(null);
+
+  const lat = hotspot.center?.[0];
+  const lng = hotspot.center?.[1];
+  const hotspotId = hotspot.id;
+
+  const link = `/mon-territoire?lat=${lat}&lng=${lng}&zoom=15&layer=satellite&hotspot=${encodeURIComponent(hotspotId)}`;
+
+  const handleMouseEnter = () => {
+    timerRef.current = setTimeout(() => setShowPreview(true), 250);
+  };
+  const handleMouseLeave = () => {
+    clearTimeout(timerRef.current);
+    setShowPreview(false);
+  };
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  if (!lat || !lng) return null;
+
+  return (
+    <div className="relative inline-block" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} ref={btnRef}>
+      <SatellitePreview lat={lat} lng={lng} visible={showPreview} anchorRef={btnRef} />
+      <a
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold
+                   bg-[#1E88E5]/15 text-[#42A5F5] border border-[#1E88E5]/30
+                   hover:bg-[#1E88E5]/25 hover:text-[#90CAF9] hover:shadow-[0_0_8px_rgba(30,136,229,0.3)]
+                   transition-all duration-200"
+        data-testid={`carte-btn-${hotspotId}`}
+      >
+        <Map className="h-3 w-3" />
+        Carte
+      </a>
+    </div>
+  );
 };
 
 /* ═══════════════════════════════════════════
@@ -224,6 +342,13 @@ const AdminHotspots = () => {
       a.click(); URL.revokeObjectURL(url);
     } catch (e) { console.error(e); }
   }, []);
+
+  /* Chargement automatique au montage */
+  useEffect(() => {
+    fetchList();
+    fetchStats();
+    fetchBceReport();
+  }, [fetchList, fetchStats, fetchBceReport]);
 
   return (
     <div className="space-y-5" data-testid="admin-hotspots-section">
@@ -434,9 +559,12 @@ const AdminHotspots = () => {
                       <td className="px-2 py-2 font-mono text-[9px] text-gray-500">{h.center?.[0]?.toFixed(4)}, {h.center?.[1]?.toFixed(4)}</td>
                       <td className="px-2 py-2 text-center">{h.corridor_nearby ? <span className="text-green-400">Oui</span> : <span className="text-red-400">Non</span>}</td>
                       <td className="px-2 py-2 text-center">
-                        <button onClick={() => setSelectedHotspot(h)} className="text-[10px] text-cyan-400 hover:text-cyan-300 underline" data-testid={`contact-btn-${h.id}`}>
-                          Contact
-                        </button>
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button onClick={() => setSelectedHotspot(h)} className="text-[10px] text-cyan-400 hover:text-cyan-300 underline" data-testid={`contact-btn-${h.id}`}>
+                            Contact
+                          </button>
+                          <CarteButton hotspot={h} />
+                        </div>
                       </td>
                     </tr>
                   );
@@ -476,7 +604,10 @@ const AdminHotspots = () => {
                     <td className="px-2 py-1.5"><Badge className={`${TT_BADGES[h.territory_type] || 'bg-gray-500/20'} text-[9px]`}>{h.territory_type || '—'}</Badge></td>
                     <td className="px-2 py-1.5 text-gray-300 text-[10px]">{h.gestionnaire?.nom || '—'}</td>
                     <td className="px-2 py-1.5 text-center">
-                      <button onClick={() => setSelectedHotspot(h)} className="text-[10px] text-cyan-400 hover:underline">Contacter</button>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button onClick={() => setSelectedHotspot(h)} className="text-[10px] text-cyan-400 hover:underline">Contacter</button>
+                        <CarteButton hotspot={h} />
+                      </div>
                     </td>
                   </tr>
                 ))}
