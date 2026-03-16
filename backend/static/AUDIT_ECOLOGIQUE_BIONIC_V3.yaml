@@ -1,0 +1,361 @@
+# AUDIT ÉCOLOGIQUE BIONIC V3 — VERSION STRUCTURÉE
+# Date: 2026-03-16
+# Format: YAML structuré par thème / variable / règle / seuil
+# Statut: OBSERVATION UNIQUEMENT
+
+audit:
+  version: "1.0"
+  date: "2026-03-16"
+  scope: "Tous les modèles/règles écologiques BIONIC"
+  status: "observation_only"
+
+# ═══════════════════════════════════════════
+# INVENTAIRE DES ENGINES
+# ═══════════════════════════════════════════
+engines:
+  legacy:
+    status: "GELÉ (2026-03-10)"
+    file: "bionic_engine.py"
+    modules:
+      - id: "thermal_v1"
+        factors: [temperature, aspect, elevation, canopy_cover, water_proximity]
+        weights: {temperature: 0.30, aspect: 0.20, elevation: 0.20, canopy_cover: 0.20, water_proximity: 0.10}
+      - id: "wetness_v1"
+        factors: [twi, stream_distance, wetland_area, precipitation, ndwi]
+        weights: {twi: 0.25, stream_distance: 0.25, wetland_area: 0.20, precipitation: 0.15, ndwi: 0.15}
+      - id: "food_v1"
+        factors: [ndvi, forest_type, edge_density, mast_production, browse_availability]
+        weights: {ndvi: 0.25, forest_type: 0.20, edge_density: 0.20, mast_production: 0.20, browse_availability: 0.15}
+      - id: "pressure_v1"
+        factors: [road_density, building_proximity, hunting_pressure, noise_level, light_pollution]
+        weights: {road_density: 0.25, building_proximity: 0.25, hunting_pressure: 0.20, noise_level: 0.15, light_pollution: 0.15}
+      - id: "access_v1"
+        factors: [trail_distance, road_distance, terrain_difficulty, visibility, parking_proximity]
+        weights: {trail_distance: 0.25, road_distance: 0.20, terrain_difficulty: 0.20, visibility: 0.20, parking_proximity: 0.15}
+      - id: "corridor_v1"
+        factors: [connectivity, bottleneck_index, crossing_density, habitat_continuity, barrier_presence]
+        weights: {connectivity: 0.25, bottleneck_index: 0.20, crossing_density: 0.20, habitat_continuity: 0.20, barrier_presence: 0.15}
+      - id: "geoform_v1"
+        factors: [slope, aspect, curvature, roughness, landform_type]
+        weights: {slope: 0.25, aspect: 0.20, curvature: 0.20, roughness: 0.20, landform_type: 0.15}
+      - id: "canopy_v1"
+        factors: [canopy_height, canopy_closure, understory_density, species_diversity, age_class]
+        weights: {canopy_height: 0.20, canopy_closure: 0.25, understory_density: 0.20, species_diversity: 0.20, age_class: 0.15}
+    species_models:
+      moose:
+        weights: {thermal: 0.15, wetness: 0.20, food: 0.25, pressure: 0.15, corridor: 0.10, canopy: 0.10, geoform: 0.05}
+        optimal_habitat: {elevation_range: [100, 800], slope_max: 25, water_distance_max: 500, forest_cover_min: 0.4, road_distance_min: 200}
+      deer:
+        weights: {thermal: 0.10, wetness: 0.10, food: 0.30, pressure: 0.15, corridor: 0.15, canopy: 0.10, geoform: 0.10}
+        optimal_habitat: {elevation_range: [0, 600], slope_max: 30, water_distance_max: 1000, forest_cover_min: 0.3, road_distance_min: 100}
+      bear:
+        weights: {thermal: 0.10, wetness: 0.15, food: 0.35, pressure: 0.20, corridor: 0.10, canopy: 0.05, geoform: 0.05}
+        optimal_habitat: {elevation_range: [0, 1200], slope_max: 40, water_distance_max: 2000, forest_cover_min: 0.5, road_distance_min: 500}
+      caribou:
+        weights: {thermal: 0.15, wetness: 0.15, food: 0.20, pressure: 0.25, corridor: 0.15, canopy: 0.05, geoform: 0.05}
+        optimal_habitat: {elevation_range: [300, 1500], slope_max: 20, water_distance_max: 3000, forest_cover_min: 0.6, road_distance_min: 1000}
+      wolf:
+        weights: {thermal: 0.05, wetness: 0.10, food: 0.15, pressure: 0.30, corridor: 0.25, canopy: 0.05, geoform: 0.10}
+        optimal_habitat: {elevation_range: [0, 2000], slope_max: 45, water_distance_max: 5000, forest_cover_min: 0.2, road_distance_min: 2000}
+      turkey:
+        weights: {thermal: 0.10, wetness: 0.05, food: 0.35, pressure: 0.10, corridor: 0.10, canopy: 0.20, geoform: 0.10}
+        optimal_habitat: {elevation_range: [0, 500], slope_max: 20, water_distance_max: 500, forest_cover_min: 0.4, road_distance_min: 50}
+
+  v2:
+    file: "engines_v2.py"
+    count: 12
+    engines:
+      - {id: behavior, weight: 1.2, category: behavioral}
+      - {id: keyzone_v2, weight: 1.5, category: zones}
+      - {id: food_deficit, weight: 1.1, category: ecology}
+      - {id: wind_intelligence, weight: 0.8, category: weather}
+      - {id: terrain, weight: 0.9, category: terrain}
+      - {id: human_pressure, weight: 1.0, category: disturbance}
+      - {id: corridor_continuity, weight: 1.0, category: corridors}
+      - {id: global_attractiveness, weight: 1.3, category: synthesis, dependent: true}
+      - {id: action_plan, weight: 0.5, category: strategy, dependent: true}
+      - {id: predictive_ai, weight: 1.1, category: prediction, dependent: true}
+      - {id: bce_compliance, weight: 0.3, category: meta}
+      - {id: rendering, weight: 0.2, category: meta}
+
+  v3:
+    file: "engines_v3.py"
+    count: 12
+    engines:
+      - {id: ecological_hierarchy, weight: 1.1, category: ecology}
+      - {id: interaction, weight: 1.0, category: ecology}
+      - {id: geopedology, weight: 0.8, category: terrain}
+      - {id: connectivity, weight: 1.2, category: landscape}
+      - {id: temporal_dynamics, weight: 1.0, category: temporal}
+      - {id: hotspot, weight: 1.3, category: strategic, dependent: true}
+      - {id: forest_structure_v2, weight: 1.0, category: ecology}
+      - {id: food_score_v2, weight: 1.2, category: ecology}
+      - {id: wetness_v2, weight: 0.9, category: hydrology}
+      - {id: geoform_v2, weight: 0.8, category: terrain}
+      - {id: behavior_v2, weight: 1.2, category: behavioral}
+      - {id: attractiveness_v2, weight: 1.5, category: synthesis, dependent: true}
+
+  ai:
+    file: "engines_v3.py"
+    count: 3
+    engines:
+      - {id: predictive_models, weight: 1.0, category: ai}
+      - {id: dynamic_scoring, weight: 1.0, category: ai}
+      - {id: temporal_analysis, weight: 0.9, category: ai}
+
+  corridor_v9:
+    file: "corridors_v9.py"
+    sub_engines:
+      - {id: nutrition, weight: 0.12, file: "nutrition_engine.py"}
+      - {id: daily_routine, weight: 0.10, file: "daily_routine_engine.py"}
+      - {id: weather, weight: 0.10, file: "weather_engine_v9.py"}
+      - {id: disturbance, weight: 0.12, file: "disturbance_engine.py"}
+      - {id: movement, weight: 0.15, file: "movement_engine_v9.py"}
+      - {id: phenology, weight: 0.08, file: "phenology_engine.py"}
+      - {id: typology, weight: 0.08, file: "typology_engine.py"}
+      - {id: learning, weight: 0.05, file: "learning_engine.py"}
+      - {id: habitat_enhancement, weight: 0.05, file: "habitat_enhancement_engine.py"}
+
+# ═══════════════════════════════════════════
+# THÈME: ALIMENTATION
+# ═══════════════════════════════════════════
+alimentation:
+  engines_impliques: [food_v1, food_deficit, food_score_v2, nutrition]
+  couches:
+    - {nom: "NDVI", source: "NASA MODIS/Seasonal OU estimation", resolution: "~250m", millesime: "temps_reel_ou_estimation"}
+    - {nom: "Zones alimentation", source: "OSM Overpass", resolution: "variable"}
+    - {nom: "Hydrographie", source: "OSM/Gouv QC", resolution: "variable"}
+    - {nom: "Peuplements", source: "WMS écoforestier QC", resolution: "1:20000"}
+  variables:
+    ndvi_estime:
+      formule: "ZONE_NDVI_BASE[type] × SEASON_NDVI_MULT[saison]"
+      zone_ndvi_base: {alimentation: 0.65, repos: 0.75, rut: 0.55, habitats: 0.70, trajets: 0.45, thermique: 0.80, salines: 0.30, affuts: 0.50}
+      season_ndvi_mult: {printemps: 0.60, ete: 1.00, automne: 0.65, hiver: 0.15}
+    qualite_fourrage:
+      alimentation: {printemps: 85, ete: 90, automne: 70, hiver: 30}
+      repos: {printemps: 40, ete: 45, automne: 35, hiver: 20}
+      rut: {printemps: 50, ete: 55, automne: 65, hiver: 25}
+      habitats: {printemps: 60, ete: 70, automne: 55, hiver: 35}
+      trajets: {printemps: 45, ete: 50, automne: 40, hiver: 15}
+      thermique: {printemps: 30, ete: 35, automne: 25, hiver: 50}
+      salines: {printemps: 95, ete: 80, automne: 60, hiver: 40}
+      affuts: {printemps: 35, ete: 40, automne: 30, hiver: 10}
+  scoring:
+    food_score_v2:
+      formule: "qualite × 0.4 + disponibilite × 0.3 + accessibilite × 0.3 + bonus_diversite"
+      qualite_saisonniere: {printemps: 0.7, ete: 0.9, automne: 1.0, hiver: 0.3}
+    nutrition_engine:
+      formule: "avg_forage × 0.40 + ndvi_score × 0.25 + browse × 0.20 + caloric × 0.15 + salt_bonus + urgency_bonus"
+      species_nutrition:
+        moose: {mineral_need: 0.8, browse_preference: 0.9, salt_attraction: 0.95, caloric_need: 0.85}
+        deer: {mineral_need: 0.6, browse_preference: 0.7, salt_attraction: 0.8, caloric_need: 0.7}
+        bear: {mineral_need: 0.3, browse_preference: 0.4, salt_attraction: 0.2, caloric_need: 0.95}
+
+# ═══════════════════════════════════════════
+# THÈME: REPOS
+# ═══════════════════════════════════════════
+repos:
+  engines_impliques: [behavior, behavior_v2, typology, forest_structure_v2, interaction]
+  variables:
+    rest_percentage:
+      moose: 0.6
+      deer: 0.5
+      bear: 0.4
+    zone_period_affinity:
+      dawn: {alimentation: 90, trajets: 80, repos: 20}
+      day: {repos: 90, thermique: 85, alimentation: 30}
+      dusk: {alimentation: 90, trajets: 85, repos: 20}
+      night: {repos: 80, habitats: 70, thermique: 60}
+  scoring:
+    behavior_v2_circadian:
+      moose: [15, 10, 5, 5, 20, 80, 95, 70, 40, 25, 20, 15, 15, 15, 20, 30, 75, 95, 85, 60, 35, 25, 20, 15]
+      deer: [10, 5, 5, 5, 15, 70, 90, 65, 35, 20, 15, 10, 10, 10, 15, 25, 65, 90, 80, 55, 30, 20, 15, 10]
+      bear: [5, 3, 2, 2, 10, 40, 70, 85, 90, 85, 75, 60, 55, 60, 70, 80, 85, 75, 50, 30, 15, 10, 8, 5]
+
+# ═══════════════════════════════════════════
+# THÈME: CORRIDORS
+# ═══════════════════════════════════════════
+corridors:
+  engines_impliques: [corridor_v1, corridor_continuity, connectivity, movement, corridors_v9_pipeline]
+  classification_5_niveaux:
+    gris: {min: 0, max: 30, label: "Potentiel", color: "#9E9E9E", width_px: 1.5}
+    jaune: {min: 31, max: 50, label: "Opportuniste", color: "#FFC107", width_px: 2.0}
+    orange: {min: 51, max: 70, label: "Fonctionnel", color: "#FF9800", width_px: 2.8}
+    rouge: {min: 71, max: 85, label: "Primaire", color: "#F44336", width_px: 3.5}
+    rouge_raye: {min: 86, max: 100, label: "Critique", color: "#B71C1C", width_px: 4.5}
+  bandes_buffer_m:
+    gris: {ratio: 0.012, min: 6, max: 26}
+    jaune: {ratio: 0.008, min: 5, max: 17}
+    orange: {ratio: 0.005, min: 2, max: 11}
+    rouge: {ratio: 0.004, min: 1, max: 6}
+    rouge_raye: {ratio: 0.001, min: 1, max: 4}
+  distance_optimale_m:
+    moose: {min: 200, max: 2000, ideal: 800}
+    deer: {min: 100, max: 1500, ideal: 500}
+    bear: {min: 300, max: 3000, ideal: 1200}
+  energy_cost_slope:
+    - {slope_deg: "0-3", cost: 1.0}
+    - {slope_deg: "3-8", cost: 1.3}
+    - {slope_deg: "8-15", cost: 1.8}
+    - {slope_deg: "15-25", cost: 2.5}
+    - {slope_deg: ">25", cost: 4.0}
+  continuity:
+    max_gap_m: 150
+    max_connection_m: 800
+    proximity_threshold_m: 150
+  post_traitement:
+    densification_target_m: 30
+    lissage: "Chaikin 2 iterations"
+    clipping: "Shapely intersection 2km²"
+
+# ═══════════════════════════════════════════
+# THÈME: SÉCURITÉ / COUVERT
+# ═══════════════════════════════════════════
+securite:
+  engines_impliques: [pressure_v1, human_pressure, disturbance, canopy_v1]
+  variables:
+    zone_disturbance_base:
+      alimentation: 10
+      repos: 5
+      rut: 8
+      habitats: 15
+      trajets: 25
+      thermique: 3
+      salines: 20
+      affuts: 12
+    species_sensitivity:
+      moose: {road: 0.8, noise: 0.7, human: 0.9, flight_dist_m: 300}
+      deer: {road: 0.6, noise: 0.8, human: 0.7, flight_dist_m: 150}
+      bear: {road: 0.5, noise: 0.6, human: 0.8, flight_dist_m: 200}
+    hunting_pressure_seasonal:
+      printemps: 0.3
+      ete: 0.1
+      automne: 1.0
+      hiver: 0.4
+    time_factor:
+      jour_8h_17h: 1.5
+      transition_6h_8h_17h_20h: 1.2
+      nuit: 0.5
+  scoring:
+    disturbance_engine:
+      formule: "score = 100 - (zone×0.30 + road×0.25 + lat×0.15 + lng×0.05 + noise×0.15 + hunting×0.10) × time_factor"
+
+# ═══════════════════════════════════════════
+# THÈME: THERMIQUE / REFUGE
+# ═══════════════════════════════════════════
+thermique:
+  engines_impliques: [thermal_v1, weather_v9]
+  donnees_externes:
+    source: "OpenWeatherMap API"
+    cache_ttl_s: 3600
+    fallback: "algorithmic (saisonnier Québec)"
+  confort_thermique:
+    moose: {optimal_min_c: -10, optimal_max_c: 15, stress_heat_c: 25, stress_cold_c: -35}
+    deer: {optimal_min_c: -5, optimal_max_c: 20, stress_heat_c: 30, stress_cold_c: -25}
+    bear: {optimal_min_c: 5, optimal_max_c: 25, stress_heat_c: 35, stress_cold_c: -10}
+  vent_impact:
+    calm_lt5: {score_mod: 10}
+    light_5_15: {score_mod: 5}
+    moderate_15_30: {score_mod: -5}
+    strong_30_50: {score_mod: -20}
+    storm_gt50: {score_mod: -40}
+  precipitation_impact:
+    rain_light: -3
+    rain_moderate: -8
+    rain_heavy: -15
+    snow_light: -5
+    snow_moderate: -12
+    snow_heavy: -25
+  pression_barometrique:
+    lt_1000hPa: -10
+    1000_1008hPa: -5
+    1020_1025hPa: 5
+    gt_1025hPa: 8
+  moon_phases:
+    new_moon: -10
+    waxing: 0
+    full_moon: 15
+    waning: 5
+
+# ═══════════════════════════════════════════
+# THÈME: HOTSPOTS
+# ═══════════════════════════════════════════
+hotspots:
+  engines_impliques: [hotspot_engine]
+  ponderations:
+    corridors_v9: 0.20
+    food_score_v2: 0.15
+    forest_structure_v2: 0.15
+    wetness_score_v2: 0.10
+    geoform_score_v2: 0.10
+    temporal_dynamics: 0.10
+    behavior_v2: 0.10
+    disturbance: 0.05
+    global_attractiveness_v2: 0.05
+  seuils:
+    MAJEUR: 80
+    FORT: 60
+    MODERE: 40
+  filtres:
+    min_score: 60
+    corridor_nearby: true
+    min_accessibility: 40
+    max_per_region: 25
+  clustering:
+    methode: "DBSCAN"
+    eps_m: "effective_spacing × 2.5"
+    min_samples: 5
+  regions_quebec: 12
+  grille: "50m × 50m (adaptatif max 50 cellules/axe)"
+  validation_bce4x:
+    - "GEOM-001: polygone >= 3 sommets"
+    - "GEOM-002: score [0, 100]"
+    - "CLIP-001: corridor 150m"
+    - "VISUAL-001: classification valide"
+
+# ═══════════════════════════════════════════
+# THÈME: PRÉDICTION / COMPORTEMENT
+# ═══════════════════════════════════════════
+prediction:
+  engines_impliques: [predictive_ai, predictive_models, dynamic_scoring, temporal_analysis, behavior, behavior_v2, typology, learning]
+  profils_comportementaux:
+    conservateur: {risk: 0.2, range_m: 500, cover: 0.8, night: 0.3}
+    explorateur: {risk: 0.7, range_m: 2000, cover: 0.4, night: 0.5}
+    nocturne: {risk: 0.5, range_m: 1200, cover: 0.6, night: 0.9}
+    opportuniste: {risk: 0.6, range_m: 1500, cover: 0.5, night: 0.6}
+    territorial: {risk: 0.3, range_m: 800, cover: 0.7, night: 0.4}
+  profil_dominant_espece:
+    moose: {default: territorial, automne: explorateur, printemps: territorial}
+    deer: {default: conservateur, automne: explorateur, hiver: conservateur}
+    bear: {default: explorateur, automne: opportuniste, printemps: explorateur, hiver: conservateur}
+  predictions:
+    24h: {formule: "avg×0.4 + behavior×0.3 + temporal×0.3", confidence: 85, decay: 1.0}
+    72h: {formule: "avg×0.5 + food×0.25 + behavior×0.25", confidence: 70, decay: 0.85}
+    7j: {formule: "avg×0.6 + food×0.2 + temporal×0.2", confidence: 55, decay: 0.70}
+  learning_observations:
+    camera_trap: {confidence: 0.20, decay_days: 30}
+    visual_sighting: {confidence: 0.15, decay_days: 3}
+    vocal: {confidence: 0.12}
+    tracks: {confidence: 0.10, decay_days: 7}
+    scat: {confidence: 0.08, decay_days: 14}
+    rub_scrape: {confidence: 0.07}
+    browse_sign: {confidence: 0.06, decay_days: 21}
+    bedding_site: {confidence: 0.05}
+    waypoint: {confidence: 0.04, decay_days: 60}
+
+# ═══════════════════════════════════════════
+# LIMITES CONNUES
+# ═══════════════════════════════════════════
+limites:
+  donnees:
+    - {id: "LIM-DATA-01", desc: "NDVI estimé (pas satellite réel)", impact: "Précision ~60-70%", statut: "connu_approuvé"}
+    - {id: "LIM-DATA-02", desc: "DEM algorithmique (pas SRTM/LiDAR)", impact: "Précision ~100-200m", statut: "connu"}
+    - {id: "LIM-DATA-03", desc: "Pression humaine algorithmique", impact: "Estimation par hash(lat,lng)", statut: "connu"}
+    - {id: "LIM-DATA-04", desc: "Données territoriales MOCKÉES", impact: "Villes/codes postaux générés", statut: "approuvé_utilisateur"}
+    - {id: "LIM-DATA-05", desc: "Pas de données de récolte MFFP", impact: "Absent", statut: "absent"}
+  modeles:
+    - {id: "LIM-MOD-01", desc: "Scores hotspots hash-based", impact: "Pseudo-aléatoire déterministe, pas écologique"}
+    - {id: "LIM-MOD-02", desc: "Pas de vrai ML dans Learning Engine", impact: "Score = 50 + bonus linéaire"}
+    - {id: "LIM-MOD-03", desc: "Profils comportementaux statiques", impact: "Tables fixes, pas calibrés GPS/telemetry"}
+    - {id: "LIM-MOD-04", desc: "Confort thermique simplifié", impact: "Zones rectangulaires, pas gaussiennes"}
+    - {id: "LIM-MOD-05", desc: "Aucun modèle prédation", impact: "Interactions prédateur-proie non modélisées"}

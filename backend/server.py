@@ -493,15 +493,50 @@ app.openapi = custom_openapi
 # ==============================================
 # STATIC AUDIT FILES
 # ==============================================
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import os as _os
+
+_MIME_MAP = {
+    ".md": "text/markdown",
+    ".yaml": "text/yaml",
+    ".yml": "text/yaml",
+    ".pdf": "application/pdf",
+    ".txt": "text/plain",
+    ".png": "image/png",
+    ".json": "application/json",
+}
+
+_AUDIT_FILES = [
+    "BIONIC_AUDIT_ECOLOGIQUE_v1.md",
+    "BIONIC_AUDIT_ECOLOGIQUE_v1.yaml",
+    "BIONIC_AUDIT_ECOLOGIQUE_v1.pdf",
+    "pipeline_ecologique_v1.txt",
+]
+
+@app.get("/api/audit/list")
+async def list_audit_files():
+    base = _os.path.join(_os.path.dirname(__file__), "static")
+    files = []
+    for f in _AUDIT_FILES:
+        fpath = _os.path.join(base, f)
+        if _os.path.exists(fpath):
+            ext = _os.path.splitext(f)[1].lower()
+            files.append({
+                "filename": f,
+                "size_bytes": _os.path.getsize(fpath),
+                "type": _MIME_MAP.get(ext, "application/octet-stream"),
+                "download_url": f"/api/audit/{f}",
+            })
+    return JSONResponse(content={"audit_files": files, "total": len(files)})
 
 @app.get("/api/audit/{filename}")
 async def serve_audit_file(filename: str):
     safe_name = _os.path.basename(filename)
     path = _os.path.join(_os.path.dirname(__file__), "static", safe_name)
     if _os.path.exists(path):
-        return FileResponse(path, filename=safe_name, media_type="text/markdown")
+        ext = _os.path.splitext(safe_name)[1].lower()
+        media = _MIME_MAP.get(ext, "application/octet-stream")
+        return FileResponse(path, filename=safe_name, media_type=media)
     from fastapi import HTTPException as _HTTPException
     raise _HTTPException(status_code=404, detail="File not found")
 

@@ -106,8 +106,8 @@
   },
   "test_credentials": {
     "admin_password": "admin123",
-    "frontend_url": "https://hotspots-admin-final.preview.emergentagent.com",
-    "admin_page": "https://hotspots-admin-final.preview.emergentagent.com/admin"
+    "frontend_url": "https://bionic-engine-review.preview.emergentagent.com",
+    "admin_page": "https://bionic-engine-review.preview.emergentagent.com/admin"
   },
   "seed_data_creation": "None - hotspots are extracted on-demand via POST /scheduler/run",
   "retest_needed": false,

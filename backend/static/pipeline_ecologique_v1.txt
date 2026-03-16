@@ -1,0 +1,185 @@
+================================================================================
+  DIAGRAMME DU PIPELINE ÉCOLOGIQUE BIONIC V3
+  Date: 2026-03-16 | Statut: OBSERVATION UNIQUEMENT
+================================================================================
+
+
+  ENTRÉE UTILISATEUR
+  ==================
+  [lat, lng, rayon, espèce, saison, heure, waypoints]
+         |
+         v
+  +==========================================================================+
+  |  COUCHE A — DONNÉES EXTERNES                                             |
+  |                                                                          |
+  |  +------------------+  +-------------------+  +------------------------+ |
+  |  | Open-Meteo       |  | Open-Elevation    |  | NASA MODIS / Seasonal  | |
+  |  | Météo temps réel |  | Terrain DEM       |  | NDVI, NDWI, LAI        | |
+  |  | + prévisions     |  | Pente, Aspect     |  | Indices végétation     | |
+  |  +--------+---------+  +---------+---------+  +-----------+------------+ |
+  |           |                      |                        |              |
+  |  +--------+----------------------+------------------------+------------+ |
+  |  |  OpenWeatherMap (OWM) — Cache 60min (règle BCE-4X)                  | |
+  |  |  T°, vent, précip, pression, visibilité, nébulosité                 | |
+  |  +---------------------------------------------------------------------+ |
+  |                                                                          |
+  |  +------------------+  +-------------------+  +------------------------+ |
+  |  | OSM Overpass API |  | WMS Écoforestier  |  | DEM Algorithmique QC   | |
+  |  | POI, routes,     |  | Peuplements       |  | Laurentides, Appal.,   | |
+  |  | sentiers, bâtim. |  | forestiers QC     |  | St-Laurent, Abitibi   | |
+  |  +--------+---------+  +---------+---------+  +-----------+------------+ |
+  +==========================================================================+
+         |
+         v
+  +==========================================================================+
+  |  COUCHE B — ENGINES INDÉPENDANTS (Phase 1)                               |
+  |                                                                          |
+  |  V2 Engines (12):                   V3 Engines (12):                     |
+  |  +---------------------------+      +-------------------------------+    |
+  |  | behavior        (w=1.2)  |      | ecological_hierarchy  (w=1.1)|    |
+  |  | keyzone_v2      (w=1.5)  |      | interaction           (w=1.0)|    |
+  |  | food_deficit    (w=1.1)  |      | geopedology           (w=0.8)|    |
+  |  | wind_intel.     (w=0.8)  |      | connectivity          (w=1.2)|    |
+  |  | terrain         (w=0.9)  |      | temporal_dynamics     (w=1.0)|    |
+  |  | human_pressure  (w=1.0)  |      | forest_structure_v2   (w=1.0)|    |
+  |  | corridor_cont.  (w=1.0)  |      | food_score_v2         (w=1.2)|    |
+  |  | bce_compliance  (w=0.3)  |      | wetness_v2            (w=0.9)|    |
+  |  | rendering       (w=0.2)  |      | geoform_v2            (w=0.8)|    |
+  |  +---------------------------+      | behavior_v2           (w=1.2)|    |
+  |                                     +-------------------------------+    |
+  +==========================================================================+
+         |
+         v
+  +==========================================================================+
+  |  COUCHE C — ENGINES DÉPENDANTS (Phase 2)                                 |
+  |                                                                          |
+  |  V2 Dépendants:                    V3 Dépendants:                       |
+  |  +---------------------------+     +-------------------------------+     |
+  |  | global_attract.   (w=1.3)|     | hotspot             (w=1.3)  |     |
+  |  | action_plan       (w=0.5)|     | attractiveness_v2   (w=1.5)  |     |
+  |  | predictive_ai     (w=1.1)|     +-------------------------------+     |
+  |  +---------------------------+                                           |
+  +==========================================================================+
+         |
+         v
+  +==========================================================================+
+  |  COUCHE D — ENGINES IA (Phase 3)                                         |
+  |                                                                          |
+  |  +--------------------+ +-------------------+ +------------------------+ |
+  |  | predictive_models  | | dynamic_scoring   | | temporal_analysis      | |
+  |  | 24h / 72h / 7j     | | Temps réel        | | Trends & patterns      | |
+  |  | Décroissance conf. | | Vent, T°, heure   | | Forecast horaire       | |
+  |  | (w=1.0)            | | (w=1.0)           | | (w=0.9)                | |
+  |  +--------------------+ +-------------------+ +------------------------+ |
+  +==========================================================================+
+         |
+         v
+  +==========================================================================+
+  |  COUCHE E — MODÈLES FAUNIQUES (Phase 4)                                  |
+  |                                                                          |
+  |  +-------------------+  +------------------+  +---------------------+    |
+  |  |     ORIGNAL       |  |  CERF VIRGINIE   |  |     OURS NOIR       |    |
+  |  |  14 pondérations  |  |  14 pondérations |  |  14 pondérations    |    |
+  |  |  Top: behavior_v2 |  |  Top: behavior_v2|  |  Top: food_score_v2 |    |
+  |  |       (w=1.4)     |  |       (w=1.3)    |  |       (w=1.5)       |    |
+  |  +-------------------+  +------------------+  +---------------------+    |
+  +==========================================================================+
+         |
+         v
+  +==========================================================================+
+  |  COUCHE F — SCORE FINAL INTÉGRÉ (Phase 5)                                |
+  |                                                                          |
+  |  Score = Moyenne_pondérée(V2 + V3 + IA) × Modèle_faunique               |
+  |  Résultat: score_final [0-100] par point/cellule                         |
+  +==========================================================================+
+         |
+         +----------------------------+----------------------------+
+         |                            |                            |
+         v                            v                            v
+  +==================+   +========================+   +======================+
+  | CORRIDOR V9      |   | HOTSPOT PIPELINE       |   | SORTIE CARTE         |
+  | PIPELINE         |   |                        |   |                      |
+  +------------------+   +------------------------+   +----------------------+
+  | 1. A* pathfinding|   | 1. Grille 50m x 50m   |   | Score final 0-100    |
+  | 2. 9 sub-engines |   |    (adaptatif)         |   | Zones GeoJSON        |
+  |    nutrition 12% |   | 2. Scoring 9 engines   |   | Corridors V9         |
+  |    daily_rout 10%|   |    (pondérations off.) |   | Hotspots polygones   |
+  |    weather   10% |   | 3. Filtres:            |   | Prédictions 24/72/7j |
+  |    disturb.  12% |   |    score >= 60         |   | Carte Leaflet/React  |
+  |    movement  15% |   |    corridor nearby     |   +----------------------+
+  |    phenology  8% |   |    access >= 40        |
+  |    typology   8% |   |    max 25/région       |
+  |    learning   5% |   | 4. DBSCAN clustering   |
+  |    habitat    5% |   |    eps = spacing×2.5   |
+  +------------------+   |    min_samples = 5     |
+  | 3. Classification|   | 5. Convex hull         |
+  |    5 niveaux:    |   | 6. BCE-4X validation   |
+  |    gris    0-30  |   | 7. Enrichissement      |
+  |    jaune  31-50  |   |    territorial          |
+  |    orange 51-70  |   +------------------------+
+  |    rouge  71-85  |
+  |    r.rayé 86-100 |
+  +------------------+
+  | 4. Lissage       |
+  |    Chaikin 2 it. |
+  | 5. Bandes conc.  |
+  |    5 niveaux buf.|
+  | 6. Clipping 2km2 |
+  | 7. Continuité    |
+  |    max gap 150m  |
+  +==================+
+
+
+  +==========================================================================+
+  |  VALIDATION TRANSVERSALE — BCE-4X                                        |
+  |                                                                          |
+  |  GEOM-001: Polygone >= 3 sommets                                        |
+  |  GEOM-002: Score dans [0, 100]                                          |
+  |  GEOM-004: Aucun pixel hors du carré 2km                               |
+  |  CLIP-001: Corridor clippé 150m                                         |
+  |  VISUAL-001: Classification valide (5 niveaux)                          |
+  |  CACHE-001: Météo OWM cache 60 minutes (non-négociable)                |
+  +==========================================================================+
+
+
+  +==========================================================================+
+  |  LÉGENDE                                                                 |
+  |                                                                          |
+  |  w = poids (weight) dans le calcul de score composite                   |
+  |  V2 = Engines version 2 (12 moteurs)                                   |
+  |  V3 = Engines version 3 (12 moteurs)                                   |
+  |  IA = Engines intelligence artificielle (3 moteurs)                     |
+  |  C9 = Corridor V9 sub-engines (9 moteurs)                              |
+  |  BCE-4X = Quality gate validation system                                |
+  |  OWM = OpenWeatherMap API                                               |
+  |  DBSCAN = Density-Based Spatial Clustering                              |
+  |  A* = Algorithme pathfinding optimal                                    |
+  |  Chaikin = Algorithme de lissage de courbes                             |
+  |  Shapely = Bibliothèque géométrique Python                              |
+  +==========================================================================+
+
+
+  +==========================================================================+
+  |  FLUX DE DONNÉES — RÉSUMÉ                                                |
+  |                                                                          |
+  |  Couches externes  ------>  36 Engines (V2+V3+IA)                       |
+  |       |                            |                                     |
+  |       |                            v                                     |
+  |       |                     3 Modèles fauniques                          |
+  |       |                            |                                     |
+  |       v                            v                                     |
+  |  9 Sub-engines V9  <----->  Score final intégré                         |
+  |       |                            |                                     |
+  |       v                            v                                     |
+  |  Corridors classifiés      Hotspots extraits                            |
+  |       |                            |                                     |
+  |       +---------->  BCE-4X  <------+                                    |
+  |                       |                                                  |
+  |                       v                                                  |
+  |               Carte Leaflet/React                                       |
+  +==========================================================================+
+
+================================================================================
+  FIN DU DIAGRAMME — Aucune modification effectuée
+  Photo fidèle du pipeline écologique BIONIC V3 actuel
+================================================================================

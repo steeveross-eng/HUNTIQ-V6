@@ -1,89 +1,55 @@
-# BIONIC HUNT - PRD.md
+# BIONIC V3 — PRD (Product Requirements Document)
 
-## Branche: steve-max
+## Problème Original
+Application BIONIC V3 — Outil d'analyse écologique full-stack (React + FastAPI + MongoDB) pour la gestion de la faune au Québec. L'application utilise des moteurs écologiques complexes (V1, V2, V3, V9) pour l'analyse de données géographiques et environnementales, la classification de terrain pour la gestion de la faune (zones d'alimentation, corridors, hotspots).
 
 ## Architecture
-- **Frontend**: React + Leaflet + Shadcn/UI
-- **Backend**: FastAPI + 27 Engines + Hotspot Engine V3 + Scheduler annuel
-- **Database**: MongoDB (admin_hotspots)
-- **Weather**: OpenWeatherMap (cache 60min)
-- **Quality Gate**: BCE-4X (12+ regles, 1200/1200 PASS)
+- **Frontend:** React + Leaflet/react-leaflet (mapping)
+- **Backend:** FastAPI (Python)
+- **Database:** MongoDB
+- **Intégrations:** OpenWeatherMap, Open-Meteo, Open-Elevation, NASA MODIS, OSM Overpass
 
-## Statut: PRET POUR CERTIFICATION FINALE BIONIC V3
+## Tâches Complétées
 
-### Securite & Consolidation (2026-03-16) - VALIDE
-- BCE-4X indicateur retire de l'espace usager (/territoire) - PASS
-- Admin (/admin) securise avec mot de passe Saturn5858* - PASS
-- Admin Premium (/admin-premium) securise avec mot de passe Saturn5858* - PASS
-- Onglet "Hotspots V3" supprime de /admin - PASS
-- Module Hotspots V3 consolide dans Admin Premium > Terres/Hotspots - PASS
-- Ancien mot de passe admin123 rejete - PASS
+### Sécurité & Consolidation (Terminé)
+- Suppression BCE-4X des sections publiques
+- Gate admin par mot de passe (`Saturn5858*`)
+- Consolidation UI Hotspots V3
+- Validation 100% (iteration_22 + iteration_23)
 
-### Tache P0-1: Carte Leaflet interactive (2026-03-13) PASS
-- Carte CartoDB dark tiles avec 300 polygones hotspots
-- Couleurs: rouge=MAJEUR (80+), orange=FORT (60-79)
-- Popup: score, espece, justification engines, type territoire, acces, ville, altitude, GPS
-- Zoom automatique par region, controles zoom
-- Bascule Carte/Tableau
+### AUDIT ÉCOLOGIQUE GLOBAL BIONIC — MODE STEEVE-MAX (Terminé 2026-03-16)
+- **Phase 1:** Inventaire complet de tous les modules/engines (Legacy, V2, V3, IA, V9, Hotspot)
+- **Phase 2:** Extraction de toutes les règles, variables, seuils, couches par thème écologique
+- **Phase 3:** Rapport structuré livré en 4 formats:
+  - `BIONIC_AUDIT_ECOLOGIQUE_v1.md` (Markdown — 775 lignes)
+  - `BIONIC_AUDIT_ECOLOGIQUE_v1.yaml` (YAML structuré — 362 lignes)
+  - `BIONIC_AUDIT_ECOLOGIQUE_v1.pdf` (PDF professionnel — reportlab)
+  - `pipeline_ecologique_v1.txt` (Diagramme ASCII du pipeline complet)
+- **Phase 4:** Aucune modification de code — observation et documentation uniquement
+- Tous les fichiers accessibles via HTTPS (`/api/audit/{filename}`)
+- Endpoint de listing: `/api/audit/list`
 
-### Tache P0-2: Liste complete enrichie (2026-03-13) PASS
-- GPS (lat/lng), ville, code postal, altitude
-- 7 types territoire: Prive, Public, Gouvernemental, ZEC, Pourvoirie, Reserve faunique, Territoire autochtone
-- 4 statuts acces: Libre, Restreint, Payant, Permission requise
-- Espece dominante, ScoreHotspot, justification engines, accessibilite, corridors V9
-- 6 filtres: region, espece, classification, type territoire, acces, categorie
-- 12 regions Quebec avec donnees realistes (villes, codes postaux, altitudes)
+## Backlog (P0 → P2)
 
-### Tache P0-3: Acces proprietaire/gestionnaire (2026-03-13) PASS
-- ZEC: nom reel, tel, courriel, site web
-- Pourvoiries: nom, tel, courriel, web
-- Reserves fauniques: SEPAQ avec coordonnees
-- Gouvernemental: MELCCFP, 1-800-561-1616, reglements acces
-- Autochtone: Nations innue, algonquine, mi'gmaq avec coordonnees
-- Terres privees: numero lot, cadastre, lien registre foncier
-- Bouton "Contacter le gestionnaire du territoire"
+### P0 — PLAN DE MATCH STEEVE-MAX
+- Optimisation des modèles écologiques basée sur les résultats de l'audit
+- En attente des instructions de Steeve
 
-### Tache P0-4: Extraction automatique ANNUELLE (2026-03-13) PASS
-- POST /scheduler/run declenche extraction complete
-- Retourne: run number, total_hotspots, next_scheduled (annee+1)
-- Rapport BCE-4X automatique (PASS 1200/1200)
-- Stockage MongoDB avec batch tracking
+### P1 — Certification Finale BIONIC V3
+- En attente de la complétion du Plan de Match
 
-### Modules precedents
-- Rotation 3D logos BIONIC (10s, preserve-3d)
-- Phase 7: 3 controles inline toolbar (Corridors V9, Seuil 10%, Curseur)
-- Phase 6: Document CI/CD BCE-4X
-- BIONIC V3: 27 engines, 3 modeles fauniques
-- Harmonisation couleurs, corridors V9 continuity
+### P2 — Propositions d'amélioration (identifiées dans l'audit)
+- P-ALIM-01: Sentinel-2 réel au lieu de NDVI estimé
+- P-TERR-01: SRTM/ALOS 30m au lieu du DEM algorithmique
+- P-PRESS-01: Densité routière OSM réelle
+- P-ML-01: Vrai modèle ML dans Learning Engine
+- P-PRED-01: Modèle prédateur-proie
+- P-THERM-01: Courbes gaussiennes de confort thermique
+- P-HOT-01: Scoring écologique réel par cellule
 
-## Tests de regression (2026-03-16)
-- Iteration 23: 16/16 backend + 100% frontend (Regression complete - 7 P0 tasks)
-- Iteration 22: 16/16 backend + 100% frontend (7 P0 tasks certified)
-- Iteration 21: 14/14 backend + 100% frontend (4 P0 features certified)
-
-## API Endpoints
-- POST /api/v1/admin/bionic-hotspots/scheduler/run - Extraction annuelle + BCE-4X
-- GET /api/v1/admin/bionic-hotspots/scheduler/status - Statut scheduler
-- GET /api/v1/admin/bionic-hotspots/territory-types - Types + distribution
-- POST /api/v1/admin/bionic-hotspots/extract - Extraction standard
-- GET /api/v1/admin/bionic-hotspots/list - Liste filtrable enrichie
-- GET /api/v1/admin/bionic-hotspots/stats - Stats agregees
-- GET /api/v1/admin/bionic-hotspots/export/geojson - Export GeoJSON
-- GET /api/v1/admin/bionic-hotspots/export/json - Export JSON
-- GET /api/v1/admin/bionic-hotspots/report/bce4x - Rapport BCE-4X
-- GET /api/v1/admin/bionic-hotspots/report/daily - Rapport quotidien
-
-## Donnees MOCKEES (approuve par l'utilisateur)
-- territory_data_provider.py genere des donnees territoriales realistes pour le Quebec
-- Non connecte aux registres publics en direct
-
-## Backlog
-### P1 - Conditions meteo locales OWM par hotspot
-### P1 - Distance depuis waypoint utilisateur
-### P2 - Dashboard analytics / apprentissage machine
-### P3 - Multi-territoire
+## Données Mockées
+- Données territoriales (villes, codes postaux, gestionnaires) — approuvé par l'utilisateur
 
 ## Credentials
-- Login utilisateur: Steeve.ross@gmail.com / Saturn5858*
-- Admin (gate composant): Saturn5858*
-- OWM_API_KEY dans backend/.env
+- **User:** `Steeve.ross@gmail.com` / `Saturn5858*`
+- **Admin:** `Saturn5858*`

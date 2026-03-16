@@ -52,7 +52,7 @@ from modules.bionic_engine_p0.services.unified_scoring_service import (
 from modules.bionic_engine_p0.services.scoring.base_score_service import ScoreContext
 
 # BASE URL for API tests
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://hotspots-admin-final.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-engine-review.preview.emergentagent.com').rstrip('/')
 
 
 # =============================================================================

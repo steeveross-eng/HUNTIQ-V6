@@ -1,7 +1,7 @@
 # HUNTIQ V5-ULTIME-FUSION — Documentation API
 
 **Version:** 5.0.0  
-**Base URL:** `https://hotspots-admin-final.preview.emergentagent.com`  
+**Base URL:** `https://bionic-engine-review.preview.emergentagent.com`  
 **Date:** 2026-02-17  
 **Phase:** Release Candidate RC-1.0.0
 

@@ -1,124 +1,114 @@
 <analysis>**original_problem_statement:**
-The user has issued a series of commands to finalize the BIONIC V3 application for certification. The latest directives focus on security, UI cleanup, and feature consolidation:
+The user has issued a new, high-priority command: **AUDIT ÉCOLOGIQUE GLOBAL BIONIC (MODE STEEVE‑MAX)**.
 
-1.  **BCE-4X Indicator Relocation:** The BCE-4X real-time status indicator must be removed entirely from the public user-facing interface (specifically the ) and be exclusively visible within the admin sections.
-2.  **Admin Security Enhancement:** The Administration and Admin Premium sections must be secured with a password. The required password is . All admin routes must be inaccessible without authentication, and the corresponding links should be hidden from unauthorized users.
-3.  **Hotspot Module Consolidation:** The entire Hotspots BIONIC V3 module (including the interactive Leaflet map, enriched data table, filters, and exports) must be integrated into the single, pre-existing tab: **ADMIN PREMIUM → Hotspots / Terres à louer**. Any newly created, separate Hotspots tabs must be removed.
-4.  **Annual Scheduler Confirmation:** The automatic annual execution of the Hotspots V3 extraction engine must be confirmed as active.
-5.  **Full Feature Verification:** The agent must verify that all previously requested features for the Hotspots module are present within the consolidated Hotspots / Terres à louer tab, including enriched territorial data, owner/manager access details, and BCE-4X reports.
+The objective is to perform a comprehensive, non-destructive audit of all ecological models, rules, and data pipelines currently used by the BIONIC application. This is an observation and documentation task only; no modifications to the code are permitted at this stage.
+
+The audit is structured into four phases:
+1.  **Phase 1: Inventory of Modules and Engines:** List all scripts/modules related to ecological analysis (feeding zones, resting areas, corridors, hotspots, etc.), detailing their location, role, and context.
+2.  **Phase 2: Extraction of Current Rules:** For each ecological theme, document the specific data layers, derived variables, scoring/classification rules, thresholds, and any post-processing logic.
+3.  **Phase 3: Structured Audit Report:** Produce a consolidated report in both PDF and a structured text format (JSON/YAML). This report must include the module inventory, the extracted rules, a pipeline diagram, and any known limitations of the current models.
+4.  **Phase 4: No Modifications:** Strictly observe and document. Any suggestions for improvements must be kept separate and marked as PROPOSITION.
+
+The ultimate goal is to create a definitive snapshot of the current system to inform a future PLAN DE MATCH STEEVE‑MAX for optimization.
 
 **User's preferred language**: French
 
 **what currently exists?**
-The application is a full-stack BIONIC analysis tool with a React frontend and FastAPI backend. All major features for the Hotspots BIONIC V3 module have been implemented, including a backend engine for data extraction/scoring/enrichment and a comprehensive frontend UI with a Leaflet map and data tables. A real-time BCE-4X indicator was also created. The agent has just completed a major refactoring to address the user's latest security and UI consolidation requirements.
+The BIONIC V3 application is a full-stack tool with a React frontend and FastAPI backend. The previous major task, which involved securing the admin sections and consolidating the Hotspots V3 UI, has been completed, validated by the user, and successfully passed a full regression test. The codebase contains multiple generations of Python-based ecological engines (V1, V2, V3, V9) that perform complex data analysis and scoring.
 
 **Last working item**:
--   **Last item agent was working:** The agent executed a 7-point plan to address the user's final requests before certification. This involved:
-    1.  Removing the BCE-4X indicator from the public-facing header.
-    2.  Adding a password gate () to the Admin and Admin Premium pages.
-    3.  Consolidating all Hotspot V3 features into the correct, pre-existing Admin Premium - / Terres à louer tab.
-    4.  Deleting the redundant Hotspots V3 tab from the main admin page.
--   **Status:** USER VERIFICATION PENDING
--   **Agent Testing Done:** Y (The agent has implemented the changes and validated them with screenshots showing the login gate and the corrected UI).
--   **Which testing method agent to use?** . The agent has just invoked the testing agent to perform a full regression and feature validation. The next step is to analyze its report.
+-   **Last item agent was working:** The agent was executing **Phase 3** of the AUDIT ÉCOLOGIQUE GLOBAL BIONIC command. After performing an exhaustive code review to gather all necessary information (Phases 1 & 2), the agent generated a detailed Markdown report and was in the process of creating the structured YAML version of the audit.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N/A (This is a documentation task, not a code change).
+-   **Which testing method agent to use?** N/A
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-There are no outstanding issues. The current focus is on validating the completion of the user's latest command.
+There are no pending issues. The sole focus is completing the audit task.
 
 **In progress Task List**:
--   **Task 1: Final Validation of Security & Consolidation Refactor (P0)**
-    -   **Where to resume:** The agent has just initiated a  call. The next action is to receive the test report (), analyze the results, and confirm that all 7 of the user's requirements have been met without regressions.
-    -   **What will be achieved with this?** This will provide the final validation needed to confirm that the BCE-4X component is admin-only, admin sections are secure, and the Hotspot V3 module is correctly consolidated. This is the last step before the user proceeds with the Certification Finale BIONIC V3.
-    -   **Status:** IN PROGRESS (awaiting test results).
-    -   **Should Test frontend/backend/both after fix?** Both.
-    -   **Blocked on something:** The output from the  tool.
+-   **Task 1: Complete the AUDIT ÉCOLOGIQUE GLOBAL BIONIC (P0)**
+    -   **Where to resume:** The agent has created  and was writing the YAML version to . The next steps are:
+        1.  Finalize the generation of the  file.
+        2.  Fulfill the remaining requirements from Phase 3 of the user's request:
+            -   Create a simple ASCII diagram of the data pipeline.
+            -   Generate a PDF version of the audit report.
+        3.  Present all deliverables (Markdown, YAML, PDF, diagram) to the user for validation.
+    -   **What will be achieved with this?** Delivery of a complete and faithful snapshot of the BIONIC system's ecological logic, which is the prerequisite for the user's next optimization phase.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** N/A
+    -   **Blocked on something:** No.
 
 **Upcoming and Future Tasks**
--   **Certification Finale BIONIC V3:** Once the current set of tasks is validated by the user, the final certification process for the entire BIONIC V3 system will begin.
+-   **P0: PLAN DE MATCH STEEVE‑MAX:** After the user validates the audit, they will provide a new set of instructions to optimize the ecological models based on the audit's findings.
+-   **P1: Certification Finale BIONIC V3:** This major milestone is on hold until the audit and subsequent optimizations are complete.
 
 **Completed work in this session**
--   **Security & Consolidation Refactor:**
-    -   Removed the  component from the public-facing .
-    -   Secured  and  with a password gate, updating the required password to .
-    -   Confirmed the  component is rendered within the Hotspots / Terres à louer tab in .
-    -   Removed the redundant Hotspots V3 tab and its corresponding component import from .
--   **Hotspots BIONIC V3 Module (Full Implementation):**
-    -   **Backend:** Created a complete hotspot engine () with scoring, DBSCAN clustering, data enrichment (), and an annual scheduler (). All logic is exposed via .
-    -   **Frontend:** Developed a rich admin interface () featuring an interactive Leaflet map, detailed data tables, KPI cards, filters, and export functions.
--   **3D Logo Rotation:**
-    -   Implemented a global CSS animation () to make all instances of the BIONIC logo rotate continuously in 3D. Applied this via  and .
+-   **Security & Consolidation Validation:**
+    -   Analyzed  and  test reports, confirming 100% pass rates.
+    -   Manually verified via screenshots and curl commands that all 7 user requirements (BCE-4X removal, admin password gate, UI consolidation) were correctly implemented without regressions.
+-   **Ecological Audit (Initiated):**
+    -   Performed an exhaustive file scan and review of the entire ecological codebase, covering all engine versions (V1, V2, V3, V9).
+    -   Completed the data gathering for Phase 1 (Inventory) and Phase 2 (Rule Extraction).
+    -   Generated the first deliverable: a comprehensive Markdown report ().
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** Corridor Continuity.
--   **Recurrence count:** 3+
--   **Status:** RESOLVED. This has not recurred since the graph-based fix was implemented.
+-   None. The Corridor Continuity issue remains resolved.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Security:** Component-level password gates in React using  to manage authentication state for admin sections.
--   **Backend Scheduling:** Use of  to create and manage cron-like jobs (e.g., annual data extraction).
--   **Frontend Mapping:** Integration of  to display complex GeoJSON polygon data with custom popups and styling.
--   **Code Consolidation:** Refactoring the React component structure to merge features into a single, designated location and remove redundant UI elements, improving maintainability.
+-   **Ecological Modeling:** The application uses a series of complex Python scripts (engines) to analyze geographical and environmental data. These engines apply rules, scoring, and weighting to classify terrain for wildlife management (e.g., feeding zones, corridors, hotspots).
+-   **Legacy Code Management:** The codebase contains multiple, co-existing versions of the ecological engines (V1, V2, V3, V9), which is the primary reason the user has requested the current audit.
+-   **Systematic Code Auditing:** The current task requires programmatically navigating a complex codebase to extract business logic and document it without making any modifications.
 
 **key DB schema**
 -   **Collection:** 
-    -   **Key Columns:** , ,  (MAJEUR/FORT),  (GeoJSON), ,  (type, manager, access), , .
+    -   **Key Columns:** , , , , , , , .
+    *(Note: The audit covers logic far beyond just the hotspots schema).*
 
 **changes in tech stack**
--    was added to the backend .
+-   None.
 
 **All files of reference**
--    (The new official home for all hotspot features).
--    (Where the redundant tab was removed).
--    (Where the BCE-4X indicator was removed).
--    (Where the admin password check happens).
--    (Core backend logic).
--    (Annual job logic).
+-    (The primary output of the work so far).
+-   The numerous engine files located under , which were analyzed to create the audit.
 
 **Areas that need refactoring**:
--   None. The agent has just completed the user-requested refactoring.
+-   The user's audit request explicitly highlights the existence of multiple, overlapping engine versions (V1, V2, V3, V9). This strongly implies a future refactoring/consolidation effort will be requested after the audit is complete. **Do not refactor anything now.**
 
 **key api endpoints**
--   : Triggers hotspot generation.
--   : Fetches all hotspots with filtering capabilities.
--   : Provides summary statistics.
--   : Manually triggers the scheduled annual job.
+-   The current audit task is focused on the internal Python logic of the backend engines, not the API endpoints that expose them.
 
 **Critical Info for New Agent**
--   The user's commands are highly specific. Adhere strictly to every point.
--   **All Hotspot V3 functionality is now exclusively located in the ADMIN PREMIUM - / Terres à louer tab.** Do not add or modify this feature anywhere else.
--   **The admin sections are password-protected.** Use the password  for access during testing. The  indicator is now an admin-only feature.
--   The immediate next step is to analyze the report from the  to validate the recent changes.
--   Do not proceed to the Certification Finale BIONIC V3 until the user explicitly gives the command after reviewing the current work.
+-   **Your primary directive is: OBSERVE AND DOCUMENT. DO NOT MODIFY ANY CODE.** The user's instructions on this are non-negotiable. Any deviation will be a failure.
+-   Your immediate goal is to complete the audit report by finalizing the YAML file, creating a pipeline diagram, and generating a PDF.
+-   The user communicates exclusively in **French**. All responses and plans must be in French.
+-   The completion of this audit is the direct blocker for the next major phase of the project: the PLAN DE MATCH STEEVE‑MAX.
 
 **documents and test reports created in this job**
 -   
--   
--   
+-    (In Progress)
+-    (From the previous validation task)
 
 **Last 10 User Messages and any pending HUMAN messages**
--   **User (LATEST):** Approved the 7-point plan and instructed the agent to proceed immediately with the security and consolidation refactor, requesting BEFORE/AFTER captures for validation.
--   **Agent:** Proposed a detailed 7-point plan to address the user's latest P0 requests for security and UI consolidation.
--   **User:** Issued a multi-point P0 command to move the BCE-4X indicator to admin, secure admin sections with a new password, and consolidate all Hotspot V3 features into the existing Admin Premium - / Terres à louer tab.
--   **Agent:** Finalized and presented the fully-featured Hotspots V3 module, including the annual scheduler and enriched territorial data, and declared readiness for certification.
--   **User:** Confirmed the plan for the 4 P0 tasks (Leaflet map, enriched list, owner access, annual scheduler) and approved the agent's approach for generating realistic mock territorial data.
+-   **User (LATEST):** Issued a detailed, multi-phase command for a complete AUDIT ÉCOLOGIQUE GLOBAL BIONIC. The user stressed that this is a non-destructive observation and documentation task only, and outlined the required deliverables (Inventory, Rules, Reports in PDF/YAML, Pipeline Diagram).
+-   **User (PREVIOUS):** Confirmed that the security and UI consolidation refactor (the 7-point plan) was validated and approved. Gave the green light for the agent to proceed with the next steps after analyzing the test reports.
 
 **Project Health Check:**
 -   **Broken:** None.
--   **Mocked:** The territorial data () is realistically generated based on Quebec's geography but is not connected to live public registries. This was approved by the user.
+-   **Mocked:** Territorial data used by the hotspot engine is generated programmatically, as approved by the user.
 
 **3rd Party Integrations**
--   **OpenWeatherMap (OWM):** Fetches weather data for hotspots. Key is in .
--   **Leaflet & react-leaflet:** Used for the interactive map in the admin section.
+-   **OpenWeatherMap (OWM):** For weather data enrichment.
+-   **Leaflet & react-leaflet:** For frontend mapping.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. The agent has been used to validate all major feature completions. The last action was to invoke it to validate the final security and consolidation refactor.
+-   **Testing agent used after significant changes:** YES. The previous feature work was fully validated by  in .
 -   **Troubleshoot agent used after agent stuck in loop:** NO.
 -   **Test files created:** None.
 -   **Known regressions:** None.
@@ -128,4 +118,7 @@ There are no outstanding issues. The current focus is on validating the completi
 -   **Admin Section Password:** 
 
 **What agent forgot to execute**
--   Nothing. The agent has followed all recent user instructions precisely and is waiting for the final test results to confirm completion.</analysis>
+-   The agent did not forget but was in the middle of executing a multi-part task. The following deliverables from the user's Phase 3 request are still pending:
+    1.  Completion of the structured YAML report.
+    2.  Creation of the pipeline diagram (ASCII or other).
+    3.  Generation of the final PDF report.</analysis>
