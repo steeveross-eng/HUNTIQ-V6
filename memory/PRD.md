@@ -11,23 +11,23 @@ Application BIONIC V3 — Outil d'analyse écologique full-stack (React + FastAP
 
 ## Tâches Complétées
 
-### Sécurité & Consolidation (Terminé)
+### Sécurité & Consolidation
 - Suppression BCE-4X des sections publiques
 - Gate admin par mot de passe (`Saturn5858*`)
 - Consolidation UI Hotspots V3
 - Validation 100% (iteration_22 + iteration_23)
 
-### AUDIT ÉCOLOGIQUE GLOBAL BIONIC — MODE STEEVE-MAX (Terminé 2026-03-16)
-- **Phase 1:** Inventaire complet de tous les modules/engines (Legacy, V2, V3, IA, V9, Hotspot)
-- **Phase 2:** Extraction de toutes les règles, variables, seuils, couches par thème écologique
-- **Phase 3:** Rapport structuré livré en 4 formats:
-  - `BIONIC_AUDIT_ECOLOGIQUE_v1.md` (Markdown — 775 lignes)
-  - `BIONIC_AUDIT_ECOLOGIQUE_v1.yaml` (YAML structuré — 362 lignes)
-  - `BIONIC_AUDIT_ECOLOGIQUE_v1.pdf` (PDF professionnel — reportlab)
-  - `pipeline_ecologique_v1.txt` (Diagramme ASCII du pipeline complet)
-- **Phase 4:** Aucune modification de code — observation et documentation uniquement
-- Tous les fichiers accessibles via HTTPS (`/api/audit/{filename}`)
-- Endpoint de listing: `/api/audit/list`
+### AUDIT ÉCOLOGIQUE GLOBAL BIONIC — MODE STEEVE-MAX (2026-03-16)
+- Phase 1-4 complètes: MD, YAML, PDF, diagramme ASCII pipeline
+- Tous accessibles via `/api/audit/{filename}` et `/api/audit/list`
+
+### Bouton "Carte" + Deep Link Mon Territoire (2026-03-16)
+- Bouton "Carte" stylisé (bleu #1E88E5, icône Map) ajouté dans la colonne ACTION du tableau des hotspots
+- Mini-preview satellite 300×180px au survol (délai 250ms, Leaflet dédié, fond ArcGIS Imagery)
+- Lien dynamique: `/mon-territoire?lat={lat}&lng={lng}&zoom=15&layer=satellite&hotspot={id}`
+- Deep link: carte centrée, zoom 15, fond Satellite, highlight cercle 2km² + marker orange
+- Chargement automatique du tableau au montage (useEffect initial ajouté)
+- Validation 100% — iteration_24: 10/10 tests passés
 
 ## Backlog (P0 → P2)
 
