@@ -218,10 +218,10 @@ export const SidePanelZones = React.memo(({
 }) => (
   <div className="p-3 space-y-3" data-testid="panel-zones">
 
-    {/* ══ 1. SCORE GLOBAL V9 ══ */}
+    {/* ══ 1. SCORE GLOBAL V10 ══ */}
     <div className="bg-[#111118] rounded-lg p-3 border border-[#1a1a2e]" data-testid="score-global-panel">
       <div className="flex items-center justify-between mb-1.5">
-        <div className="text-[10px] text-gray-500 uppercase tracking-wider">Score Global V9</div>
+        <div className="text-[10px] text-gray-500 uppercase tracking-wider">Score Global V10</div>
         <Shield className="h-3 w-3 text-emerald-500" />
       </div>
       <div className="flex items-baseline gap-2">
@@ -262,9 +262,9 @@ export const SidePanelZones = React.memo(({
         {isLoadingZones ? (
           <span className="text-gray-400">Calcul en cours...</span>
         ) : zoneSource === 'backend' ? (
-          <span className="text-green-400">V9 {weatherMetadata?.applied ? '+ Meteo' : ''}</span>
+          <span className="text-green-400">V10 {weatherMetadata?.applied ? '+ Meteo' : ''}</span>
         ) : zoneSource === 'cache' ? (
-          <span className="text-cyan-400">Cache V9</span>
+          <span className="text-cyan-400">Cache V10</span>
         ) : (
           <span className="text-gray-600">En attente</span>
         )}
