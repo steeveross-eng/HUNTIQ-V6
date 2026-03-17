@@ -152,11 +152,11 @@ const BionicCorridorsV10Layer = ({
       const contourColor = darkenHex(zc, 0.82);
 
       const polygon = L.polygon(rings, {
-        color: contourColor,
-        weight: 1.5,
+        color: zc,
+        weight: 3,
         opacity: 1.0,
-        fillColor: zc,
-        fillOpacity: 0.35,
+        fillColor: 'transparent',
+        fillOpacity: 0,
         lineCap: 'round',
         lineJoin: 'round',
       });
@@ -168,10 +168,10 @@ const BionicCorridorsV10Layer = ({
         { sticky: true, opacity: 0.95 }
       );
       polygon.on('mouseover', function() {
-        this.setStyle({ fillOpacity: 0.40, weight: 2.5 });
+        this.setStyle({ weight: 4, opacity: 1.0 });
       });
       polygon.on('mouseout', function() {
-        this.setStyle({ fillOpacity: 0.35, weight: 1.5 });
+        this.setStyle({ weight: 3, opacity: 1.0 });
       });
       group.addLayer(polygon);
     }

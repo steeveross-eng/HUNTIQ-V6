@@ -237,13 +237,13 @@ def _cluster_zones_by_type(zones, n):
 def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m, cell_m):
     """
     NORME STEEVE-MAX — Polygones organiques BIONIC V10
-    Dimension + Fusion + Adoucissement
+    Superposition libre + Dimension dynamique + Adoucissement
     Protection BCE-4X obligatoire.
 
     Pipeline:
-    0. Fusion ecologique (clustering zones meme type, distance < 100m)
+    0. Fusion ecologique (clustering super-quadrant 2x2)
     1. Dimension dynamique (rayon proportionnel a l'attraction)
-    2. BFS multi-source terrain-aware
+    2. BFS multi-source terrain-aware (superposition libre entre clusters)
     3. Extraction de frontiere
     4. Tri angulaire depuis centroide
     5. Perturbation ecologique terrain-aware
@@ -262,7 +262,6 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
     NEIGHBORS_8 = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
 
     # ══════ Phase 0: Fusion ecologique ══════
-    # Clustering zones meme type par super-quadrant 2x2 → 4 clusters par type
     clusters = _cluster_zones_by_type(zones, n)
 
     zone_polygons = []
@@ -273,27 +272,23 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
         primary_zone = max(cluster, key=lambda z: z["score"])
 
         # ══════ Phase 1: Dimension dynamique ══════
-        # zone_radius = base + (1 + attraction_score) factor
-        score_factor = max_score  # 0-1
-        max_radius = int(8 + score_factor * 14)    # 8 (faible) -> 22 (forte)
-        max_cells = int(40 + score_factor * 200)   # 40 (faible) -> 240 (forte)
+        score_factor = max_score
+        max_radius = int(8 + score_factor * 14)
+        max_cells = int(40 + score_factor * 200)
         threshold = max(0.06, max_score * 0.12)
-        inner_ring = int(2 + score_factor * 2)     # 2 (faible) -> 4 (forte)
+        inner_ring = int(2 + score_factor * 2)
 
-        # ══════ Phase 2: BFS multi-source terrain-aware ══════
-        # Depart depuis TOUS les centres du cluster (multi-source BFS)
+        # ══════ Phase 2: BFS multi-source (superposition libre) ══════
         visited = set()
         zone_cells = []
         queue = []
 
-        # Initialiser BFS depuis tous les centres du cluster
         for z in cluster:
             r0, c0 = z["pos"]
             if (r0, c0) not in visited:
                 queue.append((r0, c0, 0))
                 visited.add((r0, c0))
 
-        # Centroide du cluster pour le calcul du rayon
         cluster_cr = sum(z["pos"][0] for z in cluster) / len(cluster)
         cluster_cc = sum(z["pos"][1] for z in cluster) / len(cluster)
 
@@ -306,7 +301,6 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
 
             cell = cell_data[r][c]
 
-            # Include inner ring (proportional to score) for zone body
             if dist <= inner_ring and not cell.get("barrier"):
                 zone_cells.append((r, c))
                 for dr, dc in NEIGHBORS_8:
@@ -326,15 +320,14 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
                         queue.append((nr, nc, dist + 1))
 
         if len(zone_cells) < 3:
-            # Fallback organique: polygone spline autour du centre primaire
             clat, clng = primary_zone["lat"], primary_zone["lng"]
             base_r = cell_m * (3.0 + score_factor * 4.0)
             radius_deg = base_r / METERS_PER_DEG_LAT
             radius_lng = base_r / m_per_lng
             ctrl_pts = []
-            for i in range(12):
-                angle = math.radians(30 * i)
-                seed = hash(f"{clat:.5f}:{clng:.5f}:{i}")
+            for k in range(12):
+                angle = math.radians(30 * k)
+                seed = hash(f"{clat:.5f}:{clng:.5f}:{k}")
                 r_var = 1.0 + ((seed % 10000) / 10000.0 - 0.5) * 0.3
                 ctrl_pts.append((
                     clng + radius_lng * math.cos(angle) * r_var,
@@ -368,7 +361,6 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
         # ══════ Phase 4: Centroide + tri angulaire ══════
         cr = sum(r for r, c in boundary_cells) / len(boundary_cells)
         cc = sum(c for r, c in boundary_cells) / len(boundary_cells)
-
         boundary_cells.sort(key=lambda p: -math.atan2(p[0] - cr, p[1] - cc))
 
         # ══════ Phase 5: Conversion geo + perturbation ecologique ══════
@@ -376,12 +368,10 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
         for r, c in boundary_cells:
             lat = lat_start + (r + 0.5) * d_lat
             lng = lng_start + (c + 0.5) * d_lng
-
             cell = cell_data[r][c] if 0 <= r < n and 0 <= c < n else {}
             pert_lat, pert_lng = _terrain_perturbation(
                 r, c, cr, cc, cell, zone_type, d_lat, d_lng
             )
-
             control_points.append((
                 round(lng + pert_lng, 7),
                 round(lat + pert_lat, 7),
@@ -389,8 +379,6 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
 
         # ══════ Phase 6: Catmull-Rom spline (courbure continue) ══════
         smoothed = _catmull_rom_closed(control_points, segments=6)
-
-        # Close polygon
         if smoothed:
             smoothed.append(smoothed[0])
 
@@ -405,8 +393,6 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
             "primary_zone": primary_zone,
             "polygon": [smoothed],
         })
-
-    return zone_polygons
 
     return zone_polygons
 
