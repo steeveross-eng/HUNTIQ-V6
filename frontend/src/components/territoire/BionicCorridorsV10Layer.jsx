@@ -1,11 +1,22 @@
 /**
  * BionicCorridorsV10Layer.jsx — Couche corridors fauniques BIONIC
- * Norme CORRIDOR-V1/V10 officielle — BCE-4X / Steeve-MAX
+ * Norme CORRIDOR-V1/V10 officielle — BCE-4X / Steeve-MAX V3
  *
  * HIÉRARCHIE VISUELLE STEEVE-MAX (obligatoire):
  *   DOMINANT  → Zones (contours opaques, weight=3, fillOpacity=0)
  *   SECONDAIRE → Corridors (opacity réduite, weight réduit)
  *   TERTIAIRE  → Points centraux (radius réduit, opacité réduite)
+ *
+ * MODE ZONE D'ANALYSE (2km×2km):
+ *   Éléments IN-ZONE  → style complet, interactions actives
+ *   Éléments HORS-ZONE → atténués (opacity 0.10-0.20, weight 1-1.5)
+ *   Corridors EXTREME  → toujours prioritaires, jamais atténués
+ *
+ * PERFORMANCE V3:
+ *   - L.featureGroup pour batch rendering
+ *   - interactive: false pour éléments atténués (zéro DOM overhead)
+ *   - Pas de tooltip/hover sur éléments hors-zone
+ *   - Cache global persistant (max 20 entrées)
  *
  * Palette normative:
  *   CRITIQUE  #B80000 (contour #660000) — micro-hachures, densité +20%
@@ -26,9 +37,6 @@ const CORRIDOR_PALETTE = {
   FAIBLE:   { color: '#BFBFBF', contour: '#999999', weight: 1, hasPattern: false, patternDash: null, dashArray: null, label: 'Faible' },
 };
 
-/**
- * Assombrir couleur hex (BCE-4X: contour 15-20% plus sombre)
- */
 function darkenHex(hex, factor = 0.82) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -52,14 +60,14 @@ const SPECIES_MAP = {
   tous: 'CERF',
 };
 
-// Z-index déterministe: FAIBLE → CRITIQUE → zones
+// Z-index déterministe: FAIBLE → CRITIQUE
 const LEVEL_ZINDEX = { FAIBLE: 0, MODERE: 1, FORT: 2, MAJEUR: 3, CRITIQUE: 4 };
 
-// Cache global pour éviter re-fetch
+// ═══ PERFORMANCE V3: Cache global persistant (max 20 entrées) ═══
 const _cache = new Map();
 function cacheKey(lat, lng, sp, m) { return `${lat.toFixed(4)}:${lng.toFixed(4)}:${sp}:${m}`; }
 
-// Douglas-Peucker simplifié côté client
+// ═══ PERFORMANCE V3: Douglas-Peucker simplifié côté client ═══
 function simplifyPath(coords, tolerance = 0.00003) {
   if (coords.length <= 4) return coords;
   const sqDist = (p, a, b) => {
@@ -87,6 +95,27 @@ function simplifyPath(coords, tolerance = 0.00003) {
   dp(coords, 0, coords.length - 1, result);
   result.push(coords[coords.length - 1]);
   return result;
+}
+
+// ═══ MODE ZONE D'ANALYSE: Vérification inclusion dans bbox 2km×2km ═══
+const D_LAT_KM = 0.009;  // ~1km en latitude à ~46°N
+const D_LNG_KM = 0.013;  // ~1km en longitude à ~46°N
+
+function isInAnalysisBox(lat, lng, box) {
+  if (!box) return true;
+  return lat >= box.south && lat <= box.north && lng >= box.west && lng <= box.east;
+}
+
+function ringsCentroid(rings) {
+  let lat = 0, lng = 0;
+  for (const [rlat, rlng] of rings) { lat += rlat; lng += rlng; }
+  return [lat / rings.length, lng / rings.length];
+}
+
+function corridorMidpoint(coords) {
+  if (coords.length === 0) return [0, 0];
+  const mid = Math.floor(coords.length / 2);
+  return coords[mid];
 }
 
 const BionicCorridorsV10Layer = ({
@@ -119,15 +148,24 @@ const BionicCorridorsV10Layer = ({
     }
   }, [map]);
 
+  // ═══ MODE ZONE D'ANALYSE: BBox 2km×2km centré sur le waypoint ═══
+  const analysisBox = useMemo(() => {
+    if (!center) return null;
+    return {
+      south: center.lat - D_LAT_KM,
+      north: center.lat + D_LAT_KM,
+      west: center.lng - D_LNG_KM,
+      east: center.lng + D_LNG_KM,
+    };
+  }, [center]);
+
   // Pré-calculer les styles — Hiérarchie Visuelle STEEVE-MAX
-  // Corridors: SECONDAIRES (opacity et weight réduits vs zones DOMINANTES)
   // EXCEPTION: CRITIQUE (EXTREME) — surbrillance +40% weight, opacity 0.65-0.80
   const precomputedStyles = useMemo(() => {
-    const corOp = 0.30; // Opacité corridors: secondaire
+    const corOp = 0.30;
     const styles = {};
     for (const [level, p] of Object.entries(CORRIDOR_PALETTE)) {
       const isExtreme = level === 'CRITIQUE';
-      // EXTREME corridors: +40% weight, opacity 0.65-0.80, couleur accentuée
       const w = isExtreme ? p.weight * 1.4 : p.weight;
       const op = isExtreme ? 0.75 : corOp;
       styles[level] = {
@@ -141,9 +179,11 @@ const BionicCorridorsV10Layer = ({
     return styles;
   }, []);
 
+  // ═══ RENDU PRINCIPAL — Zone d'analyse + Performance V3 ═══
   const renderData = useCallback((data, sp) => {
     clearLayers();
-    const group = L.layerGroup();
+    // PERFORMANCE V3: L.featureGroup pour batch rendering + event delegation
+    const group = L.featureGroup();
     const features = data.geojson?.features || [];
 
     const allCorridors = features
@@ -152,6 +192,7 @@ const BionicCorridorsV10Layer = ({
 
     const zonePolygons = features.filter(f => f.geometry.type === 'Polygon');
     const zonePoints = features.filter(f => f.geometry.type === 'Point');
+    const box = analysisBox;
 
     // ═══ COUCHE 1 (Z-BAS): Zones polygonales organiques — BCE-4X protégées ═══
     if (showZones) {
@@ -160,28 +201,33 @@ const BionicCorridorsV10Layer = ({
         const props = feature.properties;
         const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
 
+        // MODE ZONE D'ANALYSE: vérifier si le centroïde est dans la bbox 2km×2km
+        const [cLat, cLng] = ringsCentroid(rings);
+        const inZone = isInAnalysisBox(cLat, cLng, box);
+
         const polygon = L.polygon(rings, {
           color: zc,
-          weight: 3,
-          opacity: 1.0,
+          weight: inZone ? 3 : 1.5,
+          opacity: inZone ? 1.0 : 0.15,
           fillColor: 'transparent',
           fillOpacity: 0,
           lineCap: 'round',
           lineJoin: 'round',
+          interactive: inZone,
         });
-        polygon.bindTooltip(
-          `<div style="font-size:12px;font-weight:600;color:${zc}">
-            ${props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)}
-          </div>
-          <div style="font-size:11px;color:#555">Score: ${props.score} | ${sp}</div>`,
-          { sticky: true, opacity: 0.95 }
-        );
-        polygon.on('mouseover', function() {
-          this.setStyle({ weight: 4, opacity: 1.0 });
-        });
-        polygon.on('mouseout', function() {
-          this.setStyle({ weight: 3, opacity: 1.0 });
-        });
+
+        // PERFORMANCE V3: Tooltips + hover uniquement pour éléments IN-ZONE
+        if (inZone) {
+          polygon.bindTooltip(
+            `<div style="font-size:12px;font-weight:600;color:${zc}">
+              ${props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)}
+            </div>
+            <div style="font-size:11px;color:#555">Score: ${props.score} | ${sp}</div>`,
+            { sticky: true, opacity: 0.95 }
+          );
+          polygon.on('mouseover', function() { this.setStyle({ weight: 4, opacity: 1.0 }); });
+          polygon.on('mouseout', function() { this.setStyle({ weight: 3, opacity: 1.0 }); });
+        }
         group.addLayer(polygon);
       }
 
@@ -191,25 +237,32 @@ const BionicCorridorsV10Layer = ({
           const [lng, lat] = feature.geometry.coordinates;
           const props = feature.properties;
           const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
+          const inZone = isInAnalysisBox(lat, lng, box);
           const c = L.circleMarker([lat, lng], {
-            radius: 6, fillColor: zc, color: darkenHex(zc, 0.82),
-            weight: 1.5, fillOpacity: 0.8, opacity: 0.9,
+            radius: inZone ? 6 : 3,
+            fillColor: zc,
+            color: darkenHex(zc, 0.82),
+            weight: inZone ? 1.5 : 0.5,
+            fillOpacity: inZone ? 0.8 : 0.15,
+            opacity: inZone ? 0.9 : 0.15,
+            interactive: inZone,
           });
-          c.bindTooltip(
-            `<span style="font-size:11px;font-weight:600;color:${zc}">${
-              props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
-            }</span>`,
-            { sticky: true }
-          );
+          if (inZone) {
+            c.bindTooltip(
+              `<span style="font-size:11px;font-weight:600;color:${zc}">${
+                props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
+              }</span>`,
+              { sticky: true }
+            );
+          }
           group.addLayer(c);
         }
       }
     }
 
     // ═══ COUCHE 2 (Z-MILIEU): Corridors filtrés ═══
-    // Note: corridors declared outside block to avoid "corridors is not defined" error in callback
     const corridors = allCorridors.filter(f => (f.properties.score || 0) >= minPercentage);
-    
+
     if (showCorridorsLayer) {
       for (const feature of corridors) {
         const raw = feature.geometry.coordinates.map(c => [c[1], c[0]]);
@@ -217,34 +270,46 @@ const BionicCorridorsV10Layer = ({
 
         const coords = simplifyPath(raw);
         const props = feature.properties;
+        const isExtreme = props.niveau === 'CRITIQUE';
         const style = precomputedStyles[props.niveau] || precomputedStyles.FORT;
 
-        group.addLayer(L.polyline(coords, style.contour));
+        // MODE ZONE D'ANALYSE: EXTREME toujours visible, autres atténués hors-zone
+        const [mLat, mLng] = corridorMidpoint(coords);
+        const inZone = isExtreme || isInAnalysisBox(mLat, mLng, box);
 
-        const line = L.polyline(coords, style.main);
-        line.bindTooltip(
-          `<div style="font-size:12px;font-weight:600;color:${CORRIDOR_PALETTE[props.niveau]?.color || '#FF8C00'}">
-            ${CORRIDOR_PALETTE[props.niveau]?.label || props.niveau} (${props.score}/100)
-          </div>
-          <div style="font-size:11px;color:#555">
-            ${props.from_type} → ${props.to_type} | ${props.largeur_m}m
-          </div>`,
-          { sticky: true, opacity: 0.95 }
-        );
-        line.on('mouseover', function() { this.setStyle(style.hover); });
-        line.on('mouseout', function() { this.setStyle(style.restore); });
-        group.addLayer(line);
-
-        if (style.hachure) {
-          group.addLayer(L.polyline(coords, style.hachure));
+        if (inZone) {
+          // Style complet avec interactions
+          group.addLayer(L.polyline(coords, style.contour));
+          const line = L.polyline(coords, style.main);
+          line.bindTooltip(
+            `<div style="font-size:12px;font-weight:600;color:${CORRIDOR_PALETTE[props.niveau]?.color || '#FF8C00'}">
+              ${CORRIDOR_PALETTE[props.niveau]?.label || props.niveau} (${props.score}/100)
+            </div>
+            <div style="font-size:11px;color:#555">
+              ${props.from_type} → ${props.to_type} | ${props.largeur_m}m
+            </div>`,
+            { sticky: true, opacity: 0.95 }
+          );
+          line.on('mouseover', function() { this.setStyle(style.hover); });
+          line.on('mouseout', function() { this.setStyle(style.restore); });
+          group.addLayer(line);
+          if (style.hachure) group.addLayer(L.polyline(coords, style.hachure));
+        } else {
+          // PERFORMANCE V3: Style atténué, zéro interaction, zéro tooltip
+          group.addLayer(L.polyline(coords, {
+            color: style.main.color,
+            weight: 1,
+            opacity: 0.12,
+            lineCap: 'round',
+            lineJoin: 'round',
+            interactive: false,
+          }));
         }
       }
     }
 
     // ═══ COUCHE 3 (Z-HAUT): Points centraux — BCE-4X protégés ═══
     if (showPoints) {
-      // MODE POINTS CHAUDS: tous les 64 points, style rétabli (version précédente)
-      // MODE NORMAL: 16 centroïdes représentatifs, style overlay léger
       const isChaud = pointsChaudsMode;
 
       for (const feature of zonePolygons) {
@@ -267,22 +332,26 @@ const BionicCorridorsV10Layer = ({
 
         if (isChaud) {
           // Mode POINTS CHAUDS: TOUS les 64 centres, apparence antérieure (fine reading)
-          for (const center of centers) {
-            if (!center.lat || !center.lng) continue;
-            const marker = L.circleMarker([center.lat, center.lng], {
-              radius: 4,
+          for (const ct of centers) {
+            if (!ct.lat || !ct.lng) continue;
+            const inZone = isInAnalysisBox(ct.lat, ct.lng, box);
+            const marker = L.circleMarker([ct.lat, ct.lng], {
+              radius: inZone ? 4 : 2,
               fillColor: zc,
               color: '#FFFFFF',
-              weight: 1.5,
-              fillOpacity: 0.65,
-              opacity: 0.70,
+              weight: inZone ? 1.5 : 0.5,
+              fillOpacity: inZone ? 0.65 : 0.12,
+              opacity: inZone ? 0.70 : 0.12,
+              interactive: inZone,
             });
-            marker.bindTooltip(
-              `<span style="font-size:11px;font-weight:600;color:${zc}">${
-                props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
-              } — ${Math.round((center.score || 0) * 100)}%</span>`,
-              { sticky: true }
-            );
+            if (inZone) {
+              marker.bindTooltip(
+                `<span style="font-size:11px;font-weight:600;color:${zc}">${
+                  props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
+                } — ${Math.round((ct.score || 0) * 100)}%</span>`,
+                { sticky: true }
+              );
+            }
             group.addLayer(marker);
           }
         } else {
@@ -297,20 +366,24 @@ const BionicCorridorsV10Layer = ({
           }
 
           if (representative && representative.lat && representative.lng) {
+            const inZone = isInAnalysisBox(representative.lat, representative.lng, box);
             const marker = L.circleMarker([representative.lat, representative.lng], {
-              radius: 5,
+              radius: inZone ? 5 : 2.5,
               fillColor: zc,
               color: '#FFFFFF',
-              weight: 1,
-              fillOpacity: 0.65,
-              opacity: 0.65,
+              weight: inZone ? 1 : 0.5,
+              fillOpacity: inZone ? 0.65 : 0.12,
+              opacity: inZone ? 0.65 : 0.12,
+              interactive: inZone,
             });
-            marker.bindTooltip(
-              `<span style="font-size:11px;font-weight:600;color:${zc}">${
-                props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
-              } — ${Math.round((representative.score || 0) * 100)}% (${centers.length} pts)</span>`,
-              { sticky: true }
-            );
+            if (inZone) {
+              marker.bindTooltip(
+                `<span style="font-size:11px;font-weight:600;color:${zc}">${
+                  props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
+                } — ${Math.round((representative.score || 0) * 100)}% (${centers.length} pts)</span>`,
+                { sticky: true }
+              );
+            }
             group.addLayer(marker);
           }
         }
@@ -332,7 +405,7 @@ const BionicCorridorsV10Layer = ({
         species: sp,
       });
     }
-  }, [map, clearLayers, precomputedStyles, minPercentage, onDataLoaded, showZones, showCorridorsLayer, showPoints, pointsChaudsMode, pointsChaudsFilter]);
+  }, [map, clearLayers, precomputedStyles, minPercentage, onDataLoaded, showZones, showCorridorsLayer, showPoints, pointsChaudsMode, pointsChaudsFilter, analysisBox]);
 
   const fetchAndRender = useCallback(async () => {
     if (!center || !enabled) {
@@ -346,13 +419,19 @@ const BionicCorridorsV10Layer = ({
     // Throttle: 200ms debounce
     if (throttleRef.current) clearTimeout(throttleRef.current);
     throttleRef.current = setTimeout(async () => {
-      // Skip if same render key
-      if (lastRenderKey.current === key && layerGroupRef.current) return;
+      // PERFORMANCE V3: Skip re-fetch if same data, force re-render for style changes
+      if (lastRenderKey.current === key && cachedDataRef.current) {
+        renderData(cachedDataRef.current, sp);
+        return;
+      }
       lastRenderKey.current = key;
 
       // Check cache
       if (_cache.has(key)) {
-        renderData(_cache.get(key), sp);
+        const cached = _cache.get(key);
+        cachedDataRef.current = cached;
+        cachedSpeciesRef.current = sp;
+        renderData(cached, sp);
         return;
       }
 
@@ -377,18 +456,16 @@ const BionicCorridorsV10Layer = ({
         if (!res.ok) return;
         const data = await res.json();
 
-        // Cache
+        // PERFORMANCE V3: Cache persistant
         _cache.set(key, data);
         if (_cache.size > 20) {
           const firstKey = _cache.keys().next().value;
           _cache.delete(firstKey);
         }
 
-        // Store for re-render on seuil change
         cachedDataRef.current = data;
         cachedSpeciesRef.current = sp;
 
-        // Render only if still the latest request
         if (lastRenderKey.current === key) {
           renderData(data, sp);
         }

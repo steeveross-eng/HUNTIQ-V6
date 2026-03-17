@@ -1,0 +1,148 @@
+{
+  "summary": "Iteration 45 - STEEVE-MAX V3 (Zone d'Analyse + Performance) Testing Complete. All features verified: (1) Map loads with V10 corridors and 26 zones displayed correctly with score 55/100. (2) ZONES tab opens with hierarchy labels (DOMINANT, SECONDAIRE, TERTIAIRE) and all three toggles work. (3) Toggle Zones OFF/ON hides/shows zone polygons. (4) Toggle Corridors OFF/ON hides/shows corridors. (5) Toggle Points OFF/ON hides/shows points. (6) POINTS CHAUDS tab mode toggle activates/deactivates with all 7 behavior filters present. (7) Corridors V10 master toggle works correctly. (8) Wind flow layer toggle works with both Minimaliste and Particules modes. (9) Analysis zone mode (2km×2km) automatically activates with waypoint selection - zones inside box at full opacity, zones outside dimmed. (10) Score displayed correctly (55/100). (11) SEUIL 30% slider visible in toolbar. (12) No critical JavaScript errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/v1/groups/*", "issue": "404 errors - Groups endpoint not implemented (pre-existing, unrelated to V3)"},
+      {"endpoint": "/sw-v2.js", "issue": "Service Worker 404 - returns text/html instead of JavaScript (pre-existing)"}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mon Territoire",
+        "issues": [
+          "INFO: ScoreBadge DataCloneError in emergent-main.js - cosmetic, does not affect functionality"
+        ]
+      }
+    ]
+  },
+  "test_results": {
+    "map_loading": {
+      "status": "PASS",
+      "leaflet_container": "Found",
+      "v10_corridors_loaded": true,
+      "zones_count": 26,
+      "corridors_count": 19,
+      "score_global": "55/100"
+    },
+    "zones_tab_testing": {
+      "status": "PASS",
+      "data_testid": "toolbar-zones-btn",
+      "popover_opens": true,
+      "hierarchy_labels": {
+        "DOMINANT_found": true,
+        "SECONDAIRE_found": true,
+        "TERTIAIRE_found": true
+      },
+      "toggle_switches": {
+        "toggle-zones-layer": "PASS - Working",
+        "toggle-corridors-layer": "PASS - Working",
+        "toggle-points-layer": "PASS - Working"
+      }
+    },
+    "points_chauds_tab_testing": {
+      "status": "PASS",
+      "data_testid": "toolbar-points-chauds-btn",
+      "mode_toggle": "toggle-points-chauds-mode - Working",
+      "behavior_filters_visible": {
+        "Tous les points": true,
+        "Alimentation": true,
+        "Rut": true,
+        "Repos": true,
+        "Trajets": true,
+        "Affûts": true,
+        "Habitat": true
+      }
+    },
+    "corridors_v10_toggle": {
+      "status": "PASS",
+      "data_testid": "toggle-corridors-v10",
+      "toggle_off_hides_corridors": true,
+      "toggle_on_shows_corridors": true
+    },
+    "wind_flow_testing": {
+      "status": "PASS",
+      "data_testid": "layer-toggle-wind-flow",
+      "modes": {
+        "arrows_mode": "PASS - Minimaliste mode works",
+        "particles_mode": "PASS - Particules mode works"
+      },
+      "wind_legend_visible": true,
+      "wind_data": {
+        "speed": "24.3 km/h",
+        "direction": "S",
+        "gusts": "50 km/h"
+      }
+    },
+    "analysis_zone_mode": {
+      "status": "PASS - Automatic",
+      "bbox_size": "2km × 2km = 4 km²",
+      "in_zone_opacity": "full opacity",
+      "out_zone_opacity": "0.10-0.20 (dimmed)",
+      "critique_corridors": "always visible (never attenuated)",
+      "visual_clipping": "working - zones inside box fully visible, outside dimmed"
+    },
+    "score_display": {
+      "status": "PASS",
+      "score_value": "55/100",
+      "rating_label": "Bon"
+    },
+    "seuil_slider": {
+      "status": "PASS",
+      "data_testid": "toolbar-seuil-btn",
+      "default_value": "30%"
+    },
+    "javascript_errors": {
+      "status": "PASS",
+      "critical_errors": 0
+    }
+  },
+  "features_verified": {
+    "map_loads_v10_corridors": "PASS",
+    "score_display_55_100": "PASS",
+    "zones_tab_hierarchy_labels": "PASS",
+    "zones_toggle_works": "PASS",
+    "corridors_toggle_works": "PASS",
+    "points_toggle_works": "PASS",
+    "points_chauds_mode_toggle": "PASS",
+    "points_chauds_7_filters": "PASS",
+    "corridors_v10_master_toggle": "PASS",
+    "wind_flow_minimaliste_mode": "PASS",
+    "wind_flow_particles_mode": "PASS",
+    "analysis_zone_attenuation": "PASS - Automatic activation on waypoint selection",
+    "performance_L_featureGroup": "PASS - Using L.featureGroup for batch rendering",
+    "performance_interactive_false": "PASS - Attenuated elements have interactive:false",
+    "seuil_30_percent_slider": "PASS",
+    "no_console_js_errors": "PASS"
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_45.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BionicCorridorsV10Layer.jsx correctly implements Analysis Zone mode with D_LAT_KM=0.009 and D_LNG_KM=0.013 for 2km×2km bbox",
+    "Performance V3 optimizations verified: L.featureGroup for batch rendering, interactive:false for attenuated elements",
+    "CRITIQUE corridors are never attenuated (always prioritaires) per BCE-4X norms - line 278: const inZone = isExtreme || isInAnalysisBox(mLat, mLng, box)",
+    "Cache global persistant implemented with max 20 entries - line 461-464",
+    "MonTerritoireBionicPage.jsx correctly passes all STEEVE-MAX UX props to BionicCorridorsV10Layer via MapContent",
+    "WindFlowLayer.jsx +15% intensity values implemented (PARTICLE_LINE_WIDTH=0.86, arrow opacity caps at 0.345)"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "steeve.ross@gmail.com / Saturn5858*",
+    "auto_logged_as": "Steeve Ross"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 45 verified STEEVE-MAX V3 Zone d'Analyse + Performance features. Key test IDs: toolbar-zones-btn, toolbar-points-chauds-btn, toggle-zones-layer, toggle-corridors-layer, toggle-points-layer, toggle-points-chauds-mode, toggle-corridors-v10, layer-toggle-wind-flow, wind-mode-arrows, wind-mode-particles, toolbar-seuil-btn. Analysis zone mode (2km×2km) activates automatically when waypoint is selected - zones inside the bbox have full opacity/weight, zones outside are dimmed (opacity 0.10-0.20, weight 1-1.5). CRITIQUE corridors are NEVER attenuated regardless of position. The app uses L.featureGroup for performance and interactive:false for attenuated elements to reduce DOM overhead.",
+  "verification_date": "2026-03-17",
+  "testing_focus": "STEEVE-MAX V3 - Zone d'Analyse Mode + Performance Optimizations"
+}
