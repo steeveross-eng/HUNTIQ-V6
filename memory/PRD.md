@@ -19,41 +19,37 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 ### ENGINE CORRIDORS-V10 — iteration_28 (31/31)
 ### Norme CORRIDOR-V1/V10 + Integration Mon Territoire — iteration_29 (26/26)
 ### Legende Mon Territoire VERSION 3X — iteration_30 (37/37)
+### Corrections V9→V10 labels + Performance — iteration_31 (14/14)
 
-### Corrections visuelles + Performance (2026-03-17) — iteration_31 (14/14)
-- **Fond orange retire** : Rectangle 2km2 fillOpacity=0, fillColor=transparent
-- **Panneau lateral V9→V10** : "Corridors & Ecologie V10", "Score V10", "Classification V10", "9 Moteurs BIONIC V10"
-- **SidePanelZones V9→V10** : "Score Global V10", "V10 + Meteo", "Cache V10"
-- **Performance optimisations:**
-  - Backend: Douglas-Peucker simplification (_simplify_coords) — GeoJSON payload reduit
-  - Frontend: Caching global (Map avec limite 20 entrees)
-  - Frontend: Throttling 200ms debounce sur fetchAndRender
-  - Frontend: Pre-rendu des styles (precomputedStyles useMemo)
-  - Frontend: Douglas-Peucker client-side (simplifyPath)
-  - Frontend: Z-index deterministe (FAIBLE → CRITIQUE → zones)
-- Tests: Backend 8/8 (100%), Frontend 6/6 (100%), 0 regression
+### Fond orange retire + Suppression V9 (2026-03-17) — iteration_32 (22/22)
+- **BionicScoreHeatmap RETIRE** : import et rendu supprimes de MapContent.jsx
+- **V9 corridors DESACTIVES** : BionicMicroZones recoit corridors=[] et showCorridors=false
+- **Centre Circle transparent** : fillOpacity=0, fillColor=transparent
+- **Rectangle 2km2 transparent** : fillOpacity=0, fillColor=transparent
+- **Panneau lateral collapse** : "Corridors & Ecologie V10" (ligne 113 corrigee)
+- **Resultat** : Terrain satellite 100% visible, seuls corridors V10 normatifs rendent
+- Tests: Backend 8/8 + Frontend 14/14 = 22/22 (100%), 0 regression
 
-## Fichiers Cles
-```
-Backend:
-  /app/backend/modules/corridors_v10/   — 11 fichiers Python
+## Etat actuel Mon Territoire
+- Fond: terrain satellite 100% visible (aucune couche opaque)
+- Corridors: V10 uniquement (palette normative CRITIQUE→FAIBLE)
+- Zones: ecologiques V9 (polygones) preservees
+- Legende: 3X normative (3 blocs, compteurs, toggles)
+- Panneau lateral: entierement V10
+- Toolbar: "CORRIDORS V10" avec toggle
 
-Frontend:
-  /app/frontend/src/components/territoire/
-    BionicLegend.jsx                   — Legende 3X normative
-    BionicCorridorsV10Layer.jsx        — Couche Leaflet + cache + throttle + DP
-    BionicScoreHeatmap.jsx             — Heatmap score consolide
-    CorridorsEcologyPanel.jsx          — Panneau lateral V10
-  /app/frontend/src/components/territoire/map/
-    MapContent.jsx                     — Rectangle transparent + couches
-  /app/frontend/src/components/territoire/ui/
-    SidePanelZones.jsx                 — Score Global V10
-```
+## API Endpoints CORRIDORS-V10
+- POST /api/v10/corridors/analyze
+- POST /api/v10/corridors/analyze-full (GeoJSON normatif simplifie)
+- GET /api/v10/corridors/multi
+- GET /api/v10/corridors/profiles
+- GET /api/v10/corridors/profile/{species}
+- GET /api/v10/corridors/documentation
 
 ## Backlog
-### P0 — HABITAT-V1 (sur commande — prochaine)
-### P1 — RUT-V1, AFFUTS-V1, TRAJETS-V1 (sequentiel)
+### P0 — HABITAT-V1 (prochaine commande)
 ### P1 — Integration score consolide CORRIDORS-V10 dans heatmap
+### P1 — RUT-V1, AFFUTS-V1, TRAJETS-V1 (sequentiel)
 ### P2 — Certification Finale BIONIC V3
 ### P3 — Phase 4: Integration transversale (BLOQUEE)
 
