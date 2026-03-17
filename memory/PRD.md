@@ -34,22 +34,17 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 ### UX STEEVE-MAX — Onglets ZONES + POINTS CHAUDS (2026-03-17) — iteration_43
 ### OPTIMISATION UX STEEVE-MAX V2 (2026-03-17) — iteration_44 (100%)
 ### MODE ZONE D'ANALYSE + PERFORMANCE V3 (2026-03-17) — iteration_45 (100%)
-
 ### EXTENSION UX STEEVE-MAX — Sous-elements granulaires (2026-03-17) — iteration_46 (100%)
-- **Zones (DOMINANT)**: 7 sous-elements individuels:
-  - Alimentation, Repos, Rut, Habitat, Affuts, Trajets, Multi-Engines
-  - Multi-Engines = afficher toutes les zones (override)
-- **Corridors (SECONDAIRE)**: 4 sous-elements individuels:
-  - Normaux (FAIBLE/MODERE), Intenses (FORT/MAJEUR), EXTREME (CRITIQUE), Saisonniers (all)
-  - Saisonniers = afficher tous les corridors (override)
-- **Points (TERTIAIRE)**: 8 sous-elements individuels:
-  - Alimentation, Rut, Repos, Trajets, Affuts, Habitat, Centroides (normal mode), Individuels (chauds mode)
-- **Master toggle** : OFF cache sous-elements et couche entiere, ON revele sous-elements
-- **UI** : Popover ZONES expandable avec 3 sections, indicateurs couleur, border-left nesting
-- **State** : zoneSubFilters, corridorSubFilters, pointSubFilters dans MonTerritoireBionicPage
-- **Helpers** : isZoneTypeVisible(), isCorridorLevelVisible(), isPointTypeVisible() dans BionicCorridorsV10Layer
-- Zero modification geometrique, conformite BCE-4X totale
-- Tests: Frontend 100% (iteration_46.json), 0 regression
+
+### BUG FIX: Corridors disparaissant (2026-03-17) — iteration_47
+- **Cause**: Prop `center` (objet {lat,lng}) recree a chaque re-render parent
+  → cascade dependances: center → analysisBox → renderData → fetchAndRender → cleanup clearLayers
+  → couches perpetuellement effacees avant affichage
+- **Fix 1**: analysisBox useMemo depend de center?.lat, center?.lng (primitives) au lieu de center (objet)
+- **Fix 2**: fetchAndRender decouple de renderData via renderDataRef (ref stable)
+- **Fix 3**: fetchAndRender ne depend plus de renderData, skip si key identique ET layers existent
+- **Fix 4**: Re-render visuel (filtres/toggles) gere par effect separe dependant de renderData
+- Resultat: Corridors, zones et points visibles correctement
 
 ## API Endpoints CORRIDORS-V10
 - POST /api/v10/corridors/analyze

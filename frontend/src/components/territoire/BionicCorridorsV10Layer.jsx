@@ -152,15 +152,18 @@ const BionicCorridorsV10Layer = ({
   }, [map]);
 
   // ═══ MODE ZONE D'ANALYSE: BBox 2km×2km centré sur le waypoint ═══
+  // STABILITÉ: dépend de lat/lng primitives, pas de l'objet center (évite cascades)
+  const centerLat = center?.lat;
+  const centerLng = center?.lng;
   const analysisBox = useMemo(() => {
-    if (!center) return null;
+    if (centerLat == null || centerLng == null) return null;
     return {
-      south: center.lat - D_LAT_KM,
-      north: center.lat + D_LAT_KM,
-      west: center.lng - D_LNG_KM,
-      east: center.lng + D_LNG_KM,
+      south: centerLat - D_LAT_KM,
+      north: centerLat + D_LAT_KM,
+      west: centerLng - D_LNG_KM,
+      east: centerLng + D_LNG_KM,
     };
-  }, [center]);
+  }, [centerLat, centerLng]);
 
   // Pré-calculer les styles — Hiérarchie Visuelle STEEVE-MAX
   // EXCEPTION: CRITIQUE (EXTREME) — surbrillance +40% weight, opacity 0.65-0.80
@@ -458,6 +461,10 @@ const BionicCorridorsV10Layer = ({
     }
   }, [map, clearLayers, precomputedStyles, minPercentage, onDataLoaded, showZones, showCorridorsLayer, showPoints, pointsChaudsMode, pointsChaudsFilter, analysisBox, isZoneTypeVisible, isCorridorLevelVisible, isPointTypeVisible]);
 
+  // REF STABLE: renderData accessible sans cascade de dépendances dans fetchAndRender
+  const renderDataRef = useRef(renderData);
+  renderDataRef.current = renderData;
+
   const fetchAndRender = useCallback(async () => {
     if (!center || !enabled) {
       clearLayers();
@@ -470,11 +477,8 @@ const BionicCorridorsV10Layer = ({
     // Throttle: 200ms debounce
     if (throttleRef.current) clearTimeout(throttleRef.current);
     throttleRef.current = setTimeout(async () => {
-      // PERFORMANCE V3: Skip re-fetch if same data, force re-render for style changes
-      if (lastRenderKey.current === key && cachedDataRef.current) {
-        renderData(cachedDataRef.current, sp);
-        return;
-      }
+      // Skip re-fetch si mêmes données (renderData appelé par re-render effect séparé)
+      if (lastRenderKey.current === key && layerGroupRef.current) return;
       lastRenderKey.current = key;
 
       // Check cache
@@ -482,7 +486,7 @@ const BionicCorridorsV10Layer = ({
         const cached = _cache.get(key);
         cachedDataRef.current = cached;
         cachedSpeciesRef.current = sp;
-        renderData(cached, sp);
+        renderDataRef.current(cached, sp);
         return;
       }
 
@@ -518,7 +522,7 @@ const BionicCorridorsV10Layer = ({
         cachedSpeciesRef.current = sp;
 
         if (lastRenderKey.current === key) {
-          renderData(data, sp);
+          renderDataRef.current(data, sp);
         }
       } catch (err) {
         if (err.name !== 'AbortError') console.error('[CORRIDORS-V10]', err);
@@ -526,14 +530,14 @@ const BionicCorridorsV10Layer = ({
         setLoading(false);
       }
     }, 200);
-  }, [center, species, month, enabled, clearLayers, renderData]);
+  }, [center, species, month, enabled, clearLayers]);
 
-  // Re-render quand le seuil minimum ou les contrôles de visibilité changent
+  // Re-render quand les contrôles visuels changent (séparé du fetch)
   useEffect(() => {
     if (cachedDataRef.current && cachedSpeciesRef.current) {
       renderData(cachedDataRef.current, cachedSpeciesRef.current);
     }
-  }, [minPercentage, showZones, showCorridorsLayer, showPoints, pointsChaudsMode, pointsChaudsFilter, renderData]);
+  }, [renderData]);
 
   useEffect(() => {
     fetchAndRender();
