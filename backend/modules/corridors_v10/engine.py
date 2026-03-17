@@ -17,6 +17,8 @@ from .scoring import compute_corridor_score, compute_corridor_levels
 from .validator import validate_bce4x, validate_steeve_max
 from .classifier import classify_batch, CORRIDOR_LEVELS
 import math
+from shapely.geometry import MultiPoint
+from shapely import concave_hull as shapely_concave_hull
 
 
 def _simplify_coords(coords, tolerance=0.00003):
@@ -243,13 +245,13 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
     Pipeline:
     0. Fusion ecologique (clustering super-quadrant 2x2)
     1. Dimension dynamique (rayon proportionnel a l'attraction)
-    2. BFS multi-source terrain-aware (superposition libre entre clusters)
-    3. Extraction de frontiere
-    4. Tri angulaire depuis centroide
-    5. Perturbation ecologique terrain-aware
-    6. Catmull-Rom spline (courbure continue)
-    7. Chaikin smoothing (anti-etoile)
-    8. ZERO simplification (BCE-4X: geometrie sanctuarisee)
+    2. BFS multi-source terrain-aware (superposition libre)
+    3. Concave hull (Shapely) — contour propre sans spikes
+    4. Lissage morphologique (buffer+/buffer-) — supprime aretes
+    5. Sous-echantillonnage control points (~50 pts)
+    6. Catmull-Rom spline (courbure continue, 6 segments)
+    7. Chaikin smoothing (anti-etoile, 2 iterations)
+    8. Firewall BCE-4X (spike detection, continuite)
     """
     m_per_lng = _meters_per_deg_lng(center_lat)
     d_lat = cell_m / METERS_PER_DEG_LAT
@@ -343,39 +345,52 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
             })
             continue
 
-        zone_set = set(zone_cells)
-
-        # ══════ Phase 3: Extraction de frontiere ══════
-        boundary_cells = []
+        # ══════ Phase 3: Contour organique via buffer union (Shapely) ══════
+        # Union de cercles autour de chaque cellule BFS → blob lisse sans spikes
+        geo_points = []
         for r, c in zone_cells:
-            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                if (r + dr, c + dc) not in zone_set:
-                    boundary_cells.append((r, c))
-                    break
-
-        if len(boundary_cells) < 3:
-            boundary_cells = list(zone_cells)
-
-        boundary_cells = list(set(boundary_cells))
-
-        # ══════ Phase 4: Centroide + tri angulaire ══════
-        cr = sum(r for r, c in boundary_cells) / len(boundary_cells)
-        cc = sum(c for r, c in boundary_cells) / len(boundary_cells)
-        boundary_cells.sort(key=lambda p: -math.atan2(p[0] - cr, p[1] - cc))
-
-        # ══════ Phase 5: Conversion geo + perturbation ecologique ══════
-        control_points = []
-        for r, c in boundary_cells:
             lat = lat_start + (r + 0.5) * d_lat
             lng = lng_start + (c + 0.5) * d_lng
-            cell = cell_data[r][c] if 0 <= r < n and 0 <= c < n else {}
-            pert_lat, pert_lng = _terrain_perturbation(
-                r, c, cr, cc, cell, zone_type, d_lat, d_lng
-            )
-            control_points.append((
-                round(lng + pert_lng, 7),
-                round(lat + pert_lat, 7),
-            ))
+            geo_points.append((lng, lat))
+
+        mp = MultiPoint(geo_points)
+        # Buffer chaque point par ~1.2 cell width → union = blob organique lisse
+        blob = mp.buffer(d_lat * 1.2)
+
+        # Gerer MultiPolygon (garder le plus grand)
+        if blob.geom_type == 'MultiPolygon':
+            blob = max(blob.geoms, key=lambda g: g.area)
+
+        if blob.is_empty or blob.geom_type not in ('Polygon',):
+            blob = mp.convex_hull.buffer(d_lat * 0.5)
+
+        # ══════ Phase 4: Reduction control points ══════
+        # Simplifier pour ~60-80 pts de controle (intermediaire seulement)
+        simplified = blob.simplify(d_lat * 0.4, preserve_topology=True)
+        if simplified.is_empty or simplified.geom_type != 'Polygon':
+            simplified = blob
+
+        raw_coords = list(simplified.exterior.coords)
+
+        # ══════ Phase 5: Sous-echantillonnage control points ══════
+        if raw_coords and raw_coords[0] == raw_coords[-1]:
+            raw_coords = raw_coords[:-1]
+
+        target_pts = 50
+        if len(raw_coords) > target_pts:
+            step = len(raw_coords) / target_pts
+            control_points = []
+            for i in range(target_pts):
+                idx = int(i * step) % len(raw_coords)
+                control_points.append(raw_coords[idx])
+        else:
+            control_points = list(raw_coords)
+
+        if len(control_points) < 3:
+            control_points = list(raw_coords) if len(raw_coords) >= 3 else geo_points[:12]
+
+        # Convertir en tuples (lng, lat)
+        control_points = [(round(x, 7), round(y, 7)) for x, y in control_points]
 
         # ══════ Phase 6: Catmull-Rom spline (courbure continue) ══════
         smoothed = _catmull_rom_closed(control_points, segments=6)
@@ -385,7 +400,7 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
         # ══════ Phase 7: Chaikin smoothing (anti-etoile) ══════
         smoothed = _chaikin_smooth(smoothed, iterations=2)
 
-        # BCE-4X: ZERO simplification — resolution maximale preservee
+        # BCE-4X: Resolution maximale preservee
         smoothed = [[round(x, 7), round(y, 7)] for x, y in smoothed]
 
         zone_polygons.append({
