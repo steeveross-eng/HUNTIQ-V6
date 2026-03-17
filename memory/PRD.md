@@ -39,15 +39,35 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - **Props nettoyees**: corridors=[] et showCorridors=false retires de MapContent → BionicMicroZones
 - Tests: Frontend 13/13 (100%), 0 regression
 
+### Anomalie critique V9/V10 — Purge V9 + Polygones V10 (2026-03-17) — iteration_34 (23/23)
+- **Backend**: engine.py — Ajout generation polygones V10 (BFS flood-fill + convex hull Andrew)
+  - Fonctions ajoutees: _generate_zone_polygons(), _convex_hull(), _score_cell_for_zone_type()
+  - GeoJSON zones: Point → Polygon (64 polygones, 0 points)
+  - Parametres: max_radius=10, max_cells=60, threshold=25% center_score
+  - Chaque polygone ~300m de cote, terrain-aware, deterministe
+- **Frontend BionicCorridorsV10Layer.jsx**: Rendu polygones V10 avec normes BCE-4X
+  - fillOpacity 0.35 (hover 0.40), contour darkenHex(0.82), weight 1.5
+  - Points centraux synchronises (center_lat/center_lng)
+  - Tooltips sur hover avec type + score
+- **Frontend MapContent.jsx**: BionicMicroZones (V9) SUPPRIME DEFINITIVEMENT
+  - Import retire, rendu retire, seul BionicCorridorsV10Layer rend les zones
+- Tests: Backend 8/8 + Frontend 15/15 = 23/23 (100%), 0 regression
+
 ## Etat actuel Mon Territoire
 - Fond: terrain satellite 100% visible (aucune couche opaque)
 - Corridors: V10 uniquement (palette normative CRITIQUE→FAIBLE, BCE-4X: aucun glow)
 - CRITIQUE: #B80000 + contour #660000 + micro-hachures
 - MAJEUR: #FF0000 + contour #CC0000, aucun pattern
-- Zones: polygones ecologiques avec transparence calibree 30-40%, contours assombris -18%, epaisseur -25%
+- Zones: **POLYGONES V10** (64 polygones generes par flood-fill + convex hull)
+  - 4 types: alimentation (vert), repos (bleu), rut (orange), eau (teal)
+  - Transparence calibree 35% (hover 40%), contours assombris 18%
+  - Points centraux synchronises
+  - Polygones cliquables avec tooltips
+  - ZERO zones V9 restantes
 - Legende: 3X normative (3 blocs, compteurs, toggles)
 - Panneau lateral: entierement V10
 - Toolbar: "CORRIDORS V10" avec toggle
+- BCE-4X: applique a la racine de tous les modules et moteurs
 
 ## API Endpoints CORRIDORS-V10
 - POST /api/v10/corridors/analyze
