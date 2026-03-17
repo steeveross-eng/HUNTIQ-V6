@@ -117,6 +117,21 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - GET /api/v10/corridors/profile/{species}
 - GET /api/v10/corridors/documentation
 
+### Directive Superposition Transparente STEEVE-MAX (2026-03-17) — iteration_38 (26/26)
+- **Frontend BionicCorridorsV10Layer.jsx**: Rendu zones transparent
+  - fillOpacity=0, fillColor=transparent (interieur transparent)
+  - Contours opaques: opacity=1.0, weight=3, couleurs vives (non assombries)
+  - Hover: weight 3→4 (zero changement de remplissage)
+  - Couleurs: alimentation=#4CAF50, repos=#2196F3, rut=#FF5722, eau=#00BCD4
+- **Backend engine.py**: BFS superposition libre (sans exclusion territoriale)
+  - Fusion ecologique 64→16 zones (4 par type, cluster_size=4)
+  - Dimension dynamique preservee (rayon proportionnel attraction)
+  - Contours organiques: Catmull-Rom(6) + Chaikin(2), 2000-5500 vertices
+  - 64 centres BCE-4X preserves (all_centers, 4 par polygone)
+- **Zero pollution visuelle**: contours seuls definissent les zones
+- **Superposition libre**: zones peuvent se chevaucher sans masquer les contours
+- Tests: Backend 10/10 + Frontend 16/16 = 26/26 (100%), 0 regression
+
 ## Backlog
 ### P1 — Integration score consolide CORRIDORS-V10 dans heatmap
 ### P2 — HABITAT-V1 (prochaine commande utilisateur)
