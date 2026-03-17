@@ -24,6 +24,16 @@ const CORRIDOR_PALETTE = {
   FAIBLE:   { color: '#BFBFBF', contour: '#999999', weight: 2, hasPattern: false, patternDash: null, dashArray: null, label: 'Faible' },
 };
 
+/**
+ * Assombrir couleur hex (BCE-4X: contour 15-20% plus sombre)
+ */
+function darkenHex(hex, factor = 0.82) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `#${Math.round(r * factor).toString(16).padStart(2, '0')}${Math.round(g * factor).toString(16).padStart(2, '0')}${Math.round(b * factor).toString(16).padStart(2, '0')}`;
+}
+
 const ZONE_COLORS = {
   alimentation: '#4CAF50',
   repos: '#2196F3',
@@ -119,12 +129,74 @@ const BionicCorridorsV10Layer = ({
     const group = L.layerGroup();
     const features = data.geojson?.features || [];
 
-    // Séparer et trier corridors par z-index
+    // Séparer corridors, polygones de zones, et points de zones
     const corridors = features
       .filter(f => f.geometry.type === 'LineString')
       .sort((a, b) => (LEVEL_ZINDEX[a.properties.niveau] || 0) - (LEVEL_ZINDEX[b.properties.niveau] || 0));
 
-    const zones = features.filter(f => f.geometry.type === 'Point');
+    const zonePolygons = features.filter(f => f.geometry.type === 'Polygon');
+    const zonePoints = features.filter(f => f.geometry.type === 'Point');
+
+    // Rendu zones V10 — Polygones BCE-4X (SOUS les corridors)
+    for (const feature of zonePolygons) {
+      const rings = feature.geometry.coordinates[0].map(c => [c[1], c[0]]);
+      const props = feature.properties;
+      const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
+      const contourColor = darkenHex(zc, 0.82);
+
+      const polygon = L.polygon(rings, {
+        color: contourColor,
+        weight: 1.5,
+        opacity: 1.0,
+        fillColor: zc,
+        fillOpacity: 0.35,
+        lineCap: 'round',
+        lineJoin: 'round',
+      });
+      polygon.bindTooltip(
+        `<div style="font-size:12px;font-weight:600;color:${zc}">
+          ${props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)}
+        </div>
+        <div style="font-size:11px;color:#555">Score: ${props.score} | ${sp}</div>`,
+        { sticky: true, opacity: 0.95 }
+      );
+      polygon.on('mouseover', function() {
+        this.setStyle({ fillOpacity: 0.40, weight: 2.5 });
+      });
+      polygon.on('mouseout', function() {
+        this.setStyle({ fillOpacity: 0.35, weight: 1.5 });
+      });
+      group.addLayer(polygon);
+
+      // Point central synchronisé (même ID)
+      if (props.center_lat && props.center_lng) {
+        const marker = L.circleMarker([props.center_lat, props.center_lng], {
+          radius: 3.5, fillColor: zc, color: contourColor,
+          weight: 1, fillOpacity: 0.9, opacity: 1.0,
+        });
+        group.addLayer(marker);
+      }
+    }
+
+    // Fallback: rendu points si pas de polygones (compatibilite)
+    if (zonePolygons.length === 0) {
+      for (const feature of zonePoints) {
+        const [lng, lat] = feature.geometry.coordinates;
+        const props = feature.properties;
+        const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
+        const c = L.circleMarker([lat, lng], {
+          radius: 4, fillColor: zc, color: darkenHex(zc, 0.82),
+          weight: 1.5, fillOpacity: 0.8, opacity: 0.9,
+        });
+        c.bindTooltip(
+          `<span style="font-size:11px;font-weight:600;color:${zc}">${
+            props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
+          }</span>`,
+          { sticky: true }
+        );
+        group.addLayer(c);
+      }
+    }
 
     // Rendu batch corridors — BCE-4X: contour + main + hachure (CRITIQUE uniquement)
     for (const feature of corridors) {
@@ -159,24 +231,6 @@ const BionicCorridorsV10Layer = ({
       }
     }
 
-    // Rendu zones
-    for (const feature of zones) {
-      const [lng, lat] = feature.geometry.coordinates;
-      const props = feature.properties;
-      const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
-      const c = L.circleMarker([lat, lng], {
-        radius: 4, fillColor: zc, color: '#fff',
-        weight: 1.5, fillOpacity: 0.8, opacity: 0.9,
-      });
-      c.bindTooltip(
-        `<span style="font-size:11px;font-weight:600;color:${zc}">${
-          props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
-        }</span>`,
-        { sticky: true }
-      );
-      group.addLayer(c);
-    }
-
     group.addTo(map);
     layerGroupRef.current = group;
 
@@ -185,7 +239,7 @@ const BionicCorridorsV10Layer = ({
       onDataLoaded({
         niveauDistribution: data.niveau_distribution || {},
         totalCorridors: corridors.length,
-        totalZones: zones.length,
+        totalZones: zonePolygons.length || zonePoints.length,
         scoreCorridors: data.score_corridor,
         classeCorridors: data.classe_corridor,
         continuity: data.continuity,

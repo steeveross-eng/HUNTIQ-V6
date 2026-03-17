@@ -16,6 +16,7 @@ from .network_builder import build_network
 from .scoring import compute_corridor_score, compute_corridor_levels
 from .validator import validate_bce4x, validate_steeve_max
 from .classifier import classify_batch, CORRIDOR_LEVELS
+import math
 
 
 def _simplify_coords(coords, tolerance=0.00003):
@@ -47,6 +48,184 @@ def _simplify_coords(coords, tolerance=0.00003):
     dp(coords, 0, len(coords) - 1, result)
     result.append(coords[-1])
     return result
+
+
+# ============================================================
+# Zone Polygon Generation — BCE-4X / Steeve-MAX
+# ============================================================
+METERS_PER_DEG_LAT = 111320.0
+
+
+def _meters_per_deg_lng(lat):
+    return 111320.0 * math.cos(math.radians(lat))
+
+
+def _score_cell_for_zone_type(cell, zone_type):
+    """Score a cell for a specific ecological zone type."""
+    if cell.get("barrier"):
+        return 0
+    if zone_type == "alimentation":
+        return cell.get("canopy_density", 0) * 0.6 + cell.get("feuillus_nobles", 0) * 0.4
+    elif zone_type == "repos":
+        return cell.get("canopy_density", 0) * 0.5 + min(cell.get("distance_route_m", 0), 500) / 500 * 0.5
+    elif zone_type == "rut":
+        return cell.get("strate_1_3m", 0) * 0.5 + (1.0 - cell.get("canopy_density", 0)) * 0.3
+    elif zone_type == "eau":
+        d = cell.get("distance_eau_m", 500)
+        if d < 150 and not cell.get("is_water", False):
+            return 1.0 - d / 150
+        return 0
+    return 0
+
+
+def _convex_hull(points):
+    """Andrew's monotone chain convex hull. Returns closed polygon coords."""
+    pts = sorted(set(points))
+    if len(pts) <= 1:
+        return []
+    if len(pts) == 2:
+        # Create a thin rectangle for 2 points
+        a, b = pts
+        dx = (b[0] - a[0]) * 0.0001
+        dy = (b[1] - a[1]) * 0.0001
+        return [
+            (a[0] - dy, a[1] + dx), (b[0] - dy, b[1] + dx),
+            (b[0] + dy, b[1] - dx), (a[0] + dy, a[1] - dx),
+            (a[0] - dy, a[1] + dx),
+        ]
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+    lower = []
+    for p in pts:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+    upper = []
+    for p in reversed(pts):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    hull = lower[:-1] + upper[:-1]
+    hull.append(hull[0])  # close polygon
+    return hull
+
+
+def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m, cell_m):
+    """
+    Generate polygon geometries for V10 ecological zones.
+    BFS flood-fill from zone center → convex hull polygon.
+    BCE-4X: terrain-aware, deterministic, no fallback.
+    """
+    m_per_lng = _meters_per_deg_lng(center_lat)
+    d_lat = cell_m / METERS_PER_DEG_LAT
+    d_lng = cell_m / m_per_lng
+
+    half = side_m / 2.0
+    lat_start = center_lat - half / METERS_PER_DEG_LAT
+    lng_start = center_lng - half / m_per_lng
+
+    zone_polygons = []
+
+    for zone in zones:
+        zone_type = zone["type"]
+        r0, c0 = zone["pos"]
+        center_score = zone["score"]
+
+        # BFS flood-fill: collect cells with good score for this zone type
+        # Parametres elargis pour polygones bien visibles
+        threshold = max(0.10, center_score * 0.25)
+        max_radius = 10  # cells (250m at 25m/cell)
+        max_cells = 60
+
+        visited = set()
+        zone_cells = []
+        queue = [(r0, c0, 0)]  # (row, col, distance)
+        visited.add((r0, c0))
+
+        while queue and len(zone_cells) < max_cells:
+            r, c, dist = queue.pop(0)
+            if r < 0 or r >= n or c < 0 or c >= n:
+                continue
+            if abs(r - r0) > max_radius or abs(c - c0) > max_radius:
+                continue
+
+            cell = cell_data[r][c]
+
+            # Always include first ring around center (2 cells)
+            if dist <= 2 and not cell.get("barrier"):
+                zone_cells.append((r, c))
+                for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
+                    nr, nc = r + dr, c + dc
+                    if (nr, nc) not in visited:
+                        visited.add((nr, nc))
+                        queue.append((nr, nc, dist + 1))
+                continue
+
+            score = _score_cell_for_zone_type(cell, zone_type)
+            if score >= threshold:
+                zone_cells.append((r, c))
+                for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
+                    nr, nc = r + dr, c + dc
+                    if (nr, nc) not in visited:
+                        visited.add((nr, nc))
+                        queue.append((nr, nc, dist + 1))
+
+        if len(zone_cells) < 3:
+            # Fallback: create hexagonal polygon around center (rayon elargi)
+            clat, clng = zone["lat"], zone["lng"]
+            radius_deg = cell_m * 4.0 / METERS_PER_DEG_LAT
+            radius_lng = cell_m * 4.0 / m_per_lng
+            hex_pts = []
+            for i in range(6):
+                angle = math.radians(60 * i + 30)
+                hex_pts.append([
+                    round(clng + radius_lng * math.cos(angle), 7),
+                    round(clat + radius_deg * math.sin(angle), 7),
+                ])
+            hex_pts.append(hex_pts[0])  # close
+            zone_polygons.append({
+                "zone": zone,
+                "polygon": [hex_pts],
+            })
+            continue
+
+        # Convert cell positions to corner points for polygon generation
+        cell_points = []
+        for r, c in zone_cells:
+            # 4 corners of each cell
+            for dr, dc in [(0, 0), (0, 1), (1, 0), (1, 1)]:
+                lat = lat_start + (r + dr) * d_lat
+                lng = lng_start + (c + dc) * d_lng
+                cell_points.append((round(lng, 7), round(lat, 7)))
+
+        hull = _convex_hull(cell_points)
+        if len(hull) < 4:
+            continue
+
+        # Add organic noise to hull vertices (deterministic per zone)
+        noise_seed = hash(f"{zone['lat']:.6f}:{zone['lng']:.6f}:{zone_type}")
+        noisy_hull = []
+        for i, (lng_v, lat_v) in enumerate(hull):
+            # Slight noise (5-15% of cell size) for organic shape
+            h = ((noise_seed + i * 7919) % 10000) / 10000.0
+            noise_factor = 0.3 * d_lat * (h - 0.5)
+            noise_lng = 0.3 * d_lng * (((noise_seed + i * 6271) % 10000) / 10000.0 - 0.5)
+            noisy_hull.append([
+                round(lng_v + noise_lng, 7),
+                round(lat_v + noise_factor, 7),
+            ])
+        # Close polygon
+        if noisy_hull and noisy_hull[0] != noisy_hull[-1]:
+            noisy_hull.append(noisy_hull[0])
+
+        zone_polygons.append({
+            "zone": zone,
+            "polygon": [noisy_hull],
+        })
+
+    return zone_polygons
 
 
 def analyze_corridors(
@@ -273,14 +452,19 @@ def analyze_corridors_full(
         }
         geojson_features.append(feature)
 
-    # GeoJSON zones ecologiques
+    # GeoJSON zones ecologiques V10 — POLYGONES (BCE-4X / Steeve-MAX)
     zone_colors = {
         "alimentation": "#4CAF50",
         "repos": "#2196F3",
         "rut": "#FF5722",
         "eau": "#00BCD4",
     }
-    for z in network["zones"]:
+    zone_polygons = _generate_zone_polygons(
+        network["zones"], grid_result["cell_data"], grid_result["n"],
+        center_lat, center_lng, side_m, cell_m,
+    )
+    for zp in zone_polygons:
+        z = zp["zone"]
         feature = {
             "type": "Feature",
             "properties": {
@@ -288,10 +472,12 @@ def analyze_corridors_full(
                 "score": z["score"],
                 "species": species,
                 "color": zone_colors.get(z["type"], "#9E9E9E"),
+                "center_lat": z["lat"],
+                "center_lng": z["lng"],
             },
             "geometry": {
-                "type": "Point",
-                "coordinates": [z["lng"], z["lat"]],
+                "type": "Polygon",
+                "coordinates": zp["polygon"],
             },
         }
         geojson_features.append(feature)

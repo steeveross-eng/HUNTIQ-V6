@@ -12,8 +12,7 @@ import HydrographyOverlayLayer from '@/components/territoire/HydrographyOverlayL
 import ExclusionOverlayLayer from '@/components/territoire/ExclusionOverlayLayer';
 import WindFlowLayer from '@/components/territoire/WindFlowLayer';
 import StructureContrastLayer from '@/components/territoire/StructureContrastLayer';
-import BionicMicroZones from '@/components/territoire/BionicMicroZones';
-// STEVE-MAX: MovementCorridorsLayer SUPPRIME DEFINITIVEMENT — BCE-4X-UI-003
+// BCE-4X-UI-003: BionicMicroZones (V9) SUPPRIME DEFINITIVEMENT — Zones rendues par BionicCorridorsV10Layer
 import { ShootingZones } from '@/modules/groupe';
 import CursorBionicLayer from '@/components/territoire/CursorBionicLayer';
 import BionicAntiDoublesGuard from '@/components/territoire/BionicAntiDoublesGuard';
@@ -100,30 +99,7 @@ const MapContentInner = React.memo(({
     <ExclusionOverlayLayer enabled={showExclusionOverlay && classificationToggles.pression} />
     {showWindFlow && <WindFlowLayer mode={windMode || 'arrows'} />}
     <StructureContrastLayer enabled={classificationToggles.anthropique} />
-    <BionicMicroZones
-      zones={bionicZones}
-      minPercentage={minPercentageFilter}
-      onZoneClick={setSelectedZone}
-      onZoneHover={setHoveredZone}
-      isZoneFavorite={isZoneFavorite}
-      onAddFavorite={async (zone) => {
-        const name = prompt(`Nom pour cette zone ${BIONIC_MODULES[zone.layerId]?.label || zone.layerId} (${zone.score}%) ?`, `Zone ${BIONIC_MODULES[zone.layerId]?.label}`);
-        if (name) {
-          await addFavorite({
-            name,
-            module_id: zone.layerId,
-            location: { lat: zone.center[0], lng: zone.center[1], radius_meters: 40 },
-            notes: null,
-            alert_enabled: true,
-            alert_days_before: 3
-          });
-        }
-      }}
-      onRemoveFavorite={(zone) => {
-        const favId = getFavoriteId(zone);
-        if (favId) removeFavorite(favId);
-      }}
-    />
+    {/* BCE-4X: Zones V9 (BionicMicroZones) SUPPRIMEES — Zones V10 rendues par BionicCorridorsV10Layer */}
     {/* STEVE-MAX: MovementCorridorsLayer PURGE DEFINITIVE — BCE-4X-UI-003 */}
 
     {/* STEVE-MAX P3: Hunting Path Layer — z-index 700 (above corridors) */}
