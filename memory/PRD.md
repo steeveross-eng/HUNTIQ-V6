@@ -70,7 +70,25 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
   - Polygones organiques = entites protegees et inviolables
 - Tests: Backend 19/19 + Frontend 16/16 = 35/35 (100%), 0 regression
 
-## Etat actuel Mon Territoire
+### Standard Visuel STEEVE-MAX (2026-03-17) — iteration_36 (16/16)
+- **Filtrage corridors par slider**: connecte minPercentageFilter au rendu V10
+  - Seuil 30% par defaut → 19 corridors (vs 192 total) — zero toile d'araignee
+  - Re-render reactif: cachedDataRef pour re-rendu instantane au changement de seuil
+  - Backend expose tous les corridors, frontend filtre dynamiquement
+- **Reduction bruit visuel corridors**:
+  - Weight 5 → 3 (CRITIQUE/MAJEUR), 4 → 2.5 (FORT), 3 → 2 (MODERE), 2 → 1.5 (FAIBLE)
+  - Opacity 0.85 → 0.55 (transparence augmentee)
+  - Contour opacity reduit (0.4 × opacity)
+- **Points centraux restaures** (BCE-4X proteges):
+  - Radius 3.5 → 6, contour blanc #FFFFFF, weight 2
+  - fillOpacity 0.95, z-index HAUT (rendus APRES corridors)
+  - Tooltip avec type + score
+- **Hierarchie visuelle stricte**:
+  - COUCHE 1 (Z-BAS): Zones polygonales organiques
+  - COUCHE 2 (Z-MILIEU): Corridors filtres par seuil
+  - COUCHE 3 (Z-HAUT): Points centraux protéges
+- **Protection BCE-4X**: polygones, points, corridors filtres — tous proteges
+- Tests: Frontend 16/16 (100%), 0 regression
 - Fond: terrain satellite 100% visible (aucune couche opaque)
 - Corridors: V10 uniquement (palette normative CRITIQUE→FAIBLE, BCE-4X: aucun glow)
   - CRITIQUE: #B80000 + contour #660000 + micro-hachures
