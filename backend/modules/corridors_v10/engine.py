@@ -78,45 +78,119 @@ def _score_cell_for_zone_type(cell, zone_type):
     return 0
 
 
-def _convex_hull(points):
-    """Andrew's monotone chain convex hull. Returns closed polygon coords."""
-    pts = sorted(set(points))
-    if len(pts) <= 1:
-        return []
-    if len(pts) == 2:
-        # Create a thin rectangle for 2 points
-        a, b = pts
-        dx = (b[0] - a[0]) * 0.0001
-        dy = (b[1] - a[1]) * 0.0001
-        return [
-            (a[0] - dy, a[1] + dx), (b[0] - dy, b[1] + dx),
-            (b[0] + dy, b[1] - dx), (a[0] + dy, a[1] - dx),
-            (a[0] - dy, a[1] + dx),
-        ]
+def _catmull_rom_closed(points, segments=8):
+    """
+    Catmull-Rom spline fermee pour polygone organique.
+    BCE-4X: Courbure continue, fluide, naturelle.
+    Steeve-MAX: Resolution maximale, 100% des points preserves.
+    """
+    np = len(points)
+    if np < 3:
+        return list(points)
 
-    def cross(o, a, b):
-        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    result = []
+    for i in range(np):
+        p0 = points[(i - 1) % np]
+        p1 = points[i]
+        p2 = points[(i + 1) % np]
+        p3 = points[(i + 2) % np]
 
-    lower = []
-    for p in pts:
-        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
-            lower.pop()
-        lower.append(p)
-    upper = []
-    for p in reversed(pts):
-        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
-            upper.pop()
-        upper.append(p)
-    hull = lower[:-1] + upper[:-1]
-    hull.append(hull[0])  # close polygon
-    return hull
+        for s in range(segments):
+            t = s / segments
+            t2 = t * t
+            t3 = t2 * t
+
+            x = 0.5 * (
+                (2 * p1[0]) +
+                (-p0[0] + p2[0]) * t +
+                (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
+                (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3
+            )
+            y = 0.5 * (
+                (2 * p1[1]) +
+                (-p0[1] + p2[1]) * t +
+                (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
+                (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3
+            )
+            result.append((round(x, 7), round(y, 7)))
+
+    return result
+
+
+def _terrain_perturbation(r, c, cr, cc, cell, zone_type, d_lat, d_lng):
+    """
+    Calcule la perturbation terrain pour un point de frontiere.
+    Fidelite ecologique: essences forestieres, pente, eau, peuplements.
+    """
+    # Direction outward from centroid
+    dr_norm = r - cr
+    dc_norm = c - cc
+    dist = math.sqrt(dr_norm ** 2 + dc_norm ** 2) + 0.001
+
+    # Terrain factors from cell data
+    canopy = cell.get("canopy_density", 0.5)
+    feuillus = cell.get("feuillus_nobles", 0.3)
+    strate = cell.get("strate_1_3m", 0.3)
+    slope = min(cell.get("slope", 0), 35)
+    d_eau = cell.get("distance_eau_m", 500)
+    d_route = cell.get("distance_route_m", 500)
+
+    # Slope factor: reduce perturbation at steep slopes (ruptures de pente)
+    slope_factor = 1.0 - slope / 50.0
+
+    # Forest stand factor: push boundary along forest edges
+    # High canopy change = boundary follows stand edge
+    forest_push = (canopy - 0.5) * d_lat * 0.35 * slope_factor
+
+    # Water proximity: expand toward water for "eau" zones
+    water_factor = 0.0
+    if d_eau < 200:
+        water_factor = (1.0 - d_eau / 200) * d_lat * 0.25
+        if zone_type == "eau":
+            water_factor *= 2.5  # Strong pull toward water features
+
+    # Feuillus nobles factor: expand toward noble hardwoods for alimentation
+    feuillus_push = 0.0
+    if zone_type == "alimentation":
+        feuillus_push = (feuillus - 0.3) * d_lat * 0.2
+
+    # Strate factor: expand toward understory for rut zones
+    strate_push = 0.0
+    if zone_type == "rut":
+        strate_push = (strate - 0.3) * d_lat * 0.2
+
+    # Route avoidance: pull boundary away from roads
+    route_pull = 0.0
+    if d_route < 150:
+        route_pull = -(1.0 - d_route / 150) * d_lat * 0.15
+
+    # Deterministic micro-variation (simulates micro-relief, micro-depressions)
+    seed = hash(f"{r}:{c}:{zone_type}")
+    micro_lat = ((seed % 10000) / 10000.0 - 0.5) * d_lat * 0.2
+    micro_lng = (((seed >> 16) % 10000) / 10000.0 - 0.5) * d_lng * 0.2
+
+    # Outward push (base)
+    base_push_lat = (dr_norm / dist) * d_lat * 0.45
+    base_push_lng = (dc_norm / dist) * d_lng * 0.45
+
+    total_lat = base_push_lat + forest_push + water_factor + feuillus_push + strate_push + route_pull + micro_lat
+    total_lng = base_push_lng + micro_lng
+
+    return total_lat, total_lng
 
 
 def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m, cell_m):
     """
-    Generate polygon geometries for V10 ecological zones.
-    BFS flood-fill from zone center → convex hull polygon.
-    BCE-4X: terrain-aware, deterministic, no fallback.
+    NORME STEEVE-MAX — Polygones organiques BIONIC V10
+    Protection BCE-4X obligatoire.
+
+    Algorithme:
+    1. BFS flood-fill terrain-aware (rayon etendu)
+    2. Extraction de frontiere (cellules avec voisins non-zone)
+    3. Tri angulaire depuis centroide
+    4. Perturbation ecologique (foret, eau, pente, peuplements)
+    5. Catmull-Rom spline (courbure continue, fluide)
+    6. ZERO simplification (BCE-4X: geometrie sanctuarisee)
     """
     m_per_lng = _meters_per_deg_lng(center_lat)
     d_lat = cell_m / METERS_PER_DEG_LAT
@@ -133,15 +207,14 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
         r0, c0 = zone["pos"]
         center_score = zone["score"]
 
-        # BFS flood-fill: collect cells with good score for this zone type
-        # Parametres elargis pour polygones bien visibles
-        threshold = max(0.10, center_score * 0.25)
-        max_radius = 10  # cells (250m at 25m/cell)
-        max_cells = 60
+        # ──── Phase 1: BFS flood-fill terrain-aware (etendu) ────
+        threshold = max(0.08, center_score * 0.15)
+        max_radius = 15   # 375m at 25m/cell
+        max_cells = 150
 
         visited = set()
         zone_cells = []
-        queue = [(r0, c0, 0)]  # (row, col, distance)
+        queue = [(r0, c0, 0)]
         visited.add((r0, c0))
 
         while queue and len(zone_cells) < max_cells:
@@ -153,8 +226,8 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
 
             cell = cell_data[r][c]
 
-            # Always include first ring around center (2 cells)
-            if dist <= 2 and not cell.get("barrier"):
+            # Always include inner ring (3 cells) for zone body
+            if dist <= 3 and not cell.get("barrier"):
                 zone_cells.append((r, c))
                 for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
                     nr, nc = r + dr, c + dc
@@ -173,56 +246,78 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
                         queue.append((nr, nc, dist + 1))
 
         if len(zone_cells) < 3:
-            # Fallback: create hexagonal polygon around center (rayon elargi)
+            # Fallback organique: petit polygone spline autour du centre
             clat, clng = zone["lat"], zone["lng"]
-            radius_deg = cell_m * 4.0 / METERS_PER_DEG_LAT
-            radius_lng = cell_m * 4.0 / m_per_lng
-            hex_pts = []
-            for i in range(6):
-                angle = math.radians(60 * i + 30)
-                hex_pts.append([
-                    round(clng + radius_lng * math.cos(angle), 7),
-                    round(clat + radius_deg * math.sin(angle), 7),
-                ])
-            hex_pts.append(hex_pts[0])  # close
-            zone_polygons.append({
-                "zone": zone,
-                "polygon": [hex_pts],
-            })
+            radius_deg = cell_m * 5.0 / METERS_PER_DEG_LAT
+            radius_lng = cell_m * 5.0 / m_per_lng
+            ctrl_pts = []
+            for i in range(12):
+                angle = math.radians(30 * i)
+                seed = hash(f"{clat:.5f}:{clng:.5f}:{i}")
+                r_var = 1.0 + ((seed % 10000) / 10000.0 - 0.5) * 0.3
+                ctrl_pts.append((
+                    clng + radius_lng * math.cos(angle) * r_var,
+                    clat + radius_deg * math.sin(angle) * r_var,
+                ))
+            smoothed = _catmull_rom_closed(ctrl_pts, segments=6)
+            if smoothed:
+                smoothed.append(smoothed[0])
+                smoothed = [[round(x, 7), round(y, 7)] for x, y in smoothed]
+            zone_polygons.append({"zone": zone, "polygon": [smoothed]})
             continue
 
-        # Convert cell positions to corner points for polygon generation
-        cell_points = []
+        zone_set = set(zone_cells)
+
+        # ──── Phase 2: Extraction de frontiere ────
+        boundary_cells = []
         for r, c in zone_cells:
-            # 4 corners of each cell
-            for dr, dc in [(0, 0), (0, 1), (1, 0), (1, 1)]:
-                lat = lat_start + (r + dr) * d_lat
-                lng = lng_start + (c + dc) * d_lng
-                cell_points.append((round(lng, 7), round(lat, 7)))
+            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                if (r + dr, c + dc) not in zone_set:
+                    boundary_cells.append((r, c))
+                    break
 
-        hull = _convex_hull(cell_points)
-        if len(hull) < 4:
-            continue
+        if len(boundary_cells) < 3:
+            boundary_cells = list(zone_cells)
 
-        # Add organic noise to hull vertices (deterministic per zone)
-        noise_seed = hash(f"{zone['lat']:.6f}:{zone['lng']:.6f}:{zone_type}")
-        noisy_hull = []
-        for i, (lng_v, lat_v) in enumerate(hull):
-            # Slight noise (5-15% of cell size) for organic shape
-            h = ((noise_seed + i * 7919) % 10000) / 10000.0
-            noise_factor = 0.3 * d_lat * (h - 0.5)
-            noise_lng = 0.3 * d_lng * (((noise_seed + i * 6271) % 10000) / 10000.0 - 0.5)
-            noisy_hull.append([
-                round(lng_v + noise_lng, 7),
-                round(lat_v + noise_factor, 7),
-            ])
+        # Remove duplicates
+        boundary_cells = list(set(boundary_cells))
+
+        # ──── Phase 3: Centroide + tri angulaire ────
+        cr = sum(r for r, c in boundary_cells) / len(boundary_cells)
+        cc = sum(c for r, c in boundary_cells) / len(boundary_cells)
+
+        boundary_cells.sort(key=lambda p: -math.atan2(p[0] - cr, p[1] - cc))
+
+        # ──── Phase 4: Conversion geo + perturbation ecologique ────
+        control_points = []
+        for r, c in boundary_cells:
+            # Cell center position
+            lat = lat_start + (r + 0.5) * d_lat
+            lng = lng_start + (c + 0.5) * d_lng
+
+            # Terrain-aware perturbation
+            cell = cell_data[r][c] if 0 <= r < n and 0 <= c < n else {}
+            pert_lat, pert_lng = _terrain_perturbation(
+                r, c, cr, cc, cell, zone_type, d_lat, d_lng
+            )
+
+            control_points.append((
+                round(lng + pert_lng, 7),
+                round(lat + pert_lat, 7),
+            ))
+
+        # ──── Phase 5: Catmull-Rom spline (courbure continue) ────
+        # BCE-4X: ZERO simplification — resolution maximale preservee
+        smoothed = _catmull_rom_closed(control_points, segments=8)
+
         # Close polygon
-        if noisy_hull and noisy_hull[0] != noisy_hull[-1]:
-            noisy_hull.append(noisy_hull[0])
+        if smoothed:
+            smoothed.append(smoothed[0])
+            smoothed = [[round(x, 7), round(y, 7)] for x, y in smoothed]
 
         zone_polygons.append({
             "zone": zone,
-            "polygon": [noisy_hull],
+            "polygon": [smoothed],
         })
 
     return zone_polygons
