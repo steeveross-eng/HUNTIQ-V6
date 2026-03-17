@@ -1,0 +1,170 @@
+{
+  "summary": "Iteration 37 - STEEVE-MAX Directive Testing: Dimension dynamique + Fusion ecologique + Chaikin smoothing. All features verified working. API returns 16 polygon features (down from 64) with 4 per zone type. Each polygon has cluster_size=4 and all_centers with 4 center entries (64 total). Zone polygons have ~5000 vertices from Chaikin smoothing.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mon Territoire",
+        "issues": [
+          "Minor: Service Worker registration errors (sw-v2.js 404) - no impact on V10 functionality",
+          "Minor: Some 404s for sharing/notifications/groups endpoints - no impact on V10 corridors"
+        ]
+      }
+    ]
+  },
+  "test_results": {
+    "backend_tests": {
+      "total": 11,
+      "passed": 11,
+      "test_file": "/app/backend/tests/test_v10_steeve_max_fusion.py",
+      "tests": [
+        "test_api_returns_16_polygon_features - PASS",
+        "test_4_polygons_per_zone_type - PASS",
+        "test_each_polygon_has_cluster_size_4 - PASS",
+        "test_each_polygon_has_4_centers_in_all_centers - PASS",
+        "test_total_64_center_points_preserved - PASS",
+        "test_polygon_high_vertex_count_chaikin_smoothing - PASS",
+        "test_zone_polygon_colors - PASS",
+        "test_192_corridor_linestring_features - PASS",
+        "test_corridor_score_property_exists - PASS",
+        "test_engine_version_v10 - PASS",
+        "test_polygon_extent_large_organic - PASS"
+      ]
+    },
+    "frontend_tests": {
+      "total": 14,
+      "passed": 14,
+      "tests": [
+        "Mon Territoire page loads at /territoire without errors - PASS",
+        "API returns 16 Polygon features (down from 64) - PASS",
+        "4 polygons per zone type (alimentation, repos, rut, eau) - PASS",
+        "Each polygon has cluster_size=4 - PASS",
+        "Each polygon has all_centers with 4 entries - PASS",
+        "Zone polygons are large and organic (1100-1450m extent) - PASS",
+        "Zone contours smooth (Chaikin smoothing, ~5000 vertices) - PASS",
+        "4 zone colors visible: alimentation(green), repos(blue), rut(orange), eau(teal) - PASS",
+        "Center point markers visible (64 total, 4 per zone) - PASS",
+        "Center points rendered on top z-layer (COUCHE 3 in code) - PASS",
+        "Seuil slider visible (data-testid=min-percentage-slider, 10-80%, default 30%) - PASS",
+        "Satellite terrain visible through zones (35% opacity) - PASS",
+        "No V9 zones visible - PASS",
+        "No orange background - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "super_quadrant_clustering": {
+      "status": "PASS",
+      "details": {
+        "algorithm": "2x2 super-quadrant grouping",
+        "result": "64 zones merged into 16 (4 per type)",
+        "cluster_size": 4
+      }
+    },
+    "dynamic_dimension": {
+      "status": "PASS",
+      "details": {
+        "formula": "base_radius * (1 + attraction_score)",
+        "polygon_extent_range": "1100-1450m",
+        "max_radius": "8-22 cells based on score"
+      }
+    },
+    "chaikin_smoothing": {
+      "status": "PASS",
+      "details": {
+        "iterations": 2,
+        "avg_vertices_per_polygon": "~5000",
+        "effect": "Smooth organic contours, no star/spike artifacts"
+      }
+    },
+    "multi_source_bfs": {
+      "status": "PASS",
+      "details": {
+        "description": "BFS starts from ALL centers in merged cluster",
+        "result": "Larger, more organic zone shapes"
+      }
+    },
+    "all_centers_preserved": {
+      "status": "PASS",
+      "details": {
+        "total_centers": 64,
+        "per_polygon": 4,
+        "property_name": "all_centers"
+      }
+    },
+    "corridor_filtering": {
+      "status": "PASS",
+      "details": {
+        "slider_data_testid": "min-percentage-slider",
+        "range": "10% to 80%",
+        "default": "30%",
+        "corridors_displayed": 19
+      }
+    },
+    "zone_colors_bce4x": {
+      "status": "PASS",
+      "details": {
+        "alimentation": "#4CAF50 (green)",
+        "repos": "#2196F3 (blue)",
+        "rut": "#FF5722 (orange)",
+        "eau": "#00BCD4 (teal)"
+      }
+    },
+    "center_point_markers": {
+      "status": "PASS",
+      "details": {
+        "count": 64,
+        "radius": 6,
+        "border": "#FFFFFF (white)",
+        "border_weight": 2,
+        "fill_opacity": 0.95,
+        "z_layer": "COUCHE 3 (top)"
+      }
+    }
+  },
+  "api_response_structure": {
+    "endpoint": "POST /api/v10/corridors/analyze-full",
+    "request": {"center_lat": 46.85, "center_lng": -71.25, "species": "CERF", "month": 10},
+    "response": {
+      "engine": "CORRIDORS-V10",
+      "version": "10.0.0",
+      "polygon_features": 16,
+      "corridor_features": 192,
+      "zone_types": {"alimentation": 4, "repos": 4, "rut": 4, "eau": 4}
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_v10_steeve_max_fusion.py",
+    "/app/test_reports/pytest/iteration_37_steeve_max_fusion_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "engine.py: _cluster_zones_by_type() correctly implements 2x2 super-quadrant grouping (lines 210-234)",
+    "engine.py: _generate_zone_polygons() implements multi-source BFS, dynamic dimension, and Chaikin smoothing (lines 237-411)",
+    "engine.py: _chaikin_smooth() implements corner-cutting algorithm with 2 iterations (lines 182-207)",
+    "engine.py: GeoJSON includes all_centers and cluster_size properties (lines 651-665)",
+    "BionicCorridorsV10Layer.jsx: Correctly renders ALL center points from all_centers array (lines 242-260)",
+    "BionicCorridorsV10Layer.jsx: Center markers have white border (#FFFFFF), radius 6, weight 2 (line 248)",
+    "BionicCorridorsV10Layer.jsx: Corridor filtering by minPercentage works correctly (line 201)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_v10_steeve_max_fusion.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100% (14/14 features verified)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*"
+  },
+  "seed_data_creation": "None - used existing waypoint data from logged-in user",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 37 verified STEEVE-MAX Directive implementation: (1) Super-quadrant clustering reduces 64 zones to 16 (4 per type, cluster_size=4). (2) Dynamic dimension creates larger polygons (1100-1450m extent). (3) Chaikin smoothing (2 iterations) creates ~5000 vertices per polygon. (4) All 64 center points preserved in all_centers property. (5) Center point markers render on COUCHE 3 (top z-layer) with white border. (6) Seuil slider (data-testid=min-percentage-slider) works at 10-80% range. (7) No V9 zones, no orange background. (8) Test file: /app/backend/tests/test_v10_steeve_max_fusion.py",
+  "verification_date": "2026-03-17"
+}

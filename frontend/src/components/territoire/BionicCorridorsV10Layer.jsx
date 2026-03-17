@@ -233,27 +233,40 @@ const BionicCorridorsV10Layer = ({
     }
 
     // ═══ COUCHE 3 (Z-HAUT): Points centraux — BCE-4X protégés ═══
-    // Steeve-MAX: visibles, actifs, contour blanc pour contraste forêt dense
+    // Steeve-MAX: TOUS les points centraux restaurés (clusters fusionnés)
     for (const feature of zonePolygons) {
       const props = feature.properties;
-      if (!props.center_lat || !props.center_lng) continue;
       const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
+      const centers = props.all_centers || [];
 
-      const marker = L.circleMarker([props.center_lat, props.center_lng], {
-        radius: 6,
-        fillColor: zc,
-        color: '#FFFFFF',
-        weight: 2,
-        fillOpacity: 0.95,
-        opacity: 1.0,
-      });
-      marker.bindTooltip(
-        `<span style="font-size:11px;font-weight:600;color:${zc}">${
-          props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
-        } — ${Math.round(props.score * 100)}%</span>`,
-        { sticky: true }
-      );
-      group.addLayer(marker);
+      // Render ALL center points from merged cluster
+      for (const center of centers) {
+        if (!center.lat || !center.lng) continue;
+        const marker = L.circleMarker([center.lat, center.lng], {
+          radius: 6,
+          fillColor: zc,
+          color: '#FFFFFF',
+          weight: 2,
+          fillOpacity: 0.95,
+          opacity: 1.0,
+        });
+        marker.bindTooltip(
+          `<span style="font-size:11px;font-weight:600;color:${zc}">${
+            props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
+          } — ${Math.round(center.score * 100)}%</span>`,
+          { sticky: true }
+        );
+        group.addLayer(marker);
+      }
+
+      // Fallback: single center if no all_centers
+      if (centers.length === 0 && props.center_lat && props.center_lng) {
+        const marker = L.circleMarker([props.center_lat, props.center_lng], {
+          radius: 6, fillColor: zc, color: '#FFFFFF',
+          weight: 2, fillOpacity: 0.95, opacity: 1.0,
+        });
+        group.addLayer(marker);
+      }
     }
 
     group.addTo(map);

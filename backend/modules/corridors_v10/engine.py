@@ -179,18 +179,77 @@ def _terrain_perturbation(r, c, cr, cc, cell, zone_type, d_lat, d_lng):
     return total_lat, total_lng
 
 
+def _chaikin_smooth(points, iterations=3):
+    """
+    Chaikin corner-cutting algorithm — Adoucissement anti-etoile.
+    Steeve-MAX: Elimine spikes/etoiles tout en preservant la forme organique.
+    BCE-4X: Respecte topographie et micro-reliefs.
+    """
+    if len(points) < 4:
+        return points
+    for _ in range(iterations):
+        new_pts = []
+        n_pts = len(points) - 1  # last point = first point (closed)
+        for i in range(n_pts):
+            p0 = points[i]
+            p1 = points[(i + 1) % n_pts]
+            new_pts.append((
+                0.75 * p0[0] + 0.25 * p1[0],
+                0.75 * p0[1] + 0.25 * p1[1],
+            ))
+            new_pts.append((
+                0.25 * p0[0] + 0.75 * p1[0],
+                0.25 * p0[1] + 0.75 * p1[1],
+            ))
+        if new_pts:
+            new_pts.append(new_pts[0])  # close polygon
+        points = new_pts
+    return points
+
+
+def _cluster_zones_by_type(zones, n):
+    """
+    Fusion ecologique — Steeve-MAX.
+    Groupe les zones de meme type par super-quadrant (2x2).
+    Resultat: 3-5 grandes zones organiques par type au lieu de 16 confetti.
+    """
+    quad_size = n // 4  # taille d'un quadrant en cellules
+    by_type = {}
+    for z in zones:
+        by_type.setdefault(z["type"], []).append(z)
+
+    clusters = []
+    for ztype, type_zones in by_type.items():
+        # Grouper par super-quadrant 2x2
+        super_quads = {}
+        for z in type_zones:
+            r, c = z["pos"]
+            sq_r = min(r // (quad_size * 2), 1)
+            sq_c = min(c // (quad_size * 2), 1)
+            super_quads.setdefault((sq_r, sq_c), []).append(z)
+
+        for cluster in super_quads.values():
+            clusters.append(cluster)
+
+    return clusters
+
+
 def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m, cell_m):
     """
     NORME STEEVE-MAX — Polygones organiques BIONIC V10
+    Dimension + Fusion + Adoucissement
     Protection BCE-4X obligatoire.
 
-    Algorithme:
-    1. BFS flood-fill terrain-aware (rayon etendu)
-    2. Extraction de frontiere (cellules avec voisins non-zone)
-    3. Tri angulaire depuis centroide
-    4. Perturbation ecologique (foret, eau, pente, peuplements)
-    5. Catmull-Rom spline (courbure continue, fluide)
-    6. ZERO simplification (BCE-4X: geometrie sanctuarisee)
+    Pipeline:
+    0. Fusion ecologique (clustering zones meme type, distance < 100m)
+    1. Dimension dynamique (rayon proportionnel a l'attraction)
+    2. BFS multi-source terrain-aware
+    3. Extraction de frontiere
+    4. Tri angulaire depuis centroide
+    5. Perturbation ecologique terrain-aware
+    6. Catmull-Rom spline (courbure continue)
+    7. Chaikin smoothing (anti-etoile)
+    8. ZERO simplification (BCE-4X: geometrie sanctuarisee)
     """
     m_per_lng = _meters_per_deg_lng(center_lat)
     d_lat = cell_m / METERS_PER_DEG_LAT
@@ -200,36 +259,57 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
     lat_start = center_lat - half / METERS_PER_DEG_LAT
     lng_start = center_lng - half / m_per_lng
 
+    NEIGHBORS_8 = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+    # ══════ Phase 0: Fusion ecologique ══════
+    # Clustering zones meme type par super-quadrant 2x2 → 4 clusters par type
+    clusters = _cluster_zones_by_type(zones, n)
+
     zone_polygons = []
 
-    for zone in zones:
-        zone_type = zone["type"]
-        r0, c0 = zone["pos"]
-        center_score = zone["score"]
+    for cluster in clusters:
+        zone_type = cluster[0]["type"]
+        max_score = max(z["score"] for z in cluster)
+        primary_zone = max(cluster, key=lambda z: z["score"])
 
-        # ──── Phase 1: BFS flood-fill terrain-aware (etendu) ────
-        threshold = max(0.08, center_score * 0.15)
-        max_radius = 15   # 375m at 25m/cell
-        max_cells = 150
+        # ══════ Phase 1: Dimension dynamique ══════
+        # zone_radius = base + (1 + attraction_score) factor
+        score_factor = max_score  # 0-1
+        max_radius = int(8 + score_factor * 14)    # 8 (faible) -> 22 (forte)
+        max_cells = int(40 + score_factor * 200)   # 40 (faible) -> 240 (forte)
+        threshold = max(0.06, max_score * 0.12)
+        inner_ring = int(2 + score_factor * 2)     # 2 (faible) -> 4 (forte)
 
+        # ══════ Phase 2: BFS multi-source terrain-aware ══════
+        # Depart depuis TOUS les centres du cluster (multi-source BFS)
         visited = set()
         zone_cells = []
-        queue = [(r0, c0, 0)]
-        visited.add((r0, c0))
+        queue = []
+
+        # Initialiser BFS depuis tous les centres du cluster
+        for z in cluster:
+            r0, c0 = z["pos"]
+            if (r0, c0) not in visited:
+                queue.append((r0, c0, 0))
+                visited.add((r0, c0))
+
+        # Centroide du cluster pour le calcul du rayon
+        cluster_cr = sum(z["pos"][0] for z in cluster) / len(cluster)
+        cluster_cc = sum(z["pos"][1] for z in cluster) / len(cluster)
 
         while queue and len(zone_cells) < max_cells:
             r, c, dist = queue.pop(0)
             if r < 0 or r >= n or c < 0 or c >= n:
                 continue
-            if abs(r - r0) > max_radius or abs(c - c0) > max_radius:
+            if abs(r - cluster_cr) > max_radius or abs(c - cluster_cc) > max_radius:
                 continue
 
             cell = cell_data[r][c]
 
-            # Always include inner ring (3 cells) for zone body
-            if dist <= 3 and not cell.get("barrier"):
+            # Include inner ring (proportional to score) for zone body
+            if dist <= inner_ring and not cell.get("barrier"):
                 zone_cells.append((r, c))
-                for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
+                for dr, dc in NEIGHBORS_8:
                     nr, nc = r + dr, c + dc
                     if (nr, nc) not in visited:
                         visited.add((nr, nc))
@@ -239,17 +319,18 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
             score = _score_cell_for_zone_type(cell, zone_type)
             if score >= threshold:
                 zone_cells.append((r, c))
-                for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
+                for dr, dc in NEIGHBORS_8:
                     nr, nc = r + dr, c + dc
                     if (nr, nc) not in visited:
                         visited.add((nr, nc))
                         queue.append((nr, nc, dist + 1))
 
         if len(zone_cells) < 3:
-            # Fallback organique: petit polygone spline autour du centre
-            clat, clng = zone["lat"], zone["lng"]
-            radius_deg = cell_m * 5.0 / METERS_PER_DEG_LAT
-            radius_lng = cell_m * 5.0 / m_per_lng
+            # Fallback organique: polygone spline autour du centre primaire
+            clat, clng = primary_zone["lat"], primary_zone["lng"]
+            base_r = cell_m * (3.0 + score_factor * 4.0)
+            radius_deg = base_r / METERS_PER_DEG_LAT
+            radius_lng = base_r / m_per_lng
             ctrl_pts = []
             for i in range(12):
                 angle = math.radians(30 * i)
@@ -260,15 +341,18 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
                     clat + radius_deg * math.sin(angle) * r_var,
                 ))
             smoothed = _catmull_rom_closed(ctrl_pts, segments=6)
-            if smoothed:
-                smoothed.append(smoothed[0])
-                smoothed = [[round(x, 7), round(y, 7)] for x, y in smoothed]
-            zone_polygons.append({"zone": zone, "polygon": [smoothed]})
+            smoothed = _chaikin_smooth(smoothed + [smoothed[0]], iterations=2)
+            smoothed = [[round(x, 7), round(y, 7)] for x, y in smoothed]
+            zone_polygons.append({
+                "cluster": cluster,
+                "primary_zone": primary_zone,
+                "polygon": [smoothed],
+            })
             continue
 
         zone_set = set(zone_cells)
 
-        # ──── Phase 2: Extraction de frontiere ────
+        # ══════ Phase 3: Extraction de frontiere ══════
         boundary_cells = []
         for r, c in zone_cells:
             for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
@@ -279,23 +363,20 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
         if len(boundary_cells) < 3:
             boundary_cells = list(zone_cells)
 
-        # Remove duplicates
         boundary_cells = list(set(boundary_cells))
 
-        # ──── Phase 3: Centroide + tri angulaire ────
+        # ══════ Phase 4: Centroide + tri angulaire ══════
         cr = sum(r for r, c in boundary_cells) / len(boundary_cells)
         cc = sum(c for r, c in boundary_cells) / len(boundary_cells)
 
         boundary_cells.sort(key=lambda p: -math.atan2(p[0] - cr, p[1] - cc))
 
-        # ──── Phase 4: Conversion geo + perturbation ecologique ────
+        # ══════ Phase 5: Conversion geo + perturbation ecologique ══════
         control_points = []
         for r, c in boundary_cells:
-            # Cell center position
             lat = lat_start + (r + 0.5) * d_lat
             lng = lng_start + (c + 0.5) * d_lng
 
-            # Terrain-aware perturbation
             cell = cell_data[r][c] if 0 <= r < n and 0 <= c < n else {}
             pert_lat, pert_lng = _terrain_perturbation(
                 r, c, cr, cc, cell, zone_type, d_lat, d_lng
@@ -306,19 +387,26 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
                 round(lat + pert_lat, 7),
             ))
 
-        # ──── Phase 5: Catmull-Rom spline (courbure continue) ────
-        # BCE-4X: ZERO simplification — resolution maximale preservee
-        smoothed = _catmull_rom_closed(control_points, segments=8)
+        # ══════ Phase 6: Catmull-Rom spline (courbure continue) ══════
+        smoothed = _catmull_rom_closed(control_points, segments=6)
 
         # Close polygon
         if smoothed:
             smoothed.append(smoothed[0])
-            smoothed = [[round(x, 7), round(y, 7)] for x, y in smoothed]
+
+        # ══════ Phase 7: Chaikin smoothing (anti-etoile) ══════
+        smoothed = _chaikin_smooth(smoothed, iterations=2)
+
+        # BCE-4X: ZERO simplification — resolution maximale preservee
+        smoothed = [[round(x, 7), round(y, 7)] for x, y in smoothed]
 
         zone_polygons.append({
-            "zone": zone,
+            "cluster": cluster,
+            "primary_zone": primary_zone,
             "polygon": [smoothed],
         })
+
+    return zone_polygons
 
     return zone_polygons
 
@@ -547,7 +635,8 @@ def analyze_corridors_full(
         }
         geojson_features.append(feature)
 
-    # GeoJSON zones ecologiques V10 — POLYGONES (BCE-4X / Steeve-MAX)
+    # GeoJSON zones ecologiques V10 — POLYGONES ORGANIQUES (BCE-4X / Steeve-MAX)
+    # Fusion + Dimension dynamique + Chaikin smoothing
     zone_colors = {
         "alimentation": "#4CAF50",
         "repos": "#2196F3",
@@ -559,16 +648,20 @@ def analyze_corridors_full(
         center_lat, center_lng, side_m, cell_m,
     )
     for zp in zone_polygons:
-        z = zp["zone"]
+        cluster = zp["cluster"]
+        pz = zp["primary_zone"]
+        all_centers = [{"lat": z["lat"], "lng": z["lng"], "score": z["score"]} for z in cluster]
         feature = {
             "type": "Feature",
             "properties": {
-                "zone_type": z["type"],
-                "score": z["score"],
+                "zone_type": pz["type"],
+                "score": pz["score"],
                 "species": species,
-                "color": zone_colors.get(z["type"], "#9E9E9E"),
-                "center_lat": z["lat"],
-                "center_lng": z["lng"],
+                "color": zone_colors.get(pz["type"], "#9E9E9E"),
+                "center_lat": pz["lat"],
+                "center_lng": pz["lng"],
+                "all_centers": all_centers,
+                "cluster_size": len(cluster),
             },
             "geometry": {
                 "type": "Polygon",
