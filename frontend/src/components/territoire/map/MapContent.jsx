@@ -86,6 +86,9 @@ const MapContentInner = React.memo(({
   showPointsLayer,
   pointsChaudsMode,
   pointsChaudsFilter,
+  zoneSubFilters,
+  corridorSubFilters,
+  pointSubFilters,
 }) => (
   <>
     <EcoforestryLayers
@@ -155,6 +158,9 @@ const MapContentInner = React.memo(({
         showPoints={showPointsLayer !== false}
         pointsChaudsMode={pointsChaudsMode || false}
         pointsChaudsFilter={pointsChaudsFilter || 'tous'}
+        zoneSubFilters={zoneSubFilters}
+        corridorSubFilters={corridorSubFilters}
+        pointSubFilters={pointSubFilters}
       />
     )}
 

@@ -495,6 +495,20 @@ const MonTerritoireBionicPage = () => {
   const [showPointsLayer, setShowPointsLayer] = useState(true);
   const [pointsChaudsMode, setPointsChaudsMode] = useState(false);
   const [pointsChaudsFilter, setPointsChaudsFilter] = useState('tous');
+
+  // STEEVE-MAX V3: Sous-éléments granulaires par couche
+  const [zoneSubFilters, setZoneSubFilters] = useState({
+    alimentation: true, repos: true, rut: true, habitat: true, affuts: true, trajets: true, multiEngines: true,
+  });
+  const [corridorSubFilters, setCorridorSubFilters] = useState({
+    normaux: true, intenses: true, extreme: true, saisonniers: true,
+  });
+  const [pointSubFilters, setPointSubFilters] = useState({
+    alimentation: true, rut: true, repos: true, trajets: true, affuts: true, habitat: true, centroides: true, individuels: true,
+  });
+  const toggleZoneSub = (k) => setZoneSubFilters(p => ({ ...p, [k]: !p[k] }));
+  const toggleCorridorSub = (k) => setCorridorSubFilters(p => ({ ...p, [k]: !p[k] }));
+  const togglePointSub = (k) => setPointSubFilters(p => ({ ...p, [k]: !p[k] }));
   
   // BIONIC V5 300% — CLASSIFICATION TOGGLES (restaures depuis session BCE-MAX)
   const [classificationToggles, setClassificationToggles] = useState(() => {
@@ -1318,7 +1332,7 @@ const MonTerritoireBionicPage = () => {
           </button>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-          {/* ═══ 8a. ONGLET ZONES — Contrôle couches STEEVE-MAX ═══ */}
+          {/* ═══ 8a. ONGLET ZONES — Contrôle couches + sous-éléments STEEVE-MAX ═══ */}
           <Popover>
             <PopoverTrigger asChild>
               <button className="h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all" data-testid="toolbar-zones-btn" title="Contrôle des couches">
@@ -1326,29 +1340,97 @@ const MonTerritoireBionicPage = () => {
                 <span className="text-emerald-400 hidden sm:inline">Zones</span>
               </button>
             </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={8} className="w-52 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
-              <div className="space-y-2.5">
+            <PopoverContent align="end" sideOffset={8} className="w-64 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40 max-h-[70vh] overflow-y-auto">
+              <div className="space-y-2">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Couches STEEVE-MAX</div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-emerald-400 font-medium">Zones</span>
-                    <span className="text-[8px] text-emerald-600 uppercase tracking-widest font-bold">dominant</span>
+
+                {/* ── ZONES (DOMINANT) ── */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-emerald-400 font-medium">Zones</span>
+                      <span className="text-[8px] text-emerald-600 uppercase tracking-widest font-bold">dominant</span>
+                    </div>
+                    <Switch checked={showZonesLayer} onCheckedChange={setShowZonesLayer} className="scale-[0.6] data-[state=checked]:bg-emerald-500" data-testid="toggle-zones-layer" />
                   </div>
-                  <Switch checked={showZonesLayer} onCheckedChange={setShowZonesLayer} className="scale-[0.6] data-[state=checked]:bg-emerald-500" data-testid="toggle-zones-layer" />
+                  {showZonesLayer && (
+                    <div className="ml-3 pl-2 border-l border-emerald-800/40 space-y-0.5">
+                      {[
+                        { k: 'alimentation', label: 'Alimentation', color: 'text-green-400' },
+                        { k: 'repos', label: 'Repos', color: 'text-blue-400' },
+                        { k: 'rut', label: 'Rut', color: 'text-orange-400' },
+                        { k: 'habitat', label: 'Habitat', color: 'text-cyan-400' },
+                        { k: 'affuts', label: 'Affûts', color: 'text-red-400' },
+                        { k: 'trajets', label: 'Trajets', color: 'text-yellow-400' },
+                        { k: 'multiEngines', label: 'Multi-Engines', color: 'text-emerald-300' },
+                      ].map(item => (
+                        <button key={item.k} onClick={() => toggleZoneSub(item.k)} className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${zoneSubFilters[item.k] ? `${item.color} bg-white/5` : 'text-gray-600 hover:text-gray-400'}`} data-testid={`zone-sub-${item.k}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${zoneSubFilters[item.k] ? 'bg-current' : 'bg-gray-700'}`} />
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-cyan-400 font-medium">Corridors</span>
-                    <span className="text-[8px] text-cyan-700 uppercase tracking-widest font-bold">secondaire</span>
+
+                <div className="h-px bg-gray-700/30" />
+
+                {/* ── CORRIDORS (SECONDAIRE) ── */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-cyan-400 font-medium">Corridors</span>
+                      <span className="text-[8px] text-cyan-700 uppercase tracking-widest font-bold">secondaire</span>
+                    </div>
+                    <Switch checked={showCorridorsLayer} onCheckedChange={setShowCorridorsLayer} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-layer" />
                   </div>
-                  <Switch checked={showCorridorsLayer} onCheckedChange={setShowCorridorsLayer} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-layer" />
+                  {showCorridorsLayer && (
+                    <div className="ml-3 pl-2 border-l border-cyan-800/40 space-y-0.5">
+                      {[
+                        { k: 'normaux', label: 'Normaux', color: 'text-gray-300' },
+                        { k: 'intenses', label: 'Intenses', color: 'text-orange-400' },
+                        { k: 'extreme', label: 'EXTREME', color: 'text-red-400' },
+                        { k: 'saisonniers', label: 'Saisonniers', color: 'text-cyan-300' },
+                      ].map(item => (
+                        <button key={item.k} onClick={() => toggleCorridorSub(item.k)} className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${corridorSubFilters[item.k] ? `${item.color} bg-white/5` : 'text-gray-600 hover:text-gray-400'}`} data-testid={`corridor-sub-${item.k}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${corridorSubFilters[item.k] ? 'bg-current' : 'bg-gray-700'}`} />
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-gray-400 font-medium">Points</span>
-                    <span className="text-[8px] text-gray-600 uppercase tracking-widest font-bold">tertiaire</span>
+
+                <div className="h-px bg-gray-700/30" />
+
+                {/* ── POINTS (TERTIAIRE) ── */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-gray-400 font-medium">Points</span>
+                      <span className="text-[8px] text-gray-600 uppercase tracking-widest font-bold">tertiaire</span>
+                    </div>
+                    <Switch checked={showPointsLayer} onCheckedChange={setShowPointsLayer} className="scale-[0.6] data-[state=checked]:bg-gray-500" data-testid="toggle-points-layer" />
                   </div>
-                  <Switch checked={showPointsLayer} onCheckedChange={setShowPointsLayer} className="scale-[0.6] data-[state=checked]:bg-gray-500" data-testid="toggle-points-layer" />
+                  {showPointsLayer && (
+                    <div className="ml-3 pl-2 border-l border-gray-700/40 space-y-0.5">
+                      {[
+                        { k: 'alimentation', label: 'Alimentation', color: 'text-green-400' },
+                        { k: 'rut', label: 'Rut', color: 'text-orange-400' },
+                        { k: 'repos', label: 'Repos', color: 'text-blue-400' },
+                        { k: 'trajets', label: 'Trajets', color: 'text-yellow-400' },
+                        { k: 'affuts', label: 'Affûts', color: 'text-red-400' },
+                        { k: 'habitat', label: 'Habitat', color: 'text-cyan-400' },
+                        { k: 'centroides', label: 'Centroïdes', color: 'text-white' },
+                        { k: 'individuels', label: 'Individuels', color: 'text-gray-300' },
+                      ].map(item => (
+                        <button key={item.k} onClick={() => togglePointSub(item.k)} className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${pointSubFilters[item.k] ? `${item.color} bg-white/5` : 'text-gray-600 hover:text-gray-400'}`} data-testid={`point-sub-${item.k}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${pointSubFilters[item.k] ? 'bg-current' : 'bg-gray-700'}`} />
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </PopoverContent>
@@ -1587,6 +1669,9 @@ const MonTerritoireBionicPage = () => {
               showPointsLayer={showPointsLayer}
               pointsChaudsMode={pointsChaudsMode}
               pointsChaudsFilter={pointsChaudsFilter}
+              zoneSubFilters={zoneSubFilters}
+              corridorSubFilters={corridorSubFilters}
+              pointSubFilters={pointSubFilters}
             />
           </MapContainer>
 

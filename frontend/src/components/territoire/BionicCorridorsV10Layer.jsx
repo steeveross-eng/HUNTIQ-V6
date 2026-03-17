@@ -131,6 +131,9 @@ const BionicCorridorsV10Layer = ({
   showPoints = true,
   pointsChaudsMode = false,
   pointsChaudsFilter = 'tous',
+  zoneSubFilters = null,
+  corridorSubFilters = null,
+  pointSubFilters = null,
 }) => {
   const map = useMap();
   const layerGroupRef = useRef(null);
@@ -179,6 +182,45 @@ const BionicCorridorsV10Layer = ({
     return styles;
   }, []);
 
+  // ═══ SOUS-ÉLÉMENTS: Helpers de filtrage granulaire ═══
+  const isZoneTypeVisible = useCallback((zoneType) => {
+    if (!zoneSubFilters) return true;
+    if (zoneSubFilters.multiEngines) return true; // Multi-Engines = tout afficher
+    const map = {
+      alimentation: zoneSubFilters.alimentation || zoneSubFilters.trajets,
+      repos: zoneSubFilters.repos || zoneSubFilters.habitat,
+      rut: zoneSubFilters.rut || zoneSubFilters.affuts,
+      eau: zoneSubFilters.habitat,
+    };
+    return map[zoneType] ?? true;
+  }, [zoneSubFilters]);
+
+  const isCorridorLevelVisible = useCallback((niveau) => {
+    if (!corridorSubFilters) return true;
+    if (corridorSubFilters.saisonniers) return true; // Saisonniers = tout afficher
+    switch (niveau) {
+      case 'FAIBLE': case 'MODERE': return corridorSubFilters.normaux;
+      case 'FORT': case 'MAJEUR': return corridorSubFilters.intenses;
+      case 'CRITIQUE': return corridorSubFilters.extreme;
+      default: return true;
+    }
+  }, [corridorSubFilters]);
+
+  const isPointTypeVisible = useCallback((zoneType, isChaudMode) => {
+    if (!pointSubFilters) return true;
+    // Mode toggle: centroïdes (normal) vs individuels (chauds)
+    if (isChaudMode && !pointSubFilters.individuels) return false;
+    if (!isChaudMode && !pointSubFilters.centroides) return false;
+    // Type filter
+    const map = {
+      alimentation: pointSubFilters.alimentation || pointSubFilters.trajets,
+      repos: pointSubFilters.repos || pointSubFilters.habitat,
+      rut: pointSubFilters.rut || pointSubFilters.affuts,
+      eau: pointSubFilters.habitat,
+    };
+    return map[zoneType] ?? true;
+  }, [pointSubFilters]);
+
   // ═══ RENDU PRINCIPAL — Zone d'analyse + Performance V3 ═══
   const renderData = useCallback((data, sp) => {
     clearLayers();
@@ -197,8 +239,11 @@ const BionicCorridorsV10Layer = ({
     // ═══ COUCHE 1 (Z-BAS): Zones polygonales organiques — BCE-4X protégées ═══
     if (showZones) {
       for (const feature of zonePolygons) {
-        const rings = feature.geometry.coordinates[0].map(c => [c[1], c[0]]);
         const props = feature.properties;
+        // SOUS-ÉLÉMENT: Filtrage par type de zone
+        if (!isZoneTypeVisible(props.zone_type)) continue;
+
+        const rings = feature.geometry.coordinates[0].map(c => [c[1], c[0]]);
         const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
 
         // MODE ZONE D'ANALYSE: vérifier si le centroïde est dans la bbox 2km×2km
@@ -265,11 +310,14 @@ const BionicCorridorsV10Layer = ({
 
     if (showCorridorsLayer) {
       for (const feature of corridors) {
+        const props = feature.properties;
+        // SOUS-ÉLÉMENT: Filtrage par niveau de corridor
+        if (!isCorridorLevelVisible(props.niveau)) continue;
+
         const raw = feature.geometry.coordinates.map(c => [c[1], c[0]]);
         if (raw.length < 2) continue;
 
         const coords = simplifyPath(raw);
-        const props = feature.properties;
         const isExtreme = props.niveau === 'CRITIQUE';
         const style = precomputedStyles[props.niveau] || precomputedStyles.FORT;
 
@@ -316,6 +364,9 @@ const BionicCorridorsV10Layer = ({
         const props = feature.properties;
         const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
         const centers = props.all_centers || [];
+
+        // SOUS-ÉLÉMENT: Filtrage par type de point
+        if (!isPointTypeVisible(props.zone_type, isChaud)) continue;
 
         // Filtrage par type en mode POINTS CHAUDS
         if (isChaud && pointsChaudsFilter !== 'tous') {
@@ -405,7 +456,7 @@ const BionicCorridorsV10Layer = ({
         species: sp,
       });
     }
-  }, [map, clearLayers, precomputedStyles, minPercentage, onDataLoaded, showZones, showCorridorsLayer, showPoints, pointsChaudsMode, pointsChaudsFilter, analysisBox]);
+  }, [map, clearLayers, precomputedStyles, minPercentage, onDataLoaded, showZones, showCorridorsLayer, showPoints, pointsChaudsMode, pointsChaudsFilter, analysisBox, isZoneTypeVisible, isCorridorLevelVisible, isPointTypeVisible]);
 
   const fetchAndRender = useCallback(async () => {
     if (!center || !enabled) {

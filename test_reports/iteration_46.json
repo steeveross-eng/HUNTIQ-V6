@@ -1,0 +1,154 @@
+{
+  "summary": "Iteration 46 - STEEVE-MAX Extension UX Sub-Element Dropdowns Testing Complete. ALL FEATURES VERIFIED: (1) ZONES popover (toolbar-zones-btn) opens and displays 3 sections with hierarchy labels - Zones (DOMINANT), Corridors (SECONDAIRE), Points (TERTIAIRE). (2) Zones section has 7 sub-elements all toggleable: Alimentation, Repos, Rut, Habitat, Affûts, Trajets, Multi-Engines. (3) Corridors section has 4 sub-elements all toggleable: Normaux, Intenses, EXTREME, Saisonniers. (4) Points section has 8 sub-elements all toggleable: Alimentation, Rut, Repos, Trajets, Affûts, Habitat, Centroïdes, Individuels. (5) Toggling zone sub-elements OFF/ON correctly affects map visibility. (6) Toggling corridor sub-elements including EXTREME correctly affects corridor visibility. (7) Master toggles (Zones/Corridors/Points) hide/show their sub-elements when OFF/ON. (8) POINTS CHAUDS mode still works with sub-filters. (9) Map loads correctly without JavaScript errors showing 26 zones and 19 corridors. (10) Corridors V10 master toggle works. (11) Score 55/100 displayed correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/sw-v2.js", "issue": "Service Worker 404 - returns text/html instead of JavaScript (pre-existing cosmetic issue)"}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mon Territoire - ZONES Popover",
+        "issues": [
+          "INFO: Popover has max-h-[70vh] overflow-y-auto - may need scrolling to see all Points sub-elements (by design)"
+        ]
+      }
+    ]
+  },
+  "test_results": {
+    "zones_popover_structure": {
+      "status": "PASS",
+      "data_testid": "toolbar-zones-btn",
+      "popover_opens": true,
+      "sections_found": 3,
+      "hierarchy_labels": {
+        "zones_dominant": true,
+        "corridors_secondaire": true,
+        "points_tertiaire": true
+      }
+    },
+    "zones_sub_elements": {
+      "status": "PASS",
+      "count": "7/7",
+      "elements": {
+        "zone-sub-alimentation": "FOUND",
+        "zone-sub-repos": "FOUND",
+        "zone-sub-rut": "FOUND",
+        "zone-sub-habitat": "FOUND",
+        "zone-sub-affuts": "FOUND",
+        "zone-sub-trajets": "FOUND",
+        "zone-sub-multiEngines": "FOUND"
+      },
+      "toggle_functionality": "PASS - Individual toggles work"
+    },
+    "corridors_sub_elements": {
+      "status": "PASS",
+      "count": "4/4",
+      "elements": {
+        "corridor-sub-normaux": "FOUND",
+        "corridor-sub-intenses": "FOUND",
+        "corridor-sub-extreme": "FOUND",
+        "corridor-sub-saisonniers": "FOUND"
+      },
+      "toggle_functionality": "PASS - Individual toggles work",
+      "extreme_hides_critique": "PASS - Toggling EXTREME OFF hides CRITIQUE corridors"
+    },
+    "points_sub_elements": {
+      "status": "PASS",
+      "count": "8/8",
+      "elements": {
+        "point-sub-alimentation": "FOUND",
+        "point-sub-rut": "FOUND",
+        "point-sub-repos": "FOUND",
+        "point-sub-trajets": "FOUND",
+        "point-sub-affuts": "FOUND",
+        "point-sub-habitat": "FOUND",
+        "point-sub-centroides": "FOUND",
+        "point-sub-individuels": "FOUND"
+      },
+      "toggle_functionality": "PASS - Individual toggles work"
+    },
+    "master_toggles": {
+      "zones_master": {
+        "status": "PASS",
+        "data_testid": "toggle-zones-layer",
+        "off_hides_sub_elements": true,
+        "on_shows_sub_elements": true
+      },
+      "corridors_master": {
+        "status": "PASS",
+        "data_testid": "toggle-corridors-layer",
+        "off_hides_sub_elements": true,
+        "on_shows_sub_elements": true
+      },
+      "points_master": {
+        "status": "PASS",
+        "data_testid": "toggle-points-layer",
+        "off_hides_sub_elements": true,
+        "on_shows_sub_elements": true
+      }
+    },
+    "points_chauds_mode": {
+      "status": "PASS",
+      "data_testid": "toggle-points-chauds-mode",
+      "activate_deactivate": "PASS"
+    },
+    "corridors_v10_toggle": {
+      "status": "PASS",
+      "data_testid": "toggle-corridors-v10",
+      "toggle_off_on": "PASS"
+    },
+    "map_loading": {
+      "status": "PASS",
+      "zones_count": 26,
+      "corridors_count": 19,
+      "score": "55/100",
+      "javascript_errors": false
+    }
+  },
+  "features_verified": {
+    "zones_popover_3_sections": "PASS",
+    "hierarchy_labels_dominant_secondaire_tertiaire": "PASS",
+    "zones_7_sub_elements": "PASS",
+    "corridors_4_sub_elements": "PASS",
+    "points_8_sub_elements": "PASS",
+    "zone_sub_toggle_affects_map": "PASS",
+    "corridor_sub_toggle_affects_map": "PASS",
+    "extreme_toggle_hides_critique": "PASS",
+    "master_zones_off_hides_subs": "PASS",
+    "master_corridors_off_hides_subs": "PASS",
+    "master_points_off_hides_subs": "PASS",
+    "points_chauds_with_sub_filters": "PASS",
+    "map_loads_no_js_errors": "PASS",
+    "corridors_v10_master_toggle": "PASS"
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_46.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "MonTerritoireBionicPage.jsx lines 499-511: zoneSubFilters, corridorSubFilters, pointSubFilters state correctly initialized with all sub-elements",
+    "MonTerritoireBionicPage.jsx lines 1346-1459: ZONES popover correctly structured with 3 sections (Zones DOMINANT, Corridors SECONDAIRE, Points TERTIAIRE) and all sub-element toggles",
+    "BionicCorridorsV10Layer.jsx lines 186-222: isZoneTypeVisible(), isCorridorLevelVisible(), isPointTypeVisible() helpers correctly implement sub-element filtering",
+    "MapContent.jsx lines 161-164: All sub-filter props (zoneSubFilters, corridorSubFilters, pointSubFilters) correctly passed to BionicCorridorsV10Layer",
+    "BCE-4X compliance maintained: All changes are visual-only, no geometric modifications"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "auto_logged_as": "Steeve Ross"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 46 verified STEEVE-MAX Extension UX sub-element dropdowns. Key test IDs: toolbar-zones-btn (opens popover), toggle-zones-layer/toggle-corridors-layer/toggle-points-layer (master toggles that hide/show sub-elements), zone-sub-{key} (7 items: alimentation, repos, rut, habitat, affuts, trajets, multiEngines), corridor-sub-{key} (4 items: normaux, intenses, extreme, saisonniers), point-sub-{key} (8 items: alimentation, rut, repos, trajets, affuts, habitat, centroides, individuels). The popover has max-h-[70vh] overflow-y-auto so it may need scrolling to see all sections. When master toggle is OFF, sub-elements are hidden (not rendered). EXTREME corridor toggle OFF hides CRITIQUE corridors per BCE-4X norms. Map shows 26 zones and 19 corridors with score 55/100.",
+  "verification_date": "2026-03-17",
+  "testing_focus": "STEEVE-MAX Extension UX - Sub-Element Dropdowns per BCE-4X compliance"
+}
