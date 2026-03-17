@@ -43,31 +43,52 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - **Backend**: engine.py — Ajout generation polygones V10 (BFS flood-fill + convex hull Andrew)
   - Fonctions ajoutees: _generate_zone_polygons(), _convex_hull(), _score_cell_for_zone_type()
   - GeoJSON zones: Point → Polygon (64 polygones, 0 points)
-  - Parametres: max_radius=10, max_cells=60, threshold=25% center_score
   - Chaque polygone ~300m de cote, terrain-aware, deterministe
 - **Frontend BionicCorridorsV10Layer.jsx**: Rendu polygones V10 avec normes BCE-4X
   - fillOpacity 0.35 (hover 0.40), contour darkenHex(0.82), weight 1.5
   - Points centraux synchronises (center_lat/center_lng)
-  - Tooltips sur hover avec type + score
 - **Frontend MapContent.jsx**: BionicMicroZones (V9) SUPPRIME DEFINITIVEMENT
-  - Import retire, rendu retire, seul BionicCorridorsV10Layer rend les zones
 - Tests: Backend 8/8 + Frontend 15/15 = 23/23 (100%), 0 regression
+
+### NORME STEEVE-MAX — Polygones organiques BIONIC (2026-03-17) — iteration_35 (35/35)
+- **Backend engine.py REECRIT**: Algorithme organique complet
+  - _convex_hull() SUPPRIME → remplace par algorithme organique 5 phases
+  - Phase 1: BFS flood-fill etendu (radius=15, cells=150, threshold=15%)
+  - Phase 2: Extraction de frontiere (cellules avec voisins non-zone)
+  - Phase 3: Tri angulaire depuis centroide
+  - Phase 4: _terrain_perturbation() — 6 facteurs terrain:
+    canopy_density, slope, distance_eau_m, distance_route_m, feuillus_nobles, strate_1_3m
+  - Phase 5: _catmull_rom_closed() — spline Catmull-Rom (8 segments/point)
+  - ZERO simplification (BCE-4X: geometrie sanctuarisee et inviolable)
+- **Resultats**: 64 polygones, avg 879 vertices (min 145, max 1185)
+  - Aucun segment rectiligne — courbure continue fluide naturelle
+  - Fidelite ecologique: foret, eau, pente, peuplements, drainage
+  - Zones ~400-560m de couverture geographique
+  - Rendu deterministe et reproductible
+- **Protection BCE-4X active**:
+  - Interdiction de simplifier, lisser, reduire, reechantillonner
+  - Polygones organiques = entites protegees et inviolables
+- Tests: Backend 19/19 + Frontend 16/16 = 35/35 (100%), 0 regression
 
 ## Etat actuel Mon Territoire
 - Fond: terrain satellite 100% visible (aucune couche opaque)
 - Corridors: V10 uniquement (palette normative CRITIQUE→FAIBLE, BCE-4X: aucun glow)
-- CRITIQUE: #B80000 + contour #660000 + micro-hachures
-- MAJEUR: #FF0000 + contour #CC0000, aucun pattern
-- Zones: **POLYGONES V10** (64 polygones generes par flood-fill + convex hull)
+  - CRITIQUE: #B80000 + contour #660000 + micro-hachures
+  - MAJEUR: #FF0000 + contour #CC0000, aucun pattern
+- Zones: **POLYGONES ORGANIQUES V10** — Protection BCE-4X
+  - 64 polygones Catmull-Rom (avg 879 vertices, max 1185)
   - 4 types: alimentation (vert), repos (bleu), rut (orange), eau (teal)
+  - Courbure continue, fluide, naturelle — ZERO segment rectiligne
+  - Fidelite ecologique: foret, eau, pente, peuplements, micro-reliefs
   - Transparence calibree 35% (hover 40%), contours assombris 18%
   - Points centraux synchronises
   - Polygones cliquables avec tooltips
   - ZERO zones V9 restantes
+  - ZERO simplification Douglas-Peucker sur zones
 - Legende: 3X normative (3 blocs, compteurs, toggles)
 - Panneau lateral: entierement V10
 - Toolbar: "CORRIDORS V10" avec toggle
-- BCE-4X: applique a la racine de tous les modules et moteurs
+- BCE-4X: applique a la racine, geometrie sanctuarisee
 
 ## API Endpoints CORRIDORS-V10
 - POST /api/v10/corridors/analyze
