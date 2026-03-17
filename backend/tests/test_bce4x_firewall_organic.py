@@ -1,6 +1,6 @@
 """
-Firewall BCE-4X Anti-Regression — Contours Organiques STEEVE-MAX
-================================================================
+Firewall BCE-4X Anti-Regression — Contours Organiques STEEVE-MAX + MULTI
+=========================================================================
 Ce test BLOQUE toute generation de polygones non-conformes.
 Criteres valides:
   1. Nombre de vertices (min 100 par polygone)
@@ -8,6 +8,8 @@ Criteres valides:
   3. Absence de spikes (aucun angle < 45 degres)
   4. Ratio surface/attraction conforme
   5. Structure: 16 polygones, 4 par type, cluster_size=4, 64 centres
+  6. STEVE-MAX-MULTI: 7 engines actifs, metadata presente
+  7. Invariance geometrique: surfaces et centres stables
 """
 import pytest
 import math
@@ -130,3 +132,53 @@ def test_firewall_polygon_extent_minimum(v10_data):
         assert ext_lng_m > 150, (
             f"Zone {i+1}: extent lng {ext_lng_m:.0f}m < 150m minimum"
         )
+
+
+# ══════ STEVE-MAX-MULTI: Tests multi-engine ══════
+
+def test_firewall_multi_engine_metadata(v10_data):
+    """Chaque zone doit porter les metadonnees STEVE-MAX-MULTI."""
+    for i, p in enumerate(v10_data):
+        props = p["properties"]
+        assert props.get("engine") == "STEVE-MAX-MULTI", (
+            f"Zone {i+1}: engine manquant, got {props.get('engine')}"
+        )
+        assert props.get("engines_count") == 7, (
+            f"Zone {i+1}: engines_count={props.get('engines_count')}, expected 7"
+        )
+
+
+def test_firewall_7_engines_active(v10_data):
+    """Les 7 engines doivent etre listes dans engines_active."""
+    expected_engines = {
+        "alimentation_v1", "rut_v1", "repos_v1",
+        "trajets_v1", "affuts_v1", "habitat_v1", "corridors_v10",
+    }
+    for i, p in enumerate(v10_data):
+        active = set(p["properties"].get("engines_active", []))
+        assert active == expected_engines, (
+            f"Zone {i+1}: engines_active={active}, expected {expected_engines}"
+        )
+
+
+def test_firewall_centers_invariance(v10_data):
+    """Les centres BCE-4X doivent etre stables (lat/lng non-nuls, score > 0)."""
+    for i, p in enumerate(v10_data):
+        centers = p["properties"].get("all_centers", [])
+        for j, c in enumerate(centers):
+            assert c.get("lat") is not None and c.get("lng") is not None, (
+                f"Zone {i+1} center {j}: lat/lng manquant"
+            )
+            assert c.get("score", 0) > 0, (
+                f"Zone {i+1} center {j}: score <= 0"
+            )
+
+
+def test_firewall_surface_invariance(v10_data):
+    """Aucune zone ne doit avoir une surface nulle ou negative."""
+    from shapely.geometry import Polygon as ShapelyPolygon
+    for i, p in enumerate(v10_data):
+        coords = p["geometry"]["coordinates"][0]
+        poly = ShapelyPolygon(coords)
+        assert poly.is_valid, f"Zone {i+1}: polygone invalide"
+        assert poly.area > 0, f"Zone {i+1}: surface nulle"

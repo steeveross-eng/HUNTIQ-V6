@@ -1,0 +1,149 @@
+{
+  "summary": "Iteration 41 - STEVE-MAX-MULTI verification with 7 engine consolidation. All 13 BCE-4X firewall tests PASSED. API returns 16 Polygons (4 per type), each with engine=STEVE-MAX-MULTI, engines_count=7, 7 engines_active, 64 total centers, ZERO spikes, 817-2401 vertices per polygon. Visual hierarchy confirmed: DOMINANT zones, SECONDARY corridors, TERTIARY center points.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mon Territoire",
+        "issues": [
+          "Minor: Service Worker registration errors (sw-v2.js 404) - no impact on V10 functionality",
+          "Minor: Groups endpoint returns network error - unrelated to V10 corridors"
+        ]
+      }
+    ]
+  },
+  "test_results": {
+    "backend_firewall_tests": {
+      "total": 13,
+      "passed": 13,
+      "test_file": "/app/backend/tests/test_bce4x_firewall_organic.py",
+      "tests": [
+        "test_firewall_16_polygons - PASS (16 polygons returned)",
+        "test_firewall_4_per_type - PASS (alimentation=4, repos=4, rut=4, eau=4)",
+        "test_firewall_cluster_size_4 - PASS (all polygons have cluster_size=4)",
+        "test_firewall_64_centers - PASS (64 total center points)",
+        "test_firewall_min_vertices - PASS (range: 817-2401 vertices, all >= 100)",
+        "test_firewall_contour_closed - PASS (all contours closed)",
+        "test_firewall_zero_spikes - PASS (0 spikes in all polygons)",
+        "test_firewall_surface_attraction_ratio - PASS (all zones have positive area)",
+        "test_firewall_polygon_extent_minimum - PASS (all extents > 150m)",
+        "test_firewall_multi_engine_metadata - PASS (all have engine=STEVE-MAX-MULTI)",
+        "test_firewall_7_engines_active - PASS (all 7 engines listed)",
+        "test_firewall_centers_invariance - PASS (all centers have valid lat/lng/score)",
+        "test_firewall_surface_invariance - PASS (all polygons valid, area > 0)"
+      ]
+    },
+    "api_response": {
+      "total_features": 208,
+      "polygon_features": 16,
+      "corridor_features": 192,
+      "zone_types": {"alimentation": 4, "repos": 4, "rut": 4, "eau": 4},
+      "cluster_size": 4,
+      "total_center_points": 64,
+      "vertex_range": "817-2401",
+      "spikes": 0,
+      "engine": "STEVE-MAX-MULTI",
+      "engines_count": 7,
+      "engines_active": ["alimentation_v1", "rut_v1", "repos_v1", "trajets_v1", "affuts_v1", "habitat_v1", "corridors_v10"]
+    },
+    "visual_hierarchy_verification": {
+      "zones_dominant": {
+        "status": "PASS",
+        "weight": 3,
+        "opacity": 1.0,
+        "fillOpacity": 0,
+        "hover_weight": 4,
+        "colors": {"alimentation": "#4CAF50", "repos": "#2196F3", "rut": "#FF5722", "eau": "#00BCD4"}
+      },
+      "corridors_secondary": {
+        "status": "PASS",
+        "opacity": 0.30,
+        "weights": {"CRITIQUE": 2, "MAJEUR": 2, "FORT": 1.5, "MODERE": 1.2, "FAIBLE": 1}
+      },
+      "center_points_tertiary": {
+        "status": "PASS",
+        "radius": 4,
+        "fillOpacity": 0.85,
+        "border_weight": 1.5,
+        "border_color": "#FFFFFF"
+      }
+    },
+    "frontend_tests": {
+      "total": 8,
+      "passed": 8,
+      "tests": [
+        "Mon Territoire page loads at /territoire - PASS",
+        "Map container renders - PASS",
+        "CORRIDORS V10 toggle ON - PASS",
+        "SEUIL slider visible at 30% - PASS",
+        "Zone contours visible with transparent interiors - PASS",
+        "Corridors rendered with secondary opacity (~0.30) - PASS",
+        "Center points rendered with tertiary visibility - PASS",
+        "No spike/star artifacts visible - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "steve_max_multi": {
+      "status": "PASS",
+      "engine_name": "STEVE-MAX-MULTI",
+      "engines_count": 7,
+      "engines_list": ["alimentation_v1", "rut_v1", "repos_v1", "trajets_v1", "affuts_v1", "habitat_v1", "corridors_v10"],
+      "all_polygons_have_metadata": true
+    },
+    "zero_spikes": {
+      "status": "PASS",
+      "threshold": "45 degrees",
+      "spikes_found": 0
+    },
+    "visual_hierarchy": {
+      "status": "PASS",
+      "dominant": "Zones (weight=3, opacity=1.0, fillOpacity=0)",
+      "secondary": "Corridors (opacity=0.30, weights 1-2)",
+      "tertiary": "Center points (radius=4, fillOpacity=0.85)"
+    },
+    "corridor_weights": {
+      "status": "PASS",
+      "CRITIQUE": 2,
+      "MAJEUR": 2,
+      "FORT": 1.5,
+      "MODERE": 1.2,
+      "FAIBLE": 1
+    },
+    "satellite_terrain_visible": {
+      "status": "PASS",
+      "fillOpacity": 0,
+      "fillColor": "transparent"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_bce4x_firewall_organic.py",
+    "/app/test_reports/pytest/iteration_41_bce4x_firewall_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "multi_engine.py: 7 engine attractors correctly implemented with ENGINE_REGISTRY and ENGINE_WEIGHTS",
+    "engine.py line 317: score_cell_multi_engine() correctly integrates multi-engine scoring into BFS",
+    "engine.py lines 679-682: STEVE-MAX-MULTI metadata correctly added to polygon properties",
+    "BionicCorridorsV10Layer.jsx line 119: corOp=0.30 correctly sets corridor secondary opacity",
+    "BionicCorridorsV10Layer.jsx lines 154-161: Zone polygon style weight=3, fillOpacity=0, opacity=1.0 (DOMINANT)"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (13/13 firewall tests passed)",
+    "frontend": "100% (8/8 visual tests passed)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 41 verified STEVE-MAX-MULTI with 7 engine consolidation. All 13 BCE-4X firewall tests pass including new tests: multi_engine_metadata, 7_engines_active, centers_invariance, surface_invariance. API returns engine=STEVE-MAX-MULTI, engines_count=7, engines_active=[all 7 engines] in polygon properties. Visual hierarchy unchanged from iteration 40: ZONES > CORRIDORS > POINTS.",
+  "verification_date": "2026-03-17"
+}

@@ -16,6 +16,7 @@ from .network_builder import build_network
 from .scoring import compute_corridor_score, compute_corridor_levels
 from .validator import validate_bce4x, validate_steeve_max
 from .classifier import classify_batch, CORRIDOR_LEVELS
+from .multi_engine import score_cell_multi_engine, ENGINE_REGISTRY, ENGINE_WEIGHTS
 import math
 from shapely.geometry import MultiPoint
 from shapely import concave_hull as shapely_concave_hull
@@ -313,7 +314,8 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
                 continue
 
             score = _score_cell_for_zone_type(cell, zone_type)
-            if score >= threshold:
+            multi_score = score_cell_multi_engine(cell, zone_type, score)
+            if multi_score >= threshold:
                 zone_cells.append((r, c))
                 for dr, dc in NEIGHBORS_8:
                     nr, nc = r + dr, c + dc
@@ -354,8 +356,8 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
             geo_points.append((lng, lat))
 
         mp = MultiPoint(geo_points)
-        # Buffer chaque point par ~1.2 cell width → union = blob organique lisse
-        blob = mp.buffer(d_lat * 1.2)
+        # Buffer chaque point par ~1.5 cell width → union = blob organique lisse
+        blob = mp.buffer(d_lat * 1.5)
 
         # Gerer MultiPolygon (garder le plus grand)
         if blob.geom_type == 'MultiPolygon':
@@ -366,7 +368,7 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
 
         # ══════ Phase 4: Reduction control points ══════
         # Simplifier pour ~60-80 pts de controle (intermediaire seulement)
-        simplified = blob.simplify(d_lat * 0.4, preserve_topology=True)
+        simplified = blob.simplify(d_lat * 0.6, preserve_topology=True)
         if simplified.is_empty or simplified.geom_type != 'Polygon':
             simplified = blob
 
@@ -397,8 +399,19 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
         if smoothed:
             smoothed.append(smoothed[0])
 
-        # ══════ Phase 7: Chaikin smoothing (anti-etoile) ══════
-        smoothed = _chaikin_smooth(smoothed, iterations=2)
+        # ══════ Phase 7: Chaikin smoothing (anti-etoile, 3 iterations) ══════
+        smoothed = _chaikin_smooth(smoothed, iterations=3)
+
+        # BCE-4X: Validation post-smoothing — garantir polygone valide
+        from shapely.geometry import Polygon as ShapelyPolygon
+        test_poly = ShapelyPolygon(smoothed)
+        if not test_poly.is_valid:
+            # Reparer auto-intersections via buffer(0)
+            fixed = test_poly.buffer(0)
+            if fixed.geom_type == 'MultiPolygon':
+                fixed = max(fixed.geoms, key=lambda g: g.area)
+            if fixed.is_valid and fixed.geom_type == 'Polygon':
+                smoothed = [list(c) for c in fixed.exterior.coords]
 
         # BCE-4X: Resolution maximale preservee
         smoothed = [[round(x, 7), round(y, 7)] for x, y in smoothed]
@@ -637,7 +650,7 @@ def analyze_corridors_full(
         geojson_features.append(feature)
 
     # GeoJSON zones ecologiques V10 — POLYGONES ORGANIQUES (BCE-4X / Steeve-MAX)
-    # Fusion + Dimension dynamique + Chaikin smoothing
+    # STEVE-MAX-MULTI: Fusion + Dimension dynamique + Multi-engine + Smoothing
     zone_colors = {
         "alimentation": "#4CAF50",
         "repos": "#2196F3",
@@ -663,6 +676,9 @@ def analyze_corridors_full(
                 "center_lng": pz["lng"],
                 "all_centers": all_centers,
                 "cluster_size": len(cluster),
+                "engine": "STEVE-MAX-MULTI",
+                "engines_active": list(ENGINE_REGISTRY.keys()),
+                "engines_count": len(ENGINE_REGISTRY),
             },
             "geometry": {
                 "type": "Polygon",
