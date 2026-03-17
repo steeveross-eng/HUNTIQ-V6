@@ -15,7 +15,7 @@ import pytest
 import httpx
 import os
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://species-network.preview.emergentagent.com")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://bionic-map-refresh.preview.emergentagent.com")
 TIMEOUT = 120  # API calls can take 30-60s due to Overpass API
 
 # Test coordinates per requirements

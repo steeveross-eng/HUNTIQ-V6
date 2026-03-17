@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://species-network.preview.emergentagent.com",
+                "url": "https://bionic-map-refresh.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],

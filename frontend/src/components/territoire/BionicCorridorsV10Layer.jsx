@@ -1,27 +1,27 @@
 /**
  * BionicCorridorsV10Layer.jsx — Couche corridors fauniques BIONIC
- * Norme CORRIDOR-V1/V10 officielle
+ * Norme CORRIDOR-V1/V10 officielle — BCE-4X / Steeve-MAX
  *
  * Palette normative obligatoire:
- *   CRITIQUE  #CC0000 (4m)  — rayé
- *   MAJEUR    #FF0000 (6m)
- *   FORT      #FF8C00 (11m)
- *   MODERE    #FFD700 (17m)
- *   FAIBLE    #BFBFBF (26m)
+ *   CRITIQUE  #B80000 (contour #660000) — micro-hachures diagonales, densité +20%
+ *   MAJEUR    #FF0000 (contour #CC0000) — rouge pur, aucun pattern
+ *   FORT      #FF8C00 (4)
+ *   MODERE    #FFD700 (3)
+ *   FAIBLE    #BFBFBF (2)
  *
- * Performance: caching, pré-rendu, throttling, simplification géométrique
- * Lissage contrôlé, continuité visible, aucune rupture.
+ * BCE-4X: Aucun glow, halo ou dégradé. Distinction visible à 3 niveaux de zoom.
+ * Steeve-MAX: Hiérarchie EXTREME > MAJEUR > FORT > MODÉRÉ > FAIBLE
  */
 import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 
 const CORRIDOR_PALETTE = {
-  CRITIQUE: { color: '#CC0000', weight: 6, dashArray: '10,4', label: 'Critique' },
-  MAJEUR:   { color: '#FF0000', weight: 5, dashArray: null,   label: 'Majeur' },
-  FORT:     { color: '#FF8C00', weight: 4, dashArray: null,   label: 'Fort' },
-  MODERE:   { color: '#FFD700', weight: 3, dashArray: null,   label: 'Modéré' },
-  FAIBLE:   { color: '#BFBFBF', weight: 2, dashArray: null,   label: 'Faible' },
+  CRITIQUE: { color: '#B80000', contour: '#660000', weight: 5, hasPattern: true, patternDash: '4,3', dashArray: null, label: 'Critique' },
+  MAJEUR:   { color: '#FF0000', contour: '#CC0000', weight: 5, hasPattern: false, patternDash: null, dashArray: null, label: 'Majeur' },
+  FORT:     { color: '#FF8C00', contour: '#CC7000', weight: 4, hasPattern: false, patternDash: null, dashArray: null, label: 'Fort' },
+  MODERE:   { color: '#FFD700', contour: '#CCAC00', weight: 3, hasPattern: false, patternDash: null, dashArray: null, label: 'Modéré' },
+  FAIBLE:   { color: '#BFBFBF', contour: '#999999', weight: 2, hasPattern: false, patternDash: null, dashArray: null, label: 'Faible' },
 };
 
 const ZONE_COLORS = {
@@ -99,13 +99,14 @@ const BionicCorridorsV10Layer = ({
     }
   }, [map]);
 
-  // Pré-calculer les styles (pré-stylé, pré-classifié)
+  // Pré-calculer les styles — BCE-4X: AUCUN glow/halo/dégradé
   const precomputedStyles = useMemo(() => {
     const styles = {};
     for (const [level, p] of Object.entries(CORRIDOR_PALETTE)) {
       styles[level] = {
-        glow: { color: p.color, weight: p.weight + 3, opacity: opacity * 0.25, lineCap: 'round', lineJoin: 'round', interactive: false },
+        contour: { color: p.contour, weight: p.weight + 2, opacity: opacity * 0.7, lineCap: 'round', lineJoin: 'round', interactive: false },
         main: { color: p.color, weight: p.weight, opacity, lineCap: 'round', lineJoin: 'round', dashArray: p.dashArray },
+        hachure: p.hasPattern ? { color: p.contour, weight: p.weight - 1, opacity: opacity * 0.6, lineCap: 'butt', lineJoin: 'round', dashArray: p.patternDash, interactive: false } : null,
         hover: { weight: p.weight + 2, opacity: 1 },
         restore: { weight: p.weight, opacity },
       };
@@ -125,7 +126,7 @@ const BionicCorridorsV10Layer = ({
 
     const zones = features.filter(f => f.geometry.type === 'Point');
 
-    // Rendu batch corridors (pré-stylé)
+    // Rendu batch corridors — BCE-4X: contour + main + hachure (CRITIQUE uniquement)
     for (const feature of corridors) {
       const raw = feature.geometry.coordinates.map(c => [c[1], c[0]]);
       if (raw.length < 2) continue;
@@ -134,10 +135,10 @@ const BionicCorridorsV10Layer = ({
       const props = feature.properties;
       const style = precomputedStyles[props.niveau] || precomputedStyles.FORT;
 
-      // Glow
-      group.addLayer(L.polyline(coords, style.glow));
+      // Contour sombre (remplace le glow — BCE-4X: aucun glow/halo)
+      group.addLayer(L.polyline(coords, style.contour));
 
-      // Main
+      // Main line
       const line = L.polyline(coords, style.main);
       line.bindTooltip(
         `<div style="font-size:12px;font-weight:600;color:${CORRIDOR_PALETTE[props.niveau]?.color || '#FF8C00'}">
@@ -151,6 +152,11 @@ const BionicCorridorsV10Layer = ({
       line.on('mouseover', function() { this.setStyle(style.hover); });
       line.on('mouseout', function() { this.setStyle(style.restore); });
       group.addLayer(line);
+
+      // Micro-hachures diagonales (CRITIQUE uniquement — densité +20%)
+      if (style.hachure) {
+        group.addLayer(L.polyline(coords, style.hachure));
+      }
     }
 
     // Rendu zones

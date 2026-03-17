@@ -17,7 +17,7 @@
  */
 
 import React, { useMemo, useState, useCallback, useRef } from 'react';
-import { Polygon, Polyline, Tooltip, useMap, Pane } from 'react-leaflet';
+import { Polygon, Tooltip, useMap, Pane } from 'react-leaflet';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { ZONE_COLORS, getZoneColor } from '@/core/bionic/bionicColorsConfig';
 import SmartMapTooltip from './SmartMapTooltip';
@@ -29,14 +29,25 @@ export { BIONIC_MODULES };
 const ZONE_NORMATIVE_COLORS = ZONE_COLORS;
 
 /**
- * Épaisseur dynamique BIONIC V7.3:
- * score 30% → poids 2.5, score 100% → poids 6
- * V7.3: Base weight increased for better visibility
+ * Assombrir une couleur hexadécimale de factor (0-1).
+ * BCE-4X: contour 15-20% plus sombre → factor=0.82
+ */
+function darkenColor(hex, factor = 0.82) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `#${Math.round(r * factor).toString(16).padStart(2, '0')}${Math.round(g * factor).toString(16).padStart(2, '0')}${Math.round(b * factor).toString(16).padStart(2, '0')}`;
+}
+
+/**
+ * Épaisseur dynamique BIONIC V10 — Norme BCE-4X:
+ * Contour -25% plus mince que V7.3
+ * score 30% → poids ~1.9, score 100% → poids ~4.5
  */
 function getDynamicWeight(score, isHovered) {
-  if (isHovered) return 7;
+  if (isHovered) return 5.25;
   const clampedScore = Math.max(30, Math.min(100, score));
-  return 2.5 + ((clampedScore - 30) / 70) * 3.5;
+  return (2.5 + ((clampedScore - 30) / 70) * 3.5) * 0.75;
 }
 
 // Classification: layer_id → tier (conservé pour tri de rendu)
@@ -61,7 +72,8 @@ const getInterpretation = (moduleId, score) => {
 };
 
 // ============================================
-// COMPOSANT — Zone normalisée BIONIC V5 300%
+// COMPOSANT — Zone normalisée BIONIC V10
+// BCE-4X: contour assombri, transparence calibrée 30-40%
 // ============================================
 const NormalizedZone = ({ zone, tier, zoneIndex, isHovered, onHover, onLeave, onToggleFavorite }) => {
   const { positions, layerId, score, areaM2 } = zone;
@@ -95,11 +107,11 @@ const NormalizedZone = ({ zone, tier, zoneIndex, isHovered, onHover, onLeave, on
       <Polygon
         positions={positions}
         pathOptions={{
-          color,
+          color: darkenColor(color, 0.82),
           weight,
           opacity: 1.0,
           fillColor: color,
-          fillOpacity: isHovered ? 0.25 : 0.18,
+          fillOpacity: isHovered ? 0.40 : 0.35,
           lineCap: 'round',
           lineJoin: 'round',
         }}
@@ -194,213 +206,16 @@ const NormalizedZone = ({ zone, tier, zoneIndex, isHovered, onHover, onLeave, on
   );
 };
 
-// ============================================
-// COMPOSANT — Corridor V7 (A*, multi-points, terrain-aware)
-// ============================================
-
-// Styles par source × sexe
-// V7 Corridors: real/male=#1565C0 (dark blue), real/female=#F472B6 (pink)
-//               ai/male=#38BDF8 (light blue), ai/female=#C084FC (purple)
-const CORRIDOR_STYLES = {
-  real:   { male: '#1565C0', female: '#F472B6' },
-  ai:     { male: '#38BDF8', female: '#C084FC' },
-};
-
-// V9 Corridor Ribbon — Multi-band polygon rendering (5-level gradient)
-const V9CorridorRibbon = ({ corridor, corridorIndex }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const { positions, source, sex, score, distanceM, fromZoneType, toZoneType, demEnhanced, bands, centerline, classificationV9 } = corridor;
-  const hasBands = bands && bands.length > 0;
-
-  if (!hasBands && (!positions || positions.length < 2)) return null;
-
-  const sourceLabel = source === 'real' ? 'Reel' : 'IA';
-  const sexLabel = sex === 'male' ? 'Male' : 'Femelle';
-  const distanceLabel = distanceM ? `${(distanceM / 1000).toFixed(1)} km` : '';
-  const level = classificationV9?.level || corridor.corridorType || 'gris';
-  const levelLabel = classificationV9?.label || level;
-
-  const tooltipContent = (
-    <div className="bg-gray-900/95 border border-gray-700 rounded-lg p-2.5 min-w-[220px] shadow-xl">
-      <div className="flex items-center gap-2 mb-1.5">
-        <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: classificationV9?.color || '#9E9E9E' }} />
-        <span className="font-semibold text-white text-sm">Corridor V9 {levelLabel}</span>
-      </div>
-      <div className="space-y-1 text-xs">
-        <div className="flex justify-between text-gray-400">
-          <span>Score V9</span>
-          <span className="font-bold" style={{ color: classificationV9?.color || '#06B6D4' }}>{score}%</span>
-        </div>
-        <div className="flex justify-between text-gray-400">
-          <span>Distance</span>
-          <span className="text-gray-200">{distanceLabel}</span>
-        </div>
-        <div className="flex justify-between text-gray-400">
-          <span>Trajet</span>
-          <span className="text-gray-200">{fromZoneType || '?'} &rarr; {toZoneType || '?'}</span>
-        </div>
-        <div className="flex justify-between text-gray-400">
-          <span>Bandes</span>
-          <span className="text-gray-200">{bands?.length || 0} niveaux</span>
-        </div>
-        {demEnhanced && (
-          <div className="text-[10px] text-emerald-400 text-center mt-1">DEM terrain-aware + 9 moteurs BIONIC</div>
-        )}
-      </div>
-    </div>
-  );
-
-  // Render multi-band polygons (outer to inner for z-ordering)
-  // IMPORTANT: Bands must be visually dominant — rendered on Pane with high z-index
-  if (hasBands) {
-    return (
-      <>
-        {bands.map((band, bIdx) => {
-          if (!band.coordinates) return null;
-          // Convert [lng, lat] to [lat, lng] for Leaflet
-          const rings = band.coordinates.map(ring =>
-            ring.map(c => [c[1], c[0]])
-          );
-          const isInnermost = bIdx === bands.length - 1;
-          const isOutermost = bIdx === 0;
-          return rings.map((ring, rIdx) => (
-            <Polygon
-              key={`corridor-band-${corridorIndex}-${band.level}-${rIdx}`}
-              positions={ring}
-              pathOptions={{
-                color: band.color,
-                weight: isHovered ? 2.5 : (isInnermost ? 2 : isOutermost ? 1.2 : 0.6),
-                opacity: isHovered ? Math.min(1, band.opacity + 0.25) : band.opacity,
-                fillColor: band.color,
-                fillOpacity: isHovered ? Math.min(0.95, band.fillOpacity + 0.2) : band.fillOpacity,
-              }}
-              eventHandlers={{
-                mouseover: () => setIsHovered(true),
-                mouseout: () => setIsHovered(false),
-              }}
-              data-testid={`corridor-v9-band-${corridorIndex}-${band.level}`}
-            >
-              {isInnermost && (
-                <Tooltip sticky direction="top" offset={[0, -8]}>
-                  {tooltipContent}
-                </Tooltip>
-              )}
-            </Polygon>
-          ));
-        })}
-        {/* Centerline: strong visible line on top */}
-        {centerline && centerline.length >= 2 && (
-          <Polyline
-            positions={centerline.map(c => [c[1], c[0]])}
-            pathOptions={{
-              color: '#FFFFFF',
-              weight: isHovered ? 3 : 2,
-              opacity: isHovered ? 0.9 : 0.6,
-              dashArray: null,
-              lineCap: 'round',
-              lineJoin: 'round',
-            }}
-            eventHandlers={{
-              mouseover: () => setIsHovered(true),
-              mouseout: () => setIsHovered(false),
-            }}
-            data-testid={`corridor-v9-centerline-${corridorIndex}`}
-          />
-        )}
-        {/* Classification line on top of white centerline */}
-        {centerline && centerline.length >= 2 && (
-          <Polyline
-            positions={centerline.map(c => [c[1], c[0]])}
-            pathOptions={{
-              color: classificationV9?.color || '#F44336',
-              weight: isHovered ? 2 : 1.2,
-              opacity: isHovered ? 0.8 : 0.5,
-              dashArray: level === 'rouge_raye' ? '6,2,2,2' : level === 'gris' ? '4,3' : null,
-              lineCap: 'round',
-              lineJoin: 'round',
-            }}
-            data-testid={`corridor-v9-classline-${corridorIndex}`}
-          />
-        )}
-      </>
-    );
-  }
-
-  // Fallback: render as simple polyline if no bands
-  const styleColor = classificationV9?.color || CORRIDOR_STYLES[source]?.[sex] || corridor.color || '#06B6D4';
-  const weight = isHovered ? 5 : (corridor.weight || 2.5);
-  const opacity = isHovered ? 1.0 : (corridor.opacity || 0.85);
-
-  return (
-    <Polyline
-      positions={positions}
-      pathOptions={{
-        color: styleColor,
-        weight,
-        opacity,
-        lineCap: 'round',
-        lineJoin: 'round',
-      }}
-      eventHandlers={{
-        mouseover: () => setIsHovered(true),
-        mouseout: () => setIsHovered(false),
-      }}
-      data-testid={`corridor-v9-fallback-${corridorIndex}`}
-    >
-      <Tooltip sticky direction="top" offset={[0, -8]}>
-        {tooltipContent}
-      </Tooltip>
-    </Polyline>
-  );
-};
-
-// Legacy corridor format (start/end two-point)
-const CorridorLine = ({ start, end, moduleId, percentage, label, corridorIndex }) => {
-  const mod = BIONIC_MODULES[moduleId] || BIONIC_MODULES.corridors;
-  const [isHovered, setIsHovered] = useState(false);
-  const color = getZoneColor('corridors');
-  const weight = getDynamicWeight(percentage, isHovered);
-
-  return (
-    <Polyline
-      positions={[start, end]}
-      pathOptions={{
-        color,
-        weight,
-        opacity: 1.0,
-        dashArray: '8, 5',
-        lineCap: 'round',
-        lineJoin: 'round',
-      }}
-      eventHandlers={{
-        mouseover: () => setIsHovered(true),
-        mouseout: () => setIsHovered(false),
-      }}
-    >
-      <Tooltip sticky direction="top" offset={[0, -5]}>
-        <div className="bg-gray-900/95 border border-gray-700 rounded-lg p-2 shadow-xl">
-          <div className="flex items-center gap-2">
-            <div className="w-2.5 h-0.5 rounded" style={{ backgroundColor: color }} />
-            <span className="font-semibold text-white">{label || mod.label}</span>
-          </div>
-          <div className="text-sm mt-1" style={{ color }}>
-            Attraction: {percentage}% — {weight.toFixed(1)}px
-          </div>
-        </div>
-      </Tooltip>
-    </Polyline>
-  );
-};
+// V9 Corridors — PURGE DEFINITIVE BCE-4X-UI-003
+// Tous les corridors sont rendus par BionicCorridorsV10Layer
 
 // ============================================
-// COMPOSANT PRINCIPAL — BionicMicroZones V5 Harmonisé
+// COMPOSANT PRINCIPAL — BionicMicroZones V10 Harmonisé
+// BCE-4X: Aucun glow, transparence calibrée, contour assombri
 // ============================================
 const BionicMicroZones = ({
   zones = [],
-  corridors = [],
   minPercentage = 50,
-  showCorridors = true,
   onZoneClick,
   onZoneHover,
   isZoneFavorite = () => false,
@@ -447,7 +262,7 @@ const BionicMicroZones = ({
 
   return (
     <>
-      {/* STEVE-MAX: COUCHE ZONES — Pane dedie z-index 400 (SOUS les corridors) */}
+      {/* STEVE-MAX: COUCHE ZONES — Pane dedie z-index 400 (SOUS les corridors V10) */}
       <Pane name="bionic-zones-pane" style={{ zIndex: 400 }}>
         {/* behavior.cells — Score faible en arriere-plan */}
         {cellZones.map((zone, idx) => (
@@ -476,34 +291,6 @@ const BionicMicroZones = ({
             onToggleFavorite={toggleFavorite}
           />
         ))}
-      </Pane>
-
-      {/* STEVE-MAX: COUCHE CORRIDORS V9 — Pane dedie z-index 650 (AU-DESSUS des zones)
-          BCE-4X-COLOR-003: Palette corridors ISOLEE des zones
-          Rendu: 5 bandes concentriques gris→jaune→orange→rouge→rouge_raye */}
-      <Pane name="corridors-v9-pane" style={{ zIndex: 650 }}>
-        {showCorridors &&
-          corridors
-            .filter(c => c.inPerimeter !== false && c.hasBands)
-            .map((c, idx) =>
-            c.positions || c.bands ? (
-              <V9CorridorRibbon
-                key={c.id || `corridor-v9-${idx}`}
-                corridor={c}
-                corridorIndex={idx}
-              />
-            ) : (
-              <CorridorLine
-                key={`corridor-${idx}`}
-                start={c.start}
-                end={c.end}
-                moduleId="corridors"
-                percentage={c.percentage}
-                label={c.label}
-                corridorIndex={idx}
-              />
-            )
-          )}
       </Pane>
     </>
   );

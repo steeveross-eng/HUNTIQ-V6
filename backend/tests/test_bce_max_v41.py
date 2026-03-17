@@ -8,7 +8,7 @@ import requests
 import os
 import json
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://species-network.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-map-refresh.preview.emergentagent.com')
 
 # Known waypoint for testing
 WAYPOINT_CENTER = {"lat": 46.8068, "lng": -71.1118}

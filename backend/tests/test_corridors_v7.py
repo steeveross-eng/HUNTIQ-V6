@@ -12,7 +12,7 @@ import os
 import pytest
 import requests
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://species-network.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-map-refresh.preview.emergentagent.com')
 
 # V7 corridor color mapping for validation
 V7_CORRIDOR_COLORS = {

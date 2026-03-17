@@ -27,7 +27,7 @@ def get_base_url():
                 if line.startswith('REACT_APP_BACKEND_URL='):
                     return line.split('=', 1)[1].strip().rstrip('/')
     
-    return 'https://species-network.preview.emergentagent.com'
+    return 'https://bionic-map-refresh.preview.emergentagent.com'
 
 BASE_URL = get_base_url()
 

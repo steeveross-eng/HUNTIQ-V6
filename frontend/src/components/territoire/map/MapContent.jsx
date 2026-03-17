@@ -102,9 +102,7 @@ const MapContentInner = React.memo(({
     <StructureContrastLayer enabled={classificationToggles.anthropique} />
     <BionicMicroZones
       zones={bionicZones}
-      corridors={[]}
       minPercentage={minPercentageFilter}
-      showCorridors={false}
       onZoneClick={setSelectedZone}
       onZoneHover={setHoveredZone}
       isZoneFavorite={isZoneFavorite}
