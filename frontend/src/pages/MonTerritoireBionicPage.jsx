@@ -1310,10 +1310,10 @@ const MonTerritoireBionicPage = () => {
           </button>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-          {/* ═══ 8a. CORRIDORS V9 — contrôle individuel inline ═══ */}
-          <div className="h-8 px-2 flex items-center gap-1.5 rounded-md" data-testid="toolbar-corridors-v9">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 hidden sm:inline">Corridors V9</span>
-            <Switch checked={showCorridors} onCheckedChange={setShowCorridors} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-v9" />
+          {/* ═══ 8a. CORRIDORS V10 — contrôle individuel inline ═══ */}
+          <div className="h-8 px-2 flex items-center gap-1.5 rounded-md" data-testid="toolbar-corridors-v10">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 hidden sm:inline">Corridors V10</span>
+            <Switch checked={showCorridors} onCheckedChange={setShowCorridors} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-v10" />
           </div>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
