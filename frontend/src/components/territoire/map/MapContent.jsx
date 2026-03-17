@@ -141,7 +141,8 @@ const MapContentInner = React.memo(({
         species={selectedSpecies}
         month={new Date().getMonth() + 1}
         enabled={showCorridors}
-        opacity={0.85}
+        opacity={0.55}
+        minPercentage={minPercentageFilter}
         onDataLoaded={onCorridorDataLoaded}
       />
     )}

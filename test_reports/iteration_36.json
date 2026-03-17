@@ -1,0 +1,142 @@
+{
+  "summary": "Iteration 36 - Standard Visuel STEEVE-MAX Testing Complete. All visual improvements verified: corridor filtering via seuil slider (10-80%), center point markers with white border (radius 6, z-index on top), corridor weight reduced (3) and opacity (0.55). 19 corridors visible at 30% default threshold as expected.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mon Territoire",
+        "issues": [
+          "Minor: Service Worker registration errors (sw-v2.js 404) - no impact on functionality",
+          "Minor: Some 404s for sharing/notifications/groups endpoints - no impact on V10 corridors"
+        ]
+      }
+    ]
+  },
+  "test_results": {
+    "frontend_tests": {
+      "total": 16,
+      "passed": 16,
+      "tests": [
+        "Mon Territoire page loads at /territoire without errors - PASS",
+        "Seuil slider visible in toolbar (SEUIL 30%) - PASS",
+        "Corridor filtering works with seuil slider (min=10%, max=80%, step=5%) - PASS",
+        "At 30% default: 19 corridors visible (not 192) - PASS",
+        "Center point markers visible with radius 6 - PASS",
+        "Center point markers have white border (#FFFFFF, stroke-width=2) - PASS",
+        "Center point markers have 0.95 fill opacity - PASS",
+        "Center points rendered AFTER corridors (z-index on top via SVG order) - PASS",
+        "Corridor lines weight reduced (3 for CRITIQUE/MAJEUR, 2.5 for FORT) - PASS",
+        "Corridor opacity reduced to 0.55 - PASS",
+        "Zone polygons visible with organic shapes (64 polygons) - PASS",
+        "Zone polygons have 35% transparency - PASS",
+        "No spider-web effect - corridors are sparse and clean - PASS",
+        "Satellite terrain visible through zones (28+ tiles) - PASS",
+        "No V9 zones visible (0 v9/micro-zone elements) - PASS",
+        "No orange background - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "corridor_filtering": {
+      "status": "PASS",
+      "details": {
+        "slider_data_testid": "min-percentage-slider",
+        "range": "10% to 80%",
+        "step": "5%",
+        "default": "30%",
+        "corridors_at_30_percent": 19,
+        "filtering_method": "client-side by score >= minPercentage"
+      }
+    },
+    "center_point_markers": {
+      "status": "PASS",
+      "details": {
+        "count": 64,
+        "radius": 6,
+        "stroke": "#FFFFFF (white border)",
+        "stroke_width": 2,
+        "fill_opacity": 0.95,
+        "z_index": "rendered AFTER corridors (SVG layer order)",
+        "colors": ["#4CAF50 (alimentation)", "#2196F3 (repos)", "#FF5722 (rut)", "#00BCD4 (eau)"]
+      }
+    },
+    "corridor_visual_properties": {
+      "status": "PASS",
+      "details": {
+        "weight_reduced": "3 (from 5) for CRITIQUE/MAJEUR, 2.5 for FORT",
+        "opacity_reduced": "0.55 (from 0.85)",
+        "no_spider_web_effect": true
+      }
+    },
+    "corridor_colors_bce4x": {
+      "status": "PASS",
+      "details": {
+        "CRITIQUE": "#B80000 with micro-hachures (dashArray 4,3 on contour #660000)",
+        "MAJEUR": "#FF0000 without pattern",
+        "FORT": "#FF8C00",
+        "contours": "15-20% darker variants"
+      }
+    },
+    "zone_polygons": {
+      "status": "PASS",
+      "details": {
+        "count": 64,
+        "organic_shapes": true,
+        "fill_opacity": "0.35 (35% transparency)",
+        "colors": ["#4CAF50", "#2196F3", "#FF5722", "#00BCD4"]
+      }
+    },
+    "v9_removal": {
+      "status": "PASS",
+      "details": {
+        "v9_elements_count": 0,
+        "no_orange_background": true
+      }
+    },
+    "satellite_terrain": {
+      "status": "PASS",
+      "details": {
+        "tiles_loaded": "28+",
+        "visible_through_zones": true
+      }
+    }
+  },
+  "visual_verification": {
+    "corridor_paths_detected": 400,
+    "critique_corridors_b80000": 20,
+    "majeur_corridors_ff0000": 146,
+    "fort_corridors_ff8c00": 24,
+    "contour_paths_660000": 40,
+    "contour_paths_cc0000": 146,
+    "micro_hachures_dasharray_4_3": 20
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BionicCorridorsV10Layer.jsx: Correctly implements minPercentage prop for corridor filtering (line 99, 201)",
+    "BionicCorridorsV10Layer.jsx: Center point markers correctly rendered AFTER corridors (lines 235-257, COUCHE 3)",
+    "BionicCorridorsV10Layer.jsx: Center markers have radius 6, white border (#FFFFFF), strokeWidth 2, fillOpacity 0.95",
+    "BionicCorridorsV10Layer.jsx: Corridor weight reduced to 3 in CORRIDOR_PALETTE (line 23-28)",
+    "BionicCorridorsV10Layer.jsx: Corridor opacity 0.55 passed via props and applied correctly",
+    "BionicCorridorsV10Layer.jsx: cachedDataRef enables re-render when minPercentage changes (lines 343-347)",
+    "MapContent.jsx: Passes minPercentageFilter to BionicCorridorsV10Layer correctly (line 145)"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend only testing)",
+    "frontend": "100% (16/16 features verified)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*"
+  },
+  "seed_data_creation": "None - used existing waypoint data from logged-in user",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 36 verified Standard Visuel STEEVE-MAX: (1) Corridor filtering connected to seuil slider (10-80%, default 30%, shows 19 corridors). (2) Center point markers visible with radius 6, white border, z-index on top (64 markers). (3) Corridor weight reduced (3), opacity reduced (0.55). (4) No spider-web effect - corridors are sparse and clean. (5) CRITIQUE #B80000 with micro-hachures, MAJEUR #FF0000 without pattern. (6) All 64 zone polygons with organic shapes, 35% opacity. (7) No V9 zones, no orange background. (8) Slider data-testid: min-percentage-slider (range 10-80, step 5).",
+  "verification_date": "2026-03-17"
+}
