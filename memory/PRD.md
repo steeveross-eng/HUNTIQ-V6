@@ -30,10 +30,21 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - **Resultat** : Terrain satellite 100% visible, seuls corridors V10 normatifs rendent
 - Tests: Backend 8/8 + Frontend 14/14 = 22/22 (100%), 0 regression
 
+### Raffinements visuels BCE-4X (2026-03-17) — iteration_33 (13/13)
+- **Zones polygonales**: fillOpacity calibree 35% (hover 40%), contour -25% plus mince, contour 18% plus sombre (darkenColor factor=0.82)
+- **CRITIQUE corridors**: couleur interne #B80000, contour #660000, micro-hachures diagonales (dashArray '4,3'), densite +20%
+- **MAJEUR corridors**: rouge pur #FF0000, contour #CC0000, aucun pattern, epaisseur identique a CRITIQUE
+- **BCE-4X compliance**: Aucun glow/halo/degradé sur aucun corridor, contours sombres pour tous les niveaux
+- **V9 purge definitive**: Code V9CorridorRibbon, CorridorLine, CORRIDOR_STYLES supprimes de BionicMicroZones
+- **Props nettoyees**: corridors=[] et showCorridors=false retires de MapContent → BionicMicroZones
+- Tests: Frontend 13/13 (100%), 0 regression
+
 ## Etat actuel Mon Territoire
 - Fond: terrain satellite 100% visible (aucune couche opaque)
-- Corridors: V10 uniquement (palette normative CRITIQUE→FAIBLE)
-- Zones: ecologiques V9 (polygones) preservees
+- Corridors: V10 uniquement (palette normative CRITIQUE→FAIBLE, BCE-4X: aucun glow)
+- CRITIQUE: #B80000 + contour #660000 + micro-hachures
+- MAJEUR: #FF0000 + contour #CC0000, aucun pattern
+- Zones: polygones ecologiques avec transparence calibree 30-40%, contours assombris -18%, epaisseur -25%
 - Legende: 3X normative (3 blocs, compteurs, toggles)
 - Panneau lateral: entierement V10
 - Toolbar: "CORRIDORS V10" avec toggle
@@ -47,11 +58,11 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - GET /api/v10/corridors/documentation
 
 ## Backlog
-### P0 — HABITAT-V1 (prochaine commande)
 ### P1 — Integration score consolide CORRIDORS-V10 dans heatmap
-### P1 — RUT-V1, AFFUTS-V1, TRAJETS-V1 (sequentiel)
-### P2 — Certification Finale BIONIC V3
-### P3 — Phase 4: Integration transversale (BLOQUEE)
+### P2 — HABITAT-V1 (prochaine commande utilisateur)
+### P2 — RUT-V1, AFFUTS-V1, TRAJETS-V1 (sequentiel, sur commande)
+### P3 — Certification Finale BIONIC V3
+### P3 — Phase 4: Integration transversale (BLOQUEE — necessite tous les moteurs V1)
 
 ## Credentials
 - **User:** `Steeve.ross@gmail.com` / `Saturn5858*`
