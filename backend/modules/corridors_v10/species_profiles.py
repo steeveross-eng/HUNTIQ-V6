@@ -25,6 +25,11 @@ CORRIDOR_PROFILES = {
         "id": "cerf",
         "nom_fr": "Cerf de Virginie",
         "nom_scientifique": "Odocoileus virginianus",
+        "description_corridor": (
+            "Corridors etroits, sinueux, opportunistes, suivant lisieres, mosaiques, "
+            "regenerations, clairieres, friches. Recherche pentes sud, nourriture, micro-reliefs. "
+            "Deplacements prudents, segmentes. Connectivite fine entre ALIMENTATION-V1, REPOS-V1, zones calmes."
+        ),
         "pente_optimale_deg": 5,
         "pente_max_deg": 15,
         "sensibilite_pression": 0.75,
@@ -48,6 +53,12 @@ CORRIDOR_PROFILES = {
         "id": "orignal",
         "nom_fr": "Orignal",
         "nom_scientifique": "Alces americanus",
+        "description_corridor": (
+            "Corridors massifs, directionnels, ancres dans vallons humides, zones fraiches, "
+            "coniferes denses, cuvettes, replats, coulees encaissees. Forte affinite zones humides. "
+            "Evitement strict pression humaine. Deplacements rectilignes. Connectivite obligatoire "
+            "entre zones humides, repos thermiques, alimentation."
+        ),
         "pente_optimale_deg": 8,
         "pente_max_deg": 25,
         "sensibilite_pression": 0.80,
@@ -71,6 +82,11 @@ CORRIDOR_PROFILES = {
         "id": "ours",
         "nom_fr": "Ours noir",
         "nom_scientifique": "Ursus americanus",
+        "description_corridor": (
+            "Corridors mixtes, frais, couverts, proches eau, fourres denses, regenerations productives, "
+            "blocs rocheux. Recherche nourriture + fraicheur + refuge. Evitement zones ouvertes. "
+            "Connectivite entre nourriture, zones humides, refuges."
+        ),
         "pente_optimale_deg": 12,
         "pente_max_deg": 35,
         "sensibilite_pression": 0.85,

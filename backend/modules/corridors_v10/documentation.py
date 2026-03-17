@@ -7,7 +7,7 @@ Norme Steeve-MAX SM-005.
 """
 from datetime import datetime, timezone
 from .species_profiles import CORRIDOR_PROFILES, SPECIES_LIST, PARAM_KEYS
-from .classifier import CLASSIFICATION_THRESHOLDS
+from .classifier import CLASSIFICATION_THRESHOLDS, CORRIDOR_LEVELS
 
 
 def generate_documentation() -> dict:
@@ -46,6 +46,7 @@ def generate_documentation() -> dict:
         },
         "parametres_12": PARAM_KEYS,
         "classification": CLASSIFICATION_THRESHOLDS,
+        "palette_normative": CORRIDOR_LEVELS,
         "zones_ecologiques": ["alimentation", "repos", "rut", "eau"],
         "especes_supportees": SPECIES_LIST,
         "profils": {k: {

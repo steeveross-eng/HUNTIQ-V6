@@ -23,6 +23,7 @@ import { MapInteractionLayer } from '@/modules/map_interaction';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { PLACE_TYPES } from '@/config/placeTypes';
 import { BionicScoreHeatmap } from '@/components/territoire/BionicScoreHeatmap';
+import BionicCorridorsV10Layer from '@/components/territoire/BionicCorridorsV10Layer';
 
 const MapContentInner = React.memo(({
   // Eco layers
@@ -165,6 +166,20 @@ const MapContentInner = React.memo(({
         month={new Date().getMonth() + 1}
         enabled={true}
         opacity={0.55}
+      />
+    )}
+
+    {/* CORRIDORS-V10: Couche corridors fauniques — palette normative */}
+    {selectedWaypointForZones && showCorridors && (
+      <BionicCorridorsV10Layer
+        center={{
+          lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
+          lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
+        }}
+        species={selectedSpecies}
+        month={new Date().getMonth() + 1}
+        enabled={showCorridors}
+        opacity={0.85}
       />
     )}
 

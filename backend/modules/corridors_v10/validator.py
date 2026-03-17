@@ -100,14 +100,14 @@ def validate_bce4x(
                 break
     checks["TOPO-001"] = "PASS" if topo001_ok else "FAIL"
 
-    # CONT-001: Continuite absolue
+    # CONT-001 / COR-006: Continuite absolue — ZERO dead-end, reseau entierement connecte
     cont001_ok = continuity.get("connected", False) and continuity.get("dead_ends", 0) == 0
     if not cont001_ok:
         if not continuity.get("connected", False):
-            errors.append(f"CONT-001: Reseau deconnecte ({continuity.get('components', 0)} composantes)")
+            errors.append(f"COR-006/CONT-001: Reseau deconnecte ({continuity.get('components', 0)} composantes)")
         if continuity.get("dead_ends", 0) > 0:
-            errors.append(f"CONT-001: {continuity['dead_ends']} dead-ends detectes")
-    checks["CONT-001"] = "PASS" if cont001_ok else "FAIL"
+            errors.append(f"COR-006/CONT-001: {continuity['dead_ends']} dead-ends detectes")
+    checks["COR-006"] = "PASS" if cont001_ok else "FAIL"
 
     # COMP-001: Style deplacement verifie (implicite par A* avec style_mults)
     checks["COMP-001"] = "PASS"

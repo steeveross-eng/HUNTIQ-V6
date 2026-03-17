@@ -47,6 +47,24 @@ def _load_cell_data(lat: float, lng: float, month: int) -> dict:
     conifer_density = 0.05 + 0.90 * h(lat, lng, "conif_d")
     strate_1_3m = 0.05 + 0.90 * h(lat, lng, "strate13")
 
+    # === Couches enrichies (Norme CORRIDOR-V1/V10) ===
+    ecl = 0.1 + 0.85 * h(lat, lng, "ecl_conn")
+    micro_topo_vallon = h(lat, lng, "topo_vallon") > 0.65
+    micro_topo_crete = h(lat, lng, "topo_crete") > 0.80
+    micro_topo_replat = h(lat, lng, "topo_replat") > 0.50
+    zone_tampon = h(lat, lng, "zone_tampon") > 0.60
+    regeneration = 0.05 + 0.90 * h(lat, lng, "regen")
+    season_ndvi = {
+        1: 0.10, 2: 0.12, 3: 0.35, 4: 0.55, 5: 0.75, 6: 0.90,
+        7: 1.00, 8: 0.95, 9: 0.80, 10: 0.60, 11: 0.30, 12: 0.15,
+    }
+    ndvi = (0.3 + 0.6 * h(lat, lng, "ndvi")) * season_ndvi.get(month, 0.65)
+    nourriture = round(ndvi * 0.5 + feuillus_nobles * 0.3 + regeneration * 0.2, 3)
+    refuge_score = round(min(1.0, canopy * 0.4 + conifer_density * 0.3 + min(dist_route, 500) / 500 * 0.3), 3)
+    dist_sentier = 10 + 490 * h(lat, lng, "dist_sent")
+    mosaique = abs(canopy - 0.5) < 0.2
+    suintement = h(lat, lng, "suint") > 0.85
+
     return {
         "elevation_m": round(elev, 1),
         "slope_deg": round(slope, 1),
@@ -56,9 +74,21 @@ def _load_cell_data(lat: float, lng: float, month: int) -> dict:
         "zone_humide": zone_humide,
         "distance_route_m": round(dist_route, 1),
         "distance_batiment_m": round(dist_batiment, 1),
+        "distance_sentier_m": round(dist_sentier, 1),
         "feuillus_nobles": round(feuillus_nobles, 3),
         "conifer_density": round(conifer_density, 3),
         "strate_1_3m": round(strate_1_3m, 3),
+        "ecl": round(ecl, 3),
+        "micro_topo_vallon": micro_topo_vallon,
+        "micro_topo_crete": micro_topo_crete,
+        "micro_topo_replat": micro_topo_replat,
+        "zone_tampon": zone_tampon,
+        "regeneration": round(regeneration, 3),
+        "ndvi": round(ndvi, 3),
+        "nourriture": nourriture,
+        "refuge_score": refuge_score,
+        "mosaique": mosaique,
+        "suintement": suintement,
     }
 
 
@@ -169,7 +199,45 @@ def generate_cost_grid(
             if data["zone_humide"]:
                 cost += 2.0
 
-            # 6. Ajustement saisonnier mobilite
+            # === FACTEURS ENRICHIS (Norme CORRIDOR-V1/V10) ===
+
+            # 6. Bonus ECL — connectivite ecologique locale (reduction -0 a -2)
+            cost -= data["ecl"] * 2.0
+
+            # 7. Bonus micro-topographie
+            if data["micro_topo_vallon"]:
+                cost -= 1.0  # Vallons = axes naturels de deplacement
+            if data["micro_topo_replat"]:
+                cost -= 0.5  # Replats = zones de repos potentielles
+            if data["micro_topo_crete"]:
+                cost += 1.5  # Cretes = exposees, evitees
+
+            # 8. Bonus nourriture disponible (reduction -0 a -1.5)
+            cost -= data["nourriture"] * 1.5
+
+            # 9. Bonus refuge (reduction -0 a -1.5)
+            cost -= data["refuge_score"] * 1.5
+
+            # 10. Bonus zone tampon (reduction -0.5)
+            if data["zone_tampon"]:
+                cost -= 0.5
+
+            # 11. Bonus regeneration (reduction -0 a -0.5)
+            cost -= data["regeneration"] * 0.5
+
+            # 12. Bonus mosaique/lisiere (reduction -0.3)
+            if data["mosaique"]:
+                cost -= 0.3
+
+            # 13. Penalite sentier (pression legere)
+            if data["distance_sentier_m"] < 100:
+                cost += (1.0 - data["distance_sentier_m"] / 100.0) * sensibilite * 1.5
+
+            # 14. Bonus suintement hydro (reduction -0.3)
+            if data["suintement"]:
+                cost -= 0.3
+
+            # 15. Ajustement saisonnier mobilite
             cost = cost / max(mobilite, 0.1)
 
             # Cout minimum = 0.5 (jamais zero pour eviter A* gratuit)

@@ -1,0 +1,190 @@
+{
+  "summary": "CORRIDORS-V10 Normative Enrichment Testing Complete. Backend: 21/21 tests passed (100%). All new normative features validated: 5-level palette (CRITIQUE/MAJEUR/FORT/MODERE/FAIBLE), per-corridor scoring with niveau/color/largeur_m, COR-006 validation, niveau_distribution, palette_normative. Frontend: BionicCorridorsV10Layer correctly calls /api/v10/corridors/analyze-full and renders corridors on Mon Territoire map with normative colors. Anti-regression: ALIMENTATION-V1 and REPOS-V1 still work.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "DataCloneError in emergent-main.js",
+        "issue": "[CORRIDORS-V10] Erreur: DataCloneError - Request object could not be cloned. This is an Emergent platform-specific postMessage serialization issue, not affecting corridor rendering functionality.",
+        "affected_selectors": [],
+        "priority": "LOW"
+      }
+    ],
+    "design_issues": [
+      {
+        "screen": "Mon Territoire sidebar",
+        "issues": ["UI toggle shows 'CORRIDORS V9' but correctly calls V10 API - cosmetic label inconsistency"]
+      }
+    ]
+  },
+  "test_results": {
+    "normative_palette": {
+      "total": 3,
+      "passed": 3,
+      "tests": [
+        "palette_normative in documentation with 5 levels - PASS",
+        "Normative colors match exactly (#CC0000, #FF0000, #FF8C00, #FFD700, #BFBFBF) - PASS",
+        "Normative widths match exactly (4, 6, 11, 17, 26m) - PASS"
+      ]
+    },
+    "niveau_distribution": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "analyze endpoint returns niveau_distribution with all 5 levels - PASS",
+        "niveau_distribution colors match normative palette - PASS"
+      ]
+    },
+    "per_corridor_scoring": {
+      "total": 5,
+      "passed": 5,
+      "tests": [
+        "GeoJSON corridors have score property (0-100) - PASS",
+        "GeoJSON corridors have niveau from 5 normative levels - PASS",
+        "GeoJSON corridors color matches niveau - PASS",
+        "GeoJSON corridors largeur_m matches normative widths - PASS",
+        "GeoJSON corridors have render_weight, dash_array, pattern - PASS"
+      ]
+    },
+    "cor006_validation": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "BCE-4X has COR-006 check - PASS",
+        "COR-006 passes for all 5 species (connected=True, dead_ends=0) - PASS"
+      ]
+    },
+    "multi_species": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "Multi-species endpoint includes palette_normative - PASS",
+        "Each species in multi has niveau_distribution - PASS"
+      ]
+    },
+    "species_description": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "Species with descriptions have description_corridor field - PASS",
+        "analyze-full includes description_corridor - PASS"
+      ]
+    },
+    "enriched_scoring": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "Corridors have varying scores (enriched data impact) - PASS",
+        "niveau_distribution has non-zero counts - PASS"
+      ]
+    },
+    "corridors_summary": {
+      "total": 1,
+      "passed": 1,
+      "tests": [
+        "corridors_summary has score_individuel, niveau, color, largeur_m - PASS"
+      ]
+    },
+    "anti_regression": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "ALIMENTATION-V1 /api/v1/alimentation/analyze still works - PASS",
+        "REPOS-V1 /api/v1/repos/analyze still works - PASS"
+      ]
+    },
+    "frontend_integration": {
+      "total": 5,
+      "passed": 5,
+      "tests": [
+        "Mon Territoire page loads - PASS",
+        "BionicCorridorsV10Layer calls /api/v10/corridors/analyze-full - PASS",
+        "Corridors render on map with normative colors - PASS",
+        "378 normative path elements detected on map - PASS",
+        "Sidebar shows normative levels (Modéré, FAIBLE) - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "5_level_normative_palette": {
+      "status": "PASS",
+      "levels": {
+        "CRITIQUE": {"color": "#CC0000", "largeur_m": 4, "verified": true},
+        "MAJEUR": {"color": "#FF0000", "largeur_m": 6, "verified": true},
+        "FORT": {"color": "#FF8C00", "largeur_m": 11, "verified": true},
+        "MODERE": {"color": "#FFD700", "largeur_m": 17, "verified": true},
+        "FAIBLE": {"color": "#BFBFBF", "largeur_m": 26, "verified": true}
+      }
+    },
+    "per_corridor_scoring": {
+      "status": "PASS",
+      "properties_verified": ["score", "niveau", "color", "largeur_m", "render_weight", "dash_array", "pattern"]
+    },
+    "cor006_validation": {
+      "status": "PASS",
+      "description": "COR-006 explicit in BCE-4X checks, validated connected=True, dead_ends=0 for all species"
+    },
+    "enriched_cell_data": {
+      "status": "PASS",
+      "fields_used": ["ecl", "micro_topo_vallon", "nourriture", "refuge_score", "zone_tampon", "regeneration"]
+    },
+    "species_descriptions": {
+      "status": "PASS",
+      "species_with_descriptions": ["CERF", "ORIGNAL", "OURS"]
+    },
+    "frontend_integration": {
+      "status": "PASS",
+      "component": "BionicCorridorsV10Layer",
+      "api_calls": "POST /api/v10/corridors/analyze-full",
+      "map_elements": "378 normative paths rendered"
+    }
+  },
+  "test_report_links": [
+    "/app/test_reports/pytest/corridors_v10_normative_results.xml",
+    "/app/backend/tests/test_corridors_v10_normative.py"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "UI shows 'CORRIDORS V9' toggle label but correctly uses V10 API - consider updating label to reflect V10"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_corridors_v10_normative.py"
+  ],
+  "success_rate": {
+    "backend": "100% (21/21 tests passed)",
+    "frontend": "100% (5/5 integration checks passed)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "admin_password": "Saturn5858*"
+  },
+  "seed_data_creation": "None - used test coordinates (46.8, -71.2) and existing waypoint 'steeve' at (46.7557, -70.4713)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CORRIDORS-V10 normative enrichment fully validated: (1) 5-level palette with exact colors/widths verified in documentation, analyze, and analyze-full endpoints. (2) Per-corridor scoring verified with score_individuel, niveau, color, largeur_m, render_weight, dash_array, pattern. (3) COR-006 explicit in BCE-4X checks with connected=True, dead_ends=0 for all 5 species. (4) niveau_distribution returned in both analyze and multi-species endpoints. (5) palette_normative in multi-species response. (6) Species descriptions verified for CERF, ORIGNAL, OURS. (7) Frontend BionicCorridorsV10Layer correctly calls V10 API and renders 378 corridor paths on map. (8) Anti-regression: ALIMENTATION-V1 and REPOS-V1 continue to work. Minor: UI toggle label shows 'CORRIDORS V9' but uses V10 API.",
+  "verification_date": "2026-03-17",
+  "corridors_v10_normative_summary": {
+    "new_features_tested": [
+      "5-level normative classification (CRITIQUE/MAJEUR/FORT/MODERE/FAIBLE)",
+      "Normative colors (#CC0000, #FF0000, #FF8C00, #FFD700, #BFBFBF)",
+      "Normative widths (4m, 6m, 11m, 17m, 26m)",
+      "Per-corridor scoring with score_single_corridor",
+      "Per-corridor niveau/color/largeur_m/render_weight/dash_array/pattern",
+      "COR-006 explicit in BCE-4X validation",
+      "niveau_distribution in analyze and analyze-full",
+      "palette_normative in multi-species response",
+      "Species description_corridor field",
+      "Frontend BionicCorridorsV10Layer integration"
+    ],
+    "api_endpoints_tested": [
+      "POST /api/v10/corridors/analyze",
+      "POST /api/v10/corridors/analyze-full",
+      "GET /api/v10/corridors/multi",
+      "GET /api/v10/corridors/documentation"
+    ]
+  }
+}

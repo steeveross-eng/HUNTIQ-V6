@@ -219,7 +219,7 @@ def build_network(
         root = _find(uf, i)
         components.setdefault(root, []).append(i)
 
-    num_components = len(components)
+    num_components = len(components)  # noqa: F841
 
     # 4. Forcer la connexion si deconnecte (CONTINUITE ABSOLUE)
     # Boucle iterative jusqu'a un reseau entierement connecte
