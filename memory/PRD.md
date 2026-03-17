@@ -117,6 +117,20 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - GET /api/v10/corridors/profile/{species}
 - GET /api/v10/corridors/documentation
 
+### Optimisation Comportementale + Reduction Points (2026-03-17) — iteration_42 (100%)
+- **Frontend**: Points reduits de 64 a 16 centroides representatifs (1 par polygone, score max)
+  - radius=3, fillOpacity=0.30, opacity=0.35, weight=1 (overlay leger)
+  - Tooltip: "Type — Score% (N pts)" pour chaque centroide
+- **Backend multi_engine.py**: Ponderation saisonniere SEASONAL_MODIFIERS
+  - 12 mois: rut booste automne (×1.6), repos booste hiver (×1.5), alimentation printemps (×1.3)
+  - get_seasonal_weights(month) renormalise les poids
+  - season_month dans metadata GeoJSON
+- **Hierarchie visuelle permanente**:
+  - DOMINANT: Zones (weight=3, opacity=1.0, fillOpacity=0)
+  - SECONDAIRE: Corridors (opacity=0.30, weights 1-2)
+  - OVERLAY LEGER: Points (radius=3, opacity=0.30-0.35)
+- Carte radicalement plus lisible — zero regression BCE-4X (13/13)
+
 ### STEVE-MAX-MULTI — Consolidation 7 Engines (2026-03-17) — iteration_41 (21/21)
 - **Multi-engine module** (`multi_engine.py`):
   - 7 attracteurs V1: alimentation_v1, rut_v1, repos_v1, trajets_v1, affuts_v1, habitat_v1, corridors_v10
