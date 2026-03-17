@@ -14,7 +14,7 @@ import requests
 import os
 
 # Get API base URL from environment
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://organic-zones-map.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://steeve-max-multi.preview.emergentagent.com').rstrip('/')
 
 # Rural location in Laurentides, Quebec (for testing zones generation)
 RURAL_BOUNDS = {

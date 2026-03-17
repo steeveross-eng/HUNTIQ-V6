@@ -23,7 +23,7 @@ import time
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
 if not BASE_URL:
-    BASE_URL = "https://organic-zones-map.preview.emergentagent.com"
+    BASE_URL = "https://steeve-max-multi.preview.emergentagent.com"
 
 # Laurentides bounds (cached data available)
 LAURENTIDES_BOUNDS = {

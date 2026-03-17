@@ -121,16 +121,21 @@ const BionicCorridorsV10Layer = ({
 
   // Pré-calculer les styles — Hiérarchie Visuelle STEEVE-MAX
   // Corridors: SECONDAIRES (opacity et weight réduits vs zones DOMINANTES)
+  // EXCEPTION: CRITIQUE (EXTREME) — surbrillance +40% weight, opacity 0.65-0.80
   const precomputedStyles = useMemo(() => {
     const corOp = 0.30; // Opacité corridors: secondaire
     const styles = {};
     for (const [level, p] of Object.entries(CORRIDOR_PALETTE)) {
+      const isExtreme = level === 'CRITIQUE';
+      // EXTREME corridors: +40% weight, opacity 0.65-0.80, couleur accentuée
+      const w = isExtreme ? p.weight * 1.4 : p.weight;
+      const op = isExtreme ? 0.75 : corOp;
       styles[level] = {
-        contour: { color: p.contour, weight: p.weight + 0.5, opacity: corOp * 0.4, lineCap: 'round', lineJoin: 'round', interactive: false },
-        main: { color: p.color, weight: p.weight, opacity: corOp, lineCap: 'round', lineJoin: 'round', dashArray: p.dashArray },
-        hachure: p.hasPattern ? { color: p.contour, weight: p.weight - 0.5, opacity: corOp * 0.5, lineCap: 'butt', lineJoin: 'round', dashArray: p.patternDash, interactive: false } : null,
-        hover: { weight: p.weight + 1, opacity: Math.min(1, corOp + 0.3) },
-        restore: { weight: p.weight, opacity: corOp },
+        contour: { color: p.contour, weight: w + 0.5, opacity: isExtreme ? 0.50 : corOp * 0.4, lineCap: 'round', lineJoin: 'round', interactive: false },
+        main: { color: p.color, weight: w, opacity: op, lineCap: 'round', lineJoin: 'round', dashArray: p.dashArray },
+        hachure: p.hasPattern ? { color: p.contour, weight: w - 0.5, opacity: isExtreme ? 0.45 : corOp * 0.5, lineCap: 'butt', lineJoin: 'round', dashArray: p.patternDash, interactive: false } : null,
+        hover: { weight: w + 1, opacity: Math.min(1, op + 0.2) },
+        restore: { weight: w, opacity: op },
       };
     }
     return styles;
@@ -261,16 +266,16 @@ const BionicCorridorsV10Layer = ({
         }
 
         if (isChaud) {
-          // Mode POINTS CHAUDS: TOUS les 64 centres, style rétabli
+          // Mode POINTS CHAUDS: TOUS les 64 centres, apparence antérieure (fine reading)
           for (const center of centers) {
             if (!center.lat || !center.lng) continue;
             const marker = L.circleMarker([center.lat, center.lng], {
-              radius: 5,
+              radius: 4,
               fillColor: zc,
               color: '#FFFFFF',
-              weight: 2,
-              fillOpacity: 0.85,
-              opacity: 1.0,
+              weight: 1.5,
+              fillOpacity: 0.65,
+              opacity: 0.70,
             });
             marker.bindTooltip(
               `<span style="font-size:11px;font-weight:600;color:${zc}">${
@@ -293,12 +298,12 @@ const BionicCorridorsV10Layer = ({
 
           if (representative && representative.lat && representative.lng) {
             const marker = L.circleMarker([representative.lat, representative.lng], {
-              radius: 4,
+              radius: 5,
               fillColor: zc,
               color: '#FFFFFF',
               weight: 1,
               fillOpacity: 0.65,
-              opacity: 0.70,
+              opacity: 0.65,
             });
             marker.bindTooltip(
               `<span style="font-size:11px;font-weight:600;color:${zc}">${

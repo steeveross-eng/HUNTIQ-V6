@@ -1330,15 +1330,24 @@ const MonTerritoireBionicPage = () => {
               <div className="space-y-2.5">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Couches STEEVE-MAX</div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-emerald-400 font-medium">Zones</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-emerald-400 font-medium">Zones</span>
+                    <span className="text-[8px] text-emerald-600 uppercase tracking-widest font-bold">dominant</span>
+                  </div>
                   <Switch checked={showZonesLayer} onCheckedChange={setShowZonesLayer} className="scale-[0.6] data-[state=checked]:bg-emerald-500" data-testid="toggle-zones-layer" />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-cyan-400 font-medium">Corridors</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-cyan-400 font-medium">Corridors</span>
+                    <span className="text-[8px] text-cyan-700 uppercase tracking-widest font-bold">secondaire</span>
+                  </div>
                   <Switch checked={showCorridorsLayer} onCheckedChange={setShowCorridorsLayer} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-layer" />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400 font-medium">Points</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-gray-400 font-medium">Points</span>
+                    <span className="text-[8px] text-gray-600 uppercase tracking-widest font-bold">tertiaire</span>
+                  </div>
                   <Switch checked={showPointsLayer} onCheckedChange={setShowPointsLayer} className="scale-[0.6] data-[state=checked]:bg-gray-500" data-testid="toggle-points-layer" />
                 </div>
               </div>

@@ -15,19 +15,19 @@ import L from 'leaflet';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-// V8.2.1 OPTIMISÉ → V8.3.A +25% intensité visuelle
-const PARTICLE_COUNT = 1000;        // +25% (était 800)
+// V8.2.1 OPTIMISÉ → V8.3.B +15% intensité visuelle (STEEVE-MAX UX)
+const PARTICLE_COUNT = 1000;        // inchangé
 const PARTICLE_MAX_AGE = 100;       // vie longue, trajectoires douces (inchangé)
-const PARTICLE_LINE_WIDTH = 0.75;   // +25% (était 0.6)
+const PARTICLE_LINE_WIDTH = 0.86;   // +15% (était 0.75)
 const SPEED_SCALE = 0.00024;        // INCHANGÉ — vitesse d'animation préservée
-const FADE_ALPHA = 0.96;            // traînées persistantes (inchangé)
+const FADE_ALPHA = 0.955;           // traînées légèrement plus persistantes (+15%)
 
-// Palette discrète bleu → vert pâle — V8.3.A +0.05 opacité (cap 0.30)
+// Palette discrète bleu → vert pâle — V8.3.B +15% opacité (cap 0.345)
 function speedToColor(speed, maxSpeed) {
   const t = Math.min(speed / (maxSpeed || 1), 1);
-  if (t < 0.4) return `rgba(140, 190, 220, ${Math.min(0.17 + t * 0.22, 0.30)})`;
-  if (t < 0.7) return `rgba(150, 200, 180, ${Math.min(0.20 + t * 0.14, 0.30)})`;
-  return `rgba(170, 210, 190, ${Math.min(0.23 + t * 0.07, 0.30)})`;
+  if (t < 0.4) return `rgba(140, 190, 220, ${Math.min(0.196 + t * 0.253, 0.345)})`;
+  if (t < 0.7) return `rgba(150, 200, 180, ${Math.min(0.230 + t * 0.161, 0.345)})`;
+  return `rgba(170, 210, 190, ${Math.min(0.265 + t * 0.081, 0.345)})`;
 }
 
 function bilinearInterpolate(grid, row, col) {
@@ -148,7 +148,7 @@ export default function WindFlowLayer({ mode = 'arrows' }) {
       p.age = 0;
     };
 
-    // Draw arrow at position — V8.3.A +25% length, opacity cap 0.30
+    // Draw arrow at position — V8.3.B +15% épaisseur & opacité (STEEVE-MAX UX)
     const drawArrow = (cx, cy, angle, length, opacity) => {
       const headLen = Math.max(5, length * 0.3);
       const ex = cx + Math.cos(angle) * length;
@@ -158,7 +158,7 @@ export default function WindFlowLayer({ mode = 'arrows' }) {
       ctx.moveTo(cx, cy);
       ctx.lineTo(ex, ey);
       ctx.strokeStyle = `rgba(150, 200, 210, ${opacity})`;
-      ctx.lineWidth = 1.0;
+      ctx.lineWidth = 1.15;
       ctx.stroke();
 
       // Arrowhead
@@ -168,7 +168,7 @@ export default function WindFlowLayer({ mode = 'arrows' }) {
       ctx.moveTo(ex, ey);
       ctx.lineTo(ex - headLen * Math.cos(angle + 0.4), ey - headLen * Math.sin(angle + 0.4));
       ctx.strokeStyle = `rgba(150, 200, 210, ${opacity * 0.8})`;
-      ctx.lineWidth = 1.0;
+      ctx.lineWidth = 1.15;
       ctx.stroke();
     };
 
@@ -207,8 +207,8 @@ export default function WindFlowLayer({ mode = 'arrows' }) {
 
           const angle = Math.atan2(-v, u); // screen coords: y inverted
           const t = Math.min(speed / maxSpeed, 1);
-          const length = 10 + t * 25; // V8.3.A +25% (était 8+t*20)
-          const opacity = Math.min(0.18 + t * 0.12, 0.30); // V8.3.A cap 0.30
+          const length = 11.5 + t * 28.75; // V8.3.B +15% (était 10+t*25)
+          const opacity = Math.min(0.207 + t * 0.138, 0.345); // V8.3.B +15% cap 0.345
 
           drawArrow(px, py, angle, length, opacity);
         }

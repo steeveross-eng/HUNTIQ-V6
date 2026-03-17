@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://organic-zones-map.preview.emergentagent.com",
+                "url": "https://steeve-max-multi.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],
