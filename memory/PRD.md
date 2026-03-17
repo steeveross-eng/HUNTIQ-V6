@@ -15,61 +15,58 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 ### Bouton Carte + Deep Link — iteration_24 (10/10)
 ### ENGINE ALIMENTATION-V1 + REPOS-V1 + Wapiti — iteration_25
 ### PLAN DE MATCH STEEVE-MAX v1 + Heatmap Officiel — iteration_26 (29/29 + 9/9)
+### Correction BCE-4X: Affuts sur eau — iteration_27
 
-### Correction BCE-4X: Affuts sur eau (2026-03-17) — iteration_27
-- Bug affut sur lac corrige. Seuils eau resserres. Frontend ray-casting ajoute.
-- Tests: Backend 16/16 (100%), Frontend 7/7 (100%)
-
-### ENGINE CORRIDORS-V10 (2026-03-17) — iteration_28
+### ENGINE CORRIDORS-V10 — iteration_28 (31/31)
 - Module independant `/app/backend/modules/corridors_v10/`
 - A* pathfinding sur grille 80x80 (25m/cellule)
-- 5 especes, 12 parametres, continuite absolue
-- Tests: Backend 31/31 (100%)
 
-### Norme CORRIDOR-V1/V10 + Integration Mon Territoire (2026-03-17) — iteration_29
-- **Classification normative 5 niveaux:** CRITIQUE #CC0000 4m, MAJEUR #FF0000 6m, FORT #FF8C00 11m, MODERE #FFD700 17m, FAIBLE #BFBFBF 26m
-- **Scoring enrichi:** ECL, micro-topographie, nourriture, refuge, zones tampons, regeneration, mosaiques, suintements
-- **Profils especes enrichis:** ORIGNAL (vallons humides, rectilignes), CERF (sinueux, lisieres), OURS (mixtes, frais, couverts)
-- **Scoring par corridor:** Chaque corridor recoit score_individuel + niveau/couleur/largeur normative
-- **Validation COR-006:** Explicit dans BCE-4X (continuite absolue zero dead-end)
-- **Frontend:** `BionicCorridorsV10Layer.jsx` integre dans `MapContent.jsx` — rendu Leaflet Polyline avec palette normative, lissage, hover tooltip, z-ordering
-- **Toggle:** "Corridors V10" dans la toolbar Mon Territoire
-- **Tests:** Backend 21/21 (100%), Frontend 5/5 (100%) — 0 regression
+### Norme CORRIDOR-V1/V10 + Integration Mon Territoire — iteration_29 (26/26)
+- Classification normative 5 niveaux
+- Scoring enrichi (ECL, micro-topo, nourriture, refuge, zones tampons)
+- Profils especes enrichis + COR-006 explicite
+- Frontend BionicCorridorsV10Layer.jsx avec palette normative
 
-## Fichiers Cles CORRIDORS-V10
+### Legende Mon Territoire VERSION 3X (2026-03-17) — iteration_30 (37/37)
+- **3 blocs normatifs:**
+  - A. Zones ecologiques (6 items): Habitat, Rut, Repos, Alimentation, Humides, Forets matures
+  - B. Corridors V10 (5 niveaux): CRITIQUE #CC0000, MAJEUR #FF0000, FORT #FF8C00, MODERE #FFD700, FAIBLE #BFBFBF
+  - C. Facteurs environnementaux (7 items): NDVI, Pentes, Orientation, Ensoleillement, Altitude, Pression, Hydrologie
+- **Compteurs dynamiques** par niveau de corridor (CRITIQUE:13, MAJEUR:149, FORT:27)
+- **Filtrage espece** avec label dynamique (TOUTES ESPECES / Orignal / etc.)
+- **Chaque item cliquable** (toggle visible/masque) + tooltips
+- **Blocs collapsibles** avec hierarchie Zones > Corridors > Facteurs
+- **Norme BCE-4X + Steeve-MAX** en footer
+- **Toolbar** mise a jour: "CORRIDORS V10" (ex-V9)
+- **Flux donnees:** V10 API → BionicCorridorsV10Layer → onDataLoaded → state → BionicLegend
+- Tests: Frontend 37/37 (100%), 0 regression
+
+## Fichiers Cles
 ```
-/app/backend/modules/corridors_v10/
-  __init__.py
-  species_profiles.py    — 12 parametres + descriptions comportementales
-  cost_surface.py        — Grille couts enrichie (15+ couches)
-  pathfinder.py          — A* 8 directions + styles deplacement
-  network_builder.py     — Reseau continu (Kruskal MST + forcement connexion)
-  scoring.py             — Score reseau + score individuel par corridor
-  classifier.py          — 5 niveaux normatifs obligatoires
-  validator.py           — BCE-4X (7 checks + COR-006) + Steeve-MAX (5 checks)
-  engine.py              — Orchestrateur principal
-  router.py              — 6 endpoints API
-  documentation.py       — Fiche technique JSON
+Backend:
+  /app/backend/modules/corridors_v10/   — 11 fichiers Python (engine complet)
 
-/app/frontend/src/components/territoire/
-  BionicCorridorsV10Layer.jsx  — Couche Leaflet corridors normatifs
+Frontend:
+  /app/frontend/src/components/territoire/
+    BionicLegend.jsx              — Legende 3X normative (3 blocs)
+    BionicCorridorsV10Layer.jsx   — Couche Leaflet corridors
+    BionicScoreHeatmap.jsx        — Heatmap score consolide
+  /app/frontend/src/components/territoire/map/
+    MapContent.jsx                — Integration couches carte
+  /app/frontend/src/pages/
+    MonTerritoireBionicPage.jsx   — Page principale Mon Territoire
 ```
 
 ## API Endpoints CORRIDORS-V10
-- `POST /api/v10/corridors/analyze` — Analyse legere (sans GeoJSON)
-- `POST /api/v10/corridors/analyze-full` — Analyse avec GeoJSON normatif
-- `GET /api/v10/corridors/multi?lat=&lng=&month=` — Multi-especes
-- `GET /api/v10/corridors/profiles` — Profils especes
-- `GET /api/v10/corridors/profile/{species}` — Profil detaille
-- `GET /api/v10/corridors/documentation` — Fiche technique
-
-## Contraintes Actives
-- Aucun engine existant modifie (V2, V3, IA, V9)
-- Phase 4 integration transversale BLOQUEE
-- Carre 2km2 reutilise
+- POST /api/v10/corridors/analyze
+- POST /api/v10/corridors/analyze-full (GeoJSON normatif)
+- GET /api/v10/corridors/multi
+- GET /api/v10/corridors/profiles
+- GET /api/v10/corridors/profile/{species}
+- GET /api/v10/corridors/documentation
 
 ## Backlog
-### P0 — Moteurs futurs (sur commande)
+### P0 — Moteurs (sur commande)
 1. ~~CORRIDORS-V10~~ COMPLETE
 2. HABITAT-V1
 3. RUT-V1
