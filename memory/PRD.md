@@ -71,24 +71,25 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - Tests: Backend 19/19 + Frontend 16/16 = 35/35 (100%), 0 regression
 
 ### Standard Visuel STEEVE-MAX (2026-03-17) — iteration_36 (16/16)
-- **Filtrage corridors par slider**: connecte minPercentageFilter au rendu V10
-  - Seuil 30% par defaut → 19 corridors (vs 192 total) — zero toile d'araignee
-  - Re-render reactif: cachedDataRef pour re-rendu instantane au changement de seuil
-  - Backend expose tous les corridors, frontend filtre dynamiquement
-- **Reduction bruit visuel corridors**:
-  - Weight 5 → 3 (CRITIQUE/MAJEUR), 4 → 2.5 (FORT), 3 → 2 (MODERE), 2 → 1.5 (FAIBLE)
-  - Opacity 0.85 → 0.55 (transparence augmentee)
-  - Contour opacity reduit (0.4 × opacity)
-- **Points centraux restaures** (BCE-4X proteges):
-  - Radius 3.5 → 6, contour blanc #FFFFFF, weight 2
-  - fillOpacity 0.95, z-index HAUT (rendus APRES corridors)
-  - Tooltip avec type + score
-- **Hierarchie visuelle stricte**:
-  - COUCHE 1 (Z-BAS): Zones polygonales organiques
-  - COUCHE 2 (Z-MILIEU): Corridors filtres par seuil
-  - COUCHE 3 (Z-HAUT): Points centraux protéges
-- **Protection BCE-4X**: polygones, points, corridors filtres — tous proteges
-- Tests: Frontend 16/16 (100%), 0 regression
+- Filtrage corridors par slider, reduction bruit visuel, points centraux restaures
+- Hierarchie visuelle: Zones (bas) → Corridors (milieu) → Points (haut)
+
+### STEEVE-MAX Dimension + Fusion + Adoucissement (2026-03-17) — iteration_37 (25/25)
+- **Fusion ecologique**: _cluster_zones_by_type() avec super-quadrant 2x2
+  - 64 zones → 16 polygones fusionnes (4 par type, cluster_size=4)
+  - Zero effet confetti — zones coherentes et lisibles
+- **Dimension dynamique**: proportionnelle a l'attraction
+  - max_radius = 8 + score × 14 (8-22 cells)
+  - max_cells = 40 + score × 200 (40-240 cells)
+  - Zones fortes: ~1000-1450m | Zones faibles: ~500-700m
+- **Adoucissement anti-etoile**: _chaikin_smooth() Chaikin corner-cutting
+  - 2 iterations apres Catmull-Rom(6 segments)
+  - avg ~5000 vertices par polygone — contours fluides sans spikes
+  - Pipeline: BFS multi-source → boundary → angular sort → terrain perturbation → Catmull-Rom → Chaikin
+- **Multi-source BFS**: depart depuis TOUS les centres du cluster fusionnee
+- **all_centers**: chaque polygone contient les 4 centres originaux BCE-4X
+  - 64 points centraux totaux preserves et rendus (radius 6, contour blanc)
+- Tests: Backend 11/11 + Frontend 14/14 = 25/25 (100%), 0 regression
 - Fond: terrain satellite 100% visible (aucune couche opaque)
 - Corridors: V10 uniquement (palette normative CRITIQUE→FAIBLE, BCE-4X: aucun glow)
   - CRITIQUE: #B80000 + contour #660000 + micro-hachures
