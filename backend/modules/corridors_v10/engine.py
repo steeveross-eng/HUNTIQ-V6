@@ -16,7 +16,7 @@ from .network_builder import build_network
 from .scoring import compute_corridor_score, compute_corridor_levels
 from .validator import validate_bce4x, validate_steeve_max
 from .classifier import classify_batch, CORRIDOR_LEVELS
-from .multi_engine import score_cell_multi_engine, ENGINE_REGISTRY, ENGINE_WEIGHTS
+from .multi_engine import score_cell_multi_engine, ENGINE_REGISTRY, ENGINE_WEIGHTS, get_seasonal_weights
 import math
 from shapely.geometry import MultiPoint
 from shapely import concave_hull as shapely_concave_hull
@@ -237,7 +237,7 @@ def _cluster_zones_by_type(zones, n):
     return clusters
 
 
-def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m, cell_m):
+def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m, cell_m, month=10):
     """
     NORME STEEVE-MAX — Polygones organiques BIONIC V10
     Superposition libre + Dimension dynamique + Adoucissement
@@ -314,7 +314,7 @@ def _generate_zone_polygons(zones, cell_data, n, center_lat, center_lng, side_m,
                 continue
 
             score = _score_cell_for_zone_type(cell, zone_type)
-            multi_score = score_cell_multi_engine(cell, zone_type, score)
+            multi_score = score_cell_multi_engine(cell, zone_type, score, month=month)
             if multi_score >= threshold:
                 zone_cells.append((r, c))
                 for dr, dc in NEIGHBORS_8:
@@ -659,7 +659,7 @@ def analyze_corridors_full(
     }
     zone_polygons = _generate_zone_polygons(
         network["zones"], grid_result["cell_data"], grid_result["n"],
-        center_lat, center_lng, side_m, cell_m,
+        center_lat, center_lng, side_m, cell_m, month=month,
     )
     for zp in zone_polygons:
         cluster = zp["cluster"]
@@ -679,6 +679,7 @@ def analyze_corridors_full(
                 "engine": "STEVE-MAX-MULTI",
                 "engines_active": list(ENGINE_REGISTRY.keys()),
                 "engines_count": len(ENGINE_REGISTRY),
+                "season_month": month,
             },
             "geometry": {
                 "type": "Polygon",

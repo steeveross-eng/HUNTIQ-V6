@@ -26,7 +26,7 @@ import math
 # ══════════════════════════════════════════════════════════
 # Ponderations normatives STEVE-MAX-MULTI
 # ══════════════════════════════════════════════════════════
-ENGINE_WEIGHTS = {
+ENGINE_WEIGHTS_BASE = {
     "alimentation_v1": 0.18,
     "rut_v1": 0.14,
     "repos_v1": 0.14,
@@ -35,6 +35,44 @@ ENGINE_WEIGHTS = {
     "habitat_v1": 0.15,
     "corridors_v10": 0.15,
 }
+
+# Ajustements saisonniers (mois 1-12) — modulent ENGINE_WEIGHTS
+SEASONAL_MODIFIERS = {
+    # Printemps (4-5): alimentation forte (regeneration), trajets actifs
+    4: {"alimentation_v1": 1.3, "trajets_v1": 1.2, "rut_v1": 0.7},
+    5: {"alimentation_v1": 1.3, "trajets_v1": 1.2, "rut_v1": 0.7},
+    # Ete (6-8): habitat dominant, repos important (chaleur)
+    6: {"habitat_v1": 1.3, "repos_v1": 1.2, "rut_v1": 0.6},
+    7: {"habitat_v1": 1.3, "repos_v1": 1.3, "rut_v1": 0.5},
+    8: {"habitat_v1": 1.2, "repos_v1": 1.2, "rut_v1": 0.6},
+    # Automne/Rut (9-11): rut dominant, affuts importants, corridors actifs
+    9: {"rut_v1": 1.4, "affuts_v1": 1.3, "corridors_v10": 1.2},
+    10: {"rut_v1": 1.6, "affuts_v1": 1.4, "corridors_v10": 1.3, "repos_v1": 0.7},
+    11: {"rut_v1": 1.5, "affuts_v1": 1.3, "corridors_v10": 1.2},
+    # Hiver (12-3): repos dominant (conservation energie), trajets reduits
+    12: {"repos_v1": 1.4, "habitat_v1": 1.2, "trajets_v1": 0.7, "rut_v1": 0.5},
+    1: {"repos_v1": 1.5, "habitat_v1": 1.3, "trajets_v1": 0.6, "rut_v1": 0.4},
+    2: {"repos_v1": 1.4, "habitat_v1": 1.2, "trajets_v1": 0.7, "rut_v1": 0.5},
+    3: {"alimentation_v1": 1.2, "repos_v1": 1.2, "rut_v1": 0.6},
+}
+
+
+def get_seasonal_weights(month=10):
+    """Retourne les ENGINE_WEIGHTS ajustes selon la saison."""
+    weights = dict(ENGINE_WEIGHTS_BASE)
+    mods = SEASONAL_MODIFIERS.get(month, {})
+    for engine, modifier in mods.items():
+        if engine in weights:
+            weights[engine] *= modifier
+    # Renormaliser pour que la somme = 1.0
+    total = sum(weights.values())
+    if total > 0:
+        weights = {k: v / total for k, v in weights.items()}
+    return weights
+
+
+# Default weights (sera recalcule par saison)
+ENGINE_WEIGHTS = ENGINE_WEIGHTS_BASE
 
 # Type-specific boost: chaque type recoit un bonus de son engine primaire
 TYPE_PRIMARY_ENGINE = {
@@ -178,23 +216,27 @@ ENGINE_REGISTRY = {
 }
 
 
-def score_cell_multi_engine(cell, zone_type, base_score):
+def score_cell_multi_engine(cell, zone_type, base_score, month=10):
     """
     STEVE-MAX-MULTI — Score consolide multi-engine pour une cellule.
 
     Combine le score de base (type-specific) avec les attracteurs
-    de tous les 7 engines V1 selon les ponderations normatives.
+    de tous les 7 engines V1 selon les ponderations normatives saisonnieres.
 
     Args:
         cell: Donnees de la cellule (dict)
         zone_type: Type de zone ecologique (str)
         base_score: Score de base du type primaire (float 0-1)
+        month: Mois pour ajustement saisonnier (int 1-12)
 
     Returns:
         float: Score consolide [0, 1]
     """
     if cell.get("barrier"):
         return 0
+
+    # Ponderations saisonnieres
+    weights = get_seasonal_weights(month)
 
     # Calculer les attracteurs multi-engine
     engine_scores = {}
@@ -203,8 +245,8 @@ def score_cell_multi_engine(cell, zone_type, base_score):
 
     # Score multi-engine pondere
     multi = sum(
-        engine_scores[name] * weight
-        for name, weight in ENGINE_WEIGHTS.items()
+        engine_scores[name] * weights.get(name, 0)
+        for name in ENGINE_REGISTRY
     )
 
     # Boost du engine primaire pour ce type de zone

@@ -233,38 +233,38 @@ const BionicCorridorsV10Layer = ({
     }
 
     // ═══ COUCHE 3 (Z-HAUT): Points centraux — BCE-4X protégés ═══
-    // Steeve-MAX HIÉRARCHIE: TERTIAIRE — taille et opacité réduites
+    // STEEVE-MAX: Points = overlay léger, NON dominant
+    // Filtrage comportemental: 1 centroïde représentatif par polygone (16 pts, pas 64)
     for (const feature of zonePolygons) {
       const props = feature.properties;
       const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
       const centers = props.all_centers || [];
 
-      // Render ALL center points from merged cluster
-      for (const center of centers) {
-        if (!center.lat || !center.lng) continue;
-        const marker = L.circleMarker([center.lat, center.lng], {
-          radius: 4,
+      // Centroïde représentatif = centre avec le score le plus élevé
+      let representative = null;
+      if (centers.length > 0) {
+        representative = centers.reduce((best, c) =>
+          (c.score || 0) > (best.score || 0) ? c : best, centers[0]
+        );
+      } else if (props.center_lat && props.center_lng) {
+        representative = { lat: props.center_lat, lng: props.center_lng, score: props.score };
+      }
+
+      if (representative && representative.lat && representative.lng) {
+        const marker = L.circleMarker([representative.lat, representative.lng], {
+          radius: 3,
           fillColor: zc,
           color: '#FFFFFF',
-          weight: 1.5,
-          fillOpacity: 0.85,
-          opacity: 0.9,
+          weight: 1,
+          fillOpacity: 0.30,
+          opacity: 0.35,
         });
         marker.bindTooltip(
           `<span style="font-size:11px;font-weight:600;color:${zc}">${
             props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
-          } — ${Math.round(center.score * 100)}%</span>`,
+          } — ${Math.round((representative.score || 0) * 100)}% (${centers.length} pts)</span>`,
           { sticky: true }
         );
-        group.addLayer(marker);
-      }
-
-      // Fallback: single center if no all_centers
-      if (centers.length === 0 && props.center_lat && props.center_lng) {
-        const marker = L.circleMarker([props.center_lat, props.center_lng], {
-          radius: 4, fillColor: zc, color: '#FFFFFF',
-          weight: 1.5, fillOpacity: 0.85, opacity: 0.9,
-        });
         group.addLayer(marker);
       }
     }
