@@ -486,6 +486,7 @@ const MonTerritoireBionicPage = () => {
   // Mode d'affichage des zones BIONIC
   const [zoneDisplayMode, setZoneDisplayMode] = useState('micro'); // 'micro' ou 'classic'
   const [showCorridors, setShowCorridors] = useState(true); // BCE-MAX: Corridors toujours visibles
+  const [corridorV10Data, setCorridorV10Data] = useState(null); // CORRIDORS-V10 niveau distribution
   const [minPercentageFilter, setMinPercentageFilter] = useState(30);
   
   // BIONIC V5 300% — CLASSIFICATION TOGGLES (restaures depuis session BCE-MAX)
@@ -1485,6 +1486,7 @@ const MonTerritoireBionicPage = () => {
               isGroupeTrackingActive={isGroupeTrackingActive}
               huntingPathData={huntingPathData}
               showHuntingPath={showHuntingPath}
+              onCorridorDataLoaded={setCorridorV10Data}
             />
           </MapContainer>
 
@@ -1494,6 +1496,9 @@ const MonTerritoireBionicPage = () => {
             zoneCount={bionicZones.length}
             corridorCount={(bionicZonesData.corridors || []).length}
             windDeg={225}
+            corridorData={corridorV10Data}
+            selectedSpecies={selectedSpecies}
+            showCorridors={showCorridors}
           />
 
 

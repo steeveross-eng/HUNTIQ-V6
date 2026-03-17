@@ -80,6 +80,8 @@ const MapContentInner = React.memo(({
   // STEVE-MAX: Hunting Path
   huntingPathData,
   showHuntingPath,
+  // CORRIDORS-V10
+  onCorridorDataLoaded,
 }) => (
   <>
     <EcoforestryLayers
@@ -180,6 +182,7 @@ const MapContentInner = React.memo(({
         month={new Date().getMonth() + 1}
         enabled={showCorridors}
         opacity={0.85}
+        onDataLoaded={onCorridorDataLoaded}
       />
     )}
 

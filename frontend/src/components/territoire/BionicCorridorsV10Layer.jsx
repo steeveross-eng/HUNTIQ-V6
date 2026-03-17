@@ -46,6 +46,7 @@ const BionicCorridorsV10Layer = ({
   month = 10,
   enabled = true,
   opacity = 0.85,
+  onDataLoaded = null,
 }) => {
   const map = useMap();
   const layerGroupRef = useRef(null);
@@ -177,6 +178,19 @@ const BionicCorridorsV10Layer = ({
 
       group.addTo(map);
       layerGroupRef.current = group;
+
+      // Callback avec données pour la légende
+      if (onDataLoaded) {
+        onDataLoaded({
+          niveauDistribution: data.niveau_distribution || {},
+          totalCorridors: corridorFeatures.length,
+          totalZones: zoneFeatures.length,
+          scoreCorridors: data.score_corridor,
+          classeCorridors: data.classe_corridor,
+          continuity: data.continuity,
+          species: sp,
+        });
+      }
     } catch (err) {
       if (err.name !== 'AbortError') {
         console.error('[CORRIDORS-V10] Erreur:', err);

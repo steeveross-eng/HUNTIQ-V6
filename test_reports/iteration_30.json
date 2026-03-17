@@ -1,0 +1,235 @@
+{
+  "summary": "BionicLegend 3X Normative Testing Complete. All 12 features verified. The new 3-block legend (Zones/Corridors/Factors) works correctly with proper data flow from V10 API. Toolbar now correctly shows 'CORRIDORS V10' (fixed from V9). Dynamic counters display per-level counts. All items have tooltips. Toggle functionality works.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "DataCloneError in emergent-main.js",
+        "issue": "DataCloneError: Request object could not be cloned. This is an Emergent platform-specific postMessage serialization issue, not affecting app functionality.",
+        "affected_selectors": [],
+        "priority": "LOW"
+      },
+      {
+        "flow": "Groups API 404",
+        "issue": "Error fetching groups: 404. Groups feature may not be fully deployed but does not affect legend functionality.",
+        "affected_selectors": [],
+        "priority": "LOW"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_results": {
+    "legend_toggle": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "Legend expands when LEGENDE button clicked - PASS",
+        "Legend collapses when toggle clicked again - PASS"
+      ]
+    },
+    "three_blocks": {
+      "total": 3,
+      "passed": 3,
+      "tests": [
+        "Block A - Zones ecologiques found - PASS",
+        "Block B - Corridors V10 found - PASS",
+        "Block C - Facteurs found - PASS"
+      ]
+    },
+    "zone_items": {
+      "total": 6,
+      "passed": 6,
+      "tests": [
+        "Habitat optimal found - PASS",
+        "Zone de rut found - PASS",
+        "Zone de repos found - PASS",
+        "Alimentation found - PASS",
+        "Zones humides found - PASS",
+        "Forets matures found - PASS"
+      ]
+    },
+    "corridor_items_colors": {
+      "total": 5,
+      "passed": 5,
+      "tests": [
+        "CRITIQUE found with color #CC0000 - PASS",
+        "MAJEUR found with color #FF0000 - PASS",
+        "FORT found with color #FF8C00 - PASS",
+        "MODERE found with color #FFD700 - PASS",
+        "FAIBLE found with color #BFBFBF - PASS"
+      ]
+    },
+    "factor_items": {
+      "total": 7,
+      "passed": 7,
+      "tests": [
+        "NDVI found - PASS",
+        "Pentes found - PASS",
+        "Orientation found - PASS",
+        "Ensoleillement found - PASS",
+        "Altitude relative found - PASS",
+        "Pression humaine found - PASS",
+        "Hydrologie found - PASS"
+      ]
+    },
+    "dynamic_counters": {
+      "total": 5,
+      "passed": 5,
+      "tests": [
+        "CRITIQUE counter: 13 - PASS",
+        "MAJEUR counter: 149 - PASS",
+        "FORT counter: 27 - PASS",
+        "MODERE counter: 0 - PASS",
+        "FAIBLE counter: 0 - PASS"
+      ],
+      "total_corridors": 189
+    },
+    "species_label": {
+      "total": 1,
+      "passed": 1,
+      "tests": [
+        "Species label shows 'TOUTES ESPECES' - PASS"
+      ]
+    },
+    "tooltips": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "Zone item tooltip: 'Zone de couvert et refuge principal' - PASS",
+        "Corridor item tooltip: 'Axe critique / ultra-frequent (4m)' - PASS"
+      ]
+    },
+    "item_toggle": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "Zone item toggle (opacity-40 applied when clicked) - PASS",
+        "Corridor item toggle (opacity-40 applied when clicked) - PASS"
+      ]
+    },
+    "toolbar_v10": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "Toolbar shows 'CORRIDORS V10' label (not V9) - PASS",
+        "Corridors V10 toggle switch present - PASS"
+      ]
+    },
+    "footer_norme": {
+      "total": 1,
+      "passed": 1,
+      "tests": [
+        "Footer shows 'BCE-4X + Steeve-MAX' and 'V10' - PASS"
+      ]
+    },
+    "block_badges": {
+      "total": 2,
+      "passed": 2,
+      "tests": [
+        "Zones block badge: 15 - PASS",
+        "Corridors block badge: 189 - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "bionic_legend_3_blocks": {
+      "status": "PASS",
+      "blocks": {
+        "zones": {"items": 6, "verified": true},
+        "corridors": {"items": 5, "verified": true},
+        "factors": {"items": 7, "verified": true}
+      }
+    },
+    "corridor_normative_colors": {
+      "status": "PASS",
+      "colors": {
+        "CRITIQUE": "#CC0000",
+        "MAJEUR": "#FF0000",
+        "FORT": "#FF8C00",
+        "MODERE": "#FFD700",
+        "FAIBLE": "#BFBFBF"
+      }
+    },
+    "dynamic_counters": {
+      "status": "PASS",
+      "sample_values": {"CRITIQUE": 13, "MAJEUR": 149, "FORT": 27, "MODERE": 0, "FAIBLE": 0}
+    },
+    "toolbar_v10_label": {
+      "status": "PASS",
+      "previous_issue": "Was showing 'CORRIDORS V9', now correctly shows 'CORRIDORS V10'"
+    },
+    "tooltips": {
+      "status": "PASS",
+      "implementation": "title attribute on legend items"
+    },
+    "item_toggle": {
+      "status": "PASS",
+      "implementation": "opacity-40 class applied when hidden"
+    },
+    "species_label": {
+      "status": "PASS",
+      "value": "TOUTES ESPECES"
+    },
+    "bce_4x_compliance": {
+      "status": "PASS",
+      "footer": "BCE-4X + Steeve-MAX V10"
+    }
+  },
+  "test_report_links": [
+    "/app/frontend/src/components/territoire/BionicLegend.jsx",
+    "/.screenshots/legend_expanded_test.png",
+    "/.screenshots/legend_full_expanded.png"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "The sidebar on the right still shows 'CORRIDORS & ECOLOGIE V9' label - could be updated to V10 for consistency (non-blocking)"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (skipped per request - validated in iteration_28/29)",
+    "frontend": "100% (37/37 tests passed)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "admin_password": "Saturn5858*"
+  },
+  "seed_data_creation": "None - used existing waypoint with 189 corridors",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BionicLegend 3X fully validated: (1) 3 collapsible blocks (zones/corridors/factors) with correct data-testids. (2) Zone items: 6 ecological zones with color swatches and tooltips. (3) Corridor items: 5 normative levels with correct colors (#CC0000->#BFBFBF), dynamic counters from V10 API, SVG line swatches. (4) Factor items: 7 environmental factors with dot swatches. (5) Species label shows selected species. (6) Toolbar now shows 'CORRIDORS V10' (not V9). (7) All items toggleable with opacity-40 class. (8) Footer shows BCE-4X + Steeve-MAX norme. Data flow: V10 API -> BionicCorridorsV10Layer -> onDataLoaded -> MonTerritoireBionicPage state -> BionicLegend props.",
+  "verification_date": "2026-03-17",
+  "bionic_legend_3x_summary": {
+    "component": "BionicLegend.jsx",
+    "architecture": {
+      "main_component": "BionicLegend",
+      "sub_components": ["LegendBlock", "LegendItem"],
+      "data_sources": ["ZONE_ITEMS", "CORRIDOR_ITEMS", "FACTOR_ITEMS", "SPECIES_LABELS"]
+    },
+    "props_used": [
+      "pipelineState",
+      "zoneCount",
+      "corridorCount",
+      "windDeg",
+      "corridorData",
+      "selectedSpecies",
+      "showCorridors"
+    ],
+    "test_ids_verified": [
+      "bionic-legend",
+      "bionic-legend-toggle",
+      "bionic-legend-expanded",
+      "legend-block-zones",
+      "legend-block-corridors",
+      "legend-block-factors",
+      "legend-block-toggle-factors",
+      "legend-species-label",
+      "legend-item-{id}",
+      "toolbar-corridors-v10",
+      "toggle-corridors-v10"
+    ]
+  }
+}
