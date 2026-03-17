@@ -25,7 +25,7 @@ import httpx
 BASELINE_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "ARCHIVES_V6")
 API_URL = os.environ.get(
     "TEST_API_URL",
-    "https://bionic-map-refresh.preview.emergentagent.com",
+    "https://organic-zones-map.preview.emergentagent.com",
 )
 
 REFERENCE_BOUNDS = {"south": 46.795, "west": -71.227, "north": 46.833, "east": -71.189}

@@ -29,7 +29,7 @@ def get_base_url():
                     return line.split('=', 1)[1].strip().rstrip('/')
     
     # Fallback
-    return 'https://bionic-map-refresh.preview.emergentagent.com'
+    return 'https://organic-zones-map.preview.emergentagent.com'
 
 BASE_URL = get_base_url()
 

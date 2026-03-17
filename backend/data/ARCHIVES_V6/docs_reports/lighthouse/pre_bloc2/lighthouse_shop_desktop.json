@@ -1,9 +1,9 @@
 {
   "lighthouseVersion": "13.0.3",
-  "requestedUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop",
-  "mainDocumentUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop",
-  "finalDisplayedUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop",
-  "finalUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+  "requestedUrl": "https://organic-zones-map.preview.emergentagent.com/shop",
+  "mainDocumentUrl": "https://organic-zones-map.preview.emergentagent.com/shop",
+  "finalDisplayedUrl": "https://organic-zones-map.preview.emergentagent.com/shop",
+  "finalUrl": "https://organic-zones-map.preview.emergentagent.com/shop",
   "fetchTime": "2026-02-19T21:22:41.610Z",
   "gatherMode": "navigation",
   "runWarnings": [],
@@ -232,7 +232,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-map-refresh.preview.emergentagent.com/api/seo/meta/shop",
+              "url": "https://organic-zones-map.preview.emergentagent.com/api/seo/meta/shop",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -243,7 +243,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-map-refresh.preview.emergentagent.com/api/seo/meta/shop",
+              "url": "https://organic-zones-map.preview.emergentagent.com/api/seo/meta/shop",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -254,7 +254,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-map-refresh.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://organic-zones-map.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -265,7 +265,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-map-refresh.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://organic-zones-map.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -303,7 +303,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+            "url": "https://organic-zones-map.preview.emergentagent.com/shop",
             "responseTime": 69
           }
         ],
@@ -1778,7 +1778,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "total": 1185.6149999999861,
             "scripting": 828.8809999999861,
             "scriptParseCompile": 241.04999999999998
@@ -1802,7 +1802,7 @@
             "scriptParseCompile": 16.338
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+            "url": "https://organic-zones-map.preview.emergentagent.com/shop",
             "total": 52.434999999999945,
             "scripting": 1.7169999999999994,
             "scriptParseCompile": 0.48600000000000004
@@ -1911,7 +1911,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+            "url": "https://organic-zones-map.preview.emergentagent.com/shop",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 0,
@@ -1945,7 +1945,7 @@
             "entity": "emergent.sh"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 126.20300006866455,
@@ -2132,7 +2132,7 @@
             "entity": "Google Fonts"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/api/products/top?limit=10",
+            "url": "https://organic-zones-map.preview.emergentagent.com/api/products/top?limit=10",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1358.7539999485016,
@@ -2149,7 +2149,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/api/products/top?limit=10",
+            "url": "https://organic-zones-map.preview.emergentagent.com/api/products/top?limit=10",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1361.2400000095367,
@@ -2166,7 +2166,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "blob:https://bionic-map-refresh.preview.emergentagent.com/d92f053f-701c-42f2-8d69-e436b8669d80",
+            "url": "blob:https://organic-zones-map.preview.emergentagent.com/d92f053f-701c-42f2-8d69-e436b8669d80",
             "sessionTargetType": "worker",
             "protocol": "blob",
             "rendererStartTime": 1435.0209999084473,
@@ -2181,7 +2181,7 @@
             "priority": "VeryLow"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/api/seo/meta/shop",
+            "url": "https://organic-zones-map.preview.emergentagent.com/api/seo/meta/shop",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1686.3760001659393,
@@ -2198,7 +2198,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/api/auth/auto-login",
+            "url": "https://organic-zones-map.preview.emergentagent.com/api/auth/auto-login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1741.319000005722,
@@ -2215,7 +2215,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/api/seo/meta/shop",
+            "url": "https://organic-zones-map.preview.emergentagent.com/api/seo/meta/shop",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1746.71599984169,
@@ -2232,7 +2232,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/api/auth/auto-login",
+            "url": "https://organic-zones-map.preview.emergentagent.com/api/auth/auto-login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1778.6600000858307,
@@ -2249,7 +2249,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/logos/bionic-logo-official.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1861.3710000514984,
@@ -2266,7 +2266,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/urine_cerf.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/urine_cerf.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1861.7620000839233,
@@ -2283,7 +2283,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/mineral_block.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/mineral_block.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1862.0429999828339,
@@ -2300,7 +2300,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/gel_pomme.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/gel_pomme.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1862.3790001869202,
@@ -2317,7 +2317,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/spray_tarsal.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/spray_tarsal.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1862.582999944687,
@@ -2334,7 +2334,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/urine_estrus.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/urine_estrus.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1862.8090000152588,
@@ -2351,7 +2351,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://organic-zones-map.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1870.9249999523163,
@@ -2368,7 +2368,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://organic-zones-map.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1871.2650001049042,
@@ -2385,7 +2385,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/manifest.json",
+            "url": "https://organic-zones-map.preview.emergentagent.com/manifest.json",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1993.5060000419617,
@@ -2402,7 +2402,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/favicon.ico",
+            "url": "https://organic-zones-map.preview.emergentagent.com/favicon.ico",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 2018.37299990654,
@@ -2419,7 +2419,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/logos/bionic-logo.svg",
+            "url": "https://organic-zones-map.preview.emergentagent.com/logos/bionic-logo.svg",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 2185.723999977112,
@@ -2442,19 +2442,19 @@
           "initiators": [
             {
               "type": "parser",
-              "url": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+              "url": "https://organic-zones-map.preview.emergentagent.com/shop",
               "lineNumber": 26,
               "columnNumber": 74
             },
             {
               "type": "parser",
-              "url": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+              "url": "https://organic-zones-map.preview.emergentagent.com/shop",
               "lineNumber": 50,
               "columnNumber": 45
             },
             {
               "type": "parser",
-              "url": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+              "url": "https://organic-zones-map.preview.emergentagent.com/shop",
               "lineNumber": 94,
               "columnNumber": 18
             },
@@ -2466,7 +2466,7 @@
             },
             {
               "type": "other",
-              "url": "https://bionic-map-refresh.preview.emergentagent.com/shop"
+              "url": "https://organic-zones-map.preview.emergentagent.com/shop"
             }
           ]
         }
@@ -2506,7 +2506,7 @@
             "rtt": 12.252000000000002
           },
           {
-            "origin": "https://bionic-map-refresh.preview.emergentagent.com",
+            "origin": "https://organic-zones-map.preview.emergentagent.com",
             "rtt": 11.945
           },
           {
@@ -2553,7 +2553,7 @@
         ],
         "items": [
           {
-            "origin": "https://bionic-map-refresh.preview.emergentagent.com",
+            "origin": "https://organic-zones-map.preview.emergentagent.com",
             "serverResponseTime": 86.334
           },
           {
@@ -2930,7 +2930,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "duration": 629,
             "startTime": 2945.0660000000007
           },
@@ -2940,7 +2940,7 @@
             "startTime": 722.426
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "duration": 160,
             "startTime": 3593.0660000000007
           },
@@ -2950,12 +2950,12 @@
             "startTime": 1120.721
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "duration": 109,
             "startTime": 3855.0660000000007
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "duration": 61,
             "startTime": 3753.0660000000007
           },
@@ -2974,7 +2974,7 @@
         "debugData": {
           "type": "debugdata",
           "urls": [
-            "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "https://us-assets.i.posthog.com/static/array.js",
             "https://us-assets.i.posthog.com/static/posthog-recorder.js?v=1.347.2"
           ],
@@ -3109,8 +3109,8 @@
         ],
         "items": [
           {
-            "scriptUrl": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
-            "sourceMapUrl": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js.map",
+            "scriptUrl": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
+            "sourceMapUrl": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js.map",
             "subItems": {
               "type": "subitems",
               "items": [
@@ -3373,7 +3373,7 @@
             "unusedBytes": 1686
           },
           {
-            "name": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+            "name": "https://organic-zones-map.preview.emergentagent.com/shop",
             "resourceBytes": 5076,
             "encodedBytes": 1681,
             "unusedBytes": 945,
@@ -3925,7 +3925,7 @@
             "unusedBytes": 0
           },
           {
-            "name": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "name": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "resourceBytes": 25633012,
             "encodedBytes": 2712391,
             "unusedBytes": 16358172,
@@ -21573,11 +21573,11 @@
         ],
         "items": [
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2712502
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/logos/bionic-logo-official.png",
             "totalBytes": 822665
           },
           {
@@ -21597,19 +21597,19 @@
             "totalBytes": 11140
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/gel_pomme.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/gel_pomme.png",
             "totalBytes": 9403
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/mineral_block.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/mineral_block.png",
             "totalBytes": 9403
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/spray_tarsal.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/spray_tarsal.png",
             "totalBytes": 9403
           },
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/images/products/urine_cerf.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/images/products/urine_cerf.png",
             "totalBytes": 9403
           }
         ],
@@ -21721,7 +21721,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2712391,
             "wastedBytes": 891183,
             "wastedPercent": 32.85600615331511
@@ -21841,7 +21841,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2711360,
             "wastedBytes": 1816200,
             "wastedPercent": 66.98482019982669,
@@ -22300,7 +22300,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop"
+                  "frameUrl": "https://organic-zones-map.preview.emergentagent.com/shop"
                 }
               ]
             },
@@ -22313,7 +22313,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop"
+                  "frameUrl": "https://organic-zones-map.preview.emergentagent.com/shop"
                 }
               ]
             },
@@ -22326,7 +22326,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop"
+                  "frameUrl": "https://organic-zones-map.preview.emergentagent.com/shop"
                 }
               ]
             },
@@ -22339,7 +22339,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop"
+                  "frameUrl": "https://organic-zones-map.preview.emergentagent.com/shop"
                 }
               ]
             },
@@ -22352,7 +22352,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-map-refresh.preview.emergentagent.com/shop"
+                  "frameUrl": "https://organic-zones-map.preview.emergentagent.com/shop"
                 }
               ]
             },
@@ -22726,7 +22726,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+                  "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
                   "urlProvider": "network",
                   "line": 232728,
                   "column": 36
@@ -22754,7 +22754,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://bionic-map-refresh.preview.emergentagent.com/static/js/bundle.js",
+                  "url": "https://organic-zones-map.preview.emergentagent.com/static/js/bundle.js",
                   "urlProvider": "network",
                   "line": 336953,
                   "column": 27
@@ -22838,7 +22838,7 @@
               "snippet": "<img alt=\"BIONIC Chasse / Hunt\" x-file-name=\"BionicLogo\" x-line-number=\"35\" x-component=\"img\" x-id=\"BionicLogo_35\" x-dynamic=\"false\" src=\"/logos/bionic-logo-official.png\" style=\"width: 96px; height: 96px; object-fit: contain; mix-blend-mode: screen;\">",
               "nodeLabel": "BIONIC Chasse / Hunt"
             },
-            "url": "https://bionic-map-refresh.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://organic-zones-map.preview.emergentagent.com/logos/bionic-logo-official.png",
             "totalBytes": 821393,
             "wastedBytes": 819910,
             "subItems": {
@@ -23079,7 +23079,7 @@
               "type": "network-tree",
               "chains": {
                 "D34B0B9CB6DB2065D081621D34799124": {
-                  "url": "https://bionic-map-refresh.preview.emergentagent.com/shop",
+                  "url": "https://organic-zones-map.preview.emergentagent.com/shop",
                   "navStartToEndTime": 131,
                   "transferSize": 3633,
                   "isLongest": true,
@@ -24187,7 +24187,7 @@
     {
       "name": "emergentagent.com",
       "origins": [
-        "https://bionic-map-refresh.preview.emergentagent.com"
+        "https://organic-zones-map.preview.emergentagent.com"
       ],
       "isFirstParty": true,
       "isUnrecognized": true

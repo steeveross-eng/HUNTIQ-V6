@@ -1,156 +1,154 @@
 <analysis>**original_problem_statement:**
-The user has validated the previous work, including the creation of two new ecological engines (, ), the optimization of the UI heatmap (), and the formalization of the . A critical bug where affût (lookout) zones were placed on water has also been fixed and validated.
+The primary objective is to build and refine a new ecological engine, , for modeling multi-species wildlife corridors. Development is strictly governed by a series of detailed, non-negotiable user norms (, ).
 
-The current high-priority task is to build the next engine as per the roadmap: ****.
+The initial scope has expanded through a sequence of user commands:
+1.  **Build :** Implement the core engine.
+2.  **Visual & Normative Refinements:** Iteratively enhance the map's visual output to meet evolving standards for corridors and ecological zones. This has included:
+    *   Styling corridors by importance ( vs. ).
+    *   Replacing point-based zones with fully rendered polygons.
+    *   Transforming geometric polygons into organic, terrain-aware shapes.
+    *   Implementing dynamic filtering of corridors via a UI slider.
+    *   Establishing a clear visual hierarchy (z-index) and restoring central points.
+    *   Implementing dynamic zone sizing, ecological fusion of similar zones, and contour smoothing.
+3.  **Build a Normative Legend (V3X):** Create an interactive legend for the map.
+4.  **Fix Critical Bugs:** Resolve any visual regressions, such as the removal of legacy  elements and a recurring orange background issue.
 
-This new engine must model realistic, multi-species wildlife corridors, adhering to a strict set of non-negotiable constraints and norms defined by the user ( and ).
-
-**PRODUCT REQUIREMENTS (CORRIDORS-V10):**
-1.  **Independence:** Must be a new, standalone module () that does not modify any existing engines (V2, V9, etc.).
-2.  **Multi-Species & Profile-Based:** Must support CERF, ORIGNAL, OURS, DINDON, and WAPITI using a detailed 12-parameter profile for each species (e.g., slope tolerance, sensitivity to pressure, movement style).
-3.  **Core Algorithm:** Use a pathfinding algorithm like A* on a cost-surface grid generated from fine-grained data (LiDAR, hydrography, forest structure, pressure, etc.).
-4.  **Absolute Continuity (CRITICAL):** The generated corridors must form a **fully connected network** without any dead-ends or breaks. Paths must create a continuous flow between key ecological zones (food, rest, rut, water).
-5.  **BCE-4X & Steeve-MAX Compliance:** Must pass all user-defined norms for geometric validation, ecological consistency, topographic accuracy, behavioral modeling, and anti-regression.
-6.  **Outputs:** The engine must produce a , , and a final vector layer of the continuous corridors.
-7.  **API:** Expose functionality via a dedicated FastAPI router ().
-8.  **No Transversal Integration (Yet):** The results of this engine will not be integrated into other systems (like the consolidated score) until explicitly commanded by the user.
+**PRODUCT REQUIREMENTS:**
+The user's latest directives demand that the map visualization be a 500% organic and perfect representation of the real habitat, with zero tolerance for geometric artifacts, visual clutter, or data inconsistencies. All visual elements must adhere to a strict hierarchy and be protected by the BCE-4X standard, making them inviolable. The immediate problem is a visual regression where the rendered map does not align with the latest  norm for zone fusion, sizing, and smoothing, despite automated tests passing.
 
 **User's preferred language**: French
 
 **what currently exists?**
-The BIONIC application is a full-stack React/FastAPI tool for ecological analysis. Recent major additions include:
--   Two new independent ecological engines:  and .
--   The Wapiti species added to the frontend species selector.
--   A new normative document, , which governs all future development.
--   An optimized UI in  featuring a single primary heatmap in the header, a  component showing a consolidated score, and removal of a redundant secondary heatmap.
--   A critical bug fix preventing lookout points (affûts) from being generated on water surfaces. This fix was implemented in both the backend data processing () and as a frontend failsafe ().
+The backend  engine () has been significantly enhanced. It now generates organic-shaped polygons with dynamic sizing based on an attraction score, fuses nearby zones of the same type using a custom clustering algorithm, and applies Chaikin/Catmull-Rom smoothing to the contours. The frontend () is designed to render these complex GeoJSON features, filter corridors based on a UI slider, and manage a strict visual z-index hierarchy. All legacy V9 components have been purged from the main map view.
+
+However, a critical discrepancy exists: the user reports that the visual output does not match the implemented features. The map still shows a confetti of overlapping zones instead of large, fused organic shapes.
 
 **Last working item**:
--   **Last item agent was working:** Initiating the implementation of the  engine. The agent's last action was to begin creating the directory structure and the numerous Python files required for this new, complex module in parallel.
--   **Status:** IN PROGRESS
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** both
--   **User Testing Done:** N
+-   **Last item agent was working:** Addressing a critical user report about a visual regression. The user stated that the map rendering does not reflect the Dimension, Fusion, Adoucissement (Sizing, Fusion, Smoothing) feature that was just marked as complete and validated by the testing agent. The agent had just begun analyzing the user's feedback and screenshot to diagnose the root cause of this discrepancy.
+-   **Status:** BLOCKED
+-   **Agent Testing Done:** N (for the fix of this specific regression)
+-   **Which testing method agent to use?** First,  to provide the  comparison requested by the user. After implementing a fix, use both the  for visual validation and the  to run regression tests.
+-   **User Testing Done:** N (The user is the one who identified and reported the failure).
 
 **All Pending/In progress Issue list**:
-There are no pending bugs or issues. The focus is purely on new feature development.
+-   **Issue 1: Critical Visual Regression: STEEVE-MAX Norms Not Respected (P0)**
+    -   **Description:** The map rendering is non-compliant with the latest  directive. Despite tests passing (25/25), the visual output shows fragmented, overlapping, and angular zones instead of the expected large, fused, and organically smooth polygons. The visual hierarchy (zone dominance) is also incorrect.
+    -   **Attempted fixes:** The previous agent implemented the logic for fusion, dynamic sizing, and smoothing. However, it declared success based on automated test results () without sufficient qualitative visual verification, leading to this regression being shipped. No fix has been attempted for this specific discrepancy yet.
+    -   **Next debug checklist:**
+        1.  Analyze the user-provided screenshot () which highlights the patchwork of zones.
+        2.  Take a new screenshot of the current map state to establish a clear BEFORE picture for the fix.
+        3.  Critically re-examine the backend logic in .
+            -   Is the  function correctly grouping zones for fusion?
+            -   Is the  operation producing a single, clean polygon per cluster, or is it creating multi-polygons or overlapping geometries?
+            -   Is the  effective, or is it being applied incorrectly, leading to persistent angularity?
+            -   Is the  for dynamic sizing creating a noticeable-enough visual difference?
+        4.  Inspect the GeoJSON output from the  endpoint. Does the raw data contain 16 large polygons as expected, or does it contain 64 small ones? This will isolate the problem to the backend (data generation) or frontend (data rendering).
+        5.  Review the frontend rendering logic in . Ensure it correctly handles potentially complex  features returned by the backend after fusion.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical blocker. The user's primary method of validation is visual, and the current output directly contradicts the core  requirement. Fixing this will align the application with the user's explicit norms and unblock all future development.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y (This project has a pattern of visual and normative regressions that pass automated tests but fail user validation).
+    -   **Should Test frontend/backend/both after fix?** Both. The backend logic for generating the shapes and the frontend for rendering them correctly must be validated.
+    -   **Blocked on other issue:** None. This is the primary blocker.
 
 **In progress Task List**:
--   **Task 1: Implement the CORRIDORS-V10 Engine (P0)**
-    -   **Where to resume:** The agent has created the directory  and the associated files (, , , etc.). The next step is to populate these files with the core logic, starting with the species profiles and the A* pathfinding implementation.
-    -   **What will be achieved with this?** A new, independent, and highly precise ecological engine for modeling wildlife corridors, which adheres to the user's strict  and  norms, especially the absolute continuity requirement.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** both
-    -   **Blocked on something:** No.
+*   None. All efforts are directed at fixing the P0 issue above.
 
 **Upcoming and Future Tasks**
--   **Upcoming Tasks:**
-    -   **P1: Integrate  into Frontend:** Add a new layer to  to visualize the generated corridors.
-    -   **P1: Integrate  into Score:** Upon user request, update the  API to include the  output in its weighting.
-
--   **Future Tasks (As per , to be executed one by one upon user command):**
-    -   **P2: Build  Engine**
-    -   **P2: Build  Engine**
-    -   **P2: Build  Engine**
-    -   **P2: Build  Engine**
-    -   **P3 (BLOCKED): Phase 4 - Transversal Integration:** Integrate all new engines into legacy parts of the application (e.g., Hotspots, Predictive AI). This is explicitly blocked by the user until all new engines are delivered and validated.
+*   **Upcoming Tasks:**
+    *   **P1: Integrate  into Consolidated Score Heatmap:** Update the  service to use the V10 engine's output. This is blocked by the P0 visual regression fix.
+*   **Future Tasks (From ):**
+    *   **P2:** Build  Engine
+    *   **P2:** Build  Engine
+    *   **P2:** Build  Engine
+    *   **P2:** Build  Engine
+    *   **P3 (BLOCKED):** Phase 4 - Transversal Integration of all V1 engines.
 
 **Completed work in this session**
--   **Ecological Audit:** Completed and delivered all Phase 3 audit artifacts (, , ASCII diagram, download endpoint).
--   **Hotspots Carte Feature:** Implemented a Carte button on the admin hotspots table that deep-links to , centered on the selected hotspot with a satellite view. Included a satellite preview on hover.
--   **Initial Data Loading Fix:** Resolved a bug where the admin hotspots table did not load data on initial component mount by adding a .
--   **Engine ALIMENTATION-V1:** Successfully built, tested, and delivered the new multi-species food source engine.
--   **Engine REPOS-V1:** Successfully built, tested, and delivered the new multi-species resting area engine.
--   **Wapiti Species Integration:** Added Wapiti as a selectable species in the frontend ().
--   **PLAN DE MATCH STEEVE-MAX:** Created and delivered the foundational normative document (, ) defining all future development standards.
--   **UI Heatmap & Score Optimization:** Refactored the  UI to use a single, consolidated heatmap powered by a new  component and a  in the header.
--   **Consolidated Score API:** Created the backend service and API endpoint () to provide a weighted score based on  and .
--   **Critical Bug Fix (Affûts on Water):** Identified and fixed a major regression where lookout zones could be placed on water. The fix involved adding stricter, layer-specific intersection thresholds in the backend () and a client-side geometric check (). The fix was fully validated by the testing agent.
+*   **STEEVE-MAX Visual Standard (Partial Implementation):**
+    *   Implemented filtering of corridors based on a UI slider ().
+    *   Adjusted visual hierarchy (z-index) to render Zones -> Corridors -> Points.
+    *   Restored visibility of central points with enhanced styling (white outline).
+*   **STEEVE-MAX Organic Polygons (Initial Implementation):**
+    *   Replaced  with an organic shape generation algorithm using BFS, boundary extraction, and Catmull-Rom splines.
+*   **STEEVE-MAX Dimension, Fusion, & Smoothing (Flawed Implementation):**
+    *   Implemented backend logic for dynamic zone sizing, ecological fusion via clustering, and Chaikin contour smoothing. **Note: This is the feature currently exhibiting the critical visual regression.**
+*   **V9 Code Purge:**
+    *   Removed the legacy  component from the  view.
 
 **Earlier issues found/mentioned but not fixed**
--   None.
+*   None.
 
 **Known issue recurrence from previous fork**
--   None.
+*   None from the previous fork's summary, but a recurring theme of visual/normative regressions has been established throughout the project's lifecycle.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Modular, Independent Engines:** The core architectural pattern is to build new functionality as self-contained Python modules that do not interfere with the legacy codebase, ensuring zero regressions.
--   **Cost-Surface Analysis & A* Pathfinding:** The required approach for  involves generating a cost grid for movement and finding the least-cost path between points of interest using an algorithm like A*.
--   **Strict Norm-Driven Development:** All work is governed by user-defined standards (, ) which act as a firewall for quality, consistency, and scientific validity.
--   **Backend-Driven UI:** The frontend components (like ) are primarily visualization layers for complex data computed and served by dedicated backend APIs.
--   **Multi-layered Bug Fixing:** Critical bugs are addressed at multiple points in the stack (e.g., data processing in backend, final rendering in frontend) to ensure robustness.
+*   **Backend Geo-computation:**  for flood-fill, custom super-quadrant clustering,  for polygon fusion,  and  for generating organic contours.
+*   **Frontend Rendering:** Dynamic filtering of GeoJSON features based on a prop (). Strict z-index management for visual layering ( components in ). Rendering multiple  elements for a single  feature to display all central points of a fused zone.
 
 **key DB schema**
--   No database schema changes were made. All new logic and data models are contained within the application code.
+*   No database changes.
 
 **changes in tech stack**
--   None.
+*   None.
 
 **All files of reference**
--    (and ): The master plan for all future work.
--   : Directory for the current task.
--   : Reference for a completed engine.
--   : Reference for a completed engine.
--   : Reference for the consolidated score API.
--   : Key frontend page for UI work.
--   : Site of the critical water exclusion bug fix.
+*   **Primary Bug Location:**
+    *    (Likely source of incorrect data)
+    *    (Possible rendering issues)
+*   **Context:**
+    *    (Connects UI controls to the layer)
+    *    (Contains history of norms and features)
 
 **Areas that need refactoring**:
--   The entire project, guided by the user, is a strategic replacement of legacy engines (, , ) with new, superior versions (, , etc.). This is a planned architectural evolution, not a technical debt refactoring task.
+*   The  file has grown into a monolith responsible for too many distinct computational geometry tasks (pathfinding, scoring, polygonization, smoothing, clustering, fusion). It should be broken down into smaller, more specialized modules (e.g., , , ) to improve maintainability.
 
 **key api endpoints**
--   ****: Runs food source analysis.
--   ****: Runs resting area analysis.
--   ****: Retrieves the weighted score for the heatmap.
--   ****: Serves documentation files.
--   **** (PLANNED): Will run the  analysis.
+*   : The sole endpoint providing all V10 corridor and zone data to the frontend. Testing this endpoint's output directly is crucial for debugging.
 
 **Critical Info for New Agent**
--   **Adherence to Norms is Paramount:** You MUST follow the , , and  documents. There is zero room for interpretation.
--   **Communicate in French:** All communication with the user, including plans and summaries, must be in French.
--   **Sequential, Validated Development:** Build one engine at a time. The current focus is . Do not start  or any other engine until the user explicitly validates  and issues the next command.
--   **Continuity is Key for Corridors:** The most critical and difficult requirement for  is ensuring the pathfinding algorithm produces a fully connected network with no dead ends. The implementation in  must be robust.
+*   **Language is French:** You MUST communicate with the user in French.
+*   **Norms are Law:** The  and  norms provided by the user are absolute. The current task is to fix a violation of these norms.
+*   **Visual Validation is Paramount:** Automated tests have proven insufficient for catching qualitative, visual regressions. DO NOT rely on test results alone. Always perform a thorough visual inspection of the map before declaring a task complete. The user's eye is the final arbiter of success.
+*   **The Bug:** The core problem is that the Fusion feature is not working visually. Instead of a few large, organic zones per type, the map shows a messy confetti of many small, overlapping zones. Your immediate task is to diagnose and fix this.
 
 **documents and test reports created in this job**
--   
--   
--    (Final validation of bug fix)
--    (Validation of Plan/Heatmap)
--   And numerous other test reports from previous steps.
+*    (Updated with latest feature completions)
+*    (Passed 25/25 for the *broken* Dimension/Fusion/Smoothing feature)
+*   
+*   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **LATEST (User):** Issued a detailed, revised official command for **CORRIDORS-V10**, providing specific 12-parameter profiles for each of the 5 species and re-emphasizing the critical absolute continuity (zero dead-ends) requirement. (ACTION PENDING)
-2.  **User:** Provided the official command for **CORRIDORS-V10**. (SUPERSEDED by the more detailed command above)
-3.  **User:** Confirmed the fix for the affût on water bug, validated the , and approved moving forward with the engine roadmap, starting with . (COMPLETED)
-4.  **User:** Reported the critical bug: an affût (lookout point) was generated on a lake surface, which is a major  violation. Demanded an immediate root cause analysis and correction. (COMPLETED)
-5.  **User:** Validated the delivery of , , and the Wapiti integration. Issued a new command to formalize the  and to optimize the UI heatmap with a consolidated score. (COMPLETED)
-6.  **User:** Confirmed the plan to implement , , and add Wapiti. Issued a simultaneous command to also build . (COMPLETED)
-7.  **User:** Provided the official, detailed command to build the  engine and add Wapiti to the UI. (COMPLETED)
-8.  **User:** Confirmed the completion of the  feature and validated the 100% passing test report. (COMPLETED)
-9.  **User:** Provided the official command to add a Carte button to the Hotspots table with deep-linking and a satellite preview on hover. (COMPLETED)
-10. **User:** Confirmed the completion of the Ecological Audit and approved the plan to proceed with its finalization. (COMPLETED)
+1.  **LATEST (ACTION PENDING):** The user reports a critical visual regression. They state the map rendering does not match the validated Dimension, Fusion, Adoucissement feature. They see a patchwork of zones, not the expected large fused polygons, and demand an immediate correction and an explanation for the discrepancy between the test results and reality.
+2.  **User:** Provides the final directive for the  visual standard, detailing dynamic sizing, ecological fusion, and organic smoothing.
+3.  **Agent:** Completes and validates the implementation of the  visual standard (filtering, z-index, points).
+4.  **User:** Provides the  directive for filtering corridors via the UI slider and restoring central points.
+5.  **Agent:** Completes and validates the implementation of organic polygons.
+6.  **User:** Provides the directive to make polygons 500% organic and protected by BCE-4X, criticizing the previous geometric shapes.
+7.  **Agent:** Completes and validates the fix for the V9/V10 zone issue.
+8.  **User:** Reports a critical anomaly: residual V9 zones are visible, and many V10 zones are missing. Demands a complete purge of V9 and restoration of V10.
 
 **Project Health Check:**
--   **Broken:** None.
--   **Mocked:** Territorial data used by the ecological engines is programmatically generated, which is an accepted and long-standing behavior.
+*   **Broken:** The primary map visualization is critically broken. Its rendering of ecological zones is non-compliant with the user's explicit  norms regarding fusion and organic appearance.
+*   **Mocked:** All territorial and ecological data is programmatically generated, which is the accepted method for this project.
 
 **3rd Party Integrations**
--   OpenWeatherMap (OWM)
--   Leaflet & react-leaflet
--   leaflet.heat
+*   OpenWeatherMap (OWM)
+*   Leaflet & react-leaflet
+*   leaflet.heat
+*   Shapely (on the backend for geometric operations)
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. It was used successfully to validate the  and  engines, the UI heatmap changes, and the critical affût on water bug fix.
--   **Troubleshoot agent used after agent stuck in loop:** NO.
--   **Test files created:** None. The agent relies on the testing sub-agent.
--   **Known regressions:** None. The last regression was found and fixed within this session.
+*   **Testing agent used after significant changes:** YES. However, the latest test suite () produced a false positive, passing all 25 tests for a feature that is visually incorrect.
+*   **Troubleshoot agent used after agent stuck in loop:** NO.
+*   **Test files created:** None.
+*   **Known regressions:** A critical visual regression in the ecological zone rendering is the current P0 issue.
 
 **Credentials to test flow:**
--   **User Login:**  / 
--   **Admin Section Password:** 
+*   **User Login:**  / 
+*   **Admin Section Password:** 
 
 **What agent forgot to execute**
--   The agent has not forgotten anything. It is in the process of executing the user's latest and most immediate command: building the  engine.</analysis>
+The previous agent failed to perform an adequate qualitative visual check after the automated tests passed for the Dimension, Fusion, Adoucissement feature. It declared success based on quantitative metrics (e.g., number of polygons), missing the critical visual failure (e.g., how those polygons overlap and appear), which led directly to the current P0 blocker.</analysis>

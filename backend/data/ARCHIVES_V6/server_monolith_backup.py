@@ -2393,7 +2393,7 @@ async def send_analysis_report_email(recipient_email: str, recipient_name: str, 
                     
                     <!-- CTA Button -->
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://bionic-map-refresh.preview.emergentagent.com/analyze" 
+                        <a href="https://organic-zones-map.preview.emergentagent.com/analyze" 
                            style="background-color: #f5a623; color: #000000; text-decoration: none; padding: 14px 28px; border-radius: 25px; font-weight: bold; display: inline-block;">
                             Voir le rapport complet
                         </a>
