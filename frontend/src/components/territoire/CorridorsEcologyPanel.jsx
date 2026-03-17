@@ -1,6 +1,6 @@
 /**
- * CorridorsEcologyPanel.jsx — Panneau unifie Corridors & Ecologie V9
- * BIONIC V9 — 9 Moteurs BIONIC + Classification 5 niveaux
+ * CorridorsEcologyPanel.jsx — Panneau unifie Corridors & Ecologie V10
+ * BIONIC V10 — 9 Moteurs BIONIC + Classification 5 niveaux
  *
  * Props:
  * - corridors: Array flat corridor objects from bionicZonesData.corridors
@@ -123,7 +123,7 @@ const CorridorsEcologyPanel = ({ corridors = [], species = 'tous' }) => {
       <div className="flex items-center justify-between px-3 py-2 bg-cyan-900/15 border-b border-cyan-900/20">
         <div className="flex items-center gap-1.5">
           <Route className="h-3.5 w-3.5 text-cyan-400" />
-          <span className="text-xs font-semibold text-cyan-300 uppercase tracking-wider">Corridors & Ecologie V9</span>
+          <span className="text-xs font-semibold text-cyan-300 uppercase tracking-wider">Corridors & Ecologie V10</span>
         </div>
         <span className="text-[10px] font-mono text-cyan-400/70">
           {stats.total} | {stats.totalDistKm} km
@@ -147,14 +147,14 @@ const CorridorsEcologyPanel = ({ corridors = [], species = 'tous' }) => {
             <div className="text-sm font-bold text-white">{stats.totalDistKm} km</div>
           </div>
           <div className="bg-gray-900/50 rounded px-2 py-1.5 text-center" data-testid="ce-stat-score">
-            <div className="text-[8px] text-gray-500 uppercase">Score V9</div>
+            <div className="text-[8px] text-gray-500 uppercase">Score V10</div>
             <div className="text-sm font-bold text-violet-300">{stats.avgScore}</div>
           </div>
         </div>
 
-        {/* Classification V9 — 5 niveaux */}
+        {/* Classification V10 — 5 niveaux */}
         <div className="space-y-1">
-          <div className="text-[9px] text-gray-500 uppercase tracking-wider font-medium">Classification V9</div>
+          <div className="text-[9px] text-gray-500 uppercase tracking-wider font-medium">Classification V10</div>
           {Object.entries(CLASSIFICATION_COLORS).map(([type, config]) => {
             const count = stats.byType[type] || 0;
             if (count === 0) return null;
@@ -175,7 +175,7 @@ const CorridorsEcologyPanel = ({ corridors = [], species = 'tous' }) => {
           className="w-full flex items-center justify-between py-1.5 text-[9px] text-cyan-400/80 hover:text-cyan-300 transition-colors border-t border-gray-800/50"
           data-testid="ce-engines-toggle"
         >
-          <span className="uppercase tracking-wider font-medium">9 Moteurs BIONIC V9</span>
+          <span className="uppercase tracking-wider font-medium">9 Moteurs BIONIC V10</span>
           {enginesExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
         </button>
 

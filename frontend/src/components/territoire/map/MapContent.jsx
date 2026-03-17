@@ -148,7 +148,7 @@ const MapContentInner = React.memo(({
     {selectedWaypointForZones && bboxBounds && showCursorBionic && (
       <Rectangle
         bounds={bboxBounds}
-        pathOptions={{ color: '#FF9800', fillColor: '#FF9800', fillOpacity: 0.04, weight: 2, dashArray: '8, 4' }}
+        pathOptions={{ color: '#FF9800', fillColor: 'transparent', fillOpacity: 0, weight: 2, dashArray: '8, 4' }}
         data-testid="analysis-bbox-overlay"
       />
     )}

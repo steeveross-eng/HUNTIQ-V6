@@ -18,6 +18,37 @@ from .validator import validate_bce4x, validate_steeve_max
 from .classifier import classify_batch, CORRIDOR_LEVELS
 
 
+def _simplify_coords(coords, tolerance=0.00003):
+    """Douglas-Peucker simplifie cote backend pour reduire le payload GeoJSON."""
+    if len(coords) <= 4:
+        return coords
+    def sq_dist(p, a, b):
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        if dx != 0 or dy != 0:
+            t = max(0, min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy)))
+            px, py = a[0] + t * dx, a[1] + t * dy
+        else:
+            px, py = a[0], a[1]
+        return (p[0] - px) ** 2 + (p[1] - py) ** 2
+    tol2 = tolerance * tolerance
+    def dp(pts, first, last, result):
+        max_d, idx = 0, 0
+        for i in range(first + 1, last):
+            d = sq_dist(pts[i], pts[first], pts[last])
+            if d > max_d:
+                max_d, idx = d, i
+        if max_d > tol2:
+            if idx - first > 1:
+                dp(pts, first, idx, result)
+            result.append(pts[idx])
+            if last - idx > 1:
+                dp(pts, idx, last, result)
+    result = [coords[0]]
+    dp(coords, 0, len(coords) - 1, result)
+    result.append(coords[-1])
+    return result
+
+
 def analyze_corridors(
     center_lat: float,
     center_lng: float,
@@ -212,10 +243,11 @@ def analyze_corridors_full(
         month=month,
     )
 
-    # GeoJSON corridors avec proprietes normatives
+    # GeoJSON corridors avec proprietes normatives + simplification geometrique
     geojson_features = []
     for c in enriched_corridors:
-        coords = [[pt["lng"], pt["lat"]] for pt in c["path"]]
+        raw_coords = [[pt["lng"], pt["lat"]] for pt in c["path"]]
+        coords = _simplify_coords(raw_coords)
         feature = {
             "type": "Feature",
             "properties": {

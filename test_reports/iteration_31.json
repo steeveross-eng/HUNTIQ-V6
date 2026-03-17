@@ -1,0 +1,135 @@
+{
+  "summary": "Iteration 31 - V10 Corridors, Orange Background Removal, Douglas-Peucker Testing Complete. Backend APIs working (8/8 tests passed). Frontend V10 labels verified. Rectangle fillOpacity=0 confirmed in code.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Groups API 404",
+        "issue": "Error fetching groups: 404 - Groups feature endpoint not deployed",
+        "affected_selectors": [],
+        "priority": "LOW"
+      },
+      {
+        "flow": "DataCloneError in emergent-main.js",
+        "issue": "DataCloneError: Request object could not be cloned (Emergent platform-specific)",
+        "affected_selectors": [],
+        "priority": "LOW"
+      }
+    ],
+    "design_issues": [
+      {
+        "screen": "Side Panel",
+        "issues": ["'SCORE GLOBAL V9' still shows V9 (not V10) in SidePanelZones.jsx - not part of current scope but noted"]
+      }
+    ]
+  },
+  "test_results": {
+    "backend_tests": {
+      "total": 8,
+      "passed": 8,
+      "tests": [
+        "test_corridors_analyze_light - PASS",
+        "test_corridors_analyze_full_with_geojson - PASS",
+        "test_corridors_profiles_endpoint - PASS",
+        "test_corridors_documentation_endpoint - PASS",
+        "test_cor_006_validation (5 species) - PASS",
+        "test_alimentation_v1_analyze (anti-regression) - PASS",
+        "test_repos_v1_analyze (anti-regression) - PASS",
+        "test_simplified_coords_smaller_than_raw (Douglas-Peucker) - PASS"
+      ]
+    },
+    "frontend_tests": {
+      "v10_labels": {
+        "total": 6,
+        "passed": 6,
+        "tests": [
+          "CORRIDORS V10 in toolbar - PASS",
+          "CORRIDORS & ECOLOGIE V10 in panel header - PASS",
+          "Score V10 label - PASS",
+          "Classification V10 label - PASS",
+          "9 MOTEURS BIONIC V10 label - PASS",
+          "Corridors V10 layer toggle present - PASS"
+        ]
+      },
+      "orange_background_removal": {
+        "status": "VERIFIED IN CODE",
+        "details": "MapContent.jsx line 151: Rectangle pathOptions has fillColor='transparent', fillOpacity=0. BionicZone2km.jsx also has fillOpacity=0. The orange visible on map is from BionicScoreHeatmap (expected behavior), not from the Rectangle."
+      },
+      "legend_3x": {
+        "status": "PASS",
+        "details": "Legend with 3 blocks (zones/corridors/factors) verified working"
+      }
+    }
+  },
+  "features_verified": {
+    "orange_background_removal": {
+      "status": "PASS",
+      "code_verification": {
+        "file": "MapContent.jsx",
+        "line": 151,
+        "code": "pathOptions={{ color: '#FF9800', fillColor: 'transparent', fillOpacity: 0, weight: 2, dashArray: '8, 4' }}"
+      },
+      "note": "Orange visible on map is from BionicScoreHeatmap heatmap layer (expected), not from Rectangle bbox"
+    },
+    "v9_to_v10_labels": {
+      "status": "PASS",
+      "updated_in": "CorridorsEcologyPanel.jsx",
+      "labels_verified": [
+        "Corridors & Ecologie V10 (header)",
+        "Score V10 (metric box)",
+        "Classification V10 (section title)",
+        "9 Moteurs BIONIC V10 (collapsible)"
+      ]
+    },
+    "toolbar_v10_label": {
+      "status": "PASS",
+      "location": "Toolbar shows 'CORRIDORS V10' toggle"
+    },
+    "douglas_peucker_simplification": {
+      "backend": "PASS - _simplify_coords function in engine.py reduces GeoJSON coordinates",
+      "frontend": "PASS - simplifyPath function in BionicCorridorsV10Layer.jsx"
+    },
+    "performance_optimizations": {
+      "caching": "PASS - _cache Map with 20-item limit in BionicCorridorsV10Layer.jsx",
+      "throttling": "PASS - 200ms debounce in fetchAndRender",
+      "precomputed_styles": "PASS - precomputedStyles useMemo for corridor rendering"
+    },
+    "anti_regression_apis": {
+      "/api/v1/alimentation/analyze": "PASS",
+      "/api/v1/repos/analyze": "PASS"
+    },
+    "cor_006_validation": {
+      "status": "PASS",
+      "species_tested": ["CERF", "ORIGNAL", "OURS", "DINDON", "WAPITI"],
+      "all_continuity_checks": "PASS"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_v10_corridors_iteration31.py",
+    "/app/test_reports/pytest/iteration_31_v10_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Note: 'SCORE GLOBAL V9' in SidePanelZones.jsx still shows V9 - not part of current scope but may need updating for consistency"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_v10_corridors_iteration31.py"
+  ],
+  "success_rate": {
+    "backend": "100% (8/8 tests passed)",
+    "frontend": "100% (V10 labels verified, Rectangle fillOpacity=0 confirmed)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "admin_password": "Saturn5858*"
+  },
+  "seed_data_creation": "None - used existing waypoint with 19 corridors",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 31 verified: (1) Rectangle bbox in MapContent.jsx now has fillColor='transparent' and fillOpacity=0, removing orange background. (2) CorridorsEcologyPanel.jsx updated all V9 labels to V10. (3) Backend Douglas-Peucker simplification in engine.py working. (4) Frontend performance optimizations (caching, throttling, pre-computed styles) in BionicCorridorsV10Layer.jsx verified. (5) All V10 API endpoints working. (6) Anti-regression: alimentation-v1 and repos-v1 APIs still work. Note: Orange visible on map is from BionicScoreHeatmap heatmap layer (expected behavior), not from the Rectangle element.",
+  "verification_date": "2026-03-17"
+}
