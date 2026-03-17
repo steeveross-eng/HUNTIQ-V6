@@ -30,12 +30,17 @@ def compute_consolidated_score(lat: float, lng: float, species: str = "CERF", mo
     """
     Calcule le score consolidé pour un point.
     Traçabilité complète: chaque composante est documentée.
+    BCE-4X: exclut automatiquement les surfaces d'eau.
     """
     alim = alim_point(lat, lng, species, month)
     repos = repos_point(lat, lng, species, month)
 
-    # Score pression (inversé: plus loin = meilleur)
+    # BCE-4X: Vérification surface d'eau via couche hydro
     layers = alim.get("layers", {})
+    hydro = layers.get("hydrographie", {})
+    is_water = hydro.get("zone_humide", 0) == 1 and hydro.get("distance_eau_m", 500) < 20
+
+    # Score pression (inversé: plus loin = meilleur)
     pert = layers.get("perturbations", {})
     dist_route = pert.get("distance_route_m", 200)
     dist_bat = pert.get("distance_batiment_m", 300)
@@ -47,6 +52,25 @@ def compute_consolidated_score(lat: float, lng: float, species: str = "CERF", mo
         "repos": repos["score_repos"],
         "pression": round(pression_score, 1),
     }
+
+    # BCE-4X: Si surface d'eau, score = 0
+    if is_water:
+        return {
+            "score": 0.0,
+            "classe": "EXCLU",
+            "label": "Surface d'eau",
+            "color": "#1E3A5F",
+            "species": species.upper(),
+            "month": month,
+            "is_water": True,
+            "components": {k: 0.0 for k in scores},
+            "weights": {k: round(v, 3) for k, v in NORMALIZED_WEIGHTS.items()},
+            "tracability": {
+                "exclusion": "BCE-4X water surface",
+                "engines_active": list(NORMALIZED_WEIGHTS.keys()),
+                "engines_pending": ["corridors_v10", "habitat_v1", "rut_v1"],
+            },
+        }
 
     # Score consolidé pondéré
     consolidated = sum(scores[k] * NORMALIZED_WEIGHTS[k] for k in NORMALIZED_WEIGHTS if k in scores)

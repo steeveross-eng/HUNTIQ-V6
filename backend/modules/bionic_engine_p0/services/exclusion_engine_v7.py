@@ -23,6 +23,7 @@ from shapely.geometry import Polygon
 
 from .exclusion_config_v7 import (
     INTERSECTION_THRESHOLDS_V7,
+    LAYER_WATER_THRESHOLDS,
     BAND_CLOSE_M_V7,
     BAND_MEDIUM_M_V7,
     BAND_FAR_M_V7,
@@ -159,10 +160,15 @@ def process_zones_v7_exclusion(
             exclusion_details[ex_type] = round(ratio, 4)
 
         # Check if any type exceeds V7 threshold
+        # BCE-4X: Pour l'eau, utiliser le seuil spécifique par couche (affûts = 0.0)
         max_violation = None
         for ex_type in ("water", "urban", "roads", "infrastructure"):
             ratio = exclusion_details.get(ex_type, 0)
-            threshold = INTERSECTION_THRESHOLDS_V7.get(ex_type, 0.5)
+            if ex_type == "water":
+                # Seuil par couche pour l'eau (BCE-4X)
+                threshold = LAYER_WATER_THRESHOLDS.get(layer_id, INTERSECTION_THRESHOLDS_V7.get(ex_type, 0.03))
+            else:
+                threshold = INTERSECTION_THRESHOLDS_V7.get(ex_type, 0.5)
             if ratio > threshold:
                 max_violation = (ex_type, ratio, threshold)
                 break
@@ -191,7 +197,11 @@ def process_zones_v7_exclusion(
                     continue
                 new_ratio = calculate_intersection_ratio(result_poly, prep_union)
                 exclusion_details[ex_type] = round(new_ratio, 4)
-                threshold = INTERSECTION_THRESHOLDS_V7.get(ex_type, 0.5)
+                # BCE-4X: seuil par couche pour l'eau
+                if ex_type == "water":
+                    threshold = LAYER_WATER_THRESHOLDS.get(layer_id, INTERSECTION_THRESHOLDS_V7.get(ex_type, 0.03))
+                else:
+                    threshold = INTERSECTION_THRESHOLDS_V7.get(ex_type, 0.5)
                 if new_ratio > threshold:
                     still_violated = True
                     rejected_zones.append({

@@ -101,10 +101,21 @@ BUFFER_CONFIG_V7 = {
 # =====================================================================
 
 INTERSECTION_THRESHOLDS_V7 = {
-    "water": 0.08,           # V6: 0.05 → V7: 0.08 (tolère petite intersection eau)
+    "water": 0.03,           # V7.1 BCE-4X: strictifié de 0.08 à 0.03 (quasi-zéro eau)
     "urban": 0.12,           # V6: 0.08 → V7: 0.12 (tolère bordure zone urbaine)
     "roads": 0.20,           # V6: 0.15 → V7: 0.20 (routes rurales fréquentes)
     "infrastructure": 0.25,  # V6: 0.18 → V7: 0.25 (lignes électriques rurales)
+}
+
+# BCE-4X: Seuils spécifiques par couche — les affûts et salines ont tolérance ZÉRO eau
+LAYER_WATER_THRESHOLDS = {
+    "affuts": 0.0,           # BCE-4X: STRICT — aucune eau sur un affût
+    "salines": 0.0,          # BCE-4X: STRICT — aucune eau sur une saline
+    "trajets": 0.01,         # BCE-4X: quasi-zéro
+    "habitats": 0.03,        # BCE-4X: très faible tolérance
+    "alimentation": 0.05,    # Eau = ressource pour certaines espèces
+    "repos": 0.04,           # Faible tolérance
+    "corridors": 0.06,       # Corridors peuvent longer l'eau
 }
 
 # =====================================================================

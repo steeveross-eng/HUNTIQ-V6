@@ -79,6 +79,26 @@ import { useSplitViewZones } from '@/hooks/useSplitViewZones';
 // Cle localStorage pour le dernier waypoint actif (legacy fallback)
 const LAST_WAYPOINT_KEY = 'bionic_last_active_waypoint_id';
 
+/**
+ * BCE-4X: Point-in-polygon (ray casting) pour exclusion hydro
+ * Vérifie si un point (lat, lng) est à l'intérieur d'un polygone
+ */
+function _pointInPolygon(lat, lng, polygon) {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const pi = polygon[i], pj = polygon[j];
+    const piLat = Array.isArray(pi) ? pi[0] : (pi.lat || 0);
+    const piLng = Array.isArray(pi) ? pi[1] : (pi.lng || pi.lon || 0);
+    const pjLat = Array.isArray(pj) ? pj[0] : (pj.lat || 0);
+    const pjLng = Array.isArray(pj) ? pj[1] : (pj.lng || pj.lon || 0);
+    if (((piLng > lng) !== (pjLng > lng)) &&
+        (lat < (pjLat - piLat) * (lng - piLng) / (pjLng - piLng) + piLat)) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
 const MonTerritoireBionicPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -789,7 +809,42 @@ const MonTerritoireBionicPage = () => {
   // ============================================
   const rawZones = useMemo(() => {
     const zones = bionicZonesData.zones || [];
-    return zones.filter(z => z.layerId !== 'hydro');
+    // BCE-4X: Séparer les zones hydro pour le masque d'exclusion
+    const hydroZones = zones.filter(z => z.layerId === 'hydro');
+    const nonHydroZones = zones.filter(z => z.layerId !== 'hydro');
+
+    // BCE-4X: Exclure les affûts et salines dont le centroïde tombe dans une zone hydro
+    // Un affût ne peut PAS être sur une surface d'eau
+    if (hydroZones.length === 0) return nonHydroZones;
+
+    const STRICT_EXCL_LAYERS = new Set(['affuts', 'salines', 'trajets']);
+
+    return nonHydroZones.filter(z => {
+      if (!STRICT_EXCL_LAYERS.has(z.layerId)) return true;
+      if (!z.positions || z.positions.length === 0) return true;
+
+      // Calculer le centroïde de la zone
+      const flat = z.positions.flat ? z.positions.flat() : z.positions;
+      if (flat.length === 0) return true;
+      let cLat = 0, cLng = 0, count = 0;
+      for (const pt of flat) {
+        if (Array.isArray(pt) && pt.length >= 2) { cLat += pt[0]; cLng += pt[1]; count++; }
+        else if (pt && pt.lat !== undefined) { cLat += pt.lat; cLng += (pt.lng || pt.lon); count++; }
+      }
+      if (count === 0) return true;
+      cLat /= count; cLng /= count;
+
+      // Vérifier si le centroïde est à l'intérieur d'une zone hydro (ray-casting simplifié)
+      for (const hydro of hydroZones) {
+        if (!hydro.positions || hydro.positions.length === 0) continue;
+        const hFlat = hydro.positions.flat ? hydro.positions.flat() : hydro.positions;
+        if (_pointInPolygon(cLat, cLng, hFlat)) {
+          console.warn(`[BCE-4X] Zone ${z.layerId} exclue: centroïde sur eau [${cLat.toFixed(5)}, ${cLng.toFixed(5)}]`);
+          return false;
+        }
+      }
+      return true;
+    });
   }, [bionicZonesData.zones]);
   const bionicStats = bionicZonesData.stats || {};
   
