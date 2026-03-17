@@ -1,13 +1,13 @@
 # BIONIC V3 — PRD (Product Requirements Document)
 
 ## Problème Original
-Application BIONIC V3 — Outil d'analyse écologique full-stack (React + FastAPI + MongoDB) pour la gestion de la faune au Québec. Moteurs écologiques complexes (V1, V2, V3, V9) pour l'analyse de données géographiques et environnementales.
+Application BIONIC V3 — Outil d'analyse écologique full-stack (React + FastAPI + MongoDB) pour la gestion de la faune au Québec.
 
 ## Architecture
 - **Frontend:** React + Leaflet/react-leaflet
 - **Backend:** FastAPI (Python)
 - **Database:** MongoDB
-- **Intégrations:** OpenWeatherMap, Open-Meteo, Open-Elevation, NASA MODIS, OSM Overpass
+- **Intégrations:** OpenWeatherMap, Open-Meteo, OSM Overpass
 
 ## Tâches Complétées
 
@@ -15,62 +15,54 @@ Application BIONIC V3 — Outil d'analyse écologique full-stack (React + FastAP
 - Gate admin, suppression BCE-4X public, consolidation UI (iteration_22/23)
 
 ### Audit Écologique Global (2026-03-16)
-- Phase 1-4 complètes: MD, YAML, PDF, pipeline ASCII
-- Accessible via `/api/audit/{filename}`
+- Livrables: MD, YAML, PDF, pipeline ASCII — `/api/audit/{filename}`
 
-### Bouton "Carte" + Deep Link Mon Territoire (2026-03-16)
-- Bouton dans tableau hotspots, preview satellite 300x180, deep link (iteration_24: 10/10)
+### Bouton Carte + Deep Link (2026-03-16)
+- Bouton dans tableau hotspots, preview satellite, deep link Mon Territoire (iteration_24: 10/10)
 
 ### ENGINE ALIMENTATION-V1 (2026-03-16)
-- Module 100% indépendant: `/app/backend/modules/alimentation_v1/`
-- 5 espèces: CERF, ORIGNAL, OURS, DINDON, WAPITI
-- Score SITE (0-100): PROTÉINES(0-25) + ÉNERGIE(0-25) + MINÉRAUX(0-20) + SÉCURITÉ(0-20) + EFFORT(0-10)
-- Classification: OPTIMALE / TRÈS BONNE / UTILISABLE / FAIBLE
-- Grille 10m×10m dans carré 2km² existant
-- Couches: LiDAR, essences, occupation sol, hydro, conifères, pente
-- Validation BCE-4X: PASS
-- API: `/api/v1/alimentation/analyze`, `/point`, `/profiles`, `/profile/{species}`, `/documentation`, `/multi`
-- Tests: 17/18 PASS (iteration_25)
+- Module indépendant, 5 espèces, PROTÉINES+ÉNERGIE+MINÉRAUX+SÉCURITÉ+EFFORT, BCE-4X PASS
 
 ### ENGINE REPOS-V1 (2026-03-16)
-- Module 100% indépendant: `/app/backend/modules/repos_v1/`
-- 5 espèces: CERF, ORIGNAL, OURS, DINDON, WAPITI
-- Score REPOS (0-100): COUVERT(0-30) + CALME(0-25) + THERMIQUE(0-20) + ACCESSIBILITÉ(0-15) + PROX_ALIM(0-10)
-- Classification: OPTIMAL / TRÈS BON / UTILISABLE / FAIBLE
-- Réutilise layers de ALIMENTATION-V1
-- Validation BCE-4X: PASS
-- API: `/api/v1/repos/analyze`, `/point`, `/profiles`, `/profile/{species}`, `/documentation`, `/multi`
-- Tests: 16/17 PASS (iteration_25)
+- Module indépendant, 5 espèces, COUVERT+CALME+THERMIQUE+ACCESSIBILITÉ+PROX_ALIM, BCE-4X PASS
 
-### Ajout Wapiti dans Mon Territoire (2026-03-16)
-- speciesConfig.js: Wapiti ajouté (couleur #B8860B, icône Mountain)
-- Dropdown: 6 espèces (Orignal, Chevreuil, Ours noir, Dindon sauvage, Wapiti, Toutes)
-- Seuil dynamique d'attractivité inchangé
-- Tests frontend: 6/6 PASS (iteration_25)
+### Ajout Wapiti (2026-03-16)
+- speciesConfig.js: Wapiti #B8860B, 6 espèces total (iteration_25)
 
-## Contraintes Non Négociables Respectées
-1. Aucun engine existant modifié (V2, V3, IA, V9)
-2. Carré 2km² réutilisé tel quel
-3. Seuil dynamique d'attractivité actif et inchangé
+### PLAN DE MATCH STEEVE-MAX v1 (2026-03-17)
+- Document normatif: 9 définitions écologiques 3× plus précises
+- Normes BCE-4X (géométrie, écologie, topographie, comportement, anti-régression, inter-moteurs)
+- Normes Steeve-MAX (documentation, traçabilité, cohérence visuelle/multi-espèces/saisonnière/opérationnelle)
+- Roadmap: CORRIDORS-V10, HABITAT-V1, RUT-V1, AFFÛTS-V1, TRAJETS-V1
+- Livrables: MD + PDF via `/api/audit/PLAN_DE_MATCH_STEEVE_MAX_v1.*`
+
+### Heatmap Officiel BIONIC (2026-03-17)
+- Score consolidé: ALIMENTATION(0.45) + REPOS(0.35) + PRESSION(0.20) → Score 0-100
+- BionicScoreHeatmap: couche principale, palette bleu→vert→jaune→rouge, leaflet.heat
+- BionicScoreBadge: anneau circulaire + label dans toolbar header
+- SessionHeatmap redondant retiré, remplacé par heatmap écologique
+- API: `/api/v1/score-consolide/point`, `/api/v1/score-consolide/heatmap`
+- Pondérations transparentes, traçabilité complète
+- Engines en attente: corridors_v10, habitat_v1, rut_v1
+- Tests iteration_26: Backend 29/29 (100%), Frontend 9/9 (100%)
+
+## Contraintes
+- Aucun engine existant modifié (V2, V3, IA, V9)
+- Carré 2km² réutilisé, seuil dynamique inchangé
+- Phase 4 intégration transversale BLOQUÉE
 
 ## Backlog
 
-### P0 — PLAN DE MATCH STEEVE-MAX
-- Optimisation modèles écologiques (en attente instructions Steeve)
-
-### P0 — Phase 4 Intégration Transversale (BLOQUÉE)
-- Remplacer food_score_v2 par alimentation_v1 (Hotspots)
-- Remplacer nutrition par alimentation_v1 (Corridors V9)
-- Intégrer dans Behavior, Predictive AI, Global Attractiveness
-- **Exécution uniquement sur commande explicite de Steeve**
+### P0 — Moteurs futurs (sur commande Steeve)
+1. CORRIDORS-V10
+2. HABITAT-V1
+3. RUT-V1
+4. AFFÛTS-V1
+5. TRAJETS-V1
 
 ### P1 — Certification Finale BIONIC V3
 
-### P2 — Propositions d'amélioration
-- P-ALIM-01 à P-HOT-01 (identifiées dans l'audit)
-
-## Données Mockées
-- Données territoriales + couches fines (LiDAR, essences, etc.) — algorithmiques, approuvées
+### P2 — Propositions audit (P-ALIM-01 à P-HOT-01)
 
 ## Credentials
 - **User:** `Steeve.ross@gmail.com` / `Saturn5858*`
