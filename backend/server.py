@@ -467,6 +467,14 @@ try:
 except Exception as e:
     logger.warning(f"REPOS-V1 not loaded: {e}")
 
+# ═══ CORRIDORS-V10 — Moteur corridors fauniques multi-especes ═══
+try:
+    from modules.corridors_v10.router import router as corridors_v10_router
+    app.include_router(corridors_v10_router)
+    logger.info("✓ CORRIDORS-V10 registered (/api/v10/corridors)")
+except Exception as e:
+    logger.warning(f"CORRIDORS-V10 not loaded: {e}")
+
 
 # ═══ SCORE CONSOLIDÉ — Heatmap multi-moteurs ═══
 try:
@@ -498,6 +506,7 @@ logger.info(f"✓ V5-ULTIME-FUSION: {len(CORE_ROUTERS)} modules registered")
 logger.info("✓ PHASE G: BIONIC Engine P0 active")
 logger.info("✓ ALIMENTATION-V1: Moteur alimentaire multi-especes active")
 logger.info("✓ REPOS-V1: Moteur zones de repos multi-especes active")
+logger.info("✓ CORRIDORS-V10: Moteur corridors fauniques multi-especes active")
 logger.info("✓ SCORE-CONSOLIDE: Heatmap multi-moteurs active")
 logger.info("✓ BCE: BIONIC Compliance Engine active")
 logger.info("=" * 60)
