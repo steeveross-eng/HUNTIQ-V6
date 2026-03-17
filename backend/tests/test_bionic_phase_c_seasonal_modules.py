@@ -560,7 +560,7 @@ class TestBionicNonRegression:
     
     @pytest.fixture
     def base_url(self):
-        return os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-engine-review.preview.emergentagent.com').rstrip('/')
+        return os.environ.get('REACT_APP_BACKEND_URL', 'https://species-network.preview.emergentagent.com').rstrip('/')
     
     def test_api_health(self, base_url):
         """Vérifie que l'API est accessible"""

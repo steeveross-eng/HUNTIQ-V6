@@ -574,7 +574,7 @@
       "frontend_port": 3000,
       "backend_port": 8001,
       "database": "MongoDB",
-      "preview_url": "https://bionic-engine-review.preview.emergentagent.com"
+      "preview_url": "https://species-network.preview.emergentagent.com"
     }
   },
 

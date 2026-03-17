@@ -19,7 +19,7 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional
 
 class BionicV8EcologicalTester:
-    def __init__(self, base_url: str = "https://bionic-engine-review.preview.emergentagent.com"):
+    def __init__(self, base_url: str = "https://species-network.preview.emergentagent.com"):
         self.base_url = base_url.rstrip('/')
         self.session = requests.Session()
         self.session.headers.update({
@@ -404,7 +404,7 @@ def main():
     import os
     
     # Get backend URL from environment
-    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-engine-review.preview.emergentagent.com')
+    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://species-network.preview.emergentagent.com')
     
     print(f"🔍 Initializing BIONIC V8 Ecological Test Suite...")
     print(f"🌐 Backend URL: {backend_url}")

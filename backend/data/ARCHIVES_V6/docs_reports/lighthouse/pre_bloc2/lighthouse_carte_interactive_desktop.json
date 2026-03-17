@@ -1,9 +1,9 @@
 {
   "lighthouseVersion": "13.0.3",
-  "requestedUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
-  "mainDocumentUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
-  "finalDisplayedUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
-  "finalUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+  "requestedUrl": "https://species-network.preview.emergentagent.com/carte-interactive",
+  "mainDocumentUrl": "https://species-network.preview.emergentagent.com/carte-interactive",
+  "finalDisplayedUrl": "https://species-network.preview.emergentagent.com/carte-interactive",
+  "finalUrl": "https://species-network.preview.emergentagent.com/carte-interactive",
   "fetchTime": "2026-02-19T21:21:56.600Z",
   "gatherMode": "navigation",
   "runWarnings": [],
@@ -232,7 +232,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/api/seo/meta/carte-interactive",
+              "url": "https://species-network.preview.emergentagent.com/api/seo/meta/carte-interactive",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -243,7 +243,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/api/seo/meta/carte-interactive",
+              "url": "https://species-network.preview.emergentagent.com/api/seo/meta/carte-interactive",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -254,7 +254,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://species-network.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -265,7 +265,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://species-network.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -276,7 +276,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://species-network.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -314,7 +314,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+            "url": "https://species-network.preview.emergentagent.com/carte-interactive",
             "responseTime": 120
           }
         ],
@@ -1081,7 +1081,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "total": 975.2969999999917,
             "scripting": 671.5359999999918,
             "scriptParseCompile": 236.52199999999996
@@ -1105,7 +1105,7 @@
             "scriptParseCompile": 0
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+            "url": "https://species-network.preview.emergentagent.com/carte-interactive",
             "total": 67.78199999999998,
             "scripting": 1.5769999999999995,
             "scriptParseCompile": 0.6070000000000001
@@ -1214,7 +1214,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+            "url": "https://species-network.preview.emergentagent.com/carte-interactive",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 0,
@@ -1248,7 +1248,7 @@
             "entity": "emergent.sh"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 203.05599975585938,
@@ -1367,7 +1367,7 @@
             "entity": "Google Fonts"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/products/top?limit=10",
+            "url": "https://species-network.preview.emergentagent.com/api/products/top?limit=10",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1439.039999961853,
@@ -1384,7 +1384,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/products/top?limit=10",
+            "url": "https://species-network.preview.emergentagent.com/api/products/top?limit=10",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1441.6769998073578,
@@ -1469,7 +1469,7 @@
             "entity": "posthog.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/manifest.json",
+            "url": "https://species-network.preview.emergentagent.com/manifest.json",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1460.8639998435974,
@@ -1486,7 +1486,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/favicon.ico",
+            "url": "https://species-network.preview.emergentagent.com/favicon.ico",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1463.09099984169,
@@ -1503,7 +1503,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "blob:https://bionic-engine-review.preview.emergentagent.com/3790582b-9366-492c-9cee-273056672828",
+            "url": "blob:https://species-network.preview.emergentagent.com/3790582b-9366-492c-9cee-273056672828",
             "sessionTargetType": "worker",
             "protocol": "blob",
             "rendererStartTime": 1559.516000032425,
@@ -1518,7 +1518,7 @@
             "priority": "VeryLow"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/seo/meta/carte-interactive",
+            "url": "https://species-network.preview.emergentagent.com/api/seo/meta/carte-interactive",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1707.1679999828339,
@@ -1535,7 +1535,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/auth/auto-login",
+            "url": "https://species-network.preview.emergentagent.com/api/auth/auto-login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1739.1210000514984,
@@ -1552,7 +1552,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/seo/meta/carte-interactive",
+            "url": "https://species-network.preview.emergentagent.com/api/seo/meta/carte-interactive",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1742.7389998435974,
@@ -1569,7 +1569,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/auth/auto-login",
+            "url": "https://species-network.preview.emergentagent.com/api/auth/auto-login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1758.0749998092651,
@@ -1586,7 +1586,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://species-network.preview.emergentagent.com/logos/bionic-logo-official.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1774.356999874115,
@@ -1603,7 +1603,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://species-network.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1774.843999862671,
@@ -1620,7 +1620,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://species-network.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1775.21599984169,
@@ -1637,7 +1637,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://species-network.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1865.2949998378754,
@@ -1654,7 +1654,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/logos/bionic-logo.svg",
+            "url": "https://species-network.preview.emergentagent.com/logos/bionic-logo.svg",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1899.0569999217987,
@@ -1677,19 +1677,19 @@
           "initiators": [
             {
               "type": "parser",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+              "url": "https://species-network.preview.emergentagent.com/carte-interactive",
               "lineNumber": 26,
               "columnNumber": 74
             },
             {
               "type": "parser",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+              "url": "https://species-network.preview.emergentagent.com/carte-interactive",
               "lineNumber": 50,
               "columnNumber": 45
             },
             {
               "type": "parser",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+              "url": "https://species-network.preview.emergentagent.com/carte-interactive",
               "lineNumber": 94,
               "columnNumber": 18
             },
@@ -1701,7 +1701,7 @@
             },
             {
               "type": "other",
-              "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive"
+              "url": "https://species-network.preview.emergentagent.com/carte-interactive"
             }
           ]
         }
@@ -1741,7 +1741,7 @@
             "rtt": 26.281999999999996
           },
           {
-            "origin": "https://bionic-engine-review.preview.emergentagent.com",
+            "origin": "https://species-network.preview.emergentagent.com",
             "rtt": 12.699000000000005
           },
           {
@@ -1788,7 +1788,7 @@
         ],
         "items": [
           {
-            "origin": "https://bionic-engine-review.preview.emergentagent.com",
+            "origin": "https://species-network.preview.emergentagent.com",
             "serverResponseTime": 95.71700000000001
           },
           {
@@ -2145,7 +2145,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "duration": 631,
             "startTime": 3046.386999999999
           },
@@ -2155,7 +2155,7 @@
             "startTime": 863.0215
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "duration": 84,
             "startTime": 3762.386999999999
           },
@@ -2165,12 +2165,12 @@
             "startTime": 1171.6435
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "duration": 67,
             "startTime": 3695.386999999999
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "duration": 59,
             "startTime": 3874.386999999999
           }
@@ -2184,7 +2184,7 @@
         "debugData": {
           "type": "debugdata",
           "urls": [
-            "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "https://us-assets.i.posthog.com/static/array.js",
             "https://us-assets.i.posthog.com/static/posthog-recorder.js?v=1.347.2"
           ],
@@ -2312,8 +2312,8 @@
         ],
         "items": [
           {
-            "scriptUrl": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
-            "sourceMapUrl": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js.map",
+            "scriptUrl": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
+            "sourceMapUrl": "https://species-network.preview.emergentagent.com/static/js/bundle.js.map",
             "subItems": {
               "type": "subitems",
               "items": [
@@ -2576,7 +2576,7 @@
             "unusedBytes": 2104
           },
           {
-            "name": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+            "name": "https://species-network.preview.emergentagent.com/carte-interactive",
             "resourceBytes": 5076,
             "encodedBytes": 1686,
             "unusedBytes": 945,
@@ -3128,7 +3128,7 @@
             "unusedBytes": 0
           },
           {
-            "name": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "name": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "resourceBytes": 25633012,
             "encodedBytes": 2712670,
             "unusedBytes": 16532154,
@@ -20571,11 +20571,11 @@
         ],
         "items": [
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2712803
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://species-network.preview.emergentagent.com/logos/bionic-logo-official.png",
             "totalBytes": 822419
           },
           {
@@ -20603,7 +20603,7 @@
             "totalBytes": 4170
           },
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+            "url": "https://species-network.preview.emergentagent.com/carte-interactive",
             "totalBytes": 3642
           },
           {
@@ -20719,7 +20719,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2712670,
             "wastedBytes": 891275,
             "wastedPercent": 32.85600615331511
@@ -20839,7 +20839,7 @@
         ],
         "items": [
           {
-            "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2711639,
             "wastedBytes": 1834848,
             "wastedPercent": 67.66565708313951,
@@ -21298,7 +21298,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive"
+                  "frameUrl": "https://species-network.preview.emergentagent.com/carte-interactive"
                 }
               ]
             },
@@ -21311,7 +21311,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive"
+                  "frameUrl": "https://species-network.preview.emergentagent.com/carte-interactive"
                 }
               ]
             },
@@ -21324,7 +21324,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive"
+                  "frameUrl": "https://species-network.preview.emergentagent.com/carte-interactive"
                 }
               ]
             },
@@ -21337,7 +21337,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive"
+                  "frameUrl": "https://species-network.preview.emergentagent.com/carte-interactive"
                 }
               ]
             },
@@ -21350,7 +21350,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive"
+                  "frameUrl": "https://species-network.preview.emergentagent.com/carte-interactive"
                 }
               ]
             },
@@ -21724,7 +21724,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+                  "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
                   "urlProvider": "network",
                   "line": 232728,
                   "column": 36
@@ -21752,7 +21752,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://bionic-engine-review.preview.emergentagent.com/static/js/bundle.js",
+                  "url": "https://species-network.preview.emergentagent.com/static/js/bundle.js",
                   "urlProvider": "network",
                   "line": 336953,
                   "column": 27
@@ -21836,7 +21836,7 @@
               "snippet": "<img alt=\"BIONIC Chasse / Hunt\" x-file-name=\"BionicLogo\" x-line-number=\"35\" x-component=\"img\" x-id=\"BionicLogo_35\" x-dynamic=\"false\" src=\"/logos/bionic-logo-official.png\" style=\"width: 96px; height: 96px; object-fit: contain; mix-blend-mode: screen;\">",
               "nodeLabel": "BIONIC Chasse / Hunt"
             },
-            "url": "https://bionic-engine-review.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://species-network.preview.emergentagent.com/logos/bionic-logo-official.png",
             "totalBytes": 821393,
             "wastedBytes": 819910,
             "subItems": {
@@ -22077,7 +22077,7 @@
               "type": "network-tree",
               "chains": {
                 "57A3B6844A0D22C1B126B9ADAD83C3C4": {
-                  "url": "https://bionic-engine-review.preview.emergentagent.com/carte-interactive",
+                  "url": "https://species-network.preview.emergentagent.com/carte-interactive",
                   "navStartToEndTime": 208,
                   "transferSize": 3642,
                   "isLongest": true,
@@ -23185,7 +23185,7 @@
     {
       "name": "emergentagent.com",
       "origins": [
-        "https://bionic-engine-review.preview.emergentagent.com"
+        "https://species-network.preview.emergentagent.com"
       ],
       "isFirstParty": true,
       "isUnrecognized": true

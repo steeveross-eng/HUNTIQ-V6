@@ -1,124 +1,156 @@
 <analysis>**original_problem_statement:**
-The user has issued a new, high-priority command: **AUDIT ÉCOLOGIQUE GLOBAL BIONIC (MODE STEEVE‑MAX)**.
+The user has validated the previous work, including the creation of two new ecological engines (, ), the optimization of the UI heatmap (), and the formalization of the . A critical bug where affût (lookout) zones were placed on water has also been fixed and validated.
 
-The objective is to perform a comprehensive, non-destructive audit of all ecological models, rules, and data pipelines currently used by the BIONIC application. This is an observation and documentation task only; no modifications to the code are permitted at this stage.
+The current high-priority task is to build the next engine as per the roadmap: ****.
 
-The audit is structured into four phases:
-1.  **Phase 1: Inventory of Modules and Engines:** List all scripts/modules related to ecological analysis (feeding zones, resting areas, corridors, hotspots, etc.), detailing their location, role, and context.
-2.  **Phase 2: Extraction of Current Rules:** For each ecological theme, document the specific data layers, derived variables, scoring/classification rules, thresholds, and any post-processing logic.
-3.  **Phase 3: Structured Audit Report:** Produce a consolidated report in both PDF and a structured text format (JSON/YAML). This report must include the module inventory, the extracted rules, a pipeline diagram, and any known limitations of the current models.
-4.  **Phase 4: No Modifications:** Strictly observe and document. Any suggestions for improvements must be kept separate and marked as PROPOSITION.
+This new engine must model realistic, multi-species wildlife corridors, adhering to a strict set of non-negotiable constraints and norms defined by the user ( and ).
 
-The ultimate goal is to create a definitive snapshot of the current system to inform a future PLAN DE MATCH STEEVE‑MAX for optimization.
+**PRODUCT REQUIREMENTS (CORRIDORS-V10):**
+1.  **Independence:** Must be a new, standalone module () that does not modify any existing engines (V2, V9, etc.).
+2.  **Multi-Species & Profile-Based:** Must support CERF, ORIGNAL, OURS, DINDON, and WAPITI using a detailed 12-parameter profile for each species (e.g., slope tolerance, sensitivity to pressure, movement style).
+3.  **Core Algorithm:** Use a pathfinding algorithm like A* on a cost-surface grid generated from fine-grained data (LiDAR, hydrography, forest structure, pressure, etc.).
+4.  **Absolute Continuity (CRITICAL):** The generated corridors must form a **fully connected network** without any dead-ends or breaks. Paths must create a continuous flow between key ecological zones (food, rest, rut, water).
+5.  **BCE-4X & Steeve-MAX Compliance:** Must pass all user-defined norms for geometric validation, ecological consistency, topographic accuracy, behavioral modeling, and anti-regression.
+6.  **Outputs:** The engine must produce a , , and a final vector layer of the continuous corridors.
+7.  **API:** Expose functionality via a dedicated FastAPI router ().
+8.  **No Transversal Integration (Yet):** The results of this engine will not be integrated into other systems (like the consolidated score) until explicitly commanded by the user.
 
 **User's preferred language**: French
 
 **what currently exists?**
-The BIONIC V3 application is a full-stack tool with a React frontend and FastAPI backend. The previous major task, which involved securing the admin sections and consolidating the Hotspots V3 UI, has been completed, validated by the user, and successfully passed a full regression test. The codebase contains multiple generations of Python-based ecological engines (V1, V2, V3, V9) that perform complex data analysis and scoring.
+The BIONIC application is a full-stack React/FastAPI tool for ecological analysis. Recent major additions include:
+-   Two new independent ecological engines:  and .
+-   The Wapiti species added to the frontend species selector.
+-   A new normative document, , which governs all future development.
+-   An optimized UI in  featuring a single primary heatmap in the header, a  component showing a consolidated score, and removal of a redundant secondary heatmap.
+-   A critical bug fix preventing lookout points (affûts) from being generated on water surfaces. This fix was implemented in both the backend data processing () and as a frontend failsafe ().
 
 **Last working item**:
--   **Last item agent was working:** The agent was executing **Phase 3** of the AUDIT ÉCOLOGIQUE GLOBAL BIONIC command. After performing an exhaustive code review to gather all necessary information (Phases 1 & 2), the agent generated a detailed Markdown report and was in the process of creating the structured YAML version of the audit.
+-   **Last item agent was working:** Initiating the implementation of the  engine. The agent's last action was to begin creating the directory structure and the numerous Python files required for this new, complex module in parallel.
 -   **Status:** IN PROGRESS
--   **Agent Testing Done:** N/A (This is a documentation task, not a code change).
--   **Which testing method agent to use?** N/A
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** both
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-There are no pending issues. The sole focus is completing the audit task.
+There are no pending bugs or issues. The focus is purely on new feature development.
 
 **In progress Task List**:
--   **Task 1: Complete the AUDIT ÉCOLOGIQUE GLOBAL BIONIC (P0)**
-    -   **Where to resume:** The agent has created  and was writing the YAML version to . The next steps are:
-        1.  Finalize the generation of the  file.
-        2.  Fulfill the remaining requirements from Phase 3 of the user's request:
-            -   Create a simple ASCII diagram of the data pipeline.
-            -   Generate a PDF version of the audit report.
-        3.  Present all deliverables (Markdown, YAML, PDF, diagram) to the user for validation.
-    -   **What will be achieved with this?** Delivery of a complete and faithful snapshot of the BIONIC system's ecological logic, which is the prerequisite for the user's next optimization phase.
+-   **Task 1: Implement the CORRIDORS-V10 Engine (P0)**
+    -   **Where to resume:** The agent has created the directory  and the associated files (, , , etc.). The next step is to populate these files with the core logic, starting with the species profiles and the A* pathfinding implementation.
+    -   **What will be achieved with this?** A new, independent, and highly precise ecological engine for modeling wildlife corridors, which adheres to the user's strict  and  norms, especially the absolute continuity requirement.
     -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** N/A
+    -   **Should Test frontend/backend/both after fix?** both
     -   **Blocked on something:** No.
 
 **Upcoming and Future Tasks**
--   **P0: PLAN DE MATCH STEEVE‑MAX:** After the user validates the audit, they will provide a new set of instructions to optimize the ecological models based on the audit's findings.
--   **P1: Certification Finale BIONIC V3:** This major milestone is on hold until the audit and subsequent optimizations are complete.
+-   **Upcoming Tasks:**
+    -   **P1: Integrate  into Frontend:** Add a new layer to  to visualize the generated corridors.
+    -   **P1: Integrate  into Score:** Upon user request, update the  API to include the  output in its weighting.
+
+-   **Future Tasks (As per , to be executed one by one upon user command):**
+    -   **P2: Build  Engine**
+    -   **P2: Build  Engine**
+    -   **P2: Build  Engine**
+    -   **P2: Build  Engine**
+    -   **P3 (BLOCKED): Phase 4 - Transversal Integration:** Integrate all new engines into legacy parts of the application (e.g., Hotspots, Predictive AI). This is explicitly blocked by the user until all new engines are delivered and validated.
 
 **Completed work in this session**
--   **Security & Consolidation Validation:**
-    -   Analyzed  and  test reports, confirming 100% pass rates.
-    -   Manually verified via screenshots and curl commands that all 7 user requirements (BCE-4X removal, admin password gate, UI consolidation) were correctly implemented without regressions.
--   **Ecological Audit (Initiated):**
-    -   Performed an exhaustive file scan and review of the entire ecological codebase, covering all engine versions (V1, V2, V3, V9).
-    -   Completed the data gathering for Phase 1 (Inventory) and Phase 2 (Rule Extraction).
-    -   Generated the first deliverable: a comprehensive Markdown report ().
+-   **Ecological Audit:** Completed and delivered all Phase 3 audit artifacts (, , ASCII diagram, download endpoint).
+-   **Hotspots Carte Feature:** Implemented a Carte button on the admin hotspots table that deep-links to , centered on the selected hotspot with a satellite view. Included a satellite preview on hover.
+-   **Initial Data Loading Fix:** Resolved a bug where the admin hotspots table did not load data on initial component mount by adding a .
+-   **Engine ALIMENTATION-V1:** Successfully built, tested, and delivered the new multi-species food source engine.
+-   **Engine REPOS-V1:** Successfully built, tested, and delivered the new multi-species resting area engine.
+-   **Wapiti Species Integration:** Added Wapiti as a selectable species in the frontend ().
+-   **PLAN DE MATCH STEEVE-MAX:** Created and delivered the foundational normative document (, ) defining all future development standards.
+-   **UI Heatmap & Score Optimization:** Refactored the  UI to use a single, consolidated heatmap powered by a new  component and a  in the header.
+-   **Consolidated Score API:** Created the backend service and API endpoint () to provide a weighted score based on  and .
+-   **Critical Bug Fix (Affûts on Water):** Identified and fixed a major regression where lookout zones could be placed on water. The fix involved adding stricter, layer-specific intersection thresholds in the backend () and a client-side geometric check (). The fix was fully validated by the testing agent.
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
 
 **Known issue recurrence from previous fork**
--   None. The Corridor Continuity issue remains resolved.
+-   None.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Ecological Modeling:** The application uses a series of complex Python scripts (engines) to analyze geographical and environmental data. These engines apply rules, scoring, and weighting to classify terrain for wildlife management (e.g., feeding zones, corridors, hotspots).
--   **Legacy Code Management:** The codebase contains multiple, co-existing versions of the ecological engines (V1, V2, V3, V9), which is the primary reason the user has requested the current audit.
--   **Systematic Code Auditing:** The current task requires programmatically navigating a complex codebase to extract business logic and document it without making any modifications.
+-   **Modular, Independent Engines:** The core architectural pattern is to build new functionality as self-contained Python modules that do not interfere with the legacy codebase, ensuring zero regressions.
+-   **Cost-Surface Analysis & A* Pathfinding:** The required approach for  involves generating a cost grid for movement and finding the least-cost path between points of interest using an algorithm like A*.
+-   **Strict Norm-Driven Development:** All work is governed by user-defined standards (, ) which act as a firewall for quality, consistency, and scientific validity.
+-   **Backend-Driven UI:** The frontend components (like ) are primarily visualization layers for complex data computed and served by dedicated backend APIs.
+-   **Multi-layered Bug Fixing:** Critical bugs are addressed at multiple points in the stack (e.g., data processing in backend, final rendering in frontend) to ensure robustness.
 
 **key DB schema**
--   **Collection:** 
-    -   **Key Columns:** , , , , , , , .
-    *(Note: The audit covers logic far beyond just the hotspots schema).*
+-   No database schema changes were made. All new logic and data models are contained within the application code.
 
 **changes in tech stack**
 -   None.
 
 **All files of reference**
--    (The primary output of the work so far).
--   The numerous engine files located under , which were analyzed to create the audit.
+-    (and ): The master plan for all future work.
+-   : Directory for the current task.
+-   : Reference for a completed engine.
+-   : Reference for a completed engine.
+-   : Reference for the consolidated score API.
+-   : Key frontend page for UI work.
+-   : Site of the critical water exclusion bug fix.
 
 **Areas that need refactoring**:
--   The user's audit request explicitly highlights the existence of multiple, overlapping engine versions (V1, V2, V3, V9). This strongly implies a future refactoring/consolidation effort will be requested after the audit is complete. **Do not refactor anything now.**
+-   The entire project, guided by the user, is a strategic replacement of legacy engines (, , ) with new, superior versions (, , etc.). This is a planned architectural evolution, not a technical debt refactoring task.
 
 **key api endpoints**
--   The current audit task is focused on the internal Python logic of the backend engines, not the API endpoints that expose them.
+-   ****: Runs food source analysis.
+-   ****: Runs resting area analysis.
+-   ****: Retrieves the weighted score for the heatmap.
+-   ****: Serves documentation files.
+-   **** (PLANNED): Will run the  analysis.
 
 **Critical Info for New Agent**
--   **Your primary directive is: OBSERVE AND DOCUMENT. DO NOT MODIFY ANY CODE.** The user's instructions on this are non-negotiable. Any deviation will be a failure.
--   Your immediate goal is to complete the audit report by finalizing the YAML file, creating a pipeline diagram, and generating a PDF.
--   The user communicates exclusively in **French**. All responses and plans must be in French.
--   The completion of this audit is the direct blocker for the next major phase of the project: the PLAN DE MATCH STEEVE‑MAX.
+-   **Adherence to Norms is Paramount:** You MUST follow the , , and  documents. There is zero room for interpretation.
+-   **Communicate in French:** All communication with the user, including plans and summaries, must be in French.
+-   **Sequential, Validated Development:** Build one engine at a time. The current focus is . Do not start  or any other engine until the user explicitly validates  and issues the next command.
+-   **Continuity is Key for Corridors:** The most critical and difficult requirement for  is ensuring the pathfinding algorithm produces a fully connected network with no dead ends. The implementation in  must be robust.
 
 **documents and test reports created in this job**
 -   
--    (In Progress)
--    (From the previous validation task)
+-   
+-    (Final validation of bug fix)
+-    (Validation of Plan/Heatmap)
+-   And numerous other test reports from previous steps.
 
 **Last 10 User Messages and any pending HUMAN messages**
--   **User (LATEST):** Issued a detailed, multi-phase command for a complete AUDIT ÉCOLOGIQUE GLOBAL BIONIC. The user stressed that this is a non-destructive observation and documentation task only, and outlined the required deliverables (Inventory, Rules, Reports in PDF/YAML, Pipeline Diagram).
--   **User (PREVIOUS):** Confirmed that the security and UI consolidation refactor (the 7-point plan) was validated and approved. Gave the green light for the agent to proceed with the next steps after analyzing the test reports.
+1.  **LATEST (User):** Issued a detailed, revised official command for **CORRIDORS-V10**, providing specific 12-parameter profiles for each of the 5 species and re-emphasizing the critical absolute continuity (zero dead-ends) requirement. (ACTION PENDING)
+2.  **User:** Provided the official command for **CORRIDORS-V10**. (SUPERSEDED by the more detailed command above)
+3.  **User:** Confirmed the fix for the affût on water bug, validated the , and approved moving forward with the engine roadmap, starting with . (COMPLETED)
+4.  **User:** Reported the critical bug: an affût (lookout point) was generated on a lake surface, which is a major  violation. Demanded an immediate root cause analysis and correction. (COMPLETED)
+5.  **User:** Validated the delivery of , , and the Wapiti integration. Issued a new command to formalize the  and to optimize the UI heatmap with a consolidated score. (COMPLETED)
+6.  **User:** Confirmed the plan to implement , , and add Wapiti. Issued a simultaneous command to also build . (COMPLETED)
+7.  **User:** Provided the official, detailed command to build the  engine and add Wapiti to the UI. (COMPLETED)
+8.  **User:** Confirmed the completion of the  feature and validated the 100% passing test report. (COMPLETED)
+9.  **User:** Provided the official command to add a Carte button to the Hotspots table with deep-linking and a satellite preview on hover. (COMPLETED)
+10. **User:** Confirmed the completion of the Ecological Audit and approved the plan to proceed with its finalization. (COMPLETED)
 
 **Project Health Check:**
 -   **Broken:** None.
--   **Mocked:** Territorial data used by the hotspot engine is generated programmatically, as approved by the user.
+-   **Mocked:** Territorial data used by the ecological engines is programmatically generated, which is an accepted and long-standing behavior.
 
 **3rd Party Integrations**
--   **OpenWeatherMap (OWM):** For weather data enrichment.
--   **Leaflet & react-leaflet:** For frontend mapping.
+-   OpenWeatherMap (OWM)
+-   Leaflet & react-leaflet
+-   leaflet.heat
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. The previous feature work was fully validated by  in .
+-   **Testing agent used after significant changes:** YES. It was used successfully to validate the  and  engines, the UI heatmap changes, and the critical affût on water bug fix.
 -   **Troubleshoot agent used after agent stuck in loop:** NO.
--   **Test files created:** None.
--   **Known regressions:** None.
+-   **Test files created:** None. The agent relies on the testing sub-agent.
+-   **Known regressions:** None. The last regression was found and fixed within this session.
 
 **Credentials to test flow:**
 -   **User Login:**  / 
 -   **Admin Section Password:** 
 
 **What agent forgot to execute**
--   The agent did not forget but was in the middle of executing a multi-part task. The following deliverables from the user's Phase 3 request are still pending:
-    1.  Completion of the structured YAML report.
-    2.  Creation of the pipeline diagram (ASCII or other).
-    3.  Generation of the final PDF report.</analysis>
+-   The agent has not forgotten anything. It is in the process of executing the user's latest and most immediate command: building the  engine.</analysis>

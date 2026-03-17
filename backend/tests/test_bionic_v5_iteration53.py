@@ -6,7 +6,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-engine-review.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://species-network.preview.emergentagent.com').rstrip('/')
 
 class TestBionicV5TerrainData:
     """Tests for terrain data API - exclusion zones"""

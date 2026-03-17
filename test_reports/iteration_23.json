@@ -103,7 +103,7 @@
   "test_credentials": {
     "admin_password": "Saturn5858*",
     "admin_email": "admin@huntiq.ca",
-    "frontend_url": "https://bionic-engine-review.preview.emergentagent.com",
+    "frontend_url": "https://species-network.preview.emergentagent.com",
     "admin_url": "/admin",
     "admin_premium_url": "/admin-premium",
     "territoire_url": "/territoire"

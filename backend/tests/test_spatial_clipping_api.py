@@ -9,7 +9,7 @@ import requests
 import os
 import math
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-engine-review.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://species-network.preview.emergentagent.com')
 
 # Test coordinates (Quebec City area)
 TEST_LAT = 46.8
