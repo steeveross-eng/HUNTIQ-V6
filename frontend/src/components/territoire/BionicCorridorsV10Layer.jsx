@@ -2,11 +2,10 @@
  * BionicCorridorsV10Layer.jsx — Couche corridors fauniques BIONIC
  * Norme CORRIDOR-V1/V10 officielle — BCE-4X / Steeve-MAX
  *
- * Standard Visuel STEEVE-MAX:
- *   Hiérarchie: Zones (bas) → Corridors (milieu) → Points centraux (haut)
- *   Filtrage corridors: contrôlé par slider "Seuil minimum"
- *   Densité réduite: pas d'effet filet/toile d'araignée
- *   BCE-4X: aucun glow, halo ou dégradé
+ * HIÉRARCHIE VISUELLE STEEVE-MAX (obligatoire):
+ *   DOMINANT  → Zones (contours opaques, weight=3, fillOpacity=0)
+ *   SECONDAIRE → Corridors (opacity réduite, weight réduit)
+ *   TERTIAIRE  → Points centraux (radius réduit, opacité réduite)
  *
  * Palette normative:
  *   CRITIQUE  #B80000 (contour #660000) — micro-hachures, densité +20%
@@ -20,11 +19,11 @@ import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 
 const CORRIDOR_PALETTE = {
-  CRITIQUE: { color: '#B80000', contour: '#660000', weight: 3, hasPattern: true, patternDash: '4,3', dashArray: null, label: 'Critique' },
-  MAJEUR:   { color: '#FF0000', contour: '#CC0000', weight: 3, hasPattern: false, patternDash: null, dashArray: null, label: 'Majeur' },
-  FORT:     { color: '#FF8C00', contour: '#CC7000', weight: 2.5, hasPattern: false, patternDash: null, dashArray: null, label: 'Fort' },
-  MODERE:   { color: '#FFD700', contour: '#CCAC00', weight: 2, hasPattern: false, patternDash: null, dashArray: null, label: 'Modéré' },
-  FAIBLE:   { color: '#BFBFBF', contour: '#999999', weight: 1.5, hasPattern: false, patternDash: null, dashArray: null, label: 'Faible' },
+  CRITIQUE: { color: '#B80000', contour: '#660000', weight: 2, hasPattern: true, patternDash: '4,3', dashArray: null, label: 'Critique' },
+  MAJEUR:   { color: '#FF0000', contour: '#CC0000', weight: 2, hasPattern: false, patternDash: null, dashArray: null, label: 'Majeur' },
+  FORT:     { color: '#FF8C00', contour: '#CC7000', weight: 1.5, hasPattern: false, patternDash: null, dashArray: null, label: 'Fort' },
+  MODERE:   { color: '#FFD700', contour: '#CCAC00', weight: 1.2, hasPattern: false, patternDash: null, dashArray: null, label: 'Modéré' },
+  FAIBLE:   { color: '#BFBFBF', contour: '#999999', weight: 1, hasPattern: false, patternDash: null, dashArray: null, label: 'Faible' },
 };
 
 /**
@@ -115,21 +114,22 @@ const BionicCorridorsV10Layer = ({
     }
   }, [map]);
 
-  // Pré-calculer les styles — Standard Visuel STEEVE-MAX
-  // Corridors: transparence augmentée, poids réduit, aucun glow
+  // Pré-calculer les styles — Hiérarchie Visuelle STEEVE-MAX
+  // Corridors: SECONDAIRES (opacity et weight réduits vs zones DOMINANTES)
   const precomputedStyles = useMemo(() => {
+    const corOp = 0.30; // Opacité corridors: secondaire
     const styles = {};
     for (const [level, p] of Object.entries(CORRIDOR_PALETTE)) {
       styles[level] = {
-        contour: { color: p.contour, weight: p.weight + 1, opacity: opacity * 0.4, lineCap: 'round', lineJoin: 'round', interactive: false },
-        main: { color: p.color, weight: p.weight, opacity, lineCap: 'round', lineJoin: 'round', dashArray: p.dashArray },
-        hachure: p.hasPattern ? { color: p.contour, weight: p.weight - 0.5, opacity: opacity * 0.5, lineCap: 'butt', lineJoin: 'round', dashArray: p.patternDash, interactive: false } : null,
-        hover: { weight: p.weight + 1.5, opacity: Math.min(1, opacity + 0.3) },
-        restore: { weight: p.weight, opacity },
+        contour: { color: p.contour, weight: p.weight + 0.5, opacity: corOp * 0.4, lineCap: 'round', lineJoin: 'round', interactive: false },
+        main: { color: p.color, weight: p.weight, opacity: corOp, lineCap: 'round', lineJoin: 'round', dashArray: p.dashArray },
+        hachure: p.hasPattern ? { color: p.contour, weight: p.weight - 0.5, opacity: corOp * 0.5, lineCap: 'butt', lineJoin: 'round', dashArray: p.patternDash, interactive: false } : null,
+        hover: { weight: p.weight + 1, opacity: Math.min(1, corOp + 0.3) },
+        restore: { weight: p.weight, opacity: corOp },
       };
     }
     return styles;
-  }, [opacity]);
+  }, []);
 
   const renderData = useCallback((data, sp) => {
     clearLayers();
@@ -233,7 +233,7 @@ const BionicCorridorsV10Layer = ({
     }
 
     // ═══ COUCHE 3 (Z-HAUT): Points centraux — BCE-4X protégés ═══
-    // Steeve-MAX: TOUS les points centraux restaurés (clusters fusionnés)
+    // Steeve-MAX HIÉRARCHIE: TERTIAIRE — taille et opacité réduites
     for (const feature of zonePolygons) {
       const props = feature.properties;
       const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
@@ -243,12 +243,12 @@ const BionicCorridorsV10Layer = ({
       for (const center of centers) {
         if (!center.lat || !center.lng) continue;
         const marker = L.circleMarker([center.lat, center.lng], {
-          radius: 6,
+          radius: 4,
           fillColor: zc,
           color: '#FFFFFF',
-          weight: 2,
-          fillOpacity: 0.95,
-          opacity: 1.0,
+          weight: 1.5,
+          fillOpacity: 0.85,
+          opacity: 0.9,
         });
         marker.bindTooltip(
           `<span style="font-size:11px;font-weight:600;color:${zc}">${
@@ -262,8 +262,8 @@ const BionicCorridorsV10Layer = ({
       // Fallback: single center if no all_centers
       if (centers.length === 0 && props.center_lat && props.center_lng) {
         const marker = L.circleMarker([props.center_lat, props.center_lng], {
-          radius: 6, fillColor: zc, color: '#FFFFFF',
-          weight: 2, fillOpacity: 0.95, opacity: 1.0,
+          radius: 4, fillColor: zc, color: '#FFFFFF',
+          weight: 1.5, fillOpacity: 0.85, opacity: 0.9,
         });
         group.addLayer(marker);
       }
