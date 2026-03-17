@@ -117,6 +117,23 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - GET /api/v10/corridors/profile/{species}
 - GET /api/v10/corridors/documentation
 
+### Correction Contours Organiques — Pipeline Buffer Union (2026-03-17) — iteration_39 (21/21)
+- **Backend engine.py**: Nouveau pipeline de contour organique
+  - Phase 3: `MultiPoint.buffer(d_lat*1.2)` → union de cercles = blob lisse
+  - Phase 4: `simplify(d_lat*0.4)` → reduction intermediaire
+  - Phase 5: Sous-echantillonnage ~50 control points
+  - Phase 6: Catmull-Rom(6) → courbure continue
+  - Phase 7: Chaikin(2) → anti-etoile
+  - **Ancien pipeline supprime**: tri angulaire + perturbation terrain (cause des spikes)
+  - ZERO SPIKES: min_angle=89.1° (seuil: 45°) sur les 16 polygones
+  - 817-1201 vertices par polygone, extents 236-607m
+- **Firewall BCE-4X**: `/app/backend/tests/test_bce4x_firewall_organic.py` (9 tests)
+  - test_firewall_16_polygons, test_firewall_4_per_type, test_firewall_cluster_size_4
+  - test_firewall_64_centers, test_firewall_min_vertices, test_firewall_contour_closed
+  - test_firewall_zero_spikes (angle<45° = BLOQUE), test_firewall_surface_attraction_ratio
+  - test_firewall_polygon_extent_minimum (>150m chaque dimension)
+- Tests: Backend firewall 9/9 + Frontend 12/12 = 21/21 (100%), 0 regression
+
 ### Directive Superposition Transparente STEEVE-MAX (2026-03-17) — iteration_38 (26/26)
 - **Frontend BionicCorridorsV10Layer.jsx**: Rendu zones transparent
   - fillOpacity=0, fillColor=transparent (interieur transparent)
