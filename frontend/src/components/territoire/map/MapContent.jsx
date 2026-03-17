@@ -22,7 +22,6 @@ import HuntingPathLayer from '@/components/territoire/HuntingPathLayer';
 import { MapInteractionLayer } from '@/modules/map_interaction';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { PLACE_TYPES } from '@/config/placeTypes';
-import { BionicScoreHeatmap } from '@/components/territoire/BionicScoreHeatmap';
 import BionicCorridorsV10Layer from '@/components/territoire/BionicCorridorsV10Layer';
 
 const MapContentInner = React.memo(({
@@ -103,9 +102,9 @@ const MapContentInner = React.memo(({
     <StructureContrastLayer enabled={classificationToggles.anthropique} />
     <BionicMicroZones
       zones={bionicZones}
-      corridors={bionicZonesData.corridors || []}
+      corridors={[]}
       minPercentage={minPercentageFilter}
-      showCorridors={showCorridors && classificationToggles.corridorsEstimes}
+      showCorridors={false}
       onZoneClick={setSelectedZone}
       onZoneHover={setHoveredZone}
       isZoneFavorite={isZoneFavorite}
@@ -153,25 +152,12 @@ const MapContentInner = React.memo(({
       />
     )}
     {selectedWaypointForZones && (
-      <Circle center={[selectedWaypointForZones.lat, selectedWaypointForZones.lng]} radius={30} pathOptions={{ color: '#FF9800', fillColor: '#FF9800', fillOpacity: 0.5, weight: 2 }} />
+      <Circle center={[selectedWaypointForZones.lat, selectedWaypointForZones.lng]} radius={30} pathOptions={{ color: '#FF9800', fillColor: 'transparent', fillOpacity: 0, weight: 2 }} />
     )}
 
     <ShootingZones zones={[]} currentUserId={userId} dangerAlerts={[]} members={[]} onZoneClick={null} showOwnZone={true} showOtherZones={true} showDangerIndicators={true} />
-    {/* STEEVE-MAX: Heatmap écologique officiel — couche principale unique */}
-    {selectedWaypointForZones && (
-      <BionicScoreHeatmap
-        center={{
-          lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
-          lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
-        }}
-        species={selectedSpecies}
-        month={new Date().getMonth() + 1}
-        enabled={true}
-        opacity={0.55}
-      />
-    )}
 
-    {/* CORRIDORS-V10: Couche corridors fauniques — palette normative */}
+    {/* CORRIDORS-V10: Couche corridors fauniques — palette normative (SEULE couche active) */}
     {selectedWaypointForZones && showCorridors && (
       <BionicCorridorsV10Layer
         center={{

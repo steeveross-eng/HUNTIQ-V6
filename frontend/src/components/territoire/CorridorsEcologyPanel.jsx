@@ -110,7 +110,7 @@ const CorridorsEcologyPanel = ({ corridors = [], species = 'tous' }) => {
       <div className="bg-[#111118] rounded-lg p-3 border border-[#1a1a2e]" data-testid="corridors-ecology-panel">
         <div className="flex items-center gap-2">
           <Route className="h-3.5 w-3.5 text-gray-500" />
-          <span className="text-xs text-gray-500">Corridors & Ecologie</span>
+          <span className="text-xs text-gray-500">Corridors & Ecologie V10</span>
         </div>
         <p className="text-[10px] text-gray-600 mt-1">En attente d'analyse...</p>
       </div>

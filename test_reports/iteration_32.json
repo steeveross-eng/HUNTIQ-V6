@@ -1,0 +1,106 @@
+{
+  "summary": "Iteration 32 - V10 Critical Fixes Verification Complete. All 14 test items passed. Orange/gold heatmap background REMOVED (BionicScoreHeatmap not rendered), V9 corridors DISABLED, V10 corridors rendering correctly, all V9->V10 labels updated.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_tests": {
+      "total": 8,
+      "passed": 8,
+      "tests": [
+        "test_corridors_analyze_light - PASS",
+        "test_corridors_analyze_full_with_geojson - PASS",
+        "test_corridors_profiles_endpoint - PASS",
+        "test_corridors_documentation_endpoint - PASS",
+        "test_cor_006_validation (5 species) - PASS",
+        "test_alimentation_v1_analyze (anti-regression) - PASS",
+        "test_repos_v1_analyze (anti-regression) - PASS",
+        "test_simplified_coords_smaller_than_raw (Douglas-Peucker) - PASS"
+      ]
+    },
+    "frontend_tests": {
+      "total": 14,
+      "passed": 14,
+      "tests": [
+        "No orange/gold background fill in 2km² zone - PASS (satellite terrain visible)",
+        "BionicScoreHeatmap NOT rendered - PASS (confirmed in code: no import/usage in MapContent.jsx)",
+        "V9 corridors NOT rendered - PASS (corridors=[] and showCorridors=false in BionicMicroZones)",
+        "V10 corridors render correctly - PASS (red/orange lines visible with normative palette)",
+        "Center circle has no orange fill - PASS (fillOpacity=0 in code)",
+        "Rectangle 2km² has no fill - PASS (fillOpacity=0 in code)",
+        "Side panel collapsed shows 'Corridors & Ecologie V10' - PASS",
+        "Side panel expanded shows 'Corridors & Ecologie V10' - PASS",
+        "Side panel shows 'Score V10' - PASS (SCORE GLOBAL V10 visible)",
+        "Side panel shows 'Classification V10' - PASS (CLASSIFICATION V10 visible)",
+        "SidePanelZones shows 'Score Global V10' - PASS",
+        "Toolbar shows 'CORRIDORS V10' label - PASS",
+        "Legend 3X still works - PASS (ZONES ECOLOGIQUES + CORRIDORS V10 blocks visible)",
+        "All V9 labels correctly removed - PASS (no V9 labels found in UI)"
+      ]
+    }
+  },
+  "features_verified": {
+    "orange_background_removal": {
+      "status": "PASS",
+      "code_verification": {
+        "BionicScoreHeatmap": "NOT imported or rendered in MapContent.jsx",
+        "BionicMicroZones_corridors": "corridors={[]} at line 105",
+        "BionicMicroZones_showCorridors": "showCorridors={false} at line 107",
+        "Circle_fillOpacity": "fillOpacity: 0 at line 155",
+        "Rectangle_fillOpacity": "fillOpacity: 0 at line 151"
+      },
+      "visual_verification": "Satellite terrain clearly visible through 2km² zone - no orange/gold heatmap overlay"
+    },
+    "v9_to_v10_labels": {
+      "status": "PASS",
+      "labels_verified": [
+        "CORRIDORS V10 (toolbar toggle)",
+        "SCORE GLOBAL V10 (side panel)",
+        "CORRIDORS & ECOLOGIE V10 (panel header)",
+        "CLASSIFICATION V10 (side panel)",
+        "9 MOTEURS BIONIC V10 (collapsible section)",
+        "V10 + Meteo (zones section)"
+      ],
+      "files_updated": [
+        "MapContent.jsx",
+        "CorridorsEcologyPanel.jsx",
+        "SidePanelZones.jsx"
+      ]
+    },
+    "v10_corridors_rendering": {
+      "status": "PASS",
+      "details": "V10 corridors visible with normative palette (red/orange lines), 19 corridors / 11.8 km / score 69"
+    },
+    "anti_regression_apis": {
+      "/api/v1/alimentation/analyze": "PASS",
+      "/api/v1/repos/analyze": "PASS"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_v10_corridors_iteration31.py",
+    "/app/test_reports/pytest/iteration_32_v10_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Note: 'Pipeline V9' text in SidePanelZones.jsx (line 277) is expected - refers to pipeline version, not corridor version"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (8/8 tests passed)",
+    "frontend": "100% (14/14 items verified)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*"
+  },
+  "seed_data_creation": "None - used existing waypoint with 19 corridors",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 32 verified all critical fixes: (1) BionicScoreHeatmap is NOT imported or rendered in MapContent.jsx - no canvas elements found on map. (2) V9 corridors disabled via corridors=[] and showCorridors=false props to BionicMicroZones. (3) V10 corridors rendering correctly with normative palette (red/orange lines). (4) All fillOpacity=0 for Rectangle and Circle elements. (5) All V9 labels updated to V10 in CorridorsEcologyPanel, SidePanelZones, and toolbar. (6) Satellite terrain clearly visible through 2km² zone.",
+  "verification_date": "2026-03-17"
+}
