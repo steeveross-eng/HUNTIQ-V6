@@ -1,0 +1,182 @@
+{
+  "summary": "BIONIC V3 - Score Consolidé & Plan de Match Testing Complete. Backend: 29/29 tests passed (100%). Frontend: All new deliverables verified - Score badge compact visible in toolbar, BionicScoreHeatmap renders on map, Wapiti species present. No regressions detected on ALIMENTATION-V1 and REPOS-V1.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "ScoreBadge API call",
+        "issue": "DataCloneError logged in console (emergent-main.js postMessage), but badge still renders correctly - appears to be emergent platform issue, not app bug",
+        "severity": "LOW"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_results": {
+    "plan_de_match_tests": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        "GET /api/audit/list returns 6 files including Plan de Match - PASS",
+        "GET /api/audit/PLAN_DE_MATCH_STEEVE_MAX_v1.md returns 200 - PASS",
+        "Plan de Match MD contains 9 ecological definitions - PASS",
+        "GET /api/audit/PLAN_DE_MATCH_STEEVE_MAX_v1.pdf returns valid PDF - PASS",
+        "Content-type headers correct (text/markdown, application/pdf) - PASS"
+      ]
+    },
+    "score_consolide_point_tests": {
+      "total": 11,
+      "passed": 11,
+      "failed": 0,
+      "tests": [
+        "GET /api/v1/score-consolide/point returns 200 - PASS",
+        "Score in valid range [0, 100] - PASS",
+        "Score has components (alimentation, repos, pression) - PASS",
+        "Score has normalized weights - PASS",
+        "Score has tracability (engines_active, engines_pending) - PASS",
+        "Score classification labels correct - PASS",
+        "Score for CERF species - PASS",
+        "Score for ORIGNAL species - PASS",
+        "Score for OURS species - PASS",
+        "Score for DINDON species - PASS",
+        "Score for WAPITI species - PASS"
+      ]
+    },
+    "heatmap_grid_tests": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "tests": [
+        "GET /api/v1/score-consolide/heatmap returns 200 - PASS",
+        "Heatmap default grid_size is 20 (400 points) - PASS",
+        "Heatmap points have lat, lng, score, classe, color - PASS",
+        "Heatmap has statistics (score_avg, score_min, score_max) - PASS",
+        "Heatmap for CERF species - PASS",
+        "Heatmap for ORIGNAL species - PASS",
+        "Heatmap for OURS species - PASS",
+        "Heatmap for DINDON species - PASS",
+        "Heatmap for WAPITI species - PASS"
+      ]
+    },
+    "regression_tests": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "tests": [
+        "ALIMENTATION-V1 profiles endpoint still works - PASS",
+        "ALIMENTATION-V1 point endpoint still works - PASS",
+        "REPOS-V1 profiles endpoint still works - PASS",
+        "REPOS-V1 point endpoint still works - PASS"
+      ]
+    },
+    "frontend_tests": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "tests": [
+        "Mon Territoire page loads correctly - PASS",
+        "Score badge compact visible in toolbar - PASS",
+        "Score badge shows circular ring with SVG - PASS",
+        "Score badge displays 'FAIBLE' label - PASS",
+        "Species selector in toolbar works - PASS",
+        "Wapiti appears in species dropdown - PASS",
+        "Leaflet map container loaded - PASS",
+        "BionicScoreHeatmap canvas rendering - PASS",
+        "All toolbar controls present (Layers, Corridors V9, Curseur) - PASS"
+      ]
+    }
+  },
+  "features_verified": {
+    "plan_de_match_steeve_max_v1": {
+      "status": "PASS",
+      "md_file": "PLAN_DE_MATCH_STEEVE_MAX_v1.md (14KB)",
+      "pdf_file": "PLAN_DE_MATCH_STEEVE_MAX_v1.pdf (9.5KB)",
+      "content": {
+        "9_definitions": ["Habitat optimal", "Zones de rut", "Corridors fauniques", "Hydrographie", "Pentes", "Orientation", "Ensoleillement", "Affûts potentiels", "Trajets de chasse"],
+        "bce_4x_norms": "VALIDATED",
+        "steeve_max_norms": "VALIDATED",
+        "engine_roadmap": "VALIDATED"
+      }
+    },
+    "score_consolide_api": {
+      "status": "PASS",
+      "endpoints": ["/api/v1/score-consolide/point", "/api/v1/score-consolide/heatmap"],
+      "components": ["alimentation (0.45)", "repos (0.35)", "pression (0.20)"],
+      "normalized_weights_sum": 1.0,
+      "tracability": {
+        "engines_active": ["alimentation", "repos", "pression"],
+        "engines_pending": ["corridors_v10", "habitat_v1", "rut_v1"]
+      },
+      "species_support": ["CERF", "ORIGNAL", "OURS", "DINDON", "WAPITI"],
+      "classification": {
+        "OPTIMAL": "80-100 (#DC2626)",
+        "BON": "60-79 (#F59E0B)",
+        "MODERE": "40-59 (#22C55E)",
+        "FAIBLE": "0-39 (#3B82F6)"
+      }
+    },
+    "bionic_score_heatmap": {
+      "status": "PASS",
+      "component": "BionicScoreHeatmap.jsx",
+      "gradient": "bleu (faible) → vert (modéré) → jaune (bon) → rouge (optimal)",
+      "library": "leaflet.heat",
+      "renders_on_map": true
+    },
+    "bionic_score_badge": {
+      "status": "PASS",
+      "component": "BionicScoreBadge.jsx",
+      "data_testid": "score-badge-compact",
+      "circular_ring": true,
+      "shows_score_and_label": true
+    },
+    "session_heatmap_replaced": {
+      "status": "PASS",
+      "old_component": "SessionHeatmap (groupe module)",
+      "new_component": "BionicScoreHeatmap (ecological score)",
+      "location": "MapContent.jsx"
+    }
+  },
+  "test_report_links": [
+    "/app/test_reports/pytest/bionic_v3_score_consolide_results.xml",
+    "/app/backend/tests/test_bionic_v3_score_consolide.py"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_bionic_v3_score_consolide.py"
+  ],
+  "success_rate": {
+    "backend": "100% (29/29 tests passed)",
+    "frontend": "100% (9/9 tests passed)"
+  },
+  "test_credentials": {
+    "admin_password": "Saturn5858*",
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*"
+  },
+  "seed_data_creation": "None - used existing waypoint 'steeve' and test coordinates (46.8, -71.2)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "BIONIC V3 deliverables fully operational: 1) Plan de Match Steeve-MAX v1 document available via /api/audit/ endpoints (MD + PDF). 2) Score consolidé API returns consolidated score from ALIMENTATION-V1 + REPOS-V1 + pression calculation with tracability. 3) BionicScoreBadge shows in toolbar (data-testid='score-badge-compact') when waypoint is active. 4) BionicScoreHeatmap replaced SessionHeatmap as primary map layer, renders via leaflet.heat. All 5 species supported. No regressions on existing engines.",
+  "verification_date": "2026-03-17",
+  "new_deliverables_summary": {
+    "plan_de_match": {
+      "md_url": "/api/audit/PLAN_DE_MATCH_STEEVE_MAX_v1.md",
+      "pdf_url": "/api/audit/PLAN_DE_MATCH_STEEVE_MAX_v1.pdf",
+      "9_definitions": "VALIDATED"
+    },
+    "score_consolide": {
+      "point_url": "/api/v1/score-consolide/point",
+      "heatmap_url": "/api/v1/score-consolide/heatmap",
+      "components": "alimentation + repos + pression",
+      "weights": "0.45 + 0.35 + 0.20 = 1.0"
+    },
+    "frontend_integration": {
+      "badge": "BionicScoreBadge in toolbar",
+      "heatmap": "BionicScoreHeatmap as primary layer"
+    }
+  }
+}

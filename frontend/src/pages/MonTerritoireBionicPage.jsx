@@ -55,6 +55,7 @@ import { toast } from 'sonner';
 import BionicMapSelector from '@/components/maps/BionicMapSelector';
 import useMapType from '@/hooks/useMapType';
 import { MAP_TYPES } from '@/config/mapSources';
+import { BionicScoreBadge } from '@/components/territoire/BionicScoreBadge';
 
 // P2: BIONIC_COLORS migrated to component-level CSS variables
 
@@ -1295,6 +1296,18 @@ const MonTerritoireBionicPage = () => {
             <span className="text-[10px] font-bold uppercase tracking-wider text-violet-400 hidden sm:inline">Curseur</span>
             <Switch checked={showCursorBionic} onCheckedChange={setShowCursorBionic} className="scale-[0.6] data-[state=checked]:bg-violet-500" data-testid="toggle-curseur-bionic" />
           </div>
+
+          {/* ═══ SCORE ÉCOLOGIQUE CONSOLIDÉ — Badge + Anneau ═══ */}
+          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+          <BionicScoreBadge
+            center={selectedWaypointForZones ? {
+              lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
+              lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
+            } : null}
+            species={selectedSpecies}
+            month={new Date().getMonth() + 1}
+            compact
+          />
         </div>
       </nav>
 

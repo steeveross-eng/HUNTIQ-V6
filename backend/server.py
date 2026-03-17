@@ -468,11 +468,37 @@ except Exception as e:
     logger.warning(f"REPOS-V1 not loaded: {e}")
 
 
+# ═══ SCORE CONSOLIDÉ — Heatmap multi-moteurs ═══
+try:
+    from modules.score_consolide import compute_consolidated_score, compute_heatmap_grid
+    from fastapi import Query as _Query
+
+    @app.get("/api/v1/score-consolide/point", tags=["SCORE-CONSOLIDE"])
+    async def get_consolidated_score(
+        lat: float = _Query(...), lng: float = _Query(...),
+        species: str = _Query("CERF"), month: int = _Query(10, ge=1, le=12),
+    ):
+        return compute_consolidated_score(lat, lng, species, month)
+
+    @app.get("/api/v1/score-consolide/heatmap", tags=["SCORE-CONSOLIDE"])
+    async def get_heatmap_grid(
+        lat: float = _Query(...), lng: float = _Query(...),
+        species: str = _Query("CERF"), month: int = _Query(10, ge=1, le=12),
+        grid_size: int = _Query(20, ge=5, le=40),
+    ):
+        return compute_heatmap_grid(lat, lng, species, month, grid_size)
+
+    logger.info("✓ SCORE-CONSOLIDE registered (/api/v1/score-consolide)")
+except Exception as e:
+    logger.warning(f"SCORE-CONSOLIDE not loaded: {e}")
+
+
 logger.info("=" * 60)
 logger.info(f"✓ V5-ULTIME-FUSION: {len(CORE_ROUTERS)} modules registered")
 logger.info("✓ PHASE G: BIONIC Engine P0 active")
 logger.info("✓ ALIMENTATION-V1: Moteur alimentaire multi-especes active")
 logger.info("✓ REPOS-V1: Moteur zones de repos multi-especes active")
+logger.info("✓ SCORE-CONSOLIDE: Heatmap multi-moteurs active")
 logger.info("✓ BCE: BIONIC Compliance Engine active")
 logger.info("=" * 60)
 
@@ -530,6 +556,8 @@ _AUDIT_FILES = [
     "BIONIC_AUDIT_ECOLOGIQUE_v1.yaml",
     "BIONIC_AUDIT_ECOLOGIQUE_v1.pdf",
     "pipeline_ecologique_v1.txt",
+    "PLAN_DE_MATCH_STEEVE_MAX_v1.md",
+    "PLAN_DE_MATCH_STEEVE_MAX_v1.pdf",
 ]
 
 @app.get("/api/audit/list")

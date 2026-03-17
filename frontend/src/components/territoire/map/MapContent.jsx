@@ -14,7 +14,7 @@ import WindFlowLayer from '@/components/territoire/WindFlowLayer';
 import StructureContrastLayer from '@/components/territoire/StructureContrastLayer';
 import BionicMicroZones from '@/components/territoire/BionicMicroZones';
 // STEVE-MAX: MovementCorridorsLayer SUPPRIME DEFINITIVEMENT — BCE-4X-UI-003
-import { ShootingZones, SessionHeatmap } from '@/modules/groupe';
+import { ShootingZones } from '@/modules/groupe';
 import CursorBionicLayer from '@/components/territoire/CursorBionicLayer';
 import BionicAntiDoublesGuard from '@/components/territoire/BionicAntiDoublesGuard';
 import { BionicZone2kmLayer } from '@/components/territoire/BionicZone2km';
@@ -22,6 +22,7 @@ import HuntingPathLayer from '@/components/territoire/HuntingPathLayer';
 import { MapInteractionLayer } from '@/modules/map_interaction';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { PLACE_TYPES } from '@/config/placeTypes';
+import { BionicScoreHeatmap } from '@/components/territoire/BionicScoreHeatmap';
 
 const MapContentInner = React.memo(({
   // Eco layers
@@ -153,7 +154,19 @@ const MapContentInner = React.memo(({
     )}
 
     <ShootingZones zones={[]} currentUserId={userId} dangerAlerts={[]} members={[]} onZoneClick={null} showOwnZone={true} showOtherZones={true} showDangerIndicators={true} />
-    <SessionHeatmap membersWithPositions={groupMembersPositions} isActive={isGroupeTrackingActive} />
+    {/* STEEVE-MAX: Heatmap écologique officiel — couche principale unique */}
+    {selectedWaypointForZones && (
+      <BionicScoreHeatmap
+        center={{
+          lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
+          lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
+        }}
+        species={selectedSpecies}
+        month={new Date().getMonth() + 1}
+        enabled={true}
+        opacity={0.55}
+      />
+    )}
 
     {userPosition && (
       <Marker position={[userPosition.lat, userPosition.lng]} icon={createCustomIcon('#3b82f6', 'user')}>
