@@ -117,6 +117,24 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - GET /api/v10/corridors/profile/{species}
 - GET /api/v10/corridors/documentation
 
+### COMMANDE FINALE — Hierarchie Visuelle STEEVE-MAX (2026-03-17) — iteration_40 (17/17)
+- **Frontend BionicCorridorsV10Layer.jsx**: Hierarchie visuelle stricte
+  - DOMINANT: Zones contours (weight=3, opacity=1.0, fillOpacity=0)
+  - SECONDAIRE: Corridors (opacity=0.30, weights: CRITIQUE/MAJEUR=2, FORT=1.5, MODERE=1.2, FAIBLE=1)
+  - TERTIAIRE: Points centraux (radius=4, fillOpacity=0.85, border=1.5)
+  - Corridors poids et opacite reduits pour ceder la dominance visuelle aux zones
+- **Backend engine.py**: Pipeline modulaire sequentiel inchange
+  - Phase 0: Fusion ecologique (64→16, super-quadrant 2x2)
+  - Phase 1: Dimension dynamique (rayon proportionnel a l'attraction)
+  - Phase 2: BFS multi-source terrain-aware
+  - Phase 3: Shapely buffer union (contour organique)
+  - Phase 4: Simplify intermediaire (reduction control points)
+  - Phase 5: Sous-echantillonnage (~50 pts)
+  - Phase 6: Catmull-Rom(6) (courbure continue)
+  - Phase 7: Chaikin(2) (anti-etoile)
+- **Protection BCE-4X**: Firewall 9/9 tests (zero spike, zero regression)
+- Tests: Backend 9/9 + Frontend 8/8 = 17/17 (100%), 0 regression
+
 ### Correction Contours Organiques — Pipeline Buffer Union (2026-03-17) — iteration_39 (21/21)
 - **Backend engine.py**: Nouveau pipeline de contour organique
   - Phase 3: `MultiPoint.buffer(d_lat*1.2)` → union de cercles = blob lisse
