@@ -80,6 +80,12 @@ const MapContentInner = React.memo(({
   showHuntingPath,
   // CORRIDORS-V10
   onCorridorDataLoaded,
+  // STEEVE-MAX UX: Contrôles couches et points chauds
+  showZonesLayer,
+  showCorridorsLayer,
+  showPointsLayer,
+  pointsChaudsMode,
+  pointsChaudsFilter,
 }) => (
   <>
     <EcoforestryLayers
@@ -144,6 +150,11 @@ const MapContentInner = React.memo(({
         opacity={0.55}
         minPercentage={minPercentageFilter}
         onDataLoaded={onCorridorDataLoaded}
+        showZones={showZonesLayer !== false}
+        showCorridorsLayer={showCorridorsLayer !== false}
+        showPoints={showPointsLayer !== false}
+        pointsChaudsMode={pointsChaudsMode || false}
+        pointsChaudsFilter={pointsChaudsFilter || 'tous'}
       />
     )}
 

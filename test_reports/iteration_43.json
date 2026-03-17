@@ -1,0 +1,128 @@
+{
+  "summary": "Iteration 43 - BIONIC V3 Optimisation UX STEEVE-MAX: All features verified. (1) ZONES dropdown with 3 toggle switches (Zones, Corridors, Points) works correctly. (2) POINTS CHAUDS dropdown with mode toggle and 7 filter buttons (tous, alimentation, rut, repos, trajets, affûts, habitat) works correctly. (3) Normal mode shows 16 centroid points (radius=4, fillOpacity=0.65). (4) POINTS CHAUDS mode shows 64 points (radius=5, fillOpacity=0.85). (5) Zone contours: fillOpacity=0, opacity=1.0, weight=3 (unchanged). (6) BCE-4X: 13 firewall tests passed. (7) Fixed 'corridors is not defined' JavaScript error by moving variable declaration outside conditional block.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mon Territoire",
+        "issues": [
+          "Minor: Service Worker registration errors (sw-v2.js 404) - unrelated to V10 functionality",
+          "Minor: Groups/shares/notifications endpoints return 404 - unrelated to corridors V10"
+        ]
+      }
+    ]
+  },
+  "test_results": {
+    "backend_firewall_tests": {
+      "total": 13,
+      "passed": 13,
+      "test_file": "/app/backend/tests/test_bce4x_firewall_organic.py",
+      "tests": [
+        "test_firewall_16_polygons - PASS (16 polygons returned)",
+        "test_firewall_4_per_type - PASS (alimentation=4, repos=4, rut=4, eau=4)",
+        "test_firewall_cluster_size_4 - PASS (all polygons have cluster_size=4)",
+        "test_firewall_64_centers - PASS (64 total center points in API data)",
+        "test_firewall_min_vertices - PASS (all >= 100 vertices)",
+        "test_firewall_contour_closed - PASS (all contours closed)",
+        "test_firewall_zero_spikes - PASS (0 spikes in all polygons)",
+        "test_firewall_surface_attraction_ratio - PASS",
+        "test_firewall_polygon_extent_minimum - PASS (all extents > 150m)",
+        "test_firewall_multi_engine_metadata - PASS (engine=STEVE-MAX-MULTI)",
+        "test_firewall_7_engines_active - PASS (7 engines listed)",
+        "test_firewall_centers_invariance - PASS",
+        "test_firewall_surface_invariance - PASS"
+      ]
+    },
+    "frontend_ui_tests": {
+      "zones_dropdown": {
+        "status": "PASS",
+        "toggle_zones_layer": "FOUND",
+        "toggle_corridors_layer": "FOUND",
+        "toggle_points_layer": "FOUND"
+      },
+      "points_chauds_dropdown": {
+        "status": "PASS",
+        "toggle_mode": "FOUND",
+        "filter_buttons": {
+          "tous": "FOUND",
+          "alimentation": "FOUND",
+          "rut": "FOUND",
+          "repos": "FOUND",
+          "trajets": "FOUND",
+          "affuts": "FOUND",
+          "habitat": "FOUND"
+        }
+      },
+      "layer_toggle_functionality": "PASS"
+    },
+    "visual_verification": {
+      "normal_mode": {
+        "centroid_points": 16,
+        "radius": 4,
+        "fillOpacity": 0.65,
+        "status": "VERIFIED"
+      },
+      "points_chauds_mode": {
+        "center_points": 64,
+        "radius": 5,
+        "fillOpacity": 0.85,
+        "status": "VERIFIED"
+      },
+      "zone_contours": {
+        "fillOpacity": 0,
+        "opacity": 1.0,
+        "weight": 3,
+        "status": "VERIFIED"
+      }
+    }
+  },
+  "bug_fixed": {
+    "issue": "ReferenceError: corridors is not defined",
+    "location": "BionicCorridorsV10Layer.jsx line 321",
+    "cause": "Variable 'corridors' was declared inside if(showCorridorsLayer) block but referenced outside in onDataLoaded callback",
+    "fix": "Moved corridors variable declaration outside conditional block (line 206)",
+    "file_updated": "/app/frontend/src/components/territoire/BionicCorridorsV10Layer.jsx"
+  },
+  "features_verified": {
+    "zones_dropdown_3_toggles": "PASS",
+    "points_chauds_mode_toggle": "PASS",
+    "points_chauds_7_filters": "PASS",
+    "normal_mode_16_centroids": "PASS",
+    "points_chauds_64_points": "PASS",
+    "zone_contours_transparent_fill": "PASS",
+    "api_16_polygons_steve_max_multi": "PASS"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_bce4x_firewall_organic.py",
+    "/app/test_reports/pytest/iteration_43_bce4x_firewall_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BionicCorridorsV10Layer.jsx line 206: 'corridors' variable now declared outside conditional block to avoid ReferenceError in callback",
+    "BionicCorridorsV10Layer.jsx lines 267-272: POINTS CHAUDS mode styles (radius=5, fillOpacity=0.85) correctly implemented",
+    "BionicCorridorsV10Layer.jsx lines 295-300: Normal mode styles (radius=4, fillOpacity=0.65) correctly implemented",
+    "BionicCorridorsV10Layer.jsx lines 158-163: Zone contours (fillOpacity=0, opacity=1.0, weight=3) unchanged as required",
+    "MonTerritoireBionicPage.jsx lines 1321-1346: ZONES dropdown correctly implemented with 3 toggle switches",
+    "MonTerritoireBionicPage.jsx lines 1349-1396: POINTS CHAUDS dropdown with mode toggle and 7 filter buttons correctly implemented"
+  ],
+  "updated_files": [
+    "/app/frontend/src/components/territoire/BionicCorridorsV10Layer.jsx"
+  ],
+  "success_rate": {
+    "backend": "100% (13/13 firewall tests passed)",
+    "frontend": "100% (all UI tests passed)"
+  },
+  "test_credentials": {
+    "user_login": "steeve.ross@gmail.com (auto-logged in)"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 43 verified BIONIC V3 Optimisation UX STEEVE-MAX: (1) ZONES dropdown in toolbar with 3 toggle switches (data-testid: toggle-zones-layer, toggle-corridors-layer, toggle-points-layer). (2) POINTS CHAUDS dropdown with mode toggle (toggle-points-chauds-mode) and 7 filter buttons (points-chauds-filter-{tous,alimentation,rut,repos,trajets,affuts,habitat}). (3) Normal mode: 16 centroid points, radius=4, fillOpacity=0.65. POINTS CHAUDS mode: 64 points, radius=5, fillOpacity=0.85. (4) Fixed 'corridors is not defined' bug by declaring variable outside if block. (5) BCE-4X: 13 firewall tests, zero geometry modification.",
+  "verification_date": "2026-03-17"
+}

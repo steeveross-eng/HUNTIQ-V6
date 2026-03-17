@@ -19,7 +19,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Crosshair, Target, MapPin, Plus, X, LocateFixed,
   BookMarked, Users, Shield, SplitSquareHorizontal,
-  Map, Binoculars, Layers, Lock, Unlock, BarChart3, CheckCircle,
+  Map, Binoculars, Layers, Lock, Unlock, BarChart3, CheckCircle, Flame,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -489,6 +489,13 @@ const MonTerritoireBionicPage = () => {
   const [corridorV10Data, setCorridorV10Data] = useState(null); // CORRIDORS-V10 niveau distribution
   const [minPercentageFilter, setMinPercentageFilter] = useState(30);
   
+  // STEEVE-MAX UX: Contrôles couches et points chauds
+  const [showZonesLayer, setShowZonesLayer] = useState(true);
+  const [showCorridorsLayer, setShowCorridorsLayer] = useState(true);
+  const [showPointsLayer, setShowPointsLayer] = useState(true);
+  const [pointsChaudsMode, setPointsChaudsMode] = useState(false);
+  const [pointsChaudsFilter, setPointsChaudsFilter] = useState('tous');
+  
   // BIONIC V5 300% — CLASSIFICATION TOGGLES (restaures depuis session BCE-MAX)
   const [classificationToggles, setClassificationToggles] = useState(() => {
     if (savedClassificationToggles && typeof savedClassificationToggles === 'object') {
@@ -789,7 +796,7 @@ const MonTerritoireBionicPage = () => {
 
   // T4 COHERENCE: Warn if backend zone count mismatches frontend parsed count
   useEffect(() => {
-    const stats = bionicZonesData.stats || {};
+    const stats = bionicZonesData?.stats || {};
     if (stats.t4_mismatch) {
       console.error(
         `[T4-COHERENCE] Backend t4_zone_count=${stats.t4_backend_count}, ` +
@@ -800,7 +807,7 @@ const MonTerritoireBionicPage = () => {
         duration: 8000,
       });
     }
-  }, [bionicZonesData.stats]);
+  }, [bionicZonesData?.stats]);
 
   // ============================================
   // BIONIC V5 300% — SPATIAL CLIPPING + STATE LOCKING
@@ -809,7 +816,7 @@ const MonTerritoireBionicPage = () => {
   // 3. La visibilité est appliquée au RENDU, pas au calcul
   // ============================================
   const rawZones = useMemo(() => {
-    const zones = bionicZonesData.zones || [];
+    const zones = bionicZonesData?.zones || [];
     // BCE-4X: Séparer les zones hydro pour le masque d'exclusion
     const hydroZones = zones.filter(z => z.layerId === 'hydro');
     const nonHydroZones = zones.filter(z => z.layerId !== 'hydro');
@@ -846,8 +853,8 @@ const MonTerritoireBionicPage = () => {
       }
       return true;
     });
-  }, [bionicZonesData.zones]);
-  const bionicStats = bionicZonesData.stats || {};
+  }, [bionicZonesData?.zones]);
+  const bionicStats = bionicZonesData?.stats || {};
   
   // SPATIAL CLIPPING: Appliquer le clipping 1km × 1km si un waypoint est sélectionné
   const allZones = useMemo(() => {
@@ -881,7 +888,7 @@ const MonTerritoireBionicPage = () => {
   // Score global V9 — Integre zones (65%) + corridors V9 (35%)
   const displayScore = useMemo(() => {
     if (globalScore) return globalScore;
-    const corridors = bionicZonesData.corridors || [];
+    const corridors = bionicZonesData?.corridors || [];
     
     let zoneAvg = 0;
     if (bionicZones.length > 0) {
@@ -905,7 +912,7 @@ const MonTerritoireBionicPage = () => {
     
     // V9: corridors weighted at 35% (up from 30%) due to 9-engine precision
     return Math.round(zoneAvg * 0.65 + corridorAvg * 0.35);
-  }, [globalScore, bionicZones, bionicZonesData.corridors]);
+  }, [globalScore, bionicZones, bionicZonesData?.corridors]);
   
   const getScoreRating = (score) => {
     if (!score) return { label: 'En attente', color: 'bg-gray-700', textColor: 'text-gray-400' };
@@ -927,7 +934,7 @@ const MonTerritoireBionicPage = () => {
   // Auto-fetch hunting path when zones are loaded
   useEffect(() => {
     if (!bionicZones.length || !selectedWaypointForZones) return;
-    const corridors = bionicZonesData.corridors || [];
+    const corridors = bionicZonesData?.corridors || [];
     const wp = selectedWaypointForZones;
     const wpc = { lat: wp.lat || wp.latitude, lng: wp.lng || wp.longitude };
 
@@ -955,7 +962,7 @@ const MonTerritoireBionicPage = () => {
         }
       })
       .catch(() => {});
-  }, [bionicZones.length, selectedWaypointForZones, bionicZonesData.corridors]);
+  }, [bionicZones.length, selectedWaypointForZones, bionicZonesData?.corridors]);
 
   // BIONIC V5 300% INVARIANT: Snapshot Territoire handler
   const handleGenerateSnapshot = useCallback(async (format) => {
@@ -1311,7 +1318,86 @@ const MonTerritoireBionicPage = () => {
           </button>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-          {/* ═══ 8a. CORRIDORS V10 — contrôle individuel inline ═══ */}
+          {/* ═══ 8a. ONGLET ZONES — Contrôle couches STEEVE-MAX ═══ */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all" data-testid="toolbar-zones-btn" title="Contrôle des couches">
+                <Layers className="h-3.5 w-3.5 text-emerald-400" />
+                <span className="text-emerald-400 hidden sm:inline">Zones</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" sideOffset={8} className="w-52 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
+              <div className="space-y-2.5">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Couches STEEVE-MAX</div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-emerald-400 font-medium">Zones</span>
+                  <Switch checked={showZonesLayer} onCheckedChange={setShowZonesLayer} className="scale-[0.6] data-[state=checked]:bg-emerald-500" data-testid="toggle-zones-layer" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-cyan-400 font-medium">Corridors</span>
+                  <Switch checked={showCorridorsLayer} onCheckedChange={setShowCorridorsLayer} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-layer" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-400 font-medium">Points</span>
+                  <Switch checked={showPointsLayer} onCheckedChange={setShowPointsLayer} className="scale-[0.6] data-[state=checked]:bg-gray-500" data-testid="toggle-points-layer" />
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+
+          {/* ═══ 8a2. ONGLET POINTS CHAUDS — Sélection comportementale ═══ */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={`h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all ${
+                  pointsChaudsMode ? 'bg-orange-500/15 text-orange-400' : 'text-gray-400'
+                }`}
+                data-testid="toolbar-points-chauds-btn"
+                title="Points chauds comportementaux"
+              >
+                <Flame className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Points chauds</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" sideOffset={8} className="w-56 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Points chauds</span>
+                  <Switch checked={pointsChaudsMode} onCheckedChange={(v) => { setPointsChaudsMode(v); if (v) setShowPointsLayer(true); }} className="scale-[0.6] data-[state=checked]:bg-orange-500" data-testid="toggle-points-chauds-mode" />
+                </div>
+                {pointsChaudsMode && (
+                  <div className="space-y-1.5 pt-1 border-t border-gray-700/40">
+                    {[
+                      { key: 'tous', label: 'Tous les points', color: 'text-white' },
+                      { key: 'alimentation', label: 'Alimentation', color: 'text-green-400' },
+                      { key: 'rut', label: 'Rut', color: 'text-orange-400' },
+                      { key: 'repos', label: 'Repos', color: 'text-blue-400' },
+                      { key: 'trajets', label: 'Trajets', color: 'text-yellow-400' },
+                      { key: 'affuts', label: 'Affûts', color: 'text-red-400' },
+                      { key: 'habitat', label: 'Habitat', color: 'text-teal-400' },
+                    ].map(item => (
+                      <button
+                        key={item.key}
+                        onClick={() => setPointsChaudsFilter(item.key)}
+                        className={`w-full text-left px-2 py-1 rounded text-xs font-medium transition-all ${
+                          pointsChaudsFilter === item.key
+                            ? `${item.color} bg-white/10`
+                            : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                        }`}
+                        data-testid={`points-chauds-filter-${item.key}`}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+
+          {/* ═══ 8a3. CORRIDORS V10 — contrôle individuel inline ═══ */}
           <div className="h-8 px-2 flex items-center gap-1.5 rounded-md" data-testid="toolbar-corridors-v10">
             <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 hidden sm:inline">Corridors V10</span>
             <Switch checked={showCorridors} onCheckedChange={setShowCorridors} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-v10" />
@@ -1487,6 +1573,11 @@ const MonTerritoireBionicPage = () => {
               huntingPathData={huntingPathData}
               showHuntingPath={showHuntingPath}
               onCorridorDataLoaded={setCorridorV10Data}
+              showZonesLayer={showZonesLayer}
+              showCorridorsLayer={showCorridorsLayer}
+              showPointsLayer={showPointsLayer}
+              pointsChaudsMode={pointsChaudsMode}
+              pointsChaudsFilter={pointsChaudsFilter}
             />
           </MapContainer>
 
@@ -1545,7 +1636,7 @@ const MonTerritoireBionicPage = () => {
               visibleZonesCount={visibleZonesCount}
               reloadZones={reloadZones}
               activeWaypoints={activeWaypoints}
-              corridors={bionicZonesData.corridors || []}
+              corridors={bionicZonesData?.corridors || []}
               selectedWaypointForZones={selectedWaypointForZones}
               clearWaypointTarget={clearWaypointTarget}
               handleDeleteWaypoint={handleDeleteWaypoint}

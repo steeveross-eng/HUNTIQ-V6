@@ -97,6 +97,11 @@ const BionicCorridorsV10Layer = ({
   opacity = 0.55,
   minPercentage = 30,
   onDataLoaded = null,
+  showZones = true,
+  showCorridorsLayer = true,
+  showPoints = true,
+  pointsChaudsMode = false,
+  pointsChaudsFilter = 'tous',
 }) => {
   const map = useMap();
   const layerGroupRef = useRef(null);
@@ -136,7 +141,6 @@ const BionicCorridorsV10Layer = ({
     const group = L.layerGroup();
     const features = data.geojson?.features || [];
 
-    // Séparer corridors, polygones de zones, et points de zones
     const allCorridors = features
       .filter(f => f.geometry.type === 'LineString')
       .sort((a, b) => (LEVEL_ZINDEX[a.properties.niveau] || 0) - (LEVEL_ZINDEX[b.properties.niveau] || 0));
@@ -145,127 +149,166 @@ const BionicCorridorsV10Layer = ({
     const zonePoints = features.filter(f => f.geometry.type === 'Point');
 
     // ═══ COUCHE 1 (Z-BAS): Zones polygonales organiques — BCE-4X protégées ═══
-    for (const feature of zonePolygons) {
-      const rings = feature.geometry.coordinates[0].map(c => [c[1], c[0]]);
-      const props = feature.properties;
-      const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
-      const contourColor = darkenHex(zc, 0.82);
-
-      const polygon = L.polygon(rings, {
-        color: zc,
-        weight: 3,
-        opacity: 1.0,
-        fillColor: 'transparent',
-        fillOpacity: 0,
-        lineCap: 'round',
-        lineJoin: 'round',
-      });
-      polygon.bindTooltip(
-        `<div style="font-size:12px;font-weight:600;color:${zc}">
-          ${props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)}
-        </div>
-        <div style="font-size:11px;color:#555">Score: ${props.score} | ${sp}</div>`,
-        { sticky: true, opacity: 0.95 }
-      );
-      polygon.on('mouseover', function() {
-        this.setStyle({ weight: 4, opacity: 1.0 });
-      });
-      polygon.on('mouseout', function() {
-        this.setStyle({ weight: 3, opacity: 1.0 });
-      });
-      group.addLayer(polygon);
-    }
-
-    // Fallback: rendu points si pas de polygones (compatibilite)
-    if (zonePolygons.length === 0) {
-      for (const feature of zonePoints) {
-        const [lng, lat] = feature.geometry.coordinates;
+    if (showZones) {
+      for (const feature of zonePolygons) {
+        const rings = feature.geometry.coordinates[0].map(c => [c[1], c[0]]);
         const props = feature.properties;
         const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
-        const c = L.circleMarker([lat, lng], {
-          radius: 6, fillColor: zc, color: darkenHex(zc, 0.82),
-          weight: 1.5, fillOpacity: 0.8, opacity: 0.9,
+
+        const polygon = L.polygon(rings, {
+          color: zc,
+          weight: 3,
+          opacity: 1.0,
+          fillColor: 'transparent',
+          fillOpacity: 0,
+          lineCap: 'round',
+          lineJoin: 'round',
         });
-        c.bindTooltip(
-          `<span style="font-size:11px;font-weight:600;color:${zc}">${
-            props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
-          }</span>`,
-          { sticky: true }
+        polygon.bindTooltip(
+          `<div style="font-size:12px;font-weight:600;color:${zc}">
+            ${props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)}
+          </div>
+          <div style="font-size:11px;color:#555">Score: ${props.score} | ${sp}</div>`,
+          { sticky: true, opacity: 0.95 }
         );
-        group.addLayer(c);
+        polygon.on('mouseover', function() {
+          this.setStyle({ weight: 4, opacity: 1.0 });
+        });
+        polygon.on('mouseout', function() {
+          this.setStyle({ weight: 3, opacity: 1.0 });
+        });
+        group.addLayer(polygon);
+      }
+
+      // Fallback points si pas de polygones
+      if (zonePolygons.length === 0) {
+        for (const feature of zonePoints) {
+          const [lng, lat] = feature.geometry.coordinates;
+          const props = feature.properties;
+          const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
+          const c = L.circleMarker([lat, lng], {
+            radius: 6, fillColor: zc, color: darkenHex(zc, 0.82),
+            weight: 1.5, fillOpacity: 0.8, opacity: 0.9,
+          });
+          c.bindTooltip(
+            `<span style="font-size:11px;font-weight:600;color:${zc}">${
+              props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
+            }</span>`,
+            { sticky: true }
+          );
+          group.addLayer(c);
+        }
       }
     }
 
-    // ═══ COUCHE 2 (Z-MILIEU): Corridors filtrés par seuil minimum ═══
-    // Steeve-MAX: filtrage dynamique par slider, pas d'effet filet/toile d'araignée
+    // ═══ COUCHE 2 (Z-MILIEU): Corridors filtrés ═══
+    // Note: corridors declared outside block to avoid "corridors is not defined" error in callback
     const corridors = allCorridors.filter(f => (f.properties.score || 0) >= minPercentage);
+    
+    if (showCorridorsLayer) {
+      for (const feature of corridors) {
+        const raw = feature.geometry.coordinates.map(c => [c[1], c[0]]);
+        if (raw.length < 2) continue;
 
-    for (const feature of corridors) {
-      const raw = feature.geometry.coordinates.map(c => [c[1], c[0]]);
-      if (raw.length < 2) continue;
+        const coords = simplifyPath(raw);
+        const props = feature.properties;
+        const style = precomputedStyles[props.niveau] || precomputedStyles.FORT;
 
-      const coords = simplifyPath(raw);
-      const props = feature.properties;
-      const style = precomputedStyles[props.niveau] || precomputedStyles.FORT;
+        group.addLayer(L.polyline(coords, style.contour));
 
-      // Contour sombre léger
-      group.addLayer(L.polyline(coords, style.contour));
+        const line = L.polyline(coords, style.main);
+        line.bindTooltip(
+          `<div style="font-size:12px;font-weight:600;color:${CORRIDOR_PALETTE[props.niveau]?.color || '#FF8C00'}">
+            ${CORRIDOR_PALETTE[props.niveau]?.label || props.niveau} (${props.score}/100)
+          </div>
+          <div style="font-size:11px;color:#555">
+            ${props.from_type} → ${props.to_type} | ${props.largeur_m}m
+          </div>`,
+          { sticky: true, opacity: 0.95 }
+        );
+        line.on('mouseover', function() { this.setStyle(style.hover); });
+        line.on('mouseout', function() { this.setStyle(style.restore); });
+        group.addLayer(line);
 
-      // Main line
-      const line = L.polyline(coords, style.main);
-      line.bindTooltip(
-        `<div style="font-size:12px;font-weight:600;color:${CORRIDOR_PALETTE[props.niveau]?.color || '#FF8C00'}">
-          ${CORRIDOR_PALETTE[props.niveau]?.label || props.niveau} (${props.score}/100)
-        </div>
-        <div style="font-size:11px;color:#555">
-          ${props.from_type} → ${props.to_type} | ${props.largeur_m}m
-        </div>`,
-        { sticky: true, opacity: 0.95 }
-      );
-      line.on('mouseover', function() { this.setStyle(style.hover); });
-      line.on('mouseout', function() { this.setStyle(style.restore); });
-      group.addLayer(line);
-
-      // Micro-hachures diagonales (CRITIQUE uniquement — densité +20%)
-      if (style.hachure) {
-        group.addLayer(L.polyline(coords, style.hachure));
+        if (style.hachure) {
+          group.addLayer(L.polyline(coords, style.hachure));
+        }
       }
     }
 
     // ═══ COUCHE 3 (Z-HAUT): Points centraux — BCE-4X protégés ═══
-    // STEEVE-MAX: Points = overlay léger, NON dominant
-    // Filtrage comportemental: 1 centroïde représentatif par polygone (16 pts, pas 64)
-    for (const feature of zonePolygons) {
-      const props = feature.properties;
-      const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
-      const centers = props.all_centers || [];
+    if (showPoints) {
+      // MODE POINTS CHAUDS: tous les 64 points, style rétabli (version précédente)
+      // MODE NORMAL: 16 centroïdes représentatifs, style overlay léger
+      const isChaud = pointsChaudsMode;
 
-      // Centroïde représentatif = centre avec le score le plus élevé
-      let representative = null;
-      if (centers.length > 0) {
-        representative = centers.reduce((best, c) =>
-          (c.score || 0) > (best.score || 0) ? c : best, centers[0]
-        );
-      } else if (props.center_lat && props.center_lng) {
-        representative = { lat: props.center_lat, lng: props.center_lng, score: props.score };
-      }
+      for (const feature of zonePolygons) {
+        const props = feature.properties;
+        const zc = ZONE_COLORS[props.zone_type] || '#9E9E9E';
+        const centers = props.all_centers || [];
 
-      if (representative && representative.lat && representative.lng) {
-        const marker = L.circleMarker([representative.lat, representative.lng], {
-          radius: 3,
-          fillColor: zc,
-          color: '#FFFFFF',
-          weight: 1,
-          fillOpacity: 0.30,
-          opacity: 0.35,
-        });
-        marker.bindTooltip(
-          `<span style="font-size:11px;font-weight:600;color:${zc}">${
-            props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
-          } — ${Math.round((representative.score || 0) * 100)}% (${centers.length} pts)</span>`,
-          { sticky: true }
-        );
-        group.addLayer(marker);
+        // Filtrage par type en mode POINTS CHAUDS
+        if (isChaud && pointsChaudsFilter !== 'tous') {
+          const filterMap = {
+            alimentation: 'alimentation',
+            rut: 'rut',
+            repos: 'repos',
+            trajets: 'alimentation',
+            affuts: 'rut',
+            habitat: 'repos',
+          };
+          if (props.zone_type !== filterMap[pointsChaudsFilter]) continue;
+        }
+
+        if (isChaud) {
+          // Mode POINTS CHAUDS: TOUS les 64 centres, style rétabli
+          for (const center of centers) {
+            if (!center.lat || !center.lng) continue;
+            const marker = L.circleMarker([center.lat, center.lng], {
+              radius: 5,
+              fillColor: zc,
+              color: '#FFFFFF',
+              weight: 2,
+              fillOpacity: 0.85,
+              opacity: 1.0,
+            });
+            marker.bindTooltip(
+              `<span style="font-size:11px;font-weight:600;color:${zc}">${
+                props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
+              } — ${Math.round((center.score || 0) * 100)}%</span>`,
+              { sticky: true }
+            );
+            group.addLayer(marker);
+          }
+        } else {
+          // Mode NORMAL: 1 centroïde représentatif par polygone
+          let representative = null;
+          if (centers.length > 0) {
+            representative = centers.reduce((best, c) =>
+              (c.score || 0) > (best.score || 0) ? c : best, centers[0]
+            );
+          } else if (props.center_lat && props.center_lng) {
+            representative = { lat: props.center_lat, lng: props.center_lng, score: props.score };
+          }
+
+          if (representative && representative.lat && representative.lng) {
+            const marker = L.circleMarker([representative.lat, representative.lng], {
+              radius: 4,
+              fillColor: zc,
+              color: '#FFFFFF',
+              weight: 1,
+              fillOpacity: 0.65,
+              opacity: 0.70,
+            });
+            marker.bindTooltip(
+              `<span style="font-size:11px;font-weight:600;color:${zc}">${
+                props.zone_type.charAt(0).toUpperCase() + props.zone_type.slice(1)
+              } — ${Math.round((representative.score || 0) * 100)}% (${centers.length} pts)</span>`,
+              { sticky: true }
+            );
+            group.addLayer(marker);
+          }
+        }
       }
     }
 
@@ -284,7 +327,7 @@ const BionicCorridorsV10Layer = ({
         species: sp,
       });
     }
-  }, [map, clearLayers, precomputedStyles, minPercentage, onDataLoaded]);
+  }, [map, clearLayers, precomputedStyles, minPercentage, onDataLoaded, showZones, showCorridorsLayer, showPoints, pointsChaudsMode, pointsChaudsFilter]);
 
   const fetchAndRender = useCallback(async () => {
     if (!center || !enabled) {
@@ -352,12 +395,12 @@ const BionicCorridorsV10Layer = ({
     }, 200);
   }, [center, species, month, enabled, clearLayers, renderData]);
 
-  // Re-render quand le seuil minimum change (données déjà en cache)
+  // Re-render quand le seuil minimum ou les contrôles de visibilité changent
   useEffect(() => {
     if (cachedDataRef.current && cachedSpeciesRef.current) {
       renderData(cachedDataRef.current, cachedSpeciesRef.current);
     }
-  }, [minPercentage, renderData]);
+  }, [minPercentage, showZones, showCorridorsLayer, showPoints, pointsChaudsMode, pointsChaudsFilter, renderData]);
 
   useEffect(() => {
     fetchAndRender();
