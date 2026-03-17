@@ -117,6 +117,25 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - GET /api/v10/corridors/profile/{species}
 - GET /api/v10/corridors/documentation
 
+### STEVE-MAX-MULTI — Consolidation 7 Engines (2026-03-17) — iteration_41 (21/21)
+- **Multi-engine module** (`multi_engine.py`):
+  - 7 attracteurs V1: alimentation_v1, rut_v1, repos_v1, trajets_v1, affuts_v1, habitat_v1, corridors_v10
+  - Ponderations normatives: 12-18% par engine, boost 25% pour engine primaire
+  - Consolidation: 55% base type + 45% multi-engine
+  - Registre ENGINE_REGISTRY pour validation et diagnostic
+- **Backend engine.py**: BFS utilise `score_cell_multi_engine()` pour scoring consolide
+  - Buffer d_lat*1.5, simplify d_lat*0.6, Chaikin 3 iterations
+  - Post-validation polygone (buffer(0) auto-repair self-intersections)
+  - Metadata GeoJSON: engine=STEVE-MAX-MULTI, engines_count=7, engines_active
+- **Firewall BCE-4X etendu**: 13 tests (9 geometriques + 4 multi-engine)
+  - test_firewall_multi_engine_metadata, test_firewall_7_engines_active
+  - test_firewall_centers_invariance, test_firewall_surface_invariance
+- **Hierarchie visuelle permanente**:
+  - DOMINANT: Zones (weight=3, opacity=1.0, fillOpacity=0)
+  - SECONDAIRE: Corridors (opacity=0.30, weights 1-2)
+  - TERTIAIRE: Points (radius=4, fillOpacity=0.85)
+- Tests: Backend 13/13 + Frontend 8/8 = 21/21 (100%), 0 regression
+
 ### COMMANDE FINALE — Hierarchie Visuelle STEEVE-MAX (2026-03-17) — iteration_40 (17/17)
 - **Frontend BionicCorridorsV10Layer.jsx**: Hierarchie visuelle stricte
   - DOMINANT: Zones contours (weight=3, opacity=1.0, fillOpacity=0)
