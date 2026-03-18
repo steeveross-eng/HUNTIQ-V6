@@ -18,9 +18,9 @@ import {
 // Lazy load pages for code splitting
 const HomePage = lazy(() => import('@/pages/HomePage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
-const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
-const ForecastPage = lazy(() => import('@/pages/ForecastPage'));
-const PlanMaitrePage = lazy(() => import('@/pages/PlanMaitrePage'));
+const AnalyticsPage = lazy(() => import('@/pages/intelligence/AnalyticsPage'));
+const ForecastPage = lazy(() => import('@/pages/intelligence/ForecastPage'));
+const PlanMaitrePage = lazy(() => import('@/pages/intelligence/PlanMaitrePage'));
 const MapPage = lazy(() => import('@/pages/MapPage'));
 const MonTerritoireBionicPage = lazy(() => import('@/pages/MonTerritoireBionicPage'));
 const TripsPage = lazy(() => import('@/pages/TripsPage'));

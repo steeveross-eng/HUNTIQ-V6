@@ -55,10 +55,10 @@ const ShopPage = lazy(() => import("@/pages").then(m => ({ default: m.ShopPage }
 const ComparePage = lazy(() => import("@/pages").then(m => ({ default: m.ComparePage })));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const BusinessPage = lazy(() => import("@/pages/BusinessPage"));
-const PlanMaitrePage = lazy(() => import("@/pages/PlanMaitrePage"));
-const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
+const PlanMaitrePage = lazy(() => import("@/pages/intelligence/PlanMaitrePage"));
+const AnalyticsPage = lazy(() => import("@/pages/intelligence/AnalyticsPage"));
 const MapPage = lazy(() => import("@/pages/MapPage"));
-const ForecastPage = lazy(() => import("@/pages/ForecastPage"));
+const ForecastPage = lazy(() => import("@/pages/intelligence/ForecastPage"));
 const AdminGeoPage = lazy(() => import("@/pages/AdminGeoPage"));
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
 const PricingPage = lazy(() => import("@/pages/PricingPage"));

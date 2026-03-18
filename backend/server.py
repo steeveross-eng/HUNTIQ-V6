@@ -506,81 +506,13 @@ except Exception as e:
     logger.warning(f"SCORE-CONSOLIDE not loaded: {e}")
 
 
-# ═══ ENGINE REGISTRY V3 — Architecture auto-adaptative ═══
+# ═══ ENGINE REGISTRY V3 — API Gateway auto-adaptative ═══
 try:
-    from modules.engine_registry.registry import EngineRegistry, DynamicConsolidator
-    from fastapi import Query as _Q3
-
-    _global_registry = EngineRegistry()
-    _global_registry.auto_discover()
-    _global_consolidator = DynamicConsolidator(_global_registry)
-
-    @app.get("/api/v3/engines/registry", tags=["ENGINE-REGISTRY-V3"])
-    async def get_engine_registry():
-        """Manifest dynamique des moteurs — consommable par INTELLIGENCE."""
-        return _global_registry.manifest()
-
-    @app.get("/api/v3/engines/score-point", tags=["ENGINE-REGISTRY-V3"])
-    async def v3_score_point(
-        lat: float = _Q3(...), lng: float = _Q3(...),
-        species: str = _Q3("CHEVREUIL"), month: int = _Q3(10, ge=1, le=12),
-        exclude: str = _Q3("", description="Moteurs à exclure (séparés par virgule)"),
-    ):
-        """Score consolidé dynamique via le registry."""
-        excluded = [e.strip() for e in exclude.split(",") if e.strip()]
-        return _global_consolidator.score_point(lat, lng, species, month, exclude_engines=excluded)
-
-    @app.get("/api/v3/engines/score-grid", tags=["ENGINE-REGISTRY-V3"])
-    async def v3_score_grid(
-        lat: float = _Q3(...), lng: float = _Q3(...),
-        species: str = _Q3("CHEVREUIL"), month: int = _Q3(10, ge=1, le=12),
-        grid_size: int = _Q3(20, ge=5, le=40),
-        exclude: str = _Q3("", description="Moteurs à exclure"),
-    ):
-        """Grille de scores consolidée dynamique via le registry."""
-        excluded = [e.strip() for e in exclude.split(",") if e.strip()]
-        return _global_consolidator.score_grid(lat, lng, species, month, grid_size, exclude_engines=excluded)
-
-    @app.get("/api/v3/engines/{engine_name}/score", tags=["ENGINE-REGISTRY-V3"])
-    async def v3_engine_individual_score(
-        engine_name: str,
-        lat: float = _Q3(...), lng: float = _Q3(...),
-        species: str = _Q3("CHEVREUIL"), month: int = _Q3(10, ge=1, le=12),
-    ):
-        """Score d'un moteur individuel par nom."""
-        engine = _global_registry.get(engine_name)
-        if not engine:
-            return {"error": f"Moteur '{engine_name}' introuvable", "available": _global_registry.list_engines()}
-        from modules.engine_registry.base import resolve_species
-        sp = resolve_species(species)
-        result = engine.score_point(lat, lng, sp, month)
-        meta = engine.meta()
-        return {
-            "engine": meta.name, "version": meta.version, "domain": meta.domain,
-            "species": sp, "month": month, "lat": lat, "lng": lng,
-            **result.to_dict(),
-        }
-
-    @app.get("/api/v3/engines/validate", tags=["ENGINE-REGISTRY-V3"])
-    async def v3_validate_bce4x():
-        """Exécute la validation BCE-4X + STEEVE-MAX en temps réel."""
-        import sys
-        sys.path.insert(0, "/app")
-        from bionic.bce4x.BCE4XGuard import BCE4XGuard
-        from bionic.steevemax.SteeveMaxRules import SteeveMaxRules
-        bce = BCE4XGuard()
-        bce_report = bce.run_all()
-        sm = SteeveMaxRules()
-        sm_report = sm.run_all()
-        return {
-            "overall_compliant": bce_report["compliant"] and sm_report["compliant"],
-            "bce4x": {"passed": bce_report["passed"], "total": bce_report["total_tests"], "compliant": bce_report["compliant"]},
-            "steeve_max": {"passed": sm_report["passed"], "total": sm_report["total_tests"], "compliant": sm_report["compliant"]},
-        }
-
-    logger.info(f"✓ ENGINE-REGISTRY-V3: {len(_global_registry.list_engines())} moteurs auto-détectés")
+    from modules.api_gateway import gateway_v3_router
+    app.include_router(gateway_v3_router)
+    logger.info("✓ API-GATEWAY-V3: Routeur unifié /api/v3/* enregistré")
 except Exception as e:
-    logger.warning(f"ENGINE-REGISTRY-V3 not loaded: {e}")
+    logger.warning(f"API-GATEWAY-V3 not loaded: {e}")
 
 
 logger.info("=" * 60)
