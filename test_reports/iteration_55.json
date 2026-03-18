@@ -1,0 +1,111 @@
+{
+  "summary": "CORRIDORS-V10 ecological engine testing completed. Lite/Pro modes are ABOLISHED — no references in UI or code. Heatmap V10 is now 100% transparent (data-only component, zero visual rendering). Corridors V10 toggle visible in Zones > Overlays. All features verified: ZONES 12, V10 corridors 15/14.1km/score 67, ALIMENTATION badge '4'. Backend API /api/v1/score-consolide/heatmap correctly handles include_corridors param (1 or 0).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api": {
+      "endpoint": "GET /api/v1/score-consolide/heatmap",
+      "status": "PASS - 8/8 tests passed",
+      "tests": {
+        "include_corridors_1": "PASS - corridors_v10_included=true, corridors_v10 in engines_integrated",
+        "include_corridors_0": "PASS - corridors_v10_included=false, corridors_v10 NOT in engines_integrated",
+        "score_difference": "PASS - Score 56.9 with corridors, 56.2 without",
+        "grid_400_points": "PASS - total_points=400 for 20x20 grid",
+        "point_structure": "PASS - lat, lng, score, classe, color fields verified",
+        "weights_sum_to_one": "PASS - weights sum to 1.0",
+        "multiple_species": "PASS - CERF, OURS, DINDON all supported",
+        "no_lite_pro_in_api": "PASS - No Lite/Pro references in API response"
+      }
+    },
+    "frontend_ui": {
+      "status": "PASS",
+      "tests": {
+        "no_mode_lite_text": "PASS - No 'Mode Lite' text anywhere in UI (ABOLISHED)",
+        "no_mode_pro_text": "PASS - No 'Mode Pro' text anywhere in UI (ABOLISHED)",
+        "no_heatmap_lite_text": "PASS - No 'Heatmap Lite' text (ABOLISHED)",
+        "no_heatmap_pro_text": "PASS - No 'Heatmap Pro' text (ABOLISHED)",
+        "heatmap_v10_toggle": "PASS - data-testid='layer-toggle-heatmap-v10' visible in Zones > Overlays",
+        "corridors_v10_toggle": "PASS - data-testid='heatmap-toggle-corridors' visible when Heatmap V10 ON",
+        "heatmap_indicator": "PASS - data-testid='heatmap-v10-indicator' shows 'Score V10' and score",
+        "indicator_sans_corridors": "PASS - Indicator shows '(sans corridors)' when toggle OFF",
+        "map_transparency": "PASS - Satellite imagery visible with NO heatmap color overlay",
+        "critical_corridors": "PASS - Orange-red pulsing corridors visually dominant on map"
+      }
+    },
+    "no_regression": {
+      "status": "PASS",
+      "tests": {
+        "zones_count": "PASS - 12 zones visible in sidebar",
+        "corridors_v10": "PASS - 15 corridors, 14.1km, score 67 displayed",
+        "alimentation_badge": "PASS - Badge shows '4'",
+        "toolbar_buttons": "PASS - All 8 toolbar buttons functional (Split, Carte, Espece, Observation, Analyse, Zones, Alimentation, Points chauds)"
+      }
+    }
+  },
+  "code_review": {
+    "ConsolidatedHeatmapLayer.jsx": {
+      "status": "PASS - Pure data-only component",
+      "verification": {
+        "no_useMap": "CONFIRMED - No useMap hook (no Leaflet rendering)",
+        "no_gradient": "CONFIRMED - No gradient or color definitions",
+        "no_canvas": "CONFIRMED - No canvas or visual rendering",
+        "data_only": "CONFIRMED - Only fetches data and calls onDataLoaded callback",
+        "returns_null": "CONFIRMED - Returns null (no DOM elements)"
+      }
+    },
+    "MonTerritoireBionicPage.jsx": {
+      "no_lite_pro_refs": "CONFIRMED - No 'Mode Lite', 'Mode Pro', 'isArchitecteMode' references",
+      "heatmap_toggle": "Line 1398-1409 - Heatmap V10 toggle in Overlays section",
+      "corridors_toggle": "Line 1410-1422 - Corridors V10 sub-toggle (visible when Heatmap V10 ON)"
+    },
+    "MapContent.jsx": {
+      "heatmap_props": "PASS - Passes heatmapIncludeCorridors to ConsolidatedHeatmapLayer",
+      "no_isArchitecteMode": "CONFIRMED - No isArchitecteMode prop"
+    },
+    "score_consolide.py": {
+      "include_corridors_param": "PASS - compute_heatmap_grid accepts include_corridors boolean",
+      "corridors_excluded_properly": "PASS - When include_corridors=False, corridors_v10 excluded from weights"
+    }
+  },
+  "features_verified": {
+    "lite_pro_abolished": "PASS - No Lite/Pro modes anywhere in UI or code",
+    "100_percent_transparent_heatmap": "PASS - ConsolidatedHeatmapLayer is data-only, zero visual rendering",
+    "corridors_v10_toggle_in_overlays": "PASS - Visible in Zones > Overlays when Heatmap V10 ON",
+    "heatmap_v10_toggle_in_overlays": "PASS - data-testid='layer-toggle-heatmap-v10' working",
+    "backend_include_corridors_api": "PASS - /api/v1/score-consolide/heatmap supports include_corridors param",
+    "indicator_score_v10": "PASS - Shows 'Score V10' and score value",
+    "indicator_sans_corridors_suffix": "PASS - Shows '(sans corridors)' when toggle OFF",
+    "satellite_imagery_visible": "PASS - No heatmap color overlay blocking satellite view",
+    "critical_corridors_dominant": "PASS - Orange-red pulsing corridors visible on map"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_corridors_v10_transparent_mode.py",
+    "/app/test_reports/pytest/corridors_v10_transparent_mode_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_corridors_v10_transparent_mode.py"
+  ],
+  "success_rate": {
+    "backend": "100% (8/8 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "admin_architecte_password": "Saturn5858*"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CORRIDORS-V10 100% transparent mode verified. Lite/Pro modes ABOLISHED completely. ConsolidatedHeatmapLayer.jsx is now pure data-only (returns null, no Leaflet rendering). The Zones popover (data-testid='toolbar-zones-btn') shows Overlays section with 'Heatmap V10' toggle (data-testid='layer-toggle-heatmap-v10') and 'Corridors V10' sub-toggle (data-testid='heatmap-toggle-corridors'). The indicator (data-testid='heatmap-v10-indicator') shows 'Score V10' and score, with '(sans corridors)' suffix when toggle OFF. All previous features intact: ZONES 12, V10 corridors 15/14.1km/67, ALIMENTATION badge '4'.",
+  "verification_date": "2026-01-18",
+  "testing_focus": "CORRIDORS-V10 100% Transparent Mode — Lite/Pro ABOLISHED"
+}

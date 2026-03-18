@@ -1409,9 +1409,6 @@ const MonTerritoireBionicPage = () => {
                   </button>
                   {showHeatmapV10 && (
                     <div className="ml-3 pl-2 border-l border-orange-800/30 space-y-1 pt-0.5">
-                      <div className="text-[8px] text-gray-600 uppercase font-bold tracking-wider">
-                        {adminArchitecteMode ? 'Mode Pro' : 'Mode Lite'}
-                      </div>
                       <button
                         onClick={() => setHeatmapIncludeCorridors(!heatmapIncludeCorridors)}
                         className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
@@ -1779,7 +1776,6 @@ const MonTerritoireBionicPage = () => {
               waypointCenter={waypointCenter}
               showHeatmapV10={showHeatmapV10}
               onHeatmapDataLoaded={setHeatmapV10Data}
-              isArchitecteMode={adminArchitecteMode}
               heatmapIncludeCorridors={heatmapIncludeCorridors}
             />
           </MapContainer>
@@ -1820,8 +1816,7 @@ const MonTerritoireBionicPage = () => {
               <div className="flex items-center gap-1.5 px-2 py-1 bg-[#0c0c14]/85 border border-gray-700/40 rounded backdrop-blur-sm">
                 <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 via-yellow-500 to-red-500 flex-shrink-0" />
                 <span className="text-[8px] text-gray-400 font-medium">
-                  Heatmap {adminArchitecteMode ? 'Pro' : 'Lite'}
-                  {!heatmapIncludeCorridors && ' (sans V10)'}
+                  Score V10{!heatmapIncludeCorridors && ' (sans corridors)'}
                 </span>
                 <span className="text-[8px] text-gray-500">{heatmapV10Data.score_avg}/100</span>
               </div>

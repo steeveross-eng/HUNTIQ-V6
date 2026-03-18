@@ -90,7 +90,6 @@ const MapContentInner = React.memo(({
   // HEATMAP V10 consolidée
   showHeatmapV10,
   onHeatmapDataLoaded,
-  isArchitecteMode,
   heatmapIncludeCorridors,
   // STEEVE-MAX UX: Contrôles couches et points chauds
   showZonesLayer,
@@ -154,16 +153,14 @@ const MapContentInner = React.memo(({
 
     <ShootingZones zones={[]} currentUserId={userId} dangerAlerts={[]} members={[]} onZoneClick={null} showOwnZone={true} showOtherZones={true} showDangerIndicators={true} />
 
-    {/* HEATMAP CONSOLIDÉE V10: Score multi-moteurs thermique (couche base) */}
+    {/* SCORE CONSOLIDÉ V10: Data-only (100% transparent, zero rendu graphique) */}
     {selectedWaypointForZones && showHeatmapV10 && waypointCenter && (
       <ConsolidatedHeatmapLayer
         center={waypointCenter}
         species={selectedSpecies}
         month={new Date().getMonth() + 1}
         enabled={showHeatmapV10}
-        opacity={isArchitecteMode ? 0.45 : 0.15}
         onDataLoaded={onHeatmapDataLoaded}
-        isArchitecteMode={isArchitecteMode}
         includeCorridors={heatmapIncludeCorridors}
       />
     )}
