@@ -94,6 +94,8 @@ const MapContentInner = React.memo(({
   zoneSubFilters,
   corridorSubFilters,
   pointSubFilters,
+  // STABILITÉ V2: Centre memoizé
+  waypointCenter,
 }) => (
   <>
     <EcoforestryLayers
@@ -146,12 +148,9 @@ const MapContentInner = React.memo(({
     <ShootingZones zones={[]} currentUserId={userId} dangerAlerts={[]} members={[]} onZoneClick={null} showOwnZone={true} showOtherZones={true} showDangerIndicators={true} />
 
     {/* CORRIDORS-V10: Couche corridors fauniques — palette normative (SEULE couche active) */}
-    {selectedWaypointForZones && showCorridors && (
+    {selectedWaypointForZones && showCorridors && waypointCenter && (
       <BionicCorridorsV10Layer
-        center={{
-          lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
-          lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
-        }}
+        center={waypointCenter}
         species={selectedSpecies}
         month={new Date().getMonth() + 1}
         enabled={showCorridors}
@@ -170,12 +169,9 @@ const MapContentInner = React.memo(({
     )}
 
     {/* ALIMENTATION-V2: Salines optimales dans la zone 2km×2km */}
-    {selectedWaypointForZones && showAlimentationV2 && (
+    {selectedWaypointForZones && showAlimentationV2 && waypointCenter && (
       <AlimentationV2Layer
-        center={{
-          lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
-          lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
-        }}
+        center={waypointCenter}
         species={selectedSpecies}
         month={new Date().getMonth() + 1}
         enabled={showAlimentationV2}

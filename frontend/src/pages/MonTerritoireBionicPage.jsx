@@ -502,6 +502,15 @@ const MonTerritoireBionicPage = () => {
   const [showNutritionPanel, setShowNutritionPanel] = useState(false);
   const [alimentationV2Data, setAlimentationV2Data] = useState(null);
 
+  // STABILITÉ V2: Centre memoizé pour éviter re-render cascade dans les layers enfants
+  const waypointCenter = useMemo(() => {
+    if (!selectedWaypointForZones) return null;
+    return {
+      lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
+      lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
+    };
+  }, [selectedWaypointForZones?.lat, selectedWaypointForZones?.lng, selectedWaypointForZones?.latitude, selectedWaypointForZones?.longitude]);
+
   // STEEVE-MAX V3: Sous-éléments granulaires par couche
   const [zoneSubFilters, setZoneSubFilters] = useState({
     alimentation: true, repos: true, rut: true, habitat: true, affuts: true, trajets: true, multiEngines: true,
@@ -1380,7 +1389,55 @@ const MonTerritoireBionicPage = () => {
           </Popover>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-          {/* ═══ 8a2. ONGLET POINTS CHAUDS — Sélection comportementale ═══ */}
+          {/* ═══ 8a2. ONGLET ALIMENTATION — ALIMENTATION-V2 (Position STEEVE-MAX: avant POINTS CHAUDS) ═══ */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${
+                  showAlimentationV2 ? 'bg-yellow-500/15 text-yellow-400' : 'text-gray-400 hover:bg-white/5'
+                }`}
+                data-testid="toolbar-alimentation-btn"
+                title="Sites d'alimentation V2"
+              >
+                <Droplets className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Alimentation</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" sideOffset={8} className="w-64 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Alimentation V2</span>
+                  <Switch checked={showAlimentationV2} onCheckedChange={setShowAlimentationV2} className="scale-[0.6] data-[state=checked]:bg-yellow-500" data-testid="toggle-alimentation-v2-master" />
+                </div>
+                <div className="space-y-1.5 pt-1 border-t border-gray-700/40">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-yellow-400 font-medium">Salines</span>
+                    <Switch checked={showSalines} onCheckedChange={setShowSalines} className="scale-[0.6] data-[state=checked]:bg-yellow-500" data-testid="toggle-salines" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-amber-300 font-medium">Recommandations</span>
+                    <Switch checked={showNutritionPanel} onCheckedChange={setShowNutritionPanel} className="scale-[0.6] data-[state=checked]:bg-amber-500" data-testid="toggle-nutrition-panel" />
+                  </div>
+                </div>
+                {alimentationV2Data && (
+                  <div className="pt-2 border-t border-gray-700/50 space-y-1">
+                    <div className="text-[9px] text-gray-500 uppercase font-bold">Résumé zone</div>
+                    <div className="text-xs text-white">Score: <span className="text-yellow-400 font-bold">{alimentationV2Data.score_global}/100</span></div>
+                    <div className="text-xs text-gray-400">Salines: <span className="text-yellow-300">{alimentationV2Data.n_salines}</span></div>
+                    <div className="text-xs text-gray-400">Espèce: <span className="text-yellow-300">{alimentationV2Data.species_nom}</span></div>
+                    {alimentationV2Data.carences_detectees?.length > 0 && (
+                      <div className="text-[10px] text-red-400 mt-1">
+                        Carences: {alimentationV2Data.carences_detectees.map(c => c.element).join(', ')}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+
+          {/* ═══ 8a3. ONGLET POINTS CHAUDS — Sélection comportementale ═══ */}
           <Popover>
             <PopoverTrigger asChild>
               <button
@@ -1424,43 +1481,6 @@ const MonTerritoireBionicPage = () => {
                         {item.label}
                       </button>
                     ))}
-                  </div>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 8a3. ONGLET SITES D'ALIMENTATION — ALIMENTATION-V2 ═══ */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all" data-testid="toolbar-alimentation-btn" title="Sites d'alimentation V2">
-                <Droplets className="h-3.5 w-3.5 text-yellow-400" />
-                <span className="text-yellow-400 hidden sm:inline">Alimentation</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={8} className="w-60 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
-              <div className="space-y-2">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Alimentation V2</div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-yellow-400 font-medium">Salines</span>
-                  <Switch checked={showSalines} onCheckedChange={setShowSalines} className="scale-[0.6] data-[state=checked]:bg-yellow-500" data-testid="toggle-salines" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-amber-300 font-medium">Recommandations</span>
-                  <Switch checked={showNutritionPanel} onCheckedChange={setShowNutritionPanel} className="scale-[0.6] data-[state=checked]:bg-amber-500" data-testid="toggle-nutrition-panel" />
-                </div>
-                {alimentationV2Data && (
-                  <div className="pt-2 border-t border-gray-700/50 space-y-1">
-                    <div className="text-[9px] text-gray-500 uppercase font-bold">Résumé zone</div>
-                    <div className="text-xs text-white">Score: <span className="text-yellow-400 font-bold">{alimentationV2Data.score_global}/100</span></div>
-                    <div className="text-xs text-gray-400">Salines: <span className="text-yellow-300">{alimentationV2Data.n_salines}</span></div>
-                    <div className="text-xs text-gray-400">Espèce: <span className="text-yellow-300">{alimentationV2Data.species_nom}</span></div>
-                    {alimentationV2Data.carences_detectees?.length > 0 && (
-                      <div className="text-[10px] text-red-400 mt-1">
-                        Carences: {alimentationV2Data.carences_detectees.map(c => c.element).join(', ')}
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -1647,6 +1667,7 @@ const MonTerritoireBionicPage = () => {
               showAlimentationV2={showAlimentationV2}
               showSalines={showSalines}
               onAlimentationDataLoaded={setAlimentationV2Data}
+              waypointCenter={waypointCenter}
             />
           </MapContainer>
 

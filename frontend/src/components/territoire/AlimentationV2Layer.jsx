@@ -3,8 +3,12 @@
  * Affiche les salines optimales dans la zone d'analyse 2km×2km.
  * Points jaunes distincts. Conforme BCE-4X.
  *
- * STABILITÉ: fetchData découplé de center (objet) via primitives lat/lng.
- * Même pattern que BionicCorridorsV10Layer (bug fix corridors).
+ * STABILITÉ V2: 
+ *   - fetchData dépend UNIQUEMENT de primitives (lat, lng, species, month, enabled)
+ *   - onDataLoaded via ref stable (pas dans les deps de fetchData)
+ *   - renderSalines via ref stable (pas dans les deps de fetchData)
+ *   - AbortController pour annuler les fetch en vol
+ *   - Cache + guards pour éviter re-fetch inutile
  */
 import { useEffect, useRef, useCallback } from 'react';
 import { useMap } from 'react-leaflet';
@@ -30,6 +34,10 @@ const AlimentationV2Layer = ({
   // Primitives stables (pas de cascade via objet center)
   const centerLat = center?.lat;
   const centerLng = center?.lng;
+
+  // Refs stables pour callbacks — évite cascades de dépendances
+  const onDataLoadedRef = useRef(onDataLoaded);
+  onDataLoadedRef.current = onDataLoaded;
 
   const clearLayers = useCallback(() => {
     if (layerRef.current) {
@@ -87,7 +95,7 @@ const AlimentationV2Layer = ({
   const renderRef = useRef(renderSalines);
   renderRef.current = renderSalines;
 
-  // Fetch découplé — dépend UNIQUEMENT des primitives lat/lng
+  // Fetch découplé — dépend UNIQUEMENT des primitives (AUCUN callback dans les deps)
   const fetchData = useCallback(async () => {
     if (centerLat == null || centerLng == null || !enabled) {
       clearLayers();
@@ -129,14 +137,14 @@ const AlimentationV2Layer = ({
 
       if (lastKeyRef.current === key) {
         renderRef.current(data);
-        if (onDataLoaded) onDataLoaded(data);
+        if (onDataLoadedRef.current) onDataLoadedRef.current(data);
       }
     } catch (err) {
       if (err.name !== 'AbortError') console.error('[ALIMENTATION-V2]', err);
     }
-  }, [centerLat, centerLng, species, month, enabled, clearLayers, onDataLoaded]);
+  }, [centerLat, centerLng, species, month, enabled, clearLayers]);
 
-  // Fetch effect — ne se re-déclenche que sur changements réels
+  // Fetch effect — ne se re-déclenche que sur changements réels de primitives
   useEffect(() => {
     fetchData();
     return () => {
