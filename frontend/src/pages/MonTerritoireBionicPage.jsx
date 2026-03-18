@@ -502,6 +502,7 @@ const MonTerritoireBionicPage = () => {
   const [showNutritionPanel, setShowNutritionPanel] = useState(false);
   const [alimentationV2Data, setAlimentationV2Data] = useState(null);
   const [nSalinesMax, setNSalinesMax] = useState(4);
+  const [adminArchitecteMode, setAdminArchitecteMode] = useState(false);
 
   // STABILITÉ V2: Centre memoizé pour éviter re-render cascade dans les layers enfants
   const waypointCenter = useMemo(() => {
@@ -1262,14 +1263,16 @@ const MonTerritoireBionicPage = () => {
             </PopoverTrigger>
             <PopoverContent align="end" sideOffset={8} className="w-64 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40 max-h-[70vh] overflow-y-auto">
               <div className="space-y-2">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Couches STEEVE-MAX</div>
+                {adminArchitecteMode && (
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1" title="Contrôle la dominance comportementale interne, pas l'affichage.">Couches STEEVE-MAX</div>
+                )}
 
-                {/* ── ZONES (DOMINANT) ── */}
+                {/* ── ZONES ── */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs text-emerald-400 font-medium">Zones</span>
-                      <span className="text-[8px] text-emerald-600 uppercase tracking-widest font-bold">dominant</span>
+                      {adminArchitecteMode && <span className="text-[8px] text-emerald-600 uppercase tracking-widest font-bold">dominant</span>}
                     </div>
                     <Switch checked={showZonesLayer} onCheckedChange={setShowZonesLayer} className="scale-[0.6] data-[state=checked]:bg-emerald-500" data-testid="toggle-zones-layer" />
                   </div>
@@ -1295,12 +1298,12 @@ const MonTerritoireBionicPage = () => {
 
                 <div className="h-px bg-gray-700/30" />
 
-                {/* ── CORRIDORS (SECONDAIRE) ── */}
+                {/* ── CORRIDORS ── */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs text-cyan-400 font-medium">Corridors</span>
-                      <span className="text-[8px] text-cyan-700 uppercase tracking-widest font-bold">secondaire</span>
+                      {adminArchitecteMode && <span className="text-[8px] text-cyan-700 uppercase tracking-widest font-bold">secondaire</span>}
                     </div>
                     <Switch checked={showCorridorsLayer} onCheckedChange={setShowCorridorsLayer} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-layer" />
                   </div>
@@ -1323,12 +1326,12 @@ const MonTerritoireBionicPage = () => {
 
                 <div className="h-px bg-gray-700/30" />
 
-                {/* ── POINTS (TERTIAIRE) ── */}
+                {/* ── POINTS ── */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs text-gray-400 font-medium">Points</span>
-                      <span className="text-[8px] text-gray-600 uppercase tracking-widest font-bold">tertiaire</span>
+                      {adminArchitecteMode && <span className="text-[8px] text-gray-600 uppercase tracking-widest font-bold">tertiaire</span>}
                     </div>
                     <Switch checked={showPointsLayer} onCheckedChange={setShowPointsLayer} className="scale-[0.6] data-[state=checked]:bg-gray-500" data-testid="toggle-points-layer" />
                   </div>
@@ -1579,6 +1582,28 @@ const MonTerritoireBionicPage = () => {
             month={new Date().getMonth() + 1}
             compact
           />
+
+          {/* ═══ ADMIN ARCHITECTE — Contrôle interne STEEVE-MAX (masqué utilisateur standard) ═══ */}
+          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+          <button
+            className={`h-7 w-7 flex items-center justify-center rounded transition-all ${
+              adminArchitecteMode ? 'bg-purple-500/20 text-purple-400' : 'text-gray-700 hover:text-gray-500'
+            }`}
+            title={adminArchitecteMode ? 'Mode Architecte actif — Contrôle la dominance comportementale interne, pas l\'affichage.' : 'Accès Architecte'}
+            data-testid="admin-architecte-btn"
+            onClick={() => {
+              if (adminArchitecteMode) {
+                setAdminArchitecteMode(false);
+              } else {
+                const pwd = window.prompt('Mot de passe administrateur:');
+                if (pwd === 'Saturn5858*') {
+                  setAdminArchitecteMode(true);
+                }
+              }
+            }}
+          >
+            <Shield className="h-3 w-3" />
+          </button>
         </div>
       </nav>
 
