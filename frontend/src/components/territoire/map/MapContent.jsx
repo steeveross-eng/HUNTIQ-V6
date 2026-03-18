@@ -23,6 +23,7 @@ import { BIONIC_MODULES } from '@/core/bionic';
 import { PLACE_TYPES } from '@/config/placeTypes';
 import BionicCorridorsV10Layer from '@/components/territoire/BionicCorridorsV10Layer';
 import AlimentationV2Layer from '@/components/territoire/AlimentationV2Layer';
+import ConsolidatedHeatmapLayer from '@/components/territoire/ConsolidatedHeatmapLayer';
 
 const MapContentInner = React.memo(({
   // Eco layers
@@ -86,6 +87,9 @@ const MapContentInner = React.memo(({
   showSalines,
   nSalinesMax,
   onAlimentationDataLoaded,
+  // HEATMAP V10 consolidée
+  showHeatmapV10,
+  onHeatmapDataLoaded,
   // STEEVE-MAX UX: Contrôles couches et points chauds
   showZonesLayer,
   showCorridorsLayer,
@@ -147,6 +151,18 @@ const MapContentInner = React.memo(({
     )}
 
     <ShootingZones zones={[]} currentUserId={userId} dangerAlerts={[]} members={[]} onZoneClick={null} showOwnZone={true} showOtherZones={true} showDangerIndicators={true} />
+
+    {/* HEATMAP CONSOLIDÉE V10: Score multi-moteurs thermique (couche base) */}
+    {selectedWaypointForZones && showHeatmapV10 && waypointCenter && (
+      <ConsolidatedHeatmapLayer
+        center={waypointCenter}
+        species={selectedSpecies}
+        month={new Date().getMonth() + 1}
+        enabled={showHeatmapV10}
+        opacity={0.45}
+        onDataLoaded={onHeatmapDataLoaded}
+      />
+    )}
 
     {/* CORRIDORS-V10: Couche corridors fauniques — palette normative (SEULE couche active) */}
     {selectedWaypointForZones && showCorridors && waypointCenter && (

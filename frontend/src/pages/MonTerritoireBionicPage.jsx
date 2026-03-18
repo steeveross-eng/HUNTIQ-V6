@@ -503,6 +503,8 @@ const MonTerritoireBionicPage = () => {
   const [alimentationV2Data, setAlimentationV2Data] = useState(null);
   const [nSalinesMax, setNSalinesMax] = useState(4);
   const [adminArchitecteMode, setAdminArchitecteMode] = useState(false);
+  const [showHeatmapV10, setShowHeatmapV10] = useState(true);
+  const [heatmapV10Data, setHeatmapV10Data] = useState(null);
 
   // STABILITÉ V2: Centre memoizé pour éviter re-render cascade dans les layers enfants
   const waypointCenter = useMemo(() => {
@@ -1391,6 +1393,19 @@ const MonTerritoireBionicPage = () => {
                     <span className={`w-1.5 h-1.5 rounded-full ${showExclusionOverlay ? 'bg-red-400' : 'bg-gray-700'}`} />
                     Exclusions
                   </button>
+                  <button
+                    onClick={() => setShowHeatmapV10(!showHeatmapV10)}
+                    className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
+                      showHeatmapV10 ? 'text-orange-400 bg-white/5' : 'text-gray-600 hover:text-gray-400'
+                    }`}
+                    data-testid="layer-toggle-heatmap-v10"
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${showHeatmapV10 ? 'bg-orange-400' : 'bg-gray-700'}`} />
+                    Heatmap V10
+                    {heatmapV10Data && (
+                      <span className="ml-auto text-[8px] text-gray-500">{heatmapV10Data.score_avg}/100</span>
+                    )}
+                  </button>
                 </div>
               </div>
             </PopoverContent>
@@ -1744,6 +1759,8 @@ const MonTerritoireBionicPage = () => {
               nSalinesMax={nSalinesMax}
               onAlimentationDataLoaded={setAlimentationV2Data}
               waypointCenter={waypointCenter}
+              showHeatmapV10={showHeatmapV10}
+              onHeatmapDataLoaded={setHeatmapV10Data}
             />
           </MapContainer>
 
@@ -1770,6 +1787,20 @@ const MonTerritoireBionicPage = () => {
                   <div className="text-[10px] font-bold text-white tracking-wide">Zone d'analyse</div>
                   <div className="text-[9px] text-gray-400">2 km × 2 km — {selectedWaypointForZones?.name || 'Waypoint'}</div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Indicateur Heatmap V10 — Discret bas-gauche ── */}
+          {showHeatmapV10 && selectedWaypointForZones && heatmapV10Data && (
+            <div
+              className="absolute bottom-[60px] left-2 z-[999] select-none pointer-events-none"
+              data-testid="heatmap-v10-indicator"
+            >
+              <div className="flex items-center gap-1.5 px-2 py-1 bg-[#0c0c14]/85 border border-gray-700/40 rounded backdrop-blur-sm">
+                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 via-yellow-500 to-red-500 flex-shrink-0" />
+                <span className="text-[8px] text-gray-400 font-medium">Corridors-V10 intégrés</span>
+                <span className="text-[8px] text-gray-500">{heatmapV10Data.score_avg}/100</span>
               </div>
             </div>
           )}

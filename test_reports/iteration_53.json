@@ -1,0 +1,95 @@
+{
+  "summary": "CORRIDORS-V10 Consolidated Heatmap Integration fully verified. Backend API returns correct weights (corridors_v10: 0.25, alimentation: 0.25, repos: 0.20, alimentation_v2: 0.10, pression: 0.20), 400-point grid, and includes corridors_v10 in engines_integrated. Frontend displays thermal gradient heatmap (blue→green→yellow→red), toggle in ZONES popover under Overlays works, and indicator 'Corridors-V10 intégrés' with score appears in bottom-left when heatmap is ON.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api": {
+      "endpoint": "GET /api/v1/score-consolide/heatmap",
+      "status": "PASS - 12/12 tests passed",
+      "tests": {
+        "returns_200": "PASS",
+        "grid_400_points": "PASS - total_points=400",
+        "score_avg": "PASS - 56.9",
+        "corridors_v10_in_engines": "PASS - ['alimentation_v1', 'repos_v1', 'corridors_v10', 'alimentation_v2', 'pression']",
+        "weights_correct": "PASS - {alimentation: 0.25, repos: 0.2, corridors_v10: 0.25, alimentation_v2: 0.1, pression: 0.2}",
+        "point_structure": "PASS - lat, lng, score, classe, color fields",
+        "classe_values": "PASS - FAIBLE, MODERE, BON, OPTIMAL, EXCLU",
+        "water_exclusion": "PASS - score=0, classe=EXCLU for water",
+        "tracability": "PASS - corridors_v10_integrated=true",
+        "species_support": "PASS - CERF, OURS, DINDON",
+        "color_gradient": "PASS - blue→green→yellow→red"
+      }
+    },
+    "frontend_ui": {
+      "status": "PASS",
+      "tests": {
+        "heatmap_toggle_visible": "PASS - data-testid='layer-toggle-heatmap-v10' in ZONES popover",
+        "toggle_in_overlays_section": "PASS - Toggle under 'Overlays' heading",
+        "heatmap_indicator_visible": "PASS - data-testid='heatmap-v10-indicator' in bottom-left",
+        "indicator_text": "PASS - Shows 'Corridors-V10 intégrés' + score",
+        "thermal_gradient_rendered": "PASS - Orange/red heatmap visible on map",
+        "toggle_off_removes_heatmap": "PASS - Indicator removed from DOM",
+        "toggle_on_restores_heatmap": "PASS - Indicator reappears with data"
+      }
+    },
+    "no_regression": {
+      "status": "PASS",
+      "tests": {
+        "zones_7_7": "PASS - 7/7 zone sub-elements found (alimentation, repos, rut, habitat, affuts, trajets, multiEngines)",
+        "corridors_4_4": "PASS - 4/4 corridor sub-elements found (normaux, intenses, extreme, saisonniers)",
+        "v10_corridors": "PASS - 19 corridors, 11.8km, score 70",
+        "alimentation_badge": "PASS - Badge shows '4'",
+        "map_layers_visible": "PASS - Zone borders, corridor paths visible on top of heatmap"
+      }
+    }
+  },
+  "features_verified": {
+    "backend_heatmap_api": "PASS - All 12 test cases",
+    "weighted_scoring": "PASS - alimentation 25%, repos 20%, corridors_v10 25%, alimentation_v2 10%, pression 20%",
+    "point_data_structure": "PASS - score, classe, color fields",
+    "water_exclusion": "PASS - score=0, classe=EXCLU",
+    "corridors_v10_integrated_tracability": "PASS - true in tracability",
+    "heatmap_toggle_in_zones": "PASS - Under Overlays section",
+    "thermal_gradient": "PASS - Blue(low)→Green→Yellow→Red(high)",
+    "indicator_bottom_left": "PASS - 'Corridors-V10 intégrés' + score/100",
+    "toggle_on_off": "PASS - Heatmap layer toggles correctly",
+    "no_obscuring_other_layers": "PASS - Zone borders and corridors visible on top"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_heatmap_v10_corridors.py",
+    "/app/test_reports/pytest/heatmap_v10_corridors_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "score_consolide.py: ENGINE_WEIGHTS correctly defined with corridors_v10: 0.25",
+    "score_consolide.py: engines_integrated list includes 'corridors_v10'",
+    "score_consolide.py: tracability includes corridors_v10_integrated: True",
+    "ConsolidatedHeatmapLayer.jsx: Uses leaflet.heat library correctly",
+    "ConsolidatedHeatmapLayer.jsx: Gradient matches spec (dark→blue→green→yellow→red)",
+    "MonTerritoireBionicPage.jsx: showHeatmapV10 state with toggle at data-testid='layer-toggle-heatmap-v10'",
+    "MonTerritoireBionicPage.jsx: Indicator at data-testid='heatmap-v10-indicator' shows 'Corridors-V10 intégrés'"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_heatmap_v10_corridors.py"
+  ],
+  "success_rate": {
+    "backend": "100% (12/12 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "CORRIDORS-V10 consolidated heatmap fully implemented. Backend API at /api/v1/score-consolide/heatmap working correctly. Frontend toggle in ZONES popover under Overlays. Indicator in bottom-left when ON. Thermal gradient renders correctly. All previous features (ZONES 7/7, V10 corridors, ALIMENTATION badge/salines, OURS/DINDON species) continue to work.",
+  "verification_date": "2026-01-18",
+  "testing_focus": "CORRIDORS-V10 Consolidated Heatmap Integration"
+}
