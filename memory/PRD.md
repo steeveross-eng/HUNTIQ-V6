@@ -17,27 +17,27 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 ### SUPPRESSION CORRIDORS V10 — iteration_48a (button removed)
 
 ### ENGINE ALIMENTATION-V2 (2026-03-18) — iteration_48 (100%)
-- **Backend module complet**: `/backend/modules/alimentation_v2/`
-  - `engine.py`: Analyse territoriale + calcul salines + recommandations
-  - `terrain.py`: Analyse algorithmique terrain (relief, eau, foret, sol, nutriments)
-  - `salines.py`: Optimiseur salines (eau, couvert, pente, accessibilite, securite)
-  - `nutrition.py`: Base statique nutritionnelle (CERF, ORIGNAL, OURS, WAPITI, DINDON)
-  - `router.py`: POST /api/v2/alimentation/analyze + GET /api/v2/alimentation/species
-- **Frontend salines**: AlimentationV2Layer.jsx — points jaunes (#FFD700) dans zone 2km
-- **Panneau nutritionnel**: Panneau flottant avec carences, aliments, proteines, oligo-elements
-- **Onglet ALIMENTATION**: Toolbar tab avec toggles Salines + Recommandations
-- **Sites permanents SUPPRIMES**: alimentation + salines dans BANNED_LAYERS (useBionicLayers)
-- **Especes supportees**: Cerf, Orignal, Ours noir, Wapiti, Dindon sauvage
-- Tests: Backend 19/19 + Frontend 100% (iteration_48.json), 0 regression
+- Backend module complet: /backend/modules/alimentation_v2/
+- Frontend salines: AlimentationV2Layer.jsx — points jaunes (#FFD700) dans zone 2km
+- Panneau nutritionnel: Panneau flottant avec carences, aliments, proteines, oligo-elements
+- Onglet ALIMENTATION: Toolbar tab avec toggles Salines + Recommandations
 
 ### BUG FIX: ALIMENTATION-V2 Tab + Salines Visibility (2026-03-18) — iteration_49 (100%)
-- **Onglet ALIMENTATION repositionne**: ZONES > ALIMENTATION > POINTS CHAUDS (conforme STEEVE-MAX)
-- **Active state**: bg-yellow-500/15 text-yellow-400 quand showAlimentationV2 = true
-- **Master toggle**: Toggle principal Alimentation V2 dans le popover
-- **Stabilite center prop**: waypointCenter memoize via useMemo dans MonTerritoireBionicPage
-- **Stabilite onDataLoaded**: Utilisation ref pattern (onDataLoadedRef) pour eviter cascade re-render
-- **Stabilite fetchData**: Dependencies reduites aux primitives uniquement (lat, lng, species, month, enabled)
-- Tests: Backend 100% + Frontend 100% (iteration_49.json), 0 regression
+- Onglet ALIMENTATION repositionne: ZONES > ALIMENTATION > POINTS CHAUDS
+- Active state: bg-yellow-500/15 text-yellow-400
+- Master toggle + stabilite center prop (useMemo) + onDataLoaded ref pattern
+
+### DIRECTIVE ESPECES STEEVE-MAX (2026-03-18) — iteration_50 (100%)
+- **OURS NOIR**: Aucune saline generee (directive biologique). Toggle Salines desactive.
+  Message: "L'ours noir n'utilise pas les salines..."
+- **DINDON SAUVAGE**: Aucune saline generee. Toggle Salines desactive.
+  Message: "Le dindon n'utilise pas les salines..."
+- **CHEVREUIL / ORIGNAL**: Salines identiques (besoins mineraux similaires). Fonctionnel.
+- **WAPITI**: Salines fonctionnelles.
+- Backend: SPECIES_NO_SALINES = {OURS, DINDON}, FRONTEND_SPECIES_MAP pour mapping IDs
+- Frontend: Toggle disabled + message explicatif amber + saline_composition masquee
+- Panneau nutritionnel: Recommandations pertinentes par espece, saline_composition masquee pour OURS/DINDON
+- Tests: Backend 11/11 + Frontend 100% (iteration_50.json), 0 regression
 
 ## Architecture de controle STEEVE-MAX (FINAL)
 ```
@@ -49,7 +49,7 @@ ZONES (unique centre de controle)
 
 ALIMENTATION (V2) — Position: apres ZONES, avant POINTS CHAUDS
 --- Master toggle (Alimentation V2)
---- Salines (toggle)
+--- Salines (toggle, disabled pour OURS/DINDON)
 --- Recommandations (panneau flottant)
 
 POINTS CHAUDS (filtrage comportemental)
@@ -65,7 +65,7 @@ POINTS CHAUDS (filtrage comportemental)
 - GET /api/v10/corridors/multi | profiles | documentation
 
 ### ALIMENTATION-V2
-- POST /api/v2/alimentation/analyze
+- POST /api/v2/alimentation/analyze (accepte IDs frontend: chevreuil, orignal, ours_noir, dindon_sauvage, wapiti)
 - GET /api/v2/alimentation/species
 
 ## Normes Actives
@@ -73,7 +73,7 @@ POINTS CHAUDS (filtrage comportemental)
 - **BCE-4X**: 16 zones, 64 centres, zero modification geometrique, firewall 13 tests
 - **EXTREME**: CRITIQUE = +40% weight, opacity 0.75
 - **V10 permanent**: showCorridors = true
-- **ALIMENTATION-V2**: Salines algorithmiques, nutrition statique, sites permanents interdits
+- **ALIMENTATION-V2**: Salines algorithmiques (sauf OURS/DINDON), nutrition par espece
 
 ## Backlog
 ### P1 — Integration score consolide CORRIDORS-V10 dans heatmap
