@@ -1,0 +1,52 @@
+# STEEVE-MAX Configuration — Standards visuels et architecturaux
+# Appliqué automatiquement à chaque composant UI et module backend.
+
+[metadata]
+version = "1.0.0"
+norm = "STEEVE-MAX"
+enforced = true
+
+[architecture]
+modularity_required = true
+max_file_lines = 500
+max_component_lines = 200
+separation_of_concerns = true
+# Backend: moteurs isolés, registry central, consolidateur découplé
+# Frontend: composants < 200 lignes, pages < 500 lignes (cible)
+backend_structure = ["modules/engine_registry/", "modules/*/engine.py"]
+frontend_structure = ["components/", "pages/", "hooks/", "stores/"]
+
+[ui_ux]
+palette = "dark"
+background_primary = "#0c0c14"
+text_micro_range = ["8px", "10px"]
+text_body = "text-base"
+animations_required_for = ["corridors_critiques", "transitions"]
+admin_mode_protected = true
+admin_password_field = "adminArchitecteMode"
+
+[code_quality]
+clean_code = true
+no_ambiguity = true
+no_dead_code = true
+no_commented_out_code = true
+docstrings_required_for_public = true
+type_hints_recommended = true
+
+[frontend_standards]
+component_library = "shadcn/ui"
+state_management = "zustand"
+icons = "lucide-react"
+no_emoji_in_code = true
+data_testid_required = true
+
+[api_standards]
+versioned_prefix = "/api/v3/"
+json_response_format = true
+error_handling_consistent = true
+cors_configured = true
+
+[future_proof]
+open_closed_principle = true
+new_engine_requires = ["engine.py", "registry_entry"]
+no_modification_of_existing = true

@@ -47,6 +47,7 @@ class EngineRegistry:
                 "name": m.name,
                 "version": m.version,
                 "type": m.engine_type,
+                "engine_type": m.engine_type,
                 "domain": m.domain,
                 "species_supported": m.species_supported,
                 "unit": m.unit,

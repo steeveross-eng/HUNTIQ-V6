@@ -1,0 +1,206 @@
+{
+  "validator": "AutoValidator",
+  "timestamp": "2026-03-18T16:27:33.316723+00:00",
+  "execution_time_s": 0.26,
+  "overall_compliant": true,
+  "bce4x": {
+    "norm": "BCE-4X",
+    "version": "4.0.0",
+    "total_tests": 23,
+    "passed": 23,
+    "failed": 0,
+    "compliant": true,
+    "results": [
+      {
+        "test": "schemas_complete",
+        "status": "PASS",
+        "detail": "5 moteurs conformes"
+      },
+      {
+        "test": "species_canonical",
+        "status": "PASS",
+        "detail": "Config=['CHEVREUIL', 'ORIGNAL', 'OURS', 'DINDON', 'WAPITI'], Code=['CHEVREUIL', 'ORIGNAL', 'OURS', 'DINDON', 'WAPITI']"
+      },
+      {
+        "test": "species_alias_cerf",
+        "status": "PASS",
+        "detail": "cerf → CHEVREUIL"
+      },
+      {
+        "test": "species_alias_deer",
+        "status": "PASS",
+        "detail": "deer → CHEVREUIL"
+      },
+      {
+        "test": "species_alias_moose",
+        "status": "PASS",
+        "detail": "moose → ORIGNAL"
+      },
+      {
+        "test": "species_alias_bear",
+        "status": "PASS",
+        "detail": "bear → OURS"
+      },
+      {
+        "test": "species_alias_turkey",
+        "status": "PASS",
+        "detail": "turkey → DINDON"
+      },
+      {
+        "test": "species_alias_elk",
+        "status": "PASS",
+        "detail": "elk → WAPITI"
+      },
+      {
+        "test": "consolidator_uses_registry",
+        "status": "PASS",
+        "detail": "DynamicConsolidator-v1"
+      },
+      {
+        "test": "consolidator_tracability",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "version_ALIMENTATION-V1",
+        "status": "PASS",
+        "detail": "1.0.0"
+      },
+      {
+        "test": "version_ALIMENTATION-V2",
+        "status": "PASS",
+        "detail": "2.0.0"
+      },
+      {
+        "test": "version_REPOS-V1",
+        "status": "PASS",
+        "detail": "1.0.0"
+      },
+      {
+        "test": "version_CORRIDORS-V10",
+        "status": "PASS",
+        "detail": "10.0.0"
+      },
+      {
+        "test": "version_PRESSION-V1",
+        "status": "PASS",
+        "detail": "1.0.0"
+      },
+      {
+        "test": "rollback_branch_exists",
+        "status": "PASS",
+        "detail": "Branche bionic-safepoint-pre-intelligence-refactor à créer via GitHub"
+      },
+      {
+        "test": "rollback_time",
+        "status": "PASS",
+        "detail": "0.0s < 30s"
+      },
+      {
+        "test": "single_source_species",
+        "status": "PASS",
+        "detail": "modules/engine_registry/base.py"
+      },
+      {
+        "test": "score_range_ALIMENTATION-V1",
+        "status": "PASS",
+        "detail": "score=30.2"
+      },
+      {
+        "test": "score_range_ALIMENTATION-V2",
+        "status": "PASS",
+        "detail": "score=50.0"
+      },
+      {
+        "test": "score_range_REPOS-V1",
+        "status": "PASS",
+        "detail": "score=62.6"
+      },
+      {
+        "test": "score_range_CORRIDORS-V10",
+        "status": "PASS",
+        "detail": "score=52.7"
+      },
+      {
+        "test": "score_range_PRESSION-V1",
+        "status": "PASS",
+        "detail": "score=100.0"
+      }
+    ]
+  },
+  "steeve_max": {
+    "norm": "STEEVE-MAX",
+    "version": "1.0.0",
+    "total_tests": 12,
+    "passed": 12,
+    "failed": 0,
+    "compliant": true,
+    "results": [
+      {
+        "test": "modularity_base.py",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "modularity_registry.py",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "modularity_adapters.py",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "modularity___init__.py",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "filesize_base.py",
+        "status": "PASS",
+        "detail": "121/500 lignes"
+      },
+      {
+        "test": "filesize_registry.py",
+        "status": "PASS",
+        "detail": "229/500 lignes"
+      },
+      {
+        "test": "filesize_adapters.py",
+        "status": "PASS",
+        "detail": "246/500 lignes"
+      },
+      {
+        "test": "filesize_engine.py",
+        "status": "PASS",
+        "detail": "84/500 lignes"
+      },
+      {
+        "test": "registry_no_direct_engine_import",
+        "status": "PASS",
+        "detail": "Découplé"
+      },
+      {
+        "test": "docstrings_base.py",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "docstrings_registry.py",
+        "status": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "data_testid_policy",
+        "status": "PASS",
+        "detail": "Politique active — vérification frontend en M4"
+      }
+    ]
+  },
+  "summary": {
+    "total_tests": 35,
+    "passed": 35,
+    "failed": 0
+  }
+}

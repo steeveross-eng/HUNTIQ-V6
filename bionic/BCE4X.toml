@@ -1,0 +1,60 @@
+# BCE-4X Configuration — BIONIC Compliance Engine v4.X
+# Appliqué automatiquement à chaque moteur, endpoint, module et composant UI.
+
+[metadata]
+version = "4.0.0"
+norm = "BCE-4X"
+enforced = true
+
+[schema]
+# Chaque réponse moteur DOIT contenir ces champs
+required_fields = ["score", "species", "month"]
+tracability_required = true
+tracability_fields = ["engines_active", "consolidator"]
+score_range = [0, 100]
+score_type = "float"
+
+[species]
+# Mapping canonique — source de vérité unique
+canonical = ["CHEVREUIL", "ORIGNAL", "OURS", "DINDON", "WAPITI"]
+forbidden_aliases_in_new_code = ["cerf", "deer", "moose", "bear", "turkey", "elk"]
+resolver = "modules.engine_registry.base.resolve_species"
+
+[versioning]
+# Chaque moteur DOIT déclarer une version semver
+format = "semver"
+required_in_meta = true
+engines_must_declare = ["name", "version", "engine_type", "domain"]
+
+[dependencies]
+# Règles de découplage
+max_direct_imports_per_module = 3
+consolidator_must_use_registry = true
+no_circular_dependencies = true
+engines_must_be_independent = true
+
+[rollback]
+max_rollback_time_seconds = 30
+safepoint_branch = "bionic-safepoint-pre-intelligence-refactor"
+rollback_methods = ["emergent_ui", "git_branch", "git_sha"]
+
+[duplication]
+zero_logic_duplication = true
+shared_logic_location = "modules/engine_registry/"
+species_mapping_single_source = "modules/engine_registry/base.py"
+
+[regression]
+zero_regression_policy = true
+protected_endpoints_v1 = [
+    "/api/v1/alimentation/analyze",
+    "/api/v1/alimentation/point",
+    "/api/v1/repos/analyze",
+    "/api/v1/repos/point",
+    "/api/v1/score-consolide/point",
+    "/api/v1/score-consolide/heatmap",
+]
+protected_endpoints_v10 = [
+    "/api/v10/corridors/analyze",
+    "/api/v10/corridors/analyze-full",
+]
+protected_frontend_routes = ["/territoire"]
