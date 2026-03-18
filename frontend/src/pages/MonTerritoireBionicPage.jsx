@@ -1089,7 +1089,7 @@ const MonTerritoireBionicPage = () => {
 
       {/* ════════════════════════════════════════════════════════════════
           P0 UX — TOOLBAR UNIFIÉE SUR UNE SEULE LIGNE
-          SAISON → SPLIT → CARTE → OBSERVATION → LAYERS → ANALYSE → LOCK → OUTILS
+          SAISON → SPLIT → CARTE → OBSERVATION → ANALYSE → LOCK → OUTILS
           Style BIONIC: bg-black/60, border-gray-700/40, rounded-lg, icônes Lucide
           ════════════════════════════════════════════════════════════════ */}
       <nav className="flex-shrink-0 h-[44px] bg-[#0d0d14] border-b border-[#1a1a2e] px-4 flex items-center relative z-40" data-testid="bionic-tabs">
@@ -1207,103 +1207,7 @@ const MonTerritoireBionicPage = () => {
           </DropdownMenu>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-          {/* ═══ 5. LAYERS ═══ */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="relative h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider text-[#10b981] hover:bg-white/5 transition-all" data-testid="toolbar-layers-btn" title="Couches">
-                <Layers className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Layers</span>
-                {activeCount > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] rounded-full bg-[#f5a623] text-black text-[8px] font-bold flex items-center justify-center leading-none px-0.5">{activeCount}</span>}
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="start" sideOffset={8} className="w-72 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-0 shadow-xl shadow-black/40">
-              <div className="px-3 py-2 border-b border-gray-800 flex items-center gap-2">
-                <Layers className="h-3.5 w-3.5 text-[#10b981]" />
-                <span className="text-xs font-semibold text-white">Couches BIONIC</span>
-              </div>
-              <div className="p-3 max-h-[60vh] overflow-y-auto space-y-2">
-                <div className="flex gap-1 mb-2">
-                  <button onClick={showAllLayers} className="flex-1 text-xs h-7 px-2 rounded border border-gray-700 hover:bg-emerald-600/20 hover:text-emerald-400 text-gray-400 transition-colors">Tout</button>
-                  <button onClick={hideAllLayers} className="flex-1 text-xs h-7 px-2 rounded border border-gray-700 hover:bg-red-600/20 hover:text-red-400 text-gray-400 transition-colors">Aucun</button>
-                </div>
-                <div className="space-y-1 max-h-48 overflow-y-auto">
-                  {allLayers.map(layer => (
-                    <button
-                      key={layer.id}
-                      onClick={() => toggleLayer(layer.id)}
-                      className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-all ${
-                        layersVisible[layer.id]
-                          ? 'bg-[#f5a623]/10 text-white border border-[#f5a623]/30'
-                          : 'bg-gray-900/50 text-gray-400 hover:bg-gray-800/50'
-                      }`}
-                      data-testid={`layer-toggle-${layer.id}`}
-                    >
-                      <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: layersVisible[layer.id] ? layer.color : '#4b5563' }} />
-                      <span className="flex-1 text-left truncate">{layer.name}</span>
-                      {layersVisible[layer.id] && <CheckCircle className="h-3 w-3 text-[#f5a623]" />}
-                    </button>
-                  ))}
-                </div>
-                <div className="pt-2 border-t border-gray-700/50">
-                  <button
-                    onClick={() => setShowExclusionOverlay(!showExclusionOverlay)}
-                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-all ${
-                      showExclusionOverlay
-                        ? 'bg-red-500/10 text-white border border-red-500/30'
-                        : 'bg-gray-900/50 text-gray-400 hover:bg-gray-800/50'
-                    }`}
-                    data-testid="layer-toggle-exclusion-overlay"
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: showExclusionOverlay ? '#F44336' : '#4b5563' }} />
-                    <span className="flex-1 text-left">Exclusions (debug)</span>
-                    {showExclusionOverlay && <CheckCircle className="h-3 w-3 text-red-400" />}
-                  </button>
-                  <button
-                    onClick={() => setShowWindFlow(!showWindFlow)}
-                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-all mt-1 ${
-                      showWindFlow
-                        ? 'bg-cyan-500/10 text-white border border-cyan-500/30'
-                        : 'bg-gray-900/50 text-gray-400 hover:bg-gray-800/50'
-                    }`}
-                    data-testid="layer-toggle-wind-flow"
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: showWindFlow ? '#06b6d4' : '#4b5563' }} />
-                    <span className="flex-1 text-left">Vent directionnel</span>
-                    {showWindFlow && <CheckCircle className="h-3 w-3 text-cyan-400" />}
-                  </button>
-                  {showWindFlow && (
-                    <div className="flex gap-1 mt-1 ml-4">
-                      <button
-                        onClick={() => setWindMode('arrows')}
-                        className={`px-2 py-0.5 rounded text-[9px] transition-all ${
-                          windMode === 'arrows'
-                            ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                            : 'bg-gray-900/50 text-gray-500 hover:text-gray-300'
-                        }`}
-                        data-testid="wind-mode-arrows"
-                      >
-                        Minimaliste
-                      </button>
-                      <button
-                        onClick={() => setWindMode('particles')}
-                        className={`px-2 py-0.5 rounded text-[9px] transition-all ${
-                          windMode === 'particles'
-                            ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                            : 'bg-gray-900/50 text-gray-500 hover:text-gray-300'
-                        }`}
-                        data-testid="wind-mode-particles"
-                      >
-                        Particules
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 6. ANALYSE / STATS ═══ */}
+          {/* ═══ 5. ANALYSE / STATS ═══ */}
           <button
             onClick={() => setActiveTab(prev => prev === 'analyse' ? 'carte' : 'analyse')}
             className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
@@ -1431,6 +1335,39 @@ const MonTerritoireBionicPage = () => {
                       ))}
                     </div>
                   )}
+                </div>
+
+                <div className="h-px bg-gray-700/30" />
+
+                {/* ── OVERLAYS ── */}
+                <div className="space-y-1">
+                  <div className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Overlays</div>
+                  <button
+                    onClick={() => setShowWindFlow(!showWindFlow)}
+                    className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
+                      showWindFlow ? 'text-cyan-400 bg-white/5' : 'text-gray-600 hover:text-gray-400'
+                    }`}
+                    data-testid="layer-toggle-wind-flow"
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${showWindFlow ? 'bg-cyan-400' : 'bg-gray-700'}`} />
+                    Vent directionnel
+                  </button>
+                  {showWindFlow && (
+                    <div className="flex gap-1 ml-4">
+                      <button onClick={() => setWindMode('arrows')} className={`px-2 py-0.5 rounded text-[9px] transition-all ${windMode === 'arrows' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-gray-900/50 text-gray-500 hover:text-gray-300'}`} data-testid="wind-mode-arrows">Minimaliste</button>
+                      <button onClick={() => setWindMode('particles')} className={`px-2 py-0.5 rounded text-[9px] transition-all ${windMode === 'particles' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-gray-900/50 text-gray-500 hover:text-gray-300'}`} data-testid="wind-mode-particles">Particules</button>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setShowExclusionOverlay(!showExclusionOverlay)}
+                    className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
+                      showExclusionOverlay ? 'text-red-400 bg-white/5' : 'text-gray-600 hover:text-gray-400'
+                    }`}
+                    data-testid="layer-toggle-exclusion-overlay"
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${showExclusionOverlay ? 'bg-red-400' : 'bg-gray-700'}`} />
+                    Exclusions
+                  </button>
                 </div>
               </div>
             </PopoverContent>

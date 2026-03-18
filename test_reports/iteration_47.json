@@ -1,0 +1,167 @@
+{
+  "summary": "Iteration 47 - STEEVE-MAX FUSION UX Testing Complete. CRITICAL CHANGES VERIFIED: (1) LAYERS button (toolbar-layers-btn) SUCCESSFULLY REMOVED from toolbar - no longer exists. (2) ZONES popover now contains ALL consolidated controls including Overlays section with Wind flow and Exclusion toggles. (3) ZONES popover structure: 4 sections - Zones (DOMINANT) with 7 sub-elements, Corridors (SECONDAIRE) with 4 sub-elements, Points (TERTIAIRE) with 8 sub-elements, plus Overlays. (4) Wind flow toggle (layer-toggle-wind-flow) correctly moved into ZONES popover under Overlays. (5) Wind mode buttons (Minimaliste/Particules) appear when wind is ON. (6) Exclusion overlay toggle (layer-toggle-exclusion-overlay) correctly moved into ZONES popover under Overlays. (7) POINTS CHAUDS tab works independently. (8) Corridors V10 master toggle works. (9) Map loads correctly with 26 zones, 19 corridors, Score 54/100. (10) BCE-4X compliance maintained - no geometric modifications.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/sw-v2.js", "issue": "Service Worker 404 - returns text/html instead of JavaScript (pre-existing cosmetic issue)"},
+      {"endpoint": "sharing/notifications/groups endpoints", "issue": "Network errors for sharing features (pre-existing, not related to this change)"}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Mon Territoire - ZONES Popover",
+        "issues": [
+          "INFO: Popover scrollable with max-h-[70vh] - by design to fit all content"
+        ]
+      }
+    ]
+  },
+  "test_results": {
+    "layers_button_removed": {
+      "status": "PASS",
+      "data_testid": "toolbar-layers-btn",
+      "exists": false,
+      "message": "LAYERS button correctly REMOVED from toolbar - BCE-4X UX consolidation successful"
+    },
+    "zones_popover_structure": {
+      "status": "PASS",
+      "data_testid": "toolbar-zones-btn",
+      "popover_opens": true,
+      "sections_found": 4,
+      "sections": {
+        "zones_dominant": true,
+        "corridors_secondaire": true,
+        "points_tertiaire": true,
+        "overlays": true
+      }
+    },
+    "zones_sub_elements": {
+      "status": "PASS",
+      "count": "7/7",
+      "elements": {
+        "zone-sub-alimentation": "FOUND",
+        "zone-sub-repos": "FOUND",
+        "zone-sub-rut": "FOUND",
+        "zone-sub-habitat": "FOUND",
+        "zone-sub-affuts": "FOUND",
+        "zone-sub-trajets": "FOUND",
+        "zone-sub-multiEngines": "FOUND"
+      }
+    },
+    "corridors_sub_elements": {
+      "status": "PASS",
+      "count": "4/4",
+      "elements": {
+        "corridor-sub-normaux": "FOUND",
+        "corridor-sub-intenses": "FOUND",
+        "corridor-sub-extreme": "FOUND",
+        "corridor-sub-saisonniers": "FOUND"
+      }
+    },
+    "points_sub_elements": {
+      "status": "PASS",
+      "count": "8/8",
+      "elements": {
+        "point-sub-alimentation": "FOUND",
+        "point-sub-rut": "FOUND",
+        "point-sub-repos": "FOUND",
+        "point-sub-trajets": "FOUND",
+        "point-sub-affuts": "FOUND",
+        "point-sub-habitat": "FOUND",
+        "point-sub-centroides": "FOUND",
+        "point-sub-individuels": "FOUND"
+      }
+    },
+    "wind_flow_toggle_in_zones": {
+      "status": "PASS",
+      "data_testid": "layer-toggle-wind-flow",
+      "location": "ZONES popover > Overlays section",
+      "message": "Wind flow toggle correctly moved from LAYERS to ZONES popover"
+    },
+    "wind_mode_buttons": {
+      "status": "PASS",
+      "minimaliste_testid": "wind-mode-arrows",
+      "particules_testid": "wind-mode-particles",
+      "visible_when_wind_on": true
+    },
+    "exclusion_overlay_in_zones": {
+      "status": "PASS",
+      "data_testid": "layer-toggle-exclusion-overlay",
+      "location": "ZONES popover > Overlays section",
+      "message": "Exclusion overlay toggle correctly moved from LAYERS to ZONES popover"
+    },
+    "master_toggles": {
+      "zones_master": {
+        "status": "PASS",
+        "data_testid": "toggle-zones-layer"
+      },
+      "corridors_master": {
+        "status": "PASS",
+        "data_testid": "toggle-corridors-layer"
+      },
+      "points_master": {
+        "status": "PASS",
+        "data_testid": "toggle-points-layer"
+      }
+    },
+    "points_chauds_independent": {
+      "status": "PASS",
+      "data_testid": "toolbar-points-chauds-btn",
+      "toggle_testid": "toggle-points-chauds-mode"
+    },
+    "corridors_v10_toggle": {
+      "status": "PASS",
+      "visible_in_toolbar": true
+    },
+    "map_loading": {
+      "status": "PASS",
+      "zones_count": 26,
+      "corridors_count": 19,
+      "score": "54/100",
+      "javascript_errors": false
+    }
+  },
+  "features_verified": {
+    "layers_button_removed": "PASS - toolbar-layers-btn NO LONGER EXISTS",
+    "zones_popover_contains_all": "PASS - 4 sections: Zones DOMINANT, Corridors SECONDAIRE, Points TERTIAIRE, Overlays",
+    "wind_flow_in_zones_popover": "PASS - layer-toggle-wind-flow moved to Overlays section",
+    "wind_mode_buttons_appear_when_on": "PASS - Minimaliste/Particules buttons visible when wind is ON",
+    "exclusion_overlay_in_zones_popover": "PASS - layer-toggle-exclusion-overlay moved to Overlays section",
+    "zones_7_sub_elements": "PASS - all 7 toggleable",
+    "corridors_4_sub_elements": "PASS - all 4 toggleable",
+    "points_8_sub_elements": "PASS - all 8 toggleable",
+    "master_toggles_work": "PASS",
+    "points_chauds_independent": "PASS",
+    "corridors_v10_works": "PASS",
+    "map_loads_with_data": "PASS - 26 zones, 19 corridors, score 54/100",
+    "no_javascript_errors": "PASS"
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_47.json"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "MonTerritoireBionicPage.jsx: LAYERS button code successfully removed from toolbar (lines ~1239-1375)",
+    "MonTerritoireBionicPage.jsx lines 1340-1371: Overlays section correctly added to ZONES popover with Wind (layer-toggle-wind-flow) and Exclusion (layer-toggle-exclusion-overlay) toggles",
+    "MonTerritoireBionicPage.jsx lines 1353-1359: Wind mode buttons (wind-mode-arrows, wind-mode-particles) correctly appear when showWindFlow is true",
+    "BCE-4X compliance confirmed: All changes are UX-only consolidation, no geometric modifications"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "auto_logged_as": "Steeve Ross"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 47 verified STEEVE-MAX FUSION UX consolidation. KEY CHANGE: LAYERS button (toolbar-layers-btn) has been REMOVED. Its controls (Wind flow, Exclusion overlay) are now in the ZONES popover under 'Overlays' section. Test IDs for verification: (1) toolbar-layers-btn should NOT exist, (2) toolbar-zones-btn opens popover with 4 sections, (3) layer-toggle-wind-flow and layer-toggle-exclusion-overlay are in the Overlays section of ZONES popover, (4) wind-mode-arrows and wind-mode-particles appear when wind is ON. The popover has max-h-[70vh] overflow-y-auto so scrolling may be needed. All 19 sub-element test IDs remain the same (zone-sub-*, corridor-sub-*, point-sub-*). Map shows 26 zones, 19 corridors with score 54/100.",
+  "verification_date": "2026-03-18",
+  "testing_focus": "STEEVE-MAX FUSION UX - LAYERS removal and ZONES consolidation per BCE-4X compliance"
+}
