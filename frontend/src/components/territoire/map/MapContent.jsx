@@ -84,6 +84,7 @@ const MapContentInner = React.memo(({
   // ALIMENTATION-V2
   showAlimentationV2,
   showSalines,
+  nSalinesMax,
   onAlimentationDataLoaded,
   // STEEVE-MAX UX: Contrôles couches et points chauds
   showZonesLayer,
@@ -176,6 +177,7 @@ const MapContentInner = React.memo(({
         month={new Date().getMonth() + 1}
         enabled={showAlimentationV2}
         showSalines={showSalines}
+        maxSalines={nSalinesMax}
         onDataLoaded={onAlimentationDataLoaded}
       />
     )}

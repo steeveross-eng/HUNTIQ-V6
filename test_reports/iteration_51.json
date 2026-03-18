@@ -1,0 +1,141 @@
+{
+  "summary": "ALIMENTATION-V2 spatial diversification, max_salines selector, and badge features fully verified. Backend: 16/16 tests passed - max_salines=1-4 returns correct counts, 300m min distance between selected salines enforced, ~16 grid-based candidates generated. Frontend: Badge updates correctly (1-4), selector buttons functional, X/Y candidats format working (e.g., '4/16 candidats'), OURS/DINDON show disabled toggle with message and no badge. No regression on ZONES (7 sub-elements) or V10 corridors (19 corridors, 11.8km).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api_tests": {
+      "status": "PASS",
+      "total": 16,
+      "passed": 16,
+      "failed": 0,
+      "test_file": "/app/backend/tests/test_alimentation_v2_spatial_diversification.py",
+      "test_categories": {
+        "max_salines_selection": "4/4 passed (max_salines=1,2,3,4 all return correct counts)",
+        "spatial_diversification": "2/2 passed (300m min distance enforced between all selected salines)",
+        "grid_candidates": "3/3 passed (~16 candidates generated, required fields present, rank assigned)",
+        "species_no_salines": "2/2 passed (OURS and DINDON return salines_disabled=true, n_salines=0)",
+        "response_format": "2/2 passed (n_candidates, n_salines, max_salines fields present)",
+        "different_species": "3/3 passed (chevreuil, orignal, wapiti all generate salines correctly)"
+      }
+    },
+    "frontend_tests": {
+      "alimentation_badge": {
+        "status": "PASS",
+        "tests": [
+          "Badge shows '4' for default max_salines=4",
+          "Badge updates to '1' when salines-count-1 clicked",
+          "Badge updates to '2' when salines-count-2 clicked",
+          "Badge hidden for OURS NOIR (no salines)",
+          "Badge hidden for DINDON SAUVAGE (no salines)"
+        ]
+      },
+      "salines_count_selector": {
+        "status": "PASS",
+        "buttons_found": ["salines-count-1", "salines-count-2", "salines-count-3", "salines-count-4"],
+        "strategy_text_verified": {
+          "1": "Meilleur spot absolu",
+          "2": "Couverture maximale (2 axes)",
+          "3": "Triangulation optimale",
+          "4": "Quadrillage optimal (4 zones)"
+        }
+      },
+      "resume_zone_format": {
+        "status": "PASS",
+        "format": "X/Y candidats",
+        "examples_verified": ["4/16 candidats", "1/16 candidats"]
+      },
+      "species_disabled_behavior": {
+        "ours_noir": {
+          "toggle_disabled": true,
+          "disabled_message": "L'ours noir n'utilise pas les salines. Ce comportement est normal et conforme à la biologie de l'espèce.",
+          "badge_hidden": true,
+          "no_yellow_dots": true
+        },
+        "dindon_sauvage": {
+          "toggle_disabled": true,
+          "badge_hidden": true
+        }
+      },
+      "alimentation_secondaire_removed": {
+        "status": "PASS",
+        "note": "No 'Alimentation secondaire' text found on page - V1 points removed"
+      }
+    },
+    "regression_tests": {
+      "zones_tab": {
+        "status": "PASS",
+        "sub_elements": ["Alimentation", "Repos", "Rut", "Habitat", "Affûts", "Trajets", "Multi-Engines"],
+        "count": "7/7"
+      },
+      "v10_corridors": {
+        "status": "PASS",
+        "corridors": 19,
+        "distance": "11.8 km",
+        "score": 70
+      },
+      "points_chauds": {
+        "status": "PASS",
+        "button_visible": true
+      }
+    }
+  },
+  "features_verified": {
+    "backend_max_salines_4": "PASS - Returns 4 selected + ~12 candidates",
+    "backend_max_salines_1": "PASS - Returns 1 selected (best spot)",
+    "backend_max_salines_2": "PASS - Returns 2 selected (coverage)",
+    "backend_max_salines_3": "PASS - Returns 3 selected (triangulation)",
+    "backend_300m_min_distance": "PASS - All selected salines are >= 300m apart",
+    "backend_16_candidates": "PASS - ~16 candidates generated from 4x4 grid",
+    "backend_ours_disabled": "PASS - salines_disabled=true, n_salines=0",
+    "backend_dindon_disabled": "PASS - salines_disabled=true, n_salines=0",
+    "frontend_badge_count": "PASS - Badge shows selected salines count (1-4)",
+    "frontend_selector_buttons": "PASS - Buttons 1-4 visible and functional",
+    "frontend_badge_updates": "PASS - Badge updates on selector click",
+    "frontend_ours_disabled_message": "PASS - Disabled message visible for OURS",
+    "frontend_no_badge_ours": "PASS - Badge hidden for OURS",
+    "frontend_resume_xy_format": "PASS - Shows 'X/16 candidats' format",
+    "frontend_no_v1_alimentation": "PASS - No 'Alimentation secondaire' text",
+    "regression_zones": "PASS - 7 sub-elements working",
+    "regression_corridors": "PASS - V10 corridors rendering"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_alimentation_v2_spatial_diversification.py",
+    "/app/test_reports/pytest/alimentation_v2_spatial_diversification_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "salines.py: compute_salines correctly generates 16 candidates from 4x4 grid with jitter",
+    "salines.py: _select_with_min_distance enforces 300m minimum distance using greedy selection",
+    "engine.py: n_candidates and max_salines correctly included in response",
+    "engine.py: SPECIES_NO_SALINES correctly handles OURS and DINDON",
+    "MonTerritoireBionicPage.jsx: nSalinesMax state controls selector and API calls",
+    "MonTerritoireBionicPage.jsx: Badge correctly shows n_salines or hidden for disabled species",
+    "MonTerritoireBionicPage.jsx: Disabled message renders with data-testid='salines-disabled-message'",
+    "AlimentationV2Layer.jsx: Yellow for selected (fillColor=#FFD700), grey for candidates (#9CA3AF)",
+    "AlimentationV2Layer.jsx: maxSalines included in fetch key for proper re-fetch"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_alimentation_v2_spatial_diversification.py"
+  ],
+  "success_rate": {
+    "backend": "100% (16/16)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "auto_logged_as": "Steeve Ross"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "ALIMENTATION-V2 spatial diversification fully tested. Key features: max_salines (1-4), 300m min distance, ~16 grid candidates, badge count, X/Y candidats format. OURS/DINDON have disabled toggle+message. Selector buttons: data-testid=salines-count-1 to salines-count-4. Badge: data-testid=alimentation-badge. Disabled message: data-testid=salines-disabled-message. All 5 species tested. No 'Alimentation secondaire' V1 points. Zones 7/7, V10 corridors working.",
+  "verification_date": "2026-01-18",
+  "testing_focus": "ALIMENTATION-V2: spatial diversification algorithm, max_salines selector 1-4, badge count updates, OURS/DINDON disabled behavior, X/Y candidats format, V1 points removal"
+}

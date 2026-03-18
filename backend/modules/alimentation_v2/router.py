@@ -17,6 +17,7 @@ class AlimentationV2Request(BaseModel):
     center_lng: float = Field(..., description="Longitude du centre")
     species: str = Field("CERF", description="Espèce: CERF, ORIGNAL, OURS, WAPITI, DINDON")
     month: int = Field(10, ge=1, le=12, description="Mois (1-12)")
+    max_salines: int = Field(4, ge=1, le=4, description="Nombre max de salines (1-4)")
 
 
 @router.post("/analyze")
@@ -27,6 +28,7 @@ async def analyze(req: AlimentationV2Request):
         center_lng=req.center_lng,
         species=req.species,
         month=req.month,
+        max_salines=req.max_salines,
     )
     return result
 

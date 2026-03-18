@@ -501,6 +501,7 @@ const MonTerritoireBionicPage = () => {
   const [showSalines, setShowSalines] = useState(true);
   const [showNutritionPanel, setShowNutritionPanel] = useState(false);
   const [alimentationV2Data, setAlimentationV2Data] = useState(null);
+  const [nSalinesMax, setNSalinesMax] = useState(4);
 
   // STABILITÉ V2: Centre memoizé pour éviter re-render cascade dans les layers enfants
   const waypointCenter = useMemo(() => {
@@ -1401,9 +1402,14 @@ const MonTerritoireBionicPage = () => {
               >
                 <Droplets className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Alimentation</span>
+                {showAlimentationV2 && alimentationV2Data && !alimentationV2Data.salines_disabled && (
+                  <span className="ml-0.5 text-[9px] bg-yellow-500/25 text-yellow-300 rounded px-1 py-px font-bold" data-testid="alimentation-badge">
+                    {alimentationV2Data.n_salines}
+                  </span>
+                )}
               </button>
             </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={8} className="w-64 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
+            <PopoverContent align="end" sideOffset={8} className="w-72 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Alimentation V2</span>
@@ -1425,6 +1431,33 @@ const MonTerritoireBionicPage = () => {
                       {alimentationV2Data.salines_message}
                     </div>
                   )}
+                  {!alimentationV2Data?.salines_disabled && (
+                    <div className="space-y-1" data-testid="salines-count-selector">
+                      <div className="text-[9px] text-gray-500 uppercase font-bold">Nombre de salines</div>
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4].map(n => (
+                          <button
+                            key={n}
+                            onClick={() => setNSalinesMax(n)}
+                            className={`flex-1 h-7 rounded text-xs font-bold transition-all ${
+                              nSalinesMax === n
+                                ? 'bg-yellow-500/30 text-yellow-300 border border-yellow-500/50'
+                                : 'bg-gray-800/60 text-gray-500 border border-gray-700/30 hover:text-gray-300 hover:bg-gray-700/40'
+                            }`}
+                            data-testid={`salines-count-${n}`}
+                          >
+                            {n}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="text-[8px] text-gray-600">
+                        {nSalinesMax === 1 && 'Meilleur spot absolu'}
+                        {nSalinesMax === 2 && 'Couverture maximale (2 axes)'}
+                        {nSalinesMax === 3 && 'Triangulation optimale'}
+                        {nSalinesMax === 4 && 'Quadrillage optimal (4 zones)'}
+                      </div>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-amber-300 font-medium">Recommandations</span>
                     <Switch checked={showNutritionPanel} onCheckedChange={setShowNutritionPanel} className="scale-[0.6] data-[state=checked]:bg-amber-500" data-testid="toggle-nutrition-panel" />
@@ -1435,7 +1468,7 @@ const MonTerritoireBionicPage = () => {
                     <div className="text-[9px] text-gray-500 uppercase font-bold">Résumé zone</div>
                     <div className="text-xs text-white">Score: <span className="text-yellow-400 font-bold">{alimentationV2Data.score_global}/100</span></div>
                     {!alimentationV2Data.salines_disabled && (
-                      <div className="text-xs text-gray-400">Salines: <span className="text-yellow-300">{alimentationV2Data.n_salines}</span></div>
+                      <div className="text-xs text-gray-400">Salines: <span className="text-yellow-300">{alimentationV2Data.n_salines}/{alimentationV2Data.n_candidates} candidats</span></div>
                     )}
                     <div className="text-xs text-gray-400">Espèce: <span className="text-yellow-300">{alimentationV2Data.species_nom}</span></div>
                     {alimentationV2Data.carences_detectees?.length > 0 && (
@@ -1679,6 +1712,7 @@ const MonTerritoireBionicPage = () => {
               pointSubFilters={pointSubFilters}
               showAlimentationV2={showAlimentationV2}
               showSalines={showSalines}
+              nSalinesMax={nSalinesMax}
               onAlimentationDataLoaded={setAlimentationV2Data}
               waypointCenter={waypointCenter}
             />

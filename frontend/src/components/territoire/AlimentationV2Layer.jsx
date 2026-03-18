@@ -1,21 +1,22 @@
 /**
  * AlimentationV2Layer.jsx — Salines ALIMENTATION-V2
  * Affiche les salines optimales dans la zone d'analyse 2km×2km.
- * Points jaunes distincts. Conforme BCE-4X.
+ * Points jaunes = sélectionnés, gris = candidats non retenus.
+ * Conforme BCE-4X + STEEVE-MAX (diversification spatiale 300m).
  *
- * STABILITÉ V2: 
- *   - fetchData dépend UNIQUEMENT de primitives (lat, lng, species, month, enabled)
- *   - onDataLoaded via ref stable (pas dans les deps de fetchData)
- *   - renderSalines via ref stable (pas dans les deps de fetchData)
+ * STABILITÉ V2:
+ *   - fetchData dépend UNIQUEMENT de primitives
+ *   - onDataLoaded via ref stable
  *   - AbortController pour annuler les fetch en vol
- *   - Cache + guards pour éviter re-fetch inutile
  */
 import { useEffect, useRef, useCallback } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 
-const SALINE_COLOR = '#FFD700';
-const SALINE_BORDER = '#B8860B';
+const SALINE_SELECTED = '#FFD700';
+const SALINE_SELECTED_BORDER = '#B8860B';
+const SALINE_CANDIDATE = '#9CA3AF';
+const SALINE_CANDIDATE_BORDER = '#6B7280';
 
 const AlimentationV2Layer = ({
   center,
@@ -23,6 +24,7 @@ const AlimentationV2Layer = ({
   month = 10,
   enabled = true,
   showSalines = true,
+  maxSalines = 4,
   onDataLoaded = null,
 }) => {
   const map = useMap();
@@ -31,11 +33,9 @@ const AlimentationV2Layer = ({
   const lastKeyRef = useRef('');
   const abortRef = useRef(null);
 
-  // Primitives stables (pas de cascade via objet center)
   const centerLat = center?.lat;
   const centerLng = center?.lng;
 
-  // Refs stables pour callbacks — évite cascades de dépendances
   const onDataLoadedRef = useRef(onDataLoaded);
   onDataLoadedRef.current = onDataLoaded;
 
@@ -53,21 +53,34 @@ const AlimentationV2Layer = ({
     const group = L.featureGroup();
 
     for (const sal of data.salines) {
+      const isSelected = sal.selected;
+      const fillColor = isSelected ? SALINE_SELECTED : SALINE_CANDIDATE;
+      const borderColor = isSelected ? SALINE_SELECTED_BORDER : SALINE_CANDIDATE_BORDER;
+      const radius = isSelected ? 9 : 5;
+      const fillOpacity = isSelected ? 0.92 : 0.35;
+      const weight = isSelected ? 2.5 : 1.5;
+
       const marker = L.circleMarker([sal.lat, sal.lng], {
-        radius: 8,
-        fillColor: SALINE_COLOR,
-        color: SALINE_BORDER,
-        weight: 2.5,
-        fillOpacity: 0.90,
-        opacity: 1.0,
+        radius,
+        fillColor,
+        color: borderColor,
+        weight,
+        fillOpacity,
+        opacity: isSelected ? 1.0 : 0.5,
         pane: 'markerPane',
       });
 
       const carences = sal.carences_zone?.join(', ') || 'Aucune';
       const justif = sal.justifications?.join(', ') || '';
+      const rankLabel = isSelected ? `#${sal.rank}` : 'Candidat';
+      const statusLabel = isSelected ? 'SÉLECTIONNÉE' : 'Non retenue';
+
       marker.bindTooltip(
-        `<div style="font-size:12px;font-weight:700;color:${SALINE_COLOR}">
-          ${sal.id} — Saline ${sal.type}
+        `<div style="font-size:12px;font-weight:700;color:${fillColor}">
+          ${sal.id} — ${rankLabel} ${sal.type}
+        </div>
+        <div style="font-size:11px;color:${isSelected ? '#FFD700' : '#999'};font-weight:600">
+          ${statusLabel}
         </div>
         <div style="font-size:11px;color:#666">
           Score: ${sal.score}/100 | Distance: ${sal.distance_centre_m}m
@@ -81,8 +94,10 @@ const AlimentationV2Layer = ({
         { sticky: true, opacity: 0.95 }
       );
 
-      marker.on('mouseover', function() { this.setStyle({ radius: 10, fillOpacity: 1.0 }); });
-      marker.on('mouseout', function() { this.setStyle({ radius: 8, fillOpacity: 0.90 }); });
+      if (isSelected) {
+        marker.on('mouseover', function () { this.setStyle({ radius: 11, fillOpacity: 1.0 }); });
+        marker.on('mouseout', function () { this.setStyle({ radius: 9, fillOpacity: 0.92 }); });
+      }
 
       group.addLayer(marker);
     }
@@ -91,30 +106,25 @@ const AlimentationV2Layer = ({
     layerRef.current = group;
   }, [map, clearLayers, showSalines]);
 
-  // Ref stable pour renderSalines — évite cascade fetchData→renderSalines
   const renderRef = useRef(renderSalines);
   renderRef.current = renderSalines;
 
-  // Fetch découplé — dépend UNIQUEMENT des primitives (AUCUN callback dans les deps)
   const fetchData = useCallback(async () => {
     if (centerLat == null || centerLng == null || !enabled) {
       clearLayers();
       return;
     }
 
-    const key = `${centerLat.toFixed(4)}:${centerLng.toFixed(4)}:${species}:${month}`;
+    const key = `${centerLat.toFixed(4)}:${centerLng.toFixed(4)}:${species}:${month}:${maxSalines}`;
 
-    // Skip si même clé ET layers existent déjà
     if (lastKeyRef.current === key && layerRef.current) return;
 
-    // Données en cache — re-render sans fetch
     if (lastKeyRef.current === key && cacheRef.current) {
       renderRef.current(cacheRef.current);
       return;
     }
     lastKeyRef.current = key;
 
-    // Abort previous fetch
     if (abortRef.current) abortRef.current.abort();
     abortRef.current = new AbortController();
 
@@ -126,8 +136,9 @@ const AlimentationV2Layer = ({
         body: JSON.stringify({
           center_lat: centerLat,
           center_lng: centerLng,
-          species: species,
-          month: month,
+          species,
+          month,
+          max_salines: maxSalines,
         }),
         signal: abortRef.current.signal,
       });
@@ -142,9 +153,8 @@ const AlimentationV2Layer = ({
     } catch (err) {
       if (err.name !== 'AbortError') console.error('[ALIMENTATION-V2]', err);
     }
-  }, [centerLat, centerLng, species, month, enabled, clearLayers]);
+  }, [centerLat, centerLng, species, month, enabled, maxSalines, clearLayers]);
 
-  // Fetch effect — ne se re-déclenche que sur changements réels de primitives
   useEffect(() => {
     fetchData();
     return () => {
@@ -152,7 +162,6 @@ const AlimentationV2Layer = ({
     };
   }, [fetchData]);
 
-  // Re-render visuel quand showSalines change (sans re-fetch)
   useEffect(() => {
     if (cacheRef.current) renderSalines(cacheRef.current);
   }, [renderSalines]);

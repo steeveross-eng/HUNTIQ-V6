@@ -40,17 +40,21 @@ def analyze_alimentation_v2(
     species: str = "CERF",
     month: int = 10,
     side_m: float = 2000.0,
+    max_salines: int = 4,
 ) -> dict:
     """
     Analyse alimentaire complète V2.
     Retourne: terrain, salines, recommandations nutritionnelles.
     STEEVE-MAX: OURS et DINDON ne génèrent aucune saline.
+    Diversification spatiale: min 300m entre salines.
     """
     # Résolution espèce: accepte IDs frontend ou backend
     species_resolved = FRONTEND_SPECIES_MAP.get(species.lower(), species.upper())
     if species_resolved not in SPECIES_LIST:
         species_resolved = "CERF"
     species = species_resolved
+
+    max_salines = max(1, min(4, max_salines))
 
     # 1. Analyse territoriale
     terrain = analyze_terrain(center_lat, center_lng, side_m)
@@ -59,19 +63,23 @@ def analyze_alimentation_v2(
     if species in SPECIES_NO_SALINES:
         salines = []
     else:
-        salines = compute_salines(center_lat, center_lng, terrain, species, month, side_m)
+        salines = compute_salines(
+            center_lat, center_lng, terrain, species, month, side_m,
+            max_salines=max_salines, min_distance_m=300.0,
+        )
 
     # 3. Recommandations nutritionnelles
     nutrition = get_nutrition(species)
 
     # 4. Score global alimentation V2
+    selected_salines = [s for s in salines if s.get("selected")]
     terrain_score = (
         terrain["alimentaire"]["score_disponibilite"] * 40 +
         terrain["eau"]["score_hydrique"] * 20 +
         (terrain["foret"]["couvert_pct"] / 100) * 20 +
         (1 - terrain["relief"]["pente_moyenne_pct"] / 30) * 20
     )
-    avg_saline_score = sum(s["score"] for s in salines) / len(salines) if salines else 0
+    avg_saline_score = sum(s["score"] for s in selected_salines) / len(selected_salines) if selected_salines else 0
     score_global = round(terrain_score * 0.6 + avg_saline_score * 0.4)
 
     # 5. Carences détectées
@@ -98,7 +106,9 @@ def analyze_alimentation_v2(
         "score_global": min(100, max(0, score_global)),
         "terrain": terrain,
         "salines": salines,
-        "n_salines": len(salines),
+        "n_salines": len(selected_salines),
+        "n_candidates": len(salines),
+        "max_salines": max_salines,
         "salines_disabled": species in SPECIES_NO_SALINES,
         "salines_message": SPECIES_NO_SALINES_MESSAGES.get(species),
         "nutrition": {
