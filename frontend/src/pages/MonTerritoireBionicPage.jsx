@@ -1645,26 +1645,9 @@ const MonTerritoireBionicPage = () => {
           SECTION 4+5 — CARTE DOMINANTE + PANNEAU LATÉRAL
           La carte occupe toujours l'espace principal.
           Un panneau latéral s'ouvre selon l'onglet actif.
+          BCE-4X R3/R7/R11: La carte est TOUJOURS rendue, jamais supprimée.
           ════════════════════════════════════════════════════════════════ */}
-
-      {/* ═══ INTELLIGENCE DASHBOARD — Tableau central plein ecran ═══ */}
-      {activeTab === 'intelligence' && (
-        <IntelligenceDashboard
-          onClose={() => setActiveTab('carte')}
-          waypointCenter={waypointCenter}
-          selectedSpecies={selectedSpecies}
-          currentMonth={new Date().getMonth() + 1}
-          onNavigateToPosition={(lat, lng) => {
-            if (mapRef.current) {
-              mapRef.current.setView([lat, lng], 15);
-              setActiveTab('carte');
-            }
-          }}
-        />
-      )}
-
-      {activeTab !== 'intelligence' && (
-      <div className="flex-1 flex overflow-hidden min-h-0">
+      <div className="flex-1 flex overflow-hidden min-h-0 relative">
         {/* ── CARTE BIONIC — ZONE DOMINANTE (80%+ de l'écran) ── */}
         <div className="flex-1 relative">
           {/* Indicateur du mode création de waypoint */}
@@ -1980,8 +1963,24 @@ const MonTerritoireBionicPage = () => {
             />
           )}
         </div>
+
+        {/* ═══ INTELLIGENCE DASHBOARD — Superposition modale sur la carte ═══ */}
+        {/* BCE-4X R3/R7/R11/R18: La carte reste intacte en dessous, jamais supprimée */}
+        {activeTab === 'intelligence' && (
+          <IntelligenceDashboard
+            onClose={() => setActiveTab('carte')}
+            waypointCenter={waypointCenter}
+            selectedSpecies={selectedSpecies}
+            currentMonth={new Date().getMonth() + 1}
+            onNavigateToPosition={(lat, lng) => {
+              if (mapRef.current) {
+                mapRef.current.setView([lat, lng], 15);
+                setActiveTab('carte');
+              }
+            }}
+          />
+        )}
       </div>
-      )}
 
       {/* ═══ PANNEAU RECOMMANDATIONS NUTRITIONNELLES — ALIMENTATION-V2 ═══ */}
       {showNutritionPanel && alimentationV2Data && (

@@ -81,7 +81,7 @@ export default function IntelligenceDashboard({ onClose, waypointCenter, selecte
   const classeStyle = summary ? (CLASSE_C[summary.consolidated?.classe] || CLASSE_C.FAIBLE) : CLASSE_C.FAIBLE;
 
   return (
-    <div className="flex-1 z-[1000] bg-[#0a0a12] overflow-hidden flex flex-col" data-testid="intelligence-dashboard">
+    <div className="absolute inset-0 z-[900] bg-[#0a0a12]/98 backdrop-blur-sm overflow-hidden flex flex-col" data-testid="intelligence-dashboard">
       {/* ══ HEADER COCKPIT ══ */}
       <div className="flex-shrink-0 bg-[#0c0c16] border-b border-gray-800/40 px-4 py-2 flex items-center gap-3">
         <div className="flex items-center gap-2">
