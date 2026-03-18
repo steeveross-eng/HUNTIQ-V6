@@ -1758,6 +1758,22 @@ const MonTerritoireBionicPage = () => {
             showCorridors={showCorridors}
           />
 
+          {/* ── Indicateur Zone d'Analyse — Position fixe bas-gauche (au-dessus de la légende) ── */}
+          {selectedWaypointForZones && (
+            <div
+              className="absolute bottom-[120px] left-2 z-[999] select-none pointer-events-none"
+              data-testid="zone-analysis-indicator"
+            >
+              <div className="flex items-center gap-2 px-3 py-2 bg-[#0c0c14]/90 border border-[#f5a623]/30 rounded-lg backdrop-blur-sm shadow-lg">
+                <div className="w-3 h-3 border-2 border-dashed rounded-sm flex-shrink-0" style={{ borderColor: '#f5a623' }} />
+                <div>
+                  <div className="text-[10px] font-bold text-white tracking-wide">Zone d'analyse</div>
+                  <div className="text-[9px] text-gray-400">2 km × 2 km — {selectedWaypointForZones?.name || 'Waypoint'}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
 
           {/* ── Contrôles carte — gauche ── */}
           <div className="absolute top-4 left-3 z-[1000] flex flex-col gap-2">

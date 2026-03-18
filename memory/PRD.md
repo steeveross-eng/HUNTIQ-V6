@@ -15,49 +15,32 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 ### DIRECTIVE ESPECES STEEVE-MAX — iteration_50 (100%)
 ### OPTIMISATION SALINES + DIVERSIFICATION SPATIALE — iteration_51 (100%)
 ### DEPLACEMENT COUCHES STEEVE-MAX — iteration_52 (100%)
+### RETRAIT MODE SECRET — iteration_53 (100%)
 
-### RETRAIT MODE SECRET (2026-03-18) — iteration_53 (100%)
-- **Mode SECRET (cadenas vert)** deplace dans ADMIN PREMIUM
-- Vue standard: Aucun cadenas visible, toolbar propre (ANALYSE > ZONES direct)
-- Vue admin: Cadenas vert/rouge accessible apres activation mode Architecte
-- privacyMode default=false: donnees utilisateur visibles par defaut
-- Confirmation visuelle: cadenas absent en mode standard, present en mode admin
+### REPOSITIONNEMENT INDICATEUR ZONE D'ANALYSE (2026-03-18) — iteration_54 (100%)
+- Indicateur fixe repositionne en bas-gauche de la carte (position: bottom-[120px] left-2)
+- Gap 20px avec la legende (conforme 16-24px STEEVE-MAX)
+- Aucune superposition avec: toolbar, badges, popovers, selecteurs, panneaux lateraux
+- Stable: position CSS absolue, z-index 999, pointer-events-none
+- Tooltip hover BionicZone2km desactive (showTooltip=false par defaut)
+- Affichage: icone carree pointillee orange + "Zone d'analyse" + "2 km x 2 km — {waypoint.name}"
+- Visible uniquement quand selectedWaypointForZones actif
 
-## Elements SUPPRIMES/DEPLACES (INTERDICTION de montrer a l'usager standard)
+## Elements SUPPRIMES/DEPLACES
 - Onglet LAYERS — supprime iteration_47
 - Onglet CORRIDORS V10 — supprime iteration_48a
 - Point "Alimentation secondaire" (V1) — supprime iteration_51
-- Couches BIONIC alimentation/salines/alimentation_sec (V1) — BANNED_LAYERS
 - Labels DOMINANT/SECONDAIRE/TERTIAIRE — ADMIN ONLY (iteration_52)
 - Mode SECRET (cadenas) — ADMIN ONLY (iteration_53)
 
 ## Architecture de controle STEEVE-MAX (FINAL)
 ```
-ZONES (unique centre de controle)
---- Zones (sous-elements: 7)
---- Corridors (sous-elements: 4)
---- Points (sous-elements: 8)
---- Overlays (Vent + Exclusions)
+ZONES > ALIMENTATION > POINTS CHAUDS > SEUIL > CURSEUR > ADMIN(Shield)
 
-ALIMENTATION (V2) — Position: apres ZONES, avant POINTS CHAUDS
---- Badge (X) = nombre salines actives
---- Master toggle + Salines toggle (disabled OURS/DINDON)
---- Selecteur 1-4 salines + Recommandations panel
-
-POINTS CHAUDS (filtrage comportemental)
-
-ADMIN PREMIUM (bouclier Shield, mot de passe Saturn5858*)
---- Labels DOMINANT/SECONDAIRE/TERTIAIRE
---- Mode SECRET (cadenas privacyMode)
---- Tooltip: "Controle la dominance comportementale interne"
+Indicateur zone d'analyse: bas-gauche (120px du bas, gap 20px legende)
+Legende: bas-gauche (56px du bas)
+Zoom controls: haut-gauche
 ```
-
-## API Endpoints
-### CORRIDORS-V10
-- POST /api/v10/corridors/analyze-full
-### ALIMENTATION-V2
-- POST /api/v2/alimentation/analyze (center_lat, center_lng, species, month, max_salines)
-- GET /api/v2/alimentation/species
 
 ## Backlog
 ### P1 — Integration score consolide CORRIDORS-V10 dans heatmap

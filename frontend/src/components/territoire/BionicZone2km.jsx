@@ -49,7 +49,7 @@ function calculateBounds(lat, lng) {
  */
 const BionicZone2km = ({ 
   waypoint,
-  showTooltip = true,
+  showTooltip = false,  // STEEVE-MAX: tooltip remplacé par indicateur fixe bas-gauche
   opacity = 0.7,
 }) => {
   // Extraction des coordonnées (support lat/latitude, lng/longitude)
