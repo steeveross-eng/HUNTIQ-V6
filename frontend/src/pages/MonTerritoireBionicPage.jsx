@@ -1240,18 +1240,22 @@ const MonTerritoireBionicPage = () => {
           </button>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-          {/* ═══ 7. LOCK ═══ */}
-          <button
-            onClick={() => setPrivacyMode(!privacyMode)}
-            className={`h-8 w-8 flex items-center justify-center rounded-md transition-all ${
-              privacyMode ? 'bg-red-500/15 text-red-400' : 'text-green-500 hover:bg-white/5'
-            }`}
-            data-testid="toolbar-lock-btn"
-            title={privacyMode ? 'Mode privé activé' : 'Mode public'}
-          >
-            {privacyMode ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
-          </button>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+          {/* ═══ 7. LOCK — ADMIN ONLY (mode SECRET déplacé dans ADMIN PREMIUM) ═══ */}
+          {adminArchitecteMode && (
+            <>
+              <button
+                onClick={() => setPrivacyMode(!privacyMode)}
+                className={`h-8 w-8 flex items-center justify-center rounded-md transition-all ${
+                  privacyMode ? 'bg-red-500/15 text-red-400' : 'text-green-500 hover:bg-white/5'
+                }`}
+                data-testid="toolbar-lock-btn"
+                title={privacyMode ? 'Mode privé activé — Données sensibles masquées' : 'Mode public — Données visibles'}
+              >
+                {privacyMode ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
+              </button>
+              <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
+            </>
+          )}
 
           {/* ═══ 8a. ONGLET ZONES — Contrôle couches + sous-éléments STEEVE-MAX ═══ */}
           <Popover>
