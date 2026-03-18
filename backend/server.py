@@ -497,8 +497,9 @@ try:
         lat: float = _Query(...), lng: float = _Query(...),
         species: str = _Query("CERF"), month: int = _Query(10, ge=1, le=12),
         grid_size: int = _Query(20, ge=5, le=40),
+        include_corridors: int = _Query(1, ge=0, le=1),
     ):
-        return compute_heatmap_grid(lat, lng, species, month, grid_size)
+        return compute_heatmap_grid(lat, lng, species, month, grid_size, include_corridors=bool(include_corridors))
 
     logger.info("✓ SCORE-CONSOLIDE registered (/api/v1/score-consolide)")
 except Exception as e:

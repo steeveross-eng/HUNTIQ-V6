@@ -505,6 +505,7 @@ const MonTerritoireBionicPage = () => {
   const [adminArchitecteMode, setAdminArchitecteMode] = useState(false);
   const [showHeatmapV10, setShowHeatmapV10] = useState(true);
   const [heatmapV10Data, setHeatmapV10Data] = useState(null);
+  const [heatmapIncludeCorridors, setHeatmapIncludeCorridors] = useState(true);
 
   // STABILITÉ V2: Centre memoizé pour éviter re-render cascade dans les layers enfants
   const waypointCenter = useMemo(() => {
@@ -1406,6 +1407,23 @@ const MonTerritoireBionicPage = () => {
                       <span className="ml-auto text-[8px] text-gray-500">{heatmapV10Data.score_avg}/100</span>
                     )}
                   </button>
+                  {showHeatmapV10 && (
+                    <div className="ml-3 pl-2 border-l border-orange-800/30 space-y-1 pt-0.5">
+                      <div className="text-[8px] text-gray-600 uppercase font-bold tracking-wider">
+                        {adminArchitecteMode ? 'Mode Pro' : 'Mode Lite'}
+                      </div>
+                      <button
+                        onClick={() => setHeatmapIncludeCorridors(!heatmapIncludeCorridors)}
+                        className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
+                          heatmapIncludeCorridors ? 'text-cyan-400 bg-white/5' : 'text-gray-600 hover:text-gray-400'
+                        }`}
+                        data-testid="heatmap-toggle-corridors"
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${heatmapIncludeCorridors ? 'bg-cyan-400' : 'bg-gray-700'}`} />
+                        Corridors V10
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </PopoverContent>
@@ -1761,6 +1779,8 @@ const MonTerritoireBionicPage = () => {
               waypointCenter={waypointCenter}
               showHeatmapV10={showHeatmapV10}
               onHeatmapDataLoaded={setHeatmapV10Data}
+              isArchitecteMode={adminArchitecteMode}
+              heatmapIncludeCorridors={heatmapIncludeCorridors}
             />
           </MapContainer>
 
@@ -1799,7 +1819,10 @@ const MonTerritoireBionicPage = () => {
             >
               <div className="flex items-center gap-1.5 px-2 py-1 bg-[#0c0c14]/85 border border-gray-700/40 rounded backdrop-blur-sm">
                 <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 via-yellow-500 to-red-500 flex-shrink-0" />
-                <span className="text-[8px] text-gray-400 font-medium">Corridors-V10 intégrés</span>
+                <span className="text-[8px] text-gray-400 font-medium">
+                  Heatmap {adminArchitecteMode ? 'Pro' : 'Lite'}
+                  {!heatmapIncludeCorridors && ' (sans V10)'}
+                </span>
                 <span className="text-[8px] text-gray-500">{heatmapV10Data.score_avg}/100</span>
               </div>
             </div>

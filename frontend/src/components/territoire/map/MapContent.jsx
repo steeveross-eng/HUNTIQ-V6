@@ -90,6 +90,8 @@ const MapContentInner = React.memo(({
   // HEATMAP V10 consolidée
   showHeatmapV10,
   onHeatmapDataLoaded,
+  isArchitecteMode,
+  heatmapIncludeCorridors,
   // STEEVE-MAX UX: Contrôles couches et points chauds
   showZonesLayer,
   showCorridorsLayer,
@@ -159,8 +161,10 @@ const MapContentInner = React.memo(({
         species={selectedSpecies}
         month={new Date().getMonth() + 1}
         enabled={showHeatmapV10}
-        opacity={0.45}
+        opacity={isArchitecteMode ? 0.45 : 0.15}
         onDataLoaded={onHeatmapDataLoaded}
+        isArchitecteMode={isArchitecteMode}
+        includeCorridors={heatmapIncludeCorridors}
       />
     )}
 

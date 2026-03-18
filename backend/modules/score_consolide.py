@@ -83,10 +83,12 @@ def _alimentation_v2_score_for_point(lat, lng, center_lat, center_lng, species, 
 
 
 def compute_consolidated_score(lat, lng, species="CERF", month=10,
-                                center_lat=None, center_lng=None):
+                                center_lat=None, center_lng=None,
+                                include_corridors=True):
     """
     Score consolidé multi-moteurs pour un point.
     Intègre CORRIDORS-V10 + ALIMENTATION-V2 en plus de V1.
+    include_corridors=False → exclut corridors_v10 du calcul (comparaison).
     """
     alim = alim_point(lat, lng, species, month)
     repos = repos_point(lat, lng, species, month)
@@ -103,7 +105,7 @@ def compute_consolidated_score(lat, lng, species="CERF", month=10,
     dist_bat = pert.get("distance_batiment_m", 300)
     pression_score = min(100, (dist_route / 8.0) + (dist_bat / 10.0))
 
-    corridor_score = _corridor_score_for_point(lat, lng, c_lat, c_lng, species, month)
+    corridor_score = _corridor_score_for_point(lat, lng, c_lat, c_lng, species, month) if include_corridors else 0.0
     alim_v2_score = _alimentation_v2_score_for_point(lat, lng, c_lat, c_lng, species, month)
 
     scores = {
@@ -114,24 +116,32 @@ def compute_consolidated_score(lat, lng, species="CERF", month=10,
         "pression": round(pression_score, 1),
     }
 
+    # Pondérations dynamiques: exclure corridors_v10 si désactivé
+    if include_corridors:
+        weights = NORMALIZED_WEIGHTS
+    else:
+        active = {k: v for k, v in ENGINE_WEIGHTS.items() if k != "corridors_v10" and v > 0}
+        total = sum(active.values())
+        weights = {k: v / total for k, v in active.items()}
+
     if is_water:
         return {
             "score": 0.0, "classe": "EXCLU", "label": "Surface d'eau",
             "color": "#1E3A5F", "species": species.upper(), "month": month,
             "is_water": True,
             "components": {k: 0.0 for k in scores},
-            "weights": {k: round(v, 3) for k, v in NORMALIZED_WEIGHTS.items()},
+            "weights": {k: round(v, 3) for k, v in weights.items()},
             "tracability": {
                 "exclusion": "BCE-4X water surface",
-                "engines_active": list(NORMALIZED_WEIGHTS.keys()),
+                "engines_active": list(weights.keys()),
                 "engines_pending": [],
-                "corridors_v10_integrated": True,
+                "corridors_v10_integrated": include_corridors,
             },
         }
 
     consolidated = sum(
-        scores.get(k, 0) * NORMALIZED_WEIGHTS[k]
-        for k in NORMALIZED_WEIGHTS if k in scores
+        scores.get(k, 0) * weights.get(k, 0)
+        for k in weights if k in scores
     )
     consolidated = max(0, min(100, consolidated))
 
@@ -149,12 +159,12 @@ def compute_consolidated_score(lat, lng, species="CERF", month=10,
         "classe": classe, "label": label, "color": color,
         "species": species.upper(), "month": month,
         "components": scores,
-        "weights": {k: round(v, 3) for k, v in NORMALIZED_WEIGHTS.items()},
+        "weights": {k: round(v, 3) for k, v in weights.items()},
         "tracability": {
             **{f"{k}_score": v for k, v in scores.items()},
-            "engines_active": list(NORMALIZED_WEIGHTS.keys()),
+            "engines_active": list(weights.keys()),
             "engines_pending": [],
-            "corridors_v10_integrated": True,
+            "corridors_v10_integrated": include_corridors,
             "alimentation_v2_integrated": True,
         },
     }
@@ -164,10 +174,12 @@ def compute_heatmap_grid(
     center_lat, center_lng,
     species="CERF", month=10,
     grid_size=20, side_m=2000.0,
+    include_corridors=True,
 ):
     """
     Grille de scores consolidés pour le heatmap.
     CORRIDORS-V10 + ALIMENTATION-V2 intégrés.
+    include_corridors: toggle pour comparaison avec/sans V10.
     """
     half = side_m / 2.0
     lat_step = (side_m / grid_size) / 111320.0
@@ -186,6 +198,7 @@ def compute_heatmap_grid(
             result = compute_consolidated_score(
                 lat, lng, species, month,
                 center_lat=center_lat, center_lng=center_lng,
+                include_corridors=include_corridors,
             )
             points.append({
                 "lat": round(lat, 6),
@@ -206,6 +219,11 @@ def compute_heatmap_grid(
     else:
         overall_classe, overall_label = "FAIBLE", "Faible"
 
+    engines = ["alimentation_v1", "repos_v1", "alimentation_v2", "pression"]
+    if include_corridors:
+        engines.append("corridors_v10")
+    active_w = NORMALIZED_WEIGHTS if include_corridors else {k: v for k, v in NORMALIZED_WEIGHTS.items() if k != "corridors_v10"}
+
     return {
         "center": {"lat": center_lat, "lng": center_lng},
         "species": species.upper(),
@@ -217,7 +235,8 @@ def compute_heatmap_grid(
         "score_max": round(max(scores), 1) if scores else 0,
         "overall_classe": overall_classe,
         "overall_label": overall_label,
-        "weights": {k: round(v, 3) for k, v in NORMALIZED_WEIGHTS.items()},
-        "engines_integrated": ["alimentation_v1", "repos_v1", "corridors_v10", "alimentation_v2", "pression"],
+        "weights": {k: round(v, 3) for k, v in active_w.items()},
+        "engines_integrated": engines,
+        "corridors_v10_included": include_corridors,
         "points": points,
     }

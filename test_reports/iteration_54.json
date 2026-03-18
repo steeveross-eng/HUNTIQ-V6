@@ -1,0 +1,110 @@
+{
+  "summary": "CORRIDORS-V10 Heatmap Lite/Pro visual optimization fully verified. Backend API correctly handles include_corridors parameter (1=with corridors, 0=without). Frontend shows 'Heatmap Lite' for standard users and 'Heatmap Pro' after Admin Architecte activation with password 'Saturn5858*'. Comparison toggle 'Corridors V10' visible in Zones>Overlays section and when disabled shows '(sans V10)' suffix. All features working: Zones 12, Corridors 15/14.1km, Alimentation badge '4'.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api": {
+      "endpoint": "GET /api/v1/score-consolide/heatmap",
+      "status": "PASS - 10/10 tests passed",
+      "tests": {
+        "include_corridors_1": "PASS - corridors_v10_included=true, corridors_v10 in engines_integrated",
+        "include_corridors_0": "PASS - corridors_v10_included=false, corridors_v10 NOT in engines_integrated",
+        "score_difference": "PASS - Score 56.9 with corridors, 56.2 without",
+        "grid_400_points": "PASS - total_points=400 for 20x20 grid",
+        "point_structure": "PASS - lat, lng, score, classe, color fields",
+        "weights_sum_to_one": "PASS - weights sum to 1.0",
+        "ours_species": "PASS - OURS species supported",
+        "dindon_species": "PASS - DINDON species supported",
+        "engine_weights": "PASS - alimentation:0.25, repos:0.20, corridors_v10:0.25, alimentation_v2:0.10, pression:0.20",
+        "engines_integrated": "PASS - all 5 engines in list"
+      }
+    },
+    "frontend_ui": {
+      "status": "PASS",
+      "tests": {
+        "heatmap_lite_mode": "PASS - Shows 'Heatmap Lite' for standard user (no admin)",
+        "heatmap_pro_mode": "PASS - Shows 'Heatmap Pro' after Admin Architecte activation",
+        "admin_architecte_password": "PASS - Prompt accepts 'Saturn5858*' password",
+        "corridors_v10_toggle": "PASS - data-testid='heatmap-toggle-corridors' visible in Zones popover",
+        "toggle_off_shows_sans_v10": "PASS - Shows '(sans V10)' when corridors disabled",
+        "heatmap_indicator": "PASS - data-testid='heatmap-v10-indicator' shows correct mode",
+        "visual_gradient_lite": "PASS - Subtle pastel colors for Lite mode",
+        "visual_gradient_pro": "PASS - High-contrast thermal colors for Pro mode"
+      }
+    },
+    "no_regression": {
+      "status": "PASS",
+      "tests": {
+        "zones_count": "PASS - 12 zones visible",
+        "corridors_v10": "PASS - 15 corridors, 14.1km, score 67",
+        "alimentation_badge": "PASS - Badge shows '4'",
+        "zones_sub_elements": "PASS - 7/7 (alimentation, repos, rut, habitat, affuts, trajets, multi-engines)",
+        "corridors_sub_elements": "PASS - 4/4 (normaux, intenses, extreme, saisonniers)"
+      }
+    }
+  },
+  "features_verified": {
+    "heatmap_lite_standard_user": "PASS - Low opacity pastel gradient for standard users",
+    "heatmap_pro_admin_mode": "PASS - High contrast thermal gradient for Admin Architecte",
+    "admin_architecte_activation": "PASS - Shield button prompts for password 'Saturn5858*'",
+    "comparison_toggle_corridors_v10": "PASS - Visible in Zones > Overlays section when Heatmap V10 ON",
+    "backend_include_corridors_1": "PASS - corridors_v10_included=true, corridors_v10 in weights",
+    "backend_include_corridors_0": "PASS - corridors_v10_included=false, corridors_v10 excluded",
+    "indicator_lite_pro_text": "PASS - Shows 'Heatmap Lite' or 'Heatmap Pro' based on mode",
+    "indicator_sans_v10_suffix": "PASS - Shows '(sans V10)' when corridors disabled",
+    "no_regression_zones_corridors_alimentation": "PASS - All previous features intact"
+  },
+  "code_review": {
+    "ConsolidatedHeatmapLayer.jsx": {
+      "line_11_28": "PASS - GRADIENT_PRO (high contrast) vs GRADIENT_LITE (pastel) correctly defined",
+      "props": "PASS - isArchitecteMode and includeCorridors props used correctly",
+      "opacity": "PASS - Lite uses lower opacity (0.05-0.4) vs Pro (0.4*opacity)"
+    },
+    "MapContent.jsx": {
+      "line_91_92": "PASS - isArchitecteMode and heatmapIncludeCorridors passed to ConsolidatedHeatmapLayer"
+    },
+    "MonTerritoireBionicPage.jsx": {
+      "line_505": "PASS - adminArchitecteMode state defined",
+      "line_508": "PASS - heatmapIncludeCorridors state defined (default true)",
+      "line_1410_1425": "PASS - Comparison toggle UI with 'Mode Pro'/'Mode Lite' label and Corridors V10 button"
+    },
+    "score_consolide.py": {
+      "include_corridors_param": "PASS - compute_heatmap_grid accepts include_corridors parameter",
+      "corridors_v10_included_field": "PASS - Response includes corridors_v10_included boolean",
+      "dynamic_weights": "PASS - Weights normalized correctly when corridors excluded"
+    },
+    "server.py": {
+      "line_495": "PASS - Heatmap endpoint with include_corridors query param (0 or 1)"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_heatmap_v10_lite_pro.py",
+    "/app/test_reports/pytest/heatmap_v10_lite_pro_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_heatmap_v10_lite_pro.py"
+  ],
+  "success_rate": {
+    "backend": "100% (10/10 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "admin_architecte_password": "Saturn5858*"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Heatmap Lite/Pro visual optimization verified. Lite mode for standard users shows pastel colors (subtle). Pro mode for Admin Architecte shows high-contrast thermal colors. Comparison toggle 'Corridors V10' in Zones>Overlays allows viewing heatmap with/without corridors engine. Backend API /api/v1/score-consolide/heatmap supports include_corridors parameter (0 or 1). All previous features (ZONES 12, V10 corridors 15/14.1km, ALIMENTATION badge '4') working without regression.",
+  "verification_date": "2026-01-18",
+  "testing_focus": "CORRIDORS-V10 Heatmap Lite/Pro Visual Optimization"
+}
