@@ -1,0 +1,129 @@
+{
+  "summary": "Phase M1 Engine Registry testing completed. All 31 backend tests PASSED. V3 Engine Registry API working with 5 engines auto-discovered (ALIMENTATION-V1, ALIMENTATION-V2, REPOS-V1, CORRIDORS-V10, PRESSION-V1). Species mapping (deer→CHEVREUIL, moose→ORIGNAL, cerf→CHEVREUIL, ours_noir→OURS) works correctly. Exclude parameter recalculates weights correctly. All legacy V1/V10 endpoints working (non-regression PASS). Frontend /territoire page loads correctly with ZONES (23), CORRIDORS V10 (19/11.8km/71), ALIMENTATION badge visible.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api": {
+      "v3_registry": {
+        "endpoint": "GET /api/v3/engines/registry",
+        "status": "PASS",
+        "tests": {
+          "returns_200": "PASS",
+          "has_5_engines": "PASS - ALIMENTATION-V1, ALIMENTATION-V2, REPOS-V1, CORRIDORS-V10, PRESSION-V1",
+          "engine_metadata_complete": "PASS",
+          "all_support_5_species": "PASS - CHEVREUIL, ORIGNAL, OURS, DINDON, WAPITI"
+        }
+      },
+      "v3_score_point": {
+        "endpoint": "GET /api/v3/engines/score-point",
+        "status": "PASS",
+        "tests": {
+          "species_CHEVREUIL": "PASS - returns species='CHEVREUIL'",
+          "species_deer_alias": "PASS - deer → CHEVREUIL",
+          "species_moose_alias": "PASS - moose → ORIGNAL",
+          "species_cerf_alias": "PASS - cerf → CHEVREUIL",
+          "species_ours_noir_alias": "PASS - ours_noir → OURS",
+          "has_5_components": "PASS",
+          "pression_v1_score": "PASS - returns 0-100",
+          "exclude_CORRIDORS_V10": "PASS - excluded from components, weights recalculated to sum=1.0",
+          "weights_sum_to_1": "PASS - both with/without exclusion",
+          "classification_thresholds": "PASS - OPTIMAL >=80, BON >=60, MODERE >=40, FAIBLE <40",
+          "tracability_fields": "PASS - engines_active, engines_excluded, consolidator version"
+        }
+      },
+      "v3_score_grid": {
+        "endpoint": "GET /api/v3/engines/score-grid",
+        "status": "PASS",
+        "tests": {
+          "returns_200": "PASS",
+          "has_points": "PASS - 25 points for 5x5 grid",
+          "has_score_avg": "PASS",
+          "has_engines_integrated": "PASS - 5 engines listed",
+          "point_structure": "PASS - lat, lng, score, classe, color"
+        }
+      },
+      "non_regression_v1_v10": {
+        "status": "PASS - All legacy endpoints working",
+        "tests": {
+          "GET_alimentation_v1_point": "PASS - species=CERF works",
+          "GET_repos_v1_point": "PASS",
+          "GET_score_consolide_point": "PASS",
+          "GET_score_consolide_heatmap_include_corridors": "PASS - include_corridors param works",
+          "POST_corridors_v10_analyze_full": "PASS"
+        }
+      }
+    },
+    "frontend_ui": {
+      "status": "PASS",
+      "tests": {
+        "territoire_page_loads": "PASS - /territoire accessible",
+        "map_visible": "PASS - Leaflet map container visible",
+        "zones_visible": "PASS - 23 zones displayed in sidebar",
+        "corridors_v10_visible": "PASS - 19 corridors, 11.8km, Score 71",
+        "alimentation_badge_visible": "PASS - Badge '4' in toolbar",
+        "score_global_v10": "PASS - 50/100 Modéré displayed",
+        "no_console_errors_blocking": "PASS - App functional despite non-critical warnings"
+      }
+    }
+  },
+  "code_review": {
+    "base.py": {
+      "status": "PASS",
+      "features": ["BionicEngine ABC interface", "SPECIES_CANONICAL list", "SPECIES_ALIASES mapping", "resolve_species() function", "EngineMeta dataclass", "EngineScore dataclass"]
+    },
+    "adapters.py": {
+      "status": "PASS",
+      "features": ["AlimentationV1Adapter", "AlimentationV2Adapter", "ReposV1Adapter", "CorridorsV10Adapter", "_TO_LEGACY mapping for V1 engines"]
+    },
+    "registry.py": {
+      "status": "PASS",
+      "features": ["EngineRegistry with auto_discover()", "DynamicConsolidator with score_point/score_grid", "Weight normalization when excluding engines"]
+    },
+    "pression_v1/engine.py": {
+      "status": "PASS",
+      "features": ["PressionV1Engine implements BionicEngine", "Score based on distance to routes/buildings"]
+    },
+    "server.py": {
+      "status": "PASS",
+      "features": ["/api/v3/engines/registry endpoint", "/api/v3/engines/score-point endpoint", "/api/v3/engines/score-grid endpoint", "Auto-discovery of 5 engines at startup"]
+    }
+  },
+  "features_verified": {
+    "BionicEngine_interface": "PASS - ABC with meta(), score_point(), score_grid()",
+    "species_mapping_unified": "PASS - CHEVREUIL/ORIGNAL/OURS/DINDON/WAPITI canonical",
+    "PRESSION_V1_standalone": "PASS - Extracted as standalone engine",
+    "EngineRegistry_auto_discovery": "PASS - 5 engines auto-detected",
+    "DynamicConsolidator_decoupled": "PASS - Uses registry, no direct engine imports",
+    "zero_regression_v1_endpoints": "PASS - All legacy endpoints working",
+    "tracability_in_response": "PASS - engines_active, engines_excluded, consolidator version"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_m1_engine_registry.py",
+    "/app/test_reports/pytest/m1_engine_registry_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_m1_engine_registry.py"
+  ],
+  "success_rate": {
+    "backend": "100% (31/31 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Phase M1 Engine Registry complete. V3 API coexists with V1/V10 legacy. New endpoints: /api/v3/engines/registry (manifest), /api/v3/engines/score-point (species+exclude params), /api/v3/engines/score-grid. Species mapping: CHEVREUIL (not CERF), ORIGNAL (not moose), OURS (not bear). 5 engines auto-discovered: ALIMENTATION-V1, ALIMENTATION-V2, REPOS-V1, CORRIDORS-V10, PRESSION-V1. DynamicConsolidator weights always sum to 1.0. Frontend /territoire page working with ZONES 23, CORRIDORS V10 19/11.8km/71, ALIMENTATION badge visible.",
+  "verification_date": "2026-01-18",
+  "testing_focus": "Phase M1 OPTION B — Standardisation des moteurs BIONIC (BionicEngine interface, Engine Registry, DynamicConsolidator)"
+}
