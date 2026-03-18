@@ -166,17 +166,6 @@ export const ROUTES = [
     showInNav: true,
     requiresAuth: false
   },
-  {
-    path: '/analyze',
-    name: 'analyze',
-    label: 'Analysez',
-    labelKey: 'nav_analyze',
-    icon: FlaskConical,
-    category: ROUTE_CATEGORIES.USER,
-    module: 'ai',
-    showInNav: true,
-    requiresAuth: false
-  },
   
   // ==========================================
   // COMMERCE ROUTES

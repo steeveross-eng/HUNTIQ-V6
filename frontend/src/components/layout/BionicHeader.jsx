@@ -121,9 +121,6 @@ const MobileNav = ({ isOpen, onClose, t, user, isBusinessOrAdmin }) => {
           <Link to="/trips" onClick={onClose} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-400 hover:text-white">
             <RouteIcon className="h-4 w-4" /> {t('common_trips')}
           </Link>
-          <Link to="/analyze" onClick={onClose} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-400 hover:text-white">
-            <FlaskConical className="h-4 w-4" /> {t('nav_analyze')}
-          </Link>
           <Link to="/shop" onClick={onClose} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-400 hover:text-white">
             <Store className="h-4 w-4" /> {t('nav_shop')}
           </Link>
@@ -232,15 +229,6 @@ const BionicHeader = ({ cartCount = 0, onCartOpen }) => {
               label={t('common_trips')} 
               isActive={isActive('/trips')} 
               testId="nav-trips" 
-            />
-            
-            {/* Analyze */}
-            <NavLink 
-              to="/analyze" 
-              icon={FlaskConical} 
-              label={t('nav_analyze')} 
-              isActive={isActive('/analyze')} 
-              testId="nav-analyze" 
             />
             
             {/* Shop */}

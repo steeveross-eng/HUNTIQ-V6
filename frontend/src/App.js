@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -252,16 +252,6 @@ const Navigation = ({ cartCount, onCartOpen }) => {
               {t('common_trips')}
             </Link>
             
-            {/* Analysez */}
-            <Link 
-              to="/analyze" 
-              className={`flex items-center gap-2 px-3 py-2 text-sm font-medium uppercase tracking-wider rounded-sm transition-all duration-200 hover:bg-white/5 ${isActive('/analyze') ? 'text-[#F5A623] bg-[#F5A623]/10' : 'text-gray-300 hover:text-white'}`}
-              data-testid="nav-analyze"
-            >
-              <FlaskConical className="h-4 w-4" />
-              {t('nav_analyze')}
-            </Link>
-            
             {/* Magasin */}
             <Link 
               to="/shop" 
@@ -394,9 +384,6 @@ const Navigation = ({ cartCount, onCartOpen }) => {
             <Link to="/trips" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-300 hover:text-white">
               <RouteIcon className="h-4 w-4" /> {t('common_trips')}
             </Link>
-            <Link to="/analyze" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-300 hover:text-white">
-              <FlaskConical className="h-4 w-4" /> {t('nav_analyze')}
-            </Link>
             <Link to="/shop" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-300 hover:text-white">
               <Store className="h-4 w-4" /> {t('nav_shop')}
             </Link>
@@ -429,7 +416,7 @@ const Navigation = ({ cartCount, onCartOpen }) => {
 };
 
 // Footer Component - Hidden on full-viewport pages
-const FULL_VIEWPORT_ROUTES = ['/map', '/territoire', '/forecast', '/analyze', '/admin-geo', '/admin-premium'];
+const FULL_VIEWPORT_ROUTES = ['/map', '/territoire', '/forecast', '/admin-geo', '/admin-premium'];
 
 const Footer = () => {
   const location = useLocation();
@@ -457,9 +444,9 @@ const HeroSection = () => {
         {brand.tagline}
       </h1>
       <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
-        <Link to="/analyze">
+        <Link to="/analytics">
           <Button className="btn-golden text-black font-semibold px-6 py-3 rounded-full flex items-center gap-2">
-            <FlaskConical className="h-5 w-5" /> {t('nav_analyze')}
+            <BarChart3 className="h-5 w-5" /> Intelligence
           </Button>
         </Link>
         <ChevronRight className="text-[#f5a623] h-6 w-6 hidden md:block" />
@@ -537,7 +524,7 @@ const ProductsSection = ({ products, onAddToCart }) => {
 const FeaturesSection = () => {
   const { t } = useLanguage();
   const features = [
-    { icon: FlaskConical, titleKey: "nav_analyze", descKey: "feature_analyze_desc" },
+    { icon: BarChart3, titleKey: "common_intelligence", descKey: "feature_analyze_desc" },
     { icon: GitCompare, titleKey: "nav_compare", descKey: "feature_compare_desc" },
     { icon: ShoppingCart, titleKey: "hero_order", descKey: "feature_order_desc" },
   ];
@@ -726,7 +713,7 @@ const FormationsPage = () => {
       id: "attractants",
       title: "Science des attractants",
       description: "Comprenez la chimie et la biologie derrière les leurres et attractants",
-      Icon: FlaskConical,
+      Icon: BarChart3,
       duration: "Auto-formation",
       type: "Exclusif BIONIC™",
       modules: ["Composés olfactifs", "Phéromones et comportement", "Timing et application", "13 critères d'évaluation"]
@@ -1044,7 +1031,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage products={products} onAddToCart={handleAddToCart} />} />
                 <Route path="/onboarding" element={<OnboardingPage />} />
-                <Route path="/analyze" element={<AnalyzerModule />} />
+                <Route path="/analyze" element={<Navigate to="/analytics" replace />} />
                 <Route path="/compare" element={<ComparePage products={products} />} />
                 <Route path="/shop" element={<ShopPage products={products} onAddToCart={handleAddToCart} />} />
                 <Route path="/territoire" element={<TerritoryPage />} />
