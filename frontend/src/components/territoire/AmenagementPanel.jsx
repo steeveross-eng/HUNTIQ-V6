@@ -47,16 +47,7 @@ const AmenagementPanel = ({ report, isLoading }) => {
         />
       )}
 
-      {/* Alimentation secondaire */}
-      {s['2_alimentation_secondaire'] && (
-        <ReportSection
-          title={s['2_alimentation_secondaire'].title}
-          detail={s['2_alimentation_secondaire'].justification}
-          priority={s['2_alimentation_secondaire'].priority}
-          icon="leaf"
-          testId="amenagement-alim"
-        />
-      )}
+      {/* ALIMENTATION-V2: "Alimentation secondaire" SUPPRIME — directive STEEVE-MAX */}
 
       {/* Trajet */}
       {s['4_trajet_optimal'] && (

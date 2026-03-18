@@ -19,8 +19,8 @@ const ESSENTIAL_LAYERS = [
   'affuts', 'pentes', 'orientation', 'altitude'
 ];
 
-// Couches interdites (STEEVE-MAX: anciens sites permanents éliminés)
-const BANNED_LAYERS = new Set(['alimentation', 'salines']);
+// Couches interdites (STEEVE-MAX: anciens sites V1 éliminés — ALIMENTATION-V2 seul contrôle)
+const BANNED_LAYERS = new Set(['alimentation', 'salines', 'alimentation_sec']);
 
 const useBionicLayers = (initialState = null) => {
   // Etat initial: session restauree OU toutes les couches essentielles

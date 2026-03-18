@@ -49,7 +49,7 @@ WAYPOINT_TYPES = {
     "start": {"icon": "flag", "color": "#4CAF50", "label": "Depart"},
     "saline": {"icon": "droplet", "color": "#FFEB3B", "label": "Saline suggeree"},
     "cache": {"icon": "eye", "color": "#795548", "label": "Cache suggeree"},
-    "alimentation_sec": {"icon": "leaf", "color": "#8BC34A", "label": "Alimentation secondaire"},
+    # ALIMENTATION-V2: "alimentation_sec" SUPPRIME — directive STEEVE-MAX
     "end": {"icon": "target", "color": "#F44336", "label": "Position finale"},
 }
 
@@ -235,15 +235,8 @@ def generate_hunting_path(
             **WAYPOINT_TYPES["cache"],
         })
 
-    # Secondary feeding suggestion (offset 300m from center)
-    if waypoint_center:
-        sec_lat, sec_lng = _offset_point(center_lat, center_lng, 225, 300)
-        waypoints.append({
-            "type": "alimentation_sec",
-            "position": [round(sec_lng, 6), round(sec_lat, 6)],
-            "label": "Site d'alimentation secondaire suggere",
-            **WAYPOINT_TYPES["alimentation_sec"],
-        })
+    # ALIMENTATION-V2: "alimentation secondaire" SUPPRIME — remplace par ENGINE ALIMENTATION-V2
+    # (Directive STEEVE-MAX: seul ALIMENTATION-V2 controle les salines et sites d'alimentation)
 
     # End waypoint (last zone visited)
     last = visited[-1]
@@ -325,7 +318,7 @@ def generate_amenagement_report(
     # Find strategic waypoints
     saline_wp = next((w for w in path_waypoints if w["type"] == "saline"), None)
     cache_wp = next((w for w in path_waypoints if w["type"] == "cache"), None)
-    alim_wp = next((w for w in path_waypoints if w["type"] == "alimentation_sec"), None)
+    # ALIMENTATION-V2: alimentation_sec SUPPRIME (directive STEEVE-MAX)
 
     report = {
         "title": "Rapport d'amenagement BIONIC — Carre 2km",
@@ -336,12 +329,6 @@ def generate_amenagement_report(
                 "position": saline_wp["position"] if saline_wp else None,
                 "justification": saline_wp["label"] if saline_wp else "Aucune zone d'alimentation detectee",
                 "priority": "HIGH",
-            },
-            "2_alimentation_secondaire": {
-                "title": "Site d'alimentation secondaire",
-                "position": alim_wp["position"] if alim_wp else None,
-                "justification": alim_wp["label"] if alim_wp else "Position non calculable",
-                "priority": "MEDIUM",
             },
             "3_cache": {
                 "title": "Suggestion de CACHE",

@@ -25,7 +25,7 @@ const HuntingPathLayer = ({ huntingPath }) => {
     start: '#4CAF50',
     saline: '#FFEB3B',
     cache: '#795548',
-    alimentation_sec: '#8BC34A',
+    // ALIMENTATION-V2: alimentation_sec SUPPRIME — directive STEEVE-MAX
     end: '#F44336',
   };
 
