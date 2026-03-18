@@ -4,7 +4,7 @@
 Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion de la faune au Quebec.
 
 ## Architecture
-- **Frontend:** React + Leaflet/react-leaflet + leaflet.heat
+- **Frontend:** React + Leaflet/react-leaflet
 - **Backend:** FastAPI (Python)
 - **Database:** MongoDB
 
@@ -14,24 +14,19 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 ### OPTIMISATION TRAILS CRITIQUES (2026-03-18) — iteration_57 (100%)
 - **CRITIQUE**: weight 4px, color #FF4500, glow externe (8px op0.15 + 4px op0.35), glow interne (2px #FFF op0.25)
 - **Animation pulsation**: CSS keyframes corridorCritiquePulse 1.5s ease-in-out infinite (20 paths actifs)
-- **Tooltip CRITIQUE**: Badge #FF4500 "Critique", score gras 800, fleche directionnelle visible
-- **MODERE**: weight 2px, color #FFA500 (orange)
-- **FAIBLE**: weight 1px, color #FFD27F (or pale)
-- **MAJEUR**: weight 2.5px, color #FF0000
-- **FORT**: weight 2px, color #FF8C00
-- 0 regression: ZONES 23, V10 19 corridors, Heatmap V10, ALIMENTATION 4 badge
+- 0 regression
 
-### HEATMAP V10 LITE vs PRO (2026-03-18) — iteration_54 (100%)
-- **Mode Lite** (usager standard): opacite 0.05-0.4, palette pastel (bleu/vert/beige doux), radius 40, blur 30
-- **Mode Pro** (Admin Architecte): opacite 0.45, palette thermique haute-contraste (bleu→vert→jaune→rouge)
-- **Toggle comparaison**: Corridors V10 ON/OFF dans Overlays, backend include_corridors param
-- **Backend**: compute_heatmap_grid(include_corridors=True/False) — ponderation dynamique
-- **Indicateur**: "Heatmap Lite" / "Heatmap Pro" + "(sans V10)" si corridors desactives
+### HEATMAP V10 100% TRANSPARENT (2026-03-18) — iteration_55 (100%)
+- **Modes Lite/Pro ABOLIS** — aucune reference dans UI ni code
+- **ConsolidatedHeatmapLayer.jsx**: composant data-only, zero rendu graphique (pas de useMap, pas de gradient)
+- **Toggle Corridors V10 ON/OFF**: dans Overlays (Zones popover), backend include_corridors param
+- **Indicateur**: "Score V10" + score + "(sans corridors)" si toggle OFF
 - 0 regression: ZONES 12, V10 corridors 15/14.1km, ALIMENTATION badge 4
 
 ## Elements SUPPRIMES/DEPLACES (ADMIN ONLY)
 - Onglet LAYERS, CORRIDORS V10, Point Alimentation secondaire V1
 - Labels DOMINANT/SECONDAIRE/TERTIAIRE, Mode SECRET, Popup zone analyse
+- Modes Heatmap Lite/Pro (ABOLIS)
 
 ## API Endpoints
 ### CORRIDORS-V10
@@ -43,7 +38,7 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - GET /api/v1/score-consolide/point
 
 ## Backlog
-### P0 — Validation finale utilisateur ALIMENTATION-V2 + Heatmap Lite
+### P0 — Validation finale utilisateur ALIMENTATION-V2 + Heatmap transparente
 ### P2 — RUT-V1, AFFUTS-V1, TRAJETS-V1 (GELE jusqu'a certification)
 ### P3 — Certification Finale BIONIC V3
 ### P3 — Refactoring MonTerritoireBionicPage.jsx
