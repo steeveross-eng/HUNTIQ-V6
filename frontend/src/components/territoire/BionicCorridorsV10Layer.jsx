@@ -29,12 +29,28 @@ import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 
+// CSS animation: pulsation lente pour trails CRITIQUE (1.5s)
+if (typeof document !== 'undefined' && !document.getElementById('corridor-critique-pulse-style')) {
+  const style = document.createElement('style');
+  style.id = 'corridor-critique-pulse-style';
+  style.textContent = `
+    @keyframes corridorCritiquePulse {
+      0%, 100% { stroke-opacity: 0.85; }
+      50% { stroke-opacity: 0.55; }
+    }
+    .corridor-critique-pulse {
+      animation: corridorCritiquePulse 1.5s ease-in-out infinite;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 const CORRIDOR_PALETTE = {
-  CRITIQUE: { color: '#B80000', contour: '#660000', weight: 2, hasPattern: true, patternDash: '4,3', dashArray: null, label: 'Critique' },
-  MAJEUR:   { color: '#FF0000', contour: '#CC0000', weight: 2, hasPattern: false, patternDash: null, dashArray: null, label: 'Majeur' },
-  FORT:     { color: '#FF8C00', contour: '#CC7000', weight: 1.5, hasPattern: false, patternDash: null, dashArray: null, label: 'Fort' },
-  MODERE:   { color: '#FFD700', contour: '#CCAC00', weight: 1.2, hasPattern: false, patternDash: null, dashArray: null, label: 'Modéré' },
-  FAIBLE:   { color: '#BFBFBF', contour: '#999999', weight: 1, hasPattern: false, patternDash: null, dashArray: null, label: 'Faible' },
+  CRITIQUE: { color: '#FF4500', contour: '#CC3700', weight: 4, hasPattern: true, patternDash: '4,3', dashArray: null, label: 'Critique', glow: true },
+  MAJEUR:   { color: '#FF0000', contour: '#CC0000', weight: 2.5, hasPattern: false, patternDash: null, dashArray: null, label: 'Majeur', glow: false },
+  FORT:     { color: '#FF8C00', contour: '#CC7000', weight: 2, hasPattern: false, patternDash: null, dashArray: null, label: 'Fort', glow: false },
+  MODERE:   { color: '#FFA500', contour: '#CC8400', weight: 2, hasPattern: false, patternDash: null, dashArray: null, label: 'Modéré', glow: false },
+  FAIBLE:   { color: '#FFD27F', contour: '#CCA963', weight: 1, hasPattern: false, patternDash: null, dashArray: null, label: 'Faible', glow: false },
 };
 
 function darkenHex(hex, factor = 0.82) {
@@ -166,19 +182,24 @@ const BionicCorridorsV10Layer = ({
   }, [centerLat, centerLng]);
 
   // Pré-calculer les styles — Hiérarchie Visuelle STEEVE-MAX
-  // EXCEPTION: CRITIQUE (EXTREME) — surbrillance +40% weight, opacity 0.65-0.80
+  // CRITIQUE: glow externe 6-8px #FF4500 op0.65 + glow interne 2px #FFF op0.25 + pulsation
   const precomputedStyles = useMemo(() => {
     const corOp = 0.30;
     const styles = {};
     for (const [level, p] of Object.entries(CORRIDOR_PALETTE)) {
       const isExtreme = level === 'CRITIQUE';
-      const w = isExtreme ? p.weight * 1.4 : p.weight;
-      const op = isExtreme ? 0.75 : corOp;
+      const w = p.weight;
+      const op = isExtreme ? 0.85 : corOp;
       styles[level] = {
-        contour: { color: p.contour, weight: w + 0.5, opacity: isExtreme ? 0.50 : corOp * 0.4, lineCap: 'round', lineJoin: 'round', interactive: false },
-        main: { color: p.color, weight: w, opacity: op, lineCap: 'round', lineJoin: 'round', dashArray: p.dashArray },
+        // Glow externe: large + semi-transparent (CRITIQUE uniquement)
+        glowOuter: isExtreme ? { color: '#FF4500', weight: w + 8, opacity: 0.15, lineCap: 'round', lineJoin: 'round', interactive: false } : null,
+        glowMid: isExtreme ? { color: '#FF4500', weight: w + 4, opacity: 0.35, lineCap: 'round', lineJoin: 'round', interactive: false } : null,
+        contour: { color: p.contour, weight: w + (isExtreme ? 2 : 0.5), opacity: isExtreme ? 0.65 : corOp * 0.4, lineCap: 'round', lineJoin: 'round', interactive: false },
+        main: { color: p.color, weight: w, opacity: op, lineCap: 'round', lineJoin: 'round', dashArray: p.dashArray, className: isExtreme ? 'corridor-critique-pulse' : '' },
+        // Glow interne: fin + blanc léger (CRITIQUE uniquement)
+        glowInner: isExtreme ? { color: '#FFFFFF', weight: 2, opacity: 0.25, lineCap: 'round', lineJoin: 'round', interactive: false } : null,
         hachure: p.hasPattern ? { color: p.contour, weight: w - 0.5, opacity: isExtreme ? 0.45 : corOp * 0.5, lineCap: 'butt', lineJoin: 'round', dashArray: p.patternDash, interactive: false } : null,
-        hover: { weight: w + 1, opacity: Math.min(1, op + 0.2) },
+        hover: { weight: w + 2, opacity: Math.min(1, op + 0.15) },
         restore: { weight: w, opacity: op },
       };
     }
@@ -329,21 +350,36 @@ const BionicCorridorsV10Layer = ({
         const inZone = isExtreme || isInAnalysisBox(mLat, mLng, box);
 
         if (inZone) {
-          // Style complet avec interactions
+          // Glow externe (CRITIQUE uniquement)
+          if (style.glowOuter) group.addLayer(L.polyline(coords, style.glowOuter));
+          if (style.glowMid) group.addLayer(L.polyline(coords, style.glowMid));
+          // Contour
           group.addLayer(L.polyline(coords, style.contour));
+          // Ligne principale
           const line = L.polyline(coords, style.main);
+          // Tooltip enrichi (CRITIQUE: badge + score gras + flèche)
+          const pal = CORRIDOR_PALETTE[props.niveau] || CORRIDOR_PALETTE.FORT;
+          const isCrit = props.niveau === 'CRITIQUE';
           line.bindTooltip(
-            `<div style="font-size:12px;font-weight:600;color:${CORRIDOR_PALETTE[props.niveau]?.color || '#FF8C00'}">
-              ${CORRIDOR_PALETTE[props.niveau]?.label || props.niveau} (${props.score}/100)
+            `<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+              ${isCrit ? `<span style="background:#FF4500;color:white;font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:0.5px">Critique</span>` : ''}
+              <span style="font-size:12px;font-weight:${isCrit ? '800' : '600'};color:${pal.color}">
+                ${pal.label} (${props.score}/100)
+              </span>
             </div>
-            <div style="font-size:11px;color:#555">
-              ${props.from_type} → ${props.to_type} | ${props.largeur_m}m
+            <div style="font-size:11px;color:#555;display:flex;align-items:center;gap:4px">
+              <span>${props.from_type}</span>
+              <span style="font-size:14px;font-weight:bold;color:${isCrit ? '#FF4500' : '#888'}">→</span>
+              <span>${props.to_type}</span>
+              <span style="color:#888;margin-left:4px">| ${props.largeur_m}m</span>
             </div>`,
             { sticky: true, opacity: 0.95 }
           );
           line.on('mouseover', function() { this.setStyle(style.hover); });
           line.on('mouseout', function() { this.setStyle(style.restore); });
           group.addLayer(line);
+          // Glow interne blanc (CRITIQUE uniquement)
+          if (style.glowInner) group.addLayer(L.polyline(coords, style.glowInner));
           if (style.hachure) group.addLayer(L.polyline(coords, style.hachure));
         } else {
           // PERFORMANCE V3: Style atténué, zéro interaction, zéro tooltip
