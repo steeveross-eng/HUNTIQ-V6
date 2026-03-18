@@ -22,6 +22,8 @@ const useBionicStore = create((set, get) => ({
   summary: null,
   forecast: null,
   plan: null,
+  solunar: null,
+  guidePro: null,
   loading: false,
 
   // ── Actions ──
@@ -78,6 +80,28 @@ const useBionicStore = create((set, get) => ({
     } catch {
       set({ loading: false });
     }
+  },
+
+  fetchSolunar: async (date) => {
+    const { location } = get();
+    if (!location) return;
+    try {
+      const params = new URLSearchParams({ lat: location.lat, lng: location.lng });
+      if (date) params.set('date', date);
+      const res = await fetch(`${API}/api/v3/intelligence/solunar?${params}`);
+      set({ solunar: await res.json() });
+    } catch { /* silent */ }
+  },
+
+  fetchGuidePro: async (date) => {
+    const { location, species, month } = get();
+    if (!location) return;
+    try {
+      const params = new URLSearchParams({ lat: location.lat, lng: location.lng, species, month });
+      if (date) params.set('date', date);
+      const res = await fetch(`${API}/api/v3/intelligence/guide-pro?${params}`);
+      set({ guidePro: await res.json() });
+    } catch { /* silent */ }
   },
 
   fetchAll: async () => {

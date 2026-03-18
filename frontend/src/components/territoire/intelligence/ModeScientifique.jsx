@@ -49,9 +49,21 @@ export default function ModeScientifique({ location, species, month }) {
             </div>
             {Object.keys(eng.components).length > 0 && (
               <div className="mt-1.5 flex gap-2 flex-wrap">
-                {Object.entries(eng.components).map(([k, v]) => (
-                  <span key={k} className="text-[7px] bg-gray-800 px-1.5 py-0.5 rounded font-mono">{k}: {typeof v === 'number' ? v.toFixed ? v.toFixed(1) : v : v}</span>
-                ))}
+                {Object.entries(eng.components).map(([k, v]) => {
+                  // Handle nested objects (e.g., {score: 3.01, raw: 1.003, saison_mult: 0.6})
+                  let displayValue;
+                  if (typeof v === 'object' && v !== null) {
+                    // Extract the score if it exists, otherwise stringify
+                    displayValue = v.score != null ? v.score.toFixed?.(1) || v.score : JSON.stringify(v).slice(0, 20);
+                  } else if (typeof v === 'number') {
+                    displayValue = v.toFixed?.(1) || v;
+                  } else {
+                    displayValue = String(v);
+                  }
+                  return (
+                    <span key={k} className="text-[7px] bg-gray-800 px-1.5 py-0.5 rounded font-mono">{k}: {displayValue}</span>
+                  );
+                })}
               </div>
             )}
             <div className="text-[7px] text-gray-700 mt-1">{eng.description}</div>

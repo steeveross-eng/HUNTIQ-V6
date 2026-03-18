@@ -38,7 +38,7 @@ import { useAuth } from '@/components/GlobalAuth';
 import DiagnosticExclusionsPanel from '@/components/territoire/DiagnosticExclusionsPanel';
 import BionicZoneDiagnosticPanel from '@/components/territoire/BionicZoneDiagnosticPanel';
 import PlacesSidePanel from '@/components/territoire/PlacesSidePanel';
-import AnalysisSidePanel from '@/components/territoire/AnalysisSidePanel';
+import IntelligenceDashboard from '@/components/territoire/IntelligenceDashboard';
 import useSpatialClipping from '@/hooks/useSpatialClipping';
 import CompareWidget from '@/components/territoire/CompareWidget';
 import { BIONIC_MODULES } from '@/core/bionic';
@@ -1227,19 +1227,19 @@ const MonTerritoireBionicPage = () => {
           </DropdownMenu>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-          {/* ═══ 5. ANALYSE / STATS ═══ */}
+          {/* ═══ 5. INTELLIGENCE — Tableau central ═══ */}
           <button
-            onClick={() => setActiveTab(prev => prev === 'analyse' ? 'carte' : 'analyse')}
+            onClick={() => setActiveTab(prev => prev === 'intelligence' ? 'carte' : 'intelligence')}
             className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
-              activeTab === 'analyse'
-                ? 'bg-[#a855f7]/15 text-[#a855f7]'
-                : 'text-[#a855f7] hover:bg-white/5'
+              activeTab === 'intelligence'
+                ? 'bg-cyan-500/15 text-cyan-400'
+                : 'text-cyan-400 hover:bg-white/5'
             }`}
-            data-testid="toolbar-analyse-btn"
-            title="Analyse & Statistiques"
+            data-testid="toolbar-intelligence-btn"
+            title="Intelligence — Tableau central"
           >
             <BarChart3 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Analyse</span>
+            <span className="hidden sm:inline">Intelligence</span>
           </button>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
@@ -1646,6 +1646,24 @@ const MonTerritoireBionicPage = () => {
           La carte occupe toujours l'espace principal.
           Un panneau latéral s'ouvre selon l'onglet actif.
           ════════════════════════════════════════════════════════════════ */}
+
+      {/* ═══ INTELLIGENCE DASHBOARD — Tableau central plein ecran ═══ */}
+      {activeTab === 'intelligence' && (
+        <IntelligenceDashboard
+          onClose={() => setActiveTab('carte')}
+          waypointCenter={waypointCenter}
+          selectedSpecies={selectedSpecies}
+          currentMonth={new Date().getMonth() + 1}
+          onNavigateToPosition={(lat, lng) => {
+            if (mapRef.current) {
+              mapRef.current.setView([lat, lng], 15);
+              setActiveTab('carte');
+            }
+          }}
+        />
+      )}
+
+      {activeTab !== 'intelligence' && (
       <div className="flex-1 flex overflow-hidden min-h-0">
         {/* ── CARTE BIONIC — ZONE DOMINANTE (80%+ de l'écran) ── */}
         <div className="flex-1 relative">
@@ -1933,20 +1951,7 @@ const MonTerritoireBionicPage = () => {
             </div>
           )}
 
-          {/* ── Panneau Analyse ── */}
-          {activeTab === 'analyse' && !selectedZone && (
-            <AnalysisSidePanel
-              displayScore={displayScore}
-              rating={rating}
-              categoryScores={categoryScores}
-              visibleZonesCount={visibleZonesCount}
-              activeWaypointsCount={activeWaypoints.length}
-              selectedSpecies={selectedSpecies}
-              activeLayersCount={activeCount}
-              selectedWaypointForZones={selectedWaypointForZones}
-              onGenerateSnapshot={handleGenerateSnapshot}
-            />
-          )}
+          {/* ── Panneau Analyse SUPPRIME — remplace par INTELLIGENCE central ── */}
 
           {/* ── Panneau Exclusions ── */}
           {activeTab === 'exclusions' && !selectedZone && (
@@ -1976,6 +1981,7 @@ const MonTerritoireBionicPage = () => {
           )}
         </div>
       </div>
+      )}
 
       {/* ═══ PANNEAU RECOMMANDATIONS NUTRITIONNELLES — ALIMENTATION-V2 ═══ */}
       {showNutritionPanel && alimentationV2Data && (

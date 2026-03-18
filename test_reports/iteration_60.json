@@ -1,0 +1,106 @@
+{
+  "summary": "Iteration 60 — INTELLIGENCE Dashboard Testing COMPLETE. All tests PASSED. Backend: 9/9 tests passed (solunar, guide-pro, scientifique, summary, forecast, plan, registry, validate, health). Frontend: All 3 modes working (GUIDE PRO, SCIENTIFIQUE, TERRAIN). BUG FIXED: ModeScientifique.jsx crash due to nested objects in eng.components. INTELLIGENCE button replaces old Analyse button. Close button returns to carte view. Sidebar blocks (Forecast, Plan Maitre, Analytics, Conditions, Raw Data) all render correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "intelligence_button": {
+      "status": "PASS",
+      "data_testid": "toolbar-intelligence-btn",
+      "details": "INTELLIGENCE button visible in toolbar, opens dashboard on click"
+    },
+    "old_analyse_button": {
+      "status": "PASS",
+      "data_testid": "toolbar-analyse-btn",
+      "details": "OLD 'Analyse' button does NOT exist in toolbar (removed as expected)"
+    },
+    "intelligence_dashboard": {
+      "status": "PASS",
+      "data_testid": "intelligence-dashboard",
+      "details": "Dashboard opens as full-screen panel with all content blocks"
+    },
+    "mode_selector": {
+      "guide_pro": {"status": "PASS", "data_testid": "mode-guide", "content_testid": "mode-guide-pro"},
+      "scientifique": {"status": "PASS", "data_testid": "mode-scientifique", "content_testid": "mode-scientifique"},
+      "terrain": {"status": "PASS", "data_testid": "mode-terrain", "content_testid": "mode-terrain"}
+    },
+    "default_mode": {
+      "status": "PASS",
+      "details": "Default mode is GUIDE PRO with solunar chart (LUNASOLCAL)"
+    },
+    "sidebar_blocks": {
+      "block_forecast": {"status": "PASS", "data_testid": "block-forecast", "details": "Shows monthly bar chart"},
+      "block_plan": {"status": "PASS", "data_testid": "block-plan", "details": "Shows prioritized actions"},
+      "block_analytics": {"status": "PASS", "data_testid": "block-analytics", "details": "Shows consolidated score and domains"},
+      "block_conditions": {"status": "PASS", "data_testid": "block-conditions", "details": "Shows alerts/recommendations"},
+      "block_raw_data": {"status": "PASS", "data_testid": "block-raw-data", "details": "Shows position and engine data"}
+    },
+    "close_button": {
+      "status": "PASS",
+      "data_testid": "intelligence-close",
+      "details": "Close button returns to carte view"
+    },
+    "backend_endpoints": {
+      "solunar": {"endpoint": "/api/v3/intelligence/solunar", "status": "PASS"},
+      "guide_pro": {"endpoint": "/api/v3/intelligence/guide-pro", "status": "PASS"},
+      "scientifique": {"endpoint": "/api/v3/intelligence/scientifique", "status": "PASS"},
+      "summary": {"endpoint": "/api/v3/intelligence/summary", "status": "PASS"},
+      "forecast": {"endpoint": "/api/v3/intelligence/forecast", "status": "PASS"},
+      "plan": {"endpoint": "/api/v3/intelligence/plan", "status": "PASS"},
+      "engines_registry": {"endpoint": "/api/v3/engines/registry", "status": "PASS"},
+      "engines_validate": {"endpoint": "/api/v3/engines/validate", "status": "PASS"},
+      "api_health": {"endpoint": "/api/health", "status": "PASS"}
+    }
+  },
+  "bugs_fixed": {
+    "ModeScientifique_crash": {
+      "file": "/app/frontend/src/components/territoire/intelligence/ModeScientifique.jsx",
+      "issue": "React render crash: 'Objects are not valid as React child (found: object with keys {score, raw, saison_mult})'",
+      "root_cause": "eng.components contains nested objects (e.g., proteines: {score: 3.01, raw: 1.003, saison_mult: 0.6}) but the code tried to render these objects directly in JSX",
+      "fix": "Added type checking to extract score value from nested objects or stringify them properly",
+      "status": "FIXED"
+    }
+  },
+  "features_verified": {
+    "INTELLIGENCE_button_replaces_Analyse": "PASS - toolbar-intelligence-btn exists, toolbar-analyse-btn removed",
+    "dashboard_opens_full_screen": "PASS - intelligence-dashboard opens as overlay",
+    "3_modes_available": "PASS - GUIDE PRO, SCIENTIFIQUE, TERRAIN all accessible",
+    "default_mode_guide_pro": "PASS - mode-guide-pro content visible on open",
+    "mode_switching": "PASS - All 3 modes switch without errors",
+    "solunar_chart": "PASS - LUNASOLCAL SVG chart renders in Guide Pro mode",
+    "hunting_windows": "PASS - Displayed in Guide Pro mode",
+    "forecast_sidebar": "PASS - Monthly bar chart visible",
+    "plan_maitre_sidebar": "PASS - Prioritized actions visible",
+    "close_returns_to_carte": "PASS - intelligence-close button works"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_60_intelligence_dashboard.py",
+    "/app/test_reports/pytest/iteration_60_intelligence_dashboard_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/frontend/src/components/territoire/intelligence/ModeScientifique.jsx",
+    "/app/backend/tests/test_iteration_60_intelligence_dashboard.py"
+  ],
+  "success_rate": {
+    "backend": "100% (9/9 tests passed)",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "auto_logged_in": true
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 60 completed. INTELLIGENCE Dashboard fully working with all 3 modes (GUIDE PRO, SCIENTIFIQUE, TERRAIN). Fixed ModeScientifique.jsx crash caused by nested objects in eng.components. All backend APIs for intelligence (solunar, guide-pro, scientifique, summary, forecast, plan) returning correct data. Old Analyse button removed from toolbar. Close button working.",
+  "verification_date": "2026-03-18",
+  "testing_focus": "INTELLIGENCE Dashboard: Button, Panel, Modes, Sidebar Blocks, Backend APIs"
+}

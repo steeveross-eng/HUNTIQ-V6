@@ -305,6 +305,17 @@ async def get_species():
 
 
 
+@router.get("/intelligence/solunar")
+async def intelligence_solunar(
+    lat: float = Query(...), lng: float = Query(...),
+    date: str = Query(None, description="Date YYYY-MM-DD (defaut: aujourd'hui)"),
+):
+    """Donnees solunaires brutes — courbe 24h, periodes, fenetres de chasse."""
+    from modules.solunar.engine import compute_solunar
+    return compute_solunar(lat, lng, date)
+
+
+
 # ══════════════════════════════════════════════════════════
 # GUIDE PRO — Solunaire + Plan d'approche
 # ══════════════════════════════════════════════════════════
