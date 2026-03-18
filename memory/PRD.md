@@ -30,17 +30,27 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - **Especes supportees**: Cerf, Orignal, Ours noir, Wapiti, Dindon sauvage
 - Tests: Backend 19/19 + Frontend 100% (iteration_48.json), 0 regression
 
+### BUG FIX: ALIMENTATION-V2 Tab + Salines Visibility (2026-03-18) — iteration_49 (100%)
+- **Onglet ALIMENTATION repositionne**: ZONES > ALIMENTATION > POINTS CHAUDS (conforme STEEVE-MAX)
+- **Active state**: bg-yellow-500/15 text-yellow-400 quand showAlimentationV2 = true
+- **Master toggle**: Toggle principal Alimentation V2 dans le popover
+- **Stabilite center prop**: waypointCenter memoize via useMemo dans MonTerritoireBionicPage
+- **Stabilite onDataLoaded**: Utilisation ref pattern (onDataLoadedRef) pour eviter cascade re-render
+- **Stabilite fetchData**: Dependencies reduites aux primitives uniquement (lat, lng, species, month, enabled)
+- Tests: Backend 100% + Frontend 100% (iteration_49.json), 0 regression
+
 ## Architecture de controle STEEVE-MAX (FINAL)
 ```
 ZONES (unique centre de controle)
-├── Zones DOMINANT (7 sous-elements)
-├── Corridors SECONDAIRE (4 sous-elements)
-├── Points TERTIAIRE (8 sous-elements)
-└── Overlays (Vent + Exclusions)
+--- Zones DOMINANT (7 sous-elements)
+--- Corridors SECONDAIRE (4 sous-elements)
+--- Points TERTIAIRE (8 sous-elements)
+--- Overlays (Vent + Exclusions)
 
-ALIMENTATION (V2)
-├── Salines (toggle)
-└── Recommandations (panneau flottant)
+ALIMENTATION (V2) — Position: apres ZONES, avant POINTS CHAUDS
+--- Master toggle (Alimentation V2)
+--- Salines (toggle)
+--- Recommandations (panneau flottant)
 
 POINTS CHAUDS (filtrage comportemental)
 ```
@@ -70,6 +80,8 @@ POINTS CHAUDS (filtrage comportemental)
 ### P2 — RUT-V1, AFFUTS-V1, TRAJETS-V1
 ### P3 — Certification Finale BIONIC V3
 ### P3 — Refactoring engine.py en modules specialises
+### P3 — Refactoring MonTerritoireBionicPage.jsx (trop volumineux)
+### P3 — React Context pour etat carte (eviter pattern re-render recurrent)
 
 ## Credentials
 - **User:** `Steeve.ross@gmail.com` / `Saturn5858*`
