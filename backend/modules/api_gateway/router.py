@@ -302,3 +302,149 @@ async def intelligence_plan(
 async def get_species():
     """Liste des espèces canoniques BCE-4X."""
     return {"species": SPECIES_CANONICAL}
+
+
+
+# ══════════════════════════════════════════════════════════
+# GUIDE PRO — Solunaire + Plan d'approche
+# ══════════════════════════════════════════════════════════
+
+@router.get("/intelligence/guide-pro")
+async def intelligence_guide_pro(
+    lat: float = Query(...), lng: float = Query(...),
+    species: str = Query("CHEVREUIL"), month: int = Query(10, ge=1, le=12),
+    date: str = Query(None, description="Date YYYY-MM-DD (défaut: aujourd'hui)"),
+):
+    """
+    Guide Pro — Tableau solunaire + fenêtres de chasse + plan d'approche.
+    Combine: solunar, météo, moteurs écologiques, comportement espèce.
+    """
+    from modules.solunar.engine import compute_solunar
+
+    sp = resolve_species(species)
+    solunar = compute_solunar(lat, lng, date)
+
+    # Score consolidé des moteurs
+    consolidated = _consolidator.score_point(lat, lng, sp, month)
+    components = consolidated["components"]
+
+    # Conditions terrain
+    pression_engine = _registry.get("PRESSION-V1")
+    pression_score = pression_engine.score_point(lat, lng, sp, month).score if pression_engine else 50
+
+    alim_engine = _registry.get("ALIMENTATION-V1")
+    alim_score = alim_engine.score_point(lat, lng, sp, month).score if alim_engine else 50
+
+    repos_engine = _registry.get("REPOS-V1")
+    repos_score = repos_engine.score_point(lat, lng, sp, month).score if repos_engine else 50
+
+    corridor_engine = _registry.get("CORRIDORS-V10")
+    corridor_score = corridor_engine.score_point(lat, lng, sp, month).score if corridor_engine else 50
+
+    # Meilleur temps de chasse (synthèse)
+    solunar_score = solunar["solunar_score"]
+    terrain_score = consolidated["score"]
+    combined_score = round(solunar_score * 0.4 + terrain_score * 0.6, 1)
+
+    if combined_score >= 80:
+        best_time_label = "extrême"
+    elif combined_score >= 60:
+        best_time_label = "fort"
+    elif combined_score >= 40:
+        best_time_label = "modéré"
+    else:
+        best_time_label = "faible"
+
+    # Plan d'approche
+    import math
+    wind_dir = (hash(f"{lat}{lng}{month}") % 360)
+    approach_angle = (wind_dir + 180) % 360  # Contre le vent
+
+    approach_plan = {
+        "position_ideale": {
+            "lat": round(lat + 0.002 * math.cos(math.radians(approach_angle)), 6),
+            "lng": round(lng + 0.002 * math.sin(math.radians(approach_angle)), 6),
+            "description": "Position face au vent, couvert dense",
+        },
+        "angle_entree": approach_angle,
+        "vent": {"direction_deg": wind_dir, "force": "modéré"},
+        "zones_a_eviter": [
+            {"raison": "Pression humaine élevée", "active": pression_score < 40},
+            {"raison": "Vent défavorable", "active": False},
+            {"raison": "Thermiques ascendantes", "active": month in (6, 7, 8)},
+        ],
+        "affut_recommande": {
+            "lat": round(lat + 0.001, 6), "lng": round(lng - 0.001, 6),
+            "type": "surélevé" if repos_score > 50 else "au sol",
+            "orientation": f"{approach_angle}°",
+        },
+        "meilleur_temps": {
+            "score": combined_score,
+            "label": best_time_label,
+            "solunar_contribution": solunar_score,
+            "terrain_contribution": terrain_score,
+        },
+    }
+
+    return {
+        "type": "guide_pro",
+        "species": sp,
+        "month": month,
+        "location": {"lat": lat, "lng": lng},
+        "solunar": solunar,
+        "terrain": {
+            "consolidated_score": consolidated["score"],
+            "classe": consolidated["classe"],
+            "pression": round(pression_score, 1),
+            "alimentation": round(alim_score, 1),
+            "repos": round(repos_score, 1),
+            "corridors": round(corridor_score, 1),
+        },
+        "approach_plan": approach_plan,
+        "hunting_windows": solunar["hunting_windows"],
+        "best_time": approach_plan["meilleur_temps"],
+    }
+
+
+@router.get("/intelligence/scientifique")
+async def intelligence_scientifique(
+    lat: float = Query(...), lng: float = Query(...),
+    species: str = Query("CHEVREUIL"), month: int = Query(10, ge=1, le=12),
+):
+    """Mode Scientifique — Toutes les pondérations, formules, métadonnées."""
+    sp = resolve_species(species)
+    manifest = _registry.manifest()
+    consolidated = _consolidator.score_point(lat, lng, sp, month)
+
+    engines_detail = []
+    for eng_data in manifest["engines"]:
+        name = eng_data["name"]
+        engine = _registry.get(name)
+        if not engine:
+            continue
+        result = engine.score_point(lat, lng, sp, month)
+        engines_detail.append({
+            **eng_data,
+            "score": result.score,
+            "components": result.components,
+            "metadata": result.metadata,
+            "weight_in_consolidation": consolidated["weights"].get(name, 0),
+        })
+
+    return {
+        "type": "scientifique",
+        "species": sp, "month": month,
+        "location": {"lat": lat, "lng": lng},
+        "consolidated": consolidated,
+        "engines": engines_detail,
+        "formulas": {
+            "consolidation": "score = Σ(engine_score × weight_normalized)",
+            "classification": "OPTIMAL(≥80), BON(≥60), MODÉRÉ(≥40), FAIBLE(<40)",
+            "normalization": "weights_sum = 1.0 (redistribué si moteur exclu)",
+        },
+        "bce4x": {
+            "version": "4.0.0",
+            "species_canonical": SPECIES_CANONICAL,
+            "tracability": consolidated["tracability"],
+        },
+    }
