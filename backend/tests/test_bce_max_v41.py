@@ -8,7 +8,7 @@ import requests
 import os
 import json
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://alimentation-v2-fix.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://heatmap-lite.preview.emergentagent.com')
 
 # Known waypoint for testing
 WAYPOINT_CENTER = {"lat": 46.8068, "lng": -71.1118}

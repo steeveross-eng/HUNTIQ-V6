@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://alimentation-v2-fix.preview.emergentagent.com",
+                "url": "https://heatmap-lite.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],
