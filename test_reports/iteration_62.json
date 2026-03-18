@@ -1,0 +1,129 @@
+{
+  "summary": "Iteration 62 — BIONIC V3 FLOATING INTELLIGENCE PANEL Anti-Regression COMPLETE. All 21 critical tests PASSED. Intelligence Dashboard is now a FLOATING non-blocking panel (pointer-events-none container). Map remains fully interactive when Intelligence is open. TerritoireToolbar extracted. NutritionPanel extracted. MonTerritoireBionicPage reduced from 2119 to 1553 lines.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/seo/meta/",
+        "issue": "Returns 404 - SEO metadata endpoint not implemented",
+        "priority": "LOW"
+      },
+      {
+        "endpoint": "/api/products/top",
+        "issue": "Returns 404 - Product listing endpoint not implemented",
+        "priority": "LOW"
+      },
+      {
+        "endpoint": "/api/v1/notification/legal-time/status",
+        "issue": "Returns 404 - Legal time notification not implemented",
+        "priority": "LOW"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Groups/Shares API",
+        "issue": "Fetching groups, sent shares, received shares returns 404 - endpoints may not exist",
+        "affected_selectors": ["[data-testid='obs-groupe-item']"],
+        "priority": "LOW - Non-blocking for core functionality"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_results": {
+    "bce_4x_rules_verified": {
+      "R3_map_always_in_dom": {
+        "status": "PASS",
+        "details": "Map (.leaflet-container) remains in DOM when Intelligence overlay is open"
+      },
+      "R7_map_visible_carte_mode": {
+        "status": "PASS",
+        "details": "Map visible=True in carte mode, 247 interactive elements rendered"
+      },
+      "R11_old_analyse_removed": {
+        "status": "PASS",
+        "details": "toolbar-analyse-btn does NOT exist (correctly removed)"
+      },
+      "R14_intelligence_button_exists": {
+        "status": "PASS",
+        "details": "toolbar-intelligence-btn present and functional"
+      },
+      "R18_state_preservation": {
+        "status": "PASS",
+        "details": "23 zones and 19 corridors preserved, toolbar accessible when Intelligence open"
+      },
+      "R21_close_returns_to_carte": {
+        "status": "PASS",
+        "details": "intelligence-close button works, map fully visible after close"
+      }
+    },
+    "floating_panel_tests": {
+      "panel_is_floating": "PASS - intelligence-panel found with pointer-events-none container",
+      "map_visible_behind_panel": "PASS - leaflet-container visible=True when Intelligence open",
+      "toolbar_accessible_when_open": "PASS - bionic-tabs visible and clickable",
+      "mode_guide_pro": "PASS - data-testid='mode-guide' found",
+      "mode_scientifique": "PASS - data-testid='mode-scientifique' found",
+      "mode_terrain": "PASS - data-testid='mode-terrain' found",
+      "compact_toggle": "PASS - data-testid='intelligence-compact-toggle' found",
+      "close_button": "PASS - data-testid='intelligence-close' found and functional"
+    },
+    "toolbar_buttons": {
+      "split-view-toggle": "PASS",
+      "toolbar-carte-btn": "PASS",
+      "toolbar-species-btn": "PASS",
+      "toolbar-observation-btn": "PASS",
+      "toolbar-intelligence-btn": "PASS",
+      "toolbar-zones-btn": "PASS",
+      "toolbar-alimentation-btn": "PASS",
+      "toolbar-points-chauds-btn": "PASS",
+      "toolbar-seuil-btn": "PASS",
+      "toggle-curseur-bionic": "PASS"
+    },
+    "popover_tests": {
+      "zones_popover": "PASS - toggle-zones-layer found",
+      "alimentation_popover": "PASS - toggle-alimentation-v2-master found",
+      "species_dropdown": "PASS - Chevreuil option found",
+      "observation_dropdown": "PASS - obs-waypoints-item found"
+    },
+    "backend_api_tests": {
+      "api_v3_engines_validate": "PASS (overall_compliant=true, BCE-4X: 23/23, STEEVE-MAX: 12/12)",
+      "intelligence_summary": "PASS",
+      "intelligence_forecast": "PASS (12 months data)",
+      "intelligence_plan": "PASS (actions list)",
+      "intelligence_solunar": "PASS",
+      "intelligence_guide_pro": "PASS",
+      "engines_registry": "PASS",
+      "engines_score_point": "PASS",
+      "old_v3_analyse_removed": "PASS (404)",
+      "old_v1_analyse_removed": "PASS (404)",
+      "species_list": "PASS"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_62_floating_panel.py",
+    "/app/test_reports/pytest/iteration_62_floating_panel_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "NOTE: /map/territoire route shows blank black screen - correct route is /mon-territoire. Consider redirecting /map/territoire to /mon-territoire for consistency."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration_62_floating_panel.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100% (all toolbar buttons, Intelligence panel, popovers working)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "auto_logged_in": true
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 62 FLOATING PANEL refactoring complete. IntelligenceDashboard is now at components/territoire/IntelligenceDashboard.jsx with pointer-events-none wrapper allowing map clicks through. TerritoireToolbar extracted to components/territoire/ui/TerritoireToolbar.jsx. NutritionPanel at components/territoire/ui/NutritionPanel.jsx. Main page reduced to 1553 lines. All critical data-testid selectors verified: toolbar-intelligence-btn, intelligence-panel, intelligence-close, intelligence-compact-toggle, mode-guide, mode-scientifique, mode-terrain. Map route is /mon-territoire NOT /map/territoire. User session persists via cookie - Steeve Ross already logged in.",
+  "verification_date": "2026-03-18",
+  "testing_focus": "BCE-4X FLOATING PANEL: Non-blocking Intelligence overlay, Map interactivity preservation, Toolbar extraction verification"
+}

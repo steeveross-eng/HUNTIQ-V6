@@ -25,8 +25,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
-import useBionicLayers from '@/hooks/useBionicLayers';
 import useBionicSession from '@/hooks/useBionicSession';
+import useBionicLayers from '@/hooks/useBionicLayers';
+import { TerritoireToolbar } from '@/components/territoire/ui/TerritoireToolbar';
+import { NutritionPanel } from '@/components/territoire/ui/NutritionPanel';
 import useBionicWeather from '@/hooks/useBionicWeather';
 import useBionicScoring from '@/hooks/useBionicScoring';
 import { useUserData } from '@/hooks/useUserData';
@@ -1108,538 +1110,42 @@ const MonTerritoireBionicPage = () => {
       />
 
       {/* ════════════════════════════════════════════════════════════════
-          P0 UX — TOOLBAR UNIFIÉE SUR UNE SEULE LIGNE
-          SAISON → SPLIT → CARTE → OBSERVATION → ANALYSE → LOCK → OUTILS
-          Style BIONIC: bg-black/60, border-gray-700/40, rounded-lg, icônes Lucide
+          P0 UX — TOOLBAR UNIFIEE (composant extrait STEEVE-MAX P0)
           ════════════════════════════════════════════════════════════════ */}
-      <nav className="flex-shrink-0 h-[44px] bg-[#0d0d14] border-b border-[#1a1a2e] px-4 flex items-center relative z-40" data-testid="bionic-tabs">
-        <div className="flex items-center gap-0.5 bg-black/60 backdrop-blur-sm rounded-lg border border-gray-700/40 p-1">
-          {/* ═══ 1. SAISON — masqué en mode Split (chaque panneau a le sien) ═══ */}
-          {!splitViewEnabled && (
-            <>
-              <BiologicalSeasonSelector
-                selectedSeason={selectedBiologicalSeason}
-                onSeasonChange={setSelectedBiologicalSeason}
-              />
-              <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-            </>
-          )}
-
-          {/* ═══ 2. SPLIT ═══ */}
-          <button
-            onClick={toggleSplitView}
-            className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all duration-150 flex-shrink-0 ${
-              splitViewEnabled
-                ? 'bg-[#3CB371]/15 text-[#3CB371]'
-                : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
-            }`}
-            data-testid="split-view-toggle"
-            title="Comparer deux saisons"
-          >
-            <SplitSquareHorizontal className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Split</span>
-          </button>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 3. CARTE — V8.3.A: fermeture auto après sélection ═══ */}
-          <Popover open={cartePopoverOpen} onOpenChange={setCartePopoverOpen}>
-            <PopoverTrigger asChild>
-              <button className="h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider text-[#f5a623] hover:bg-white/5 transition-all" data-testid="toolbar-carte-btn" title="Fond de Carte">
-                <Map className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Carte</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="start" sideOffset={8} className="w-80 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
-              <BionicMapSelector
-                currentMapType={mapType}
-                onMapTypeChange={handleMapTypeChangeAndClose}
-                mapOptions={mapOptions}
-                onOptionsChange={setMapOptions}
-                variant="panel"
-                showOptions={true}
-              />
-            </PopoverContent>
-          </Popover>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 3b. ESPÈCE — Sélecteur rapide ═══ */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider text-amber-400 hover:bg-white/5 transition-all"
-                data-testid="toolbar-species-btn"
-                title="Espèce cible"
-              >
-                <Target className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{SPECIES_LIST.find(s => s.id === selectedSpecies)?.name || 'Espèce'}</span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-gray-950 border-gray-700/60 shadow-xl" side="bottom" align="start">
-              {SPECIES_LIST.map(sp => (
-                <DropdownMenuItem
-                  key={sp.id}
-                  onClick={() => setSelectedSpecies(sp.id)}
-                  className={`cursor-pointer ${selectedSpecies === sp.id ? 'text-amber-400 bg-amber-500/10' : 'text-white hover:bg-white/10'}`}
-                  data-testid={`species-quick-${sp.id}`}
-                >
-                  <div className="w-2.5 h-2.5 rounded-full mr-2 flex-shrink-0" style={{ backgroundColor: sp.color }} />
-                  {sp.name}
-                  {selectedSpecies === sp.id && <CheckCircle className="h-3 w-3 ml-auto text-amber-400" />}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 4. OBSERVATION ═══ */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
-                  ['waypoints','lieux','groupe','exclusions'].includes(activeTab)
-                    ? 'bg-white/10 text-white'
-                    : 'text-[#FF9800] hover:bg-white/5'
-                }`}
-                data-testid="toolbar-observation-btn"
-                title="Observation"
-              >
-                <Binoculars className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Observation</span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-gray-950 border-gray-700/60 shadow-xl" side="bottom" align="start">
-              <DropdownMenuItem onClick={() => setActiveTab(prev => prev === 'waypoints' ? 'carte' : 'waypoints')} className="text-white hover:bg-white/10 cursor-pointer" data-testid="obs-waypoints-item">
-                <MapPin className="h-4 w-4 mr-2 text-[#FF9800]" /> Waypoints
-                {activeWaypoints.length > 0 && <span className="ml-auto text-[9px] bg-[#3CB371] text-black rounded-full px-1.5 py-0.5 font-bold">{activeWaypoints.length}</span>}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setActiveTab(prev => prev === 'lieux' ? 'carte' : 'lieux')} className="text-white hover:bg-white/10 cursor-pointer" data-testid="obs-lieux-item">
-                <BookMarked className="h-4 w-4 mr-2 text-[#3b82f6]" /> Lieux
-                {savedPlaces.length > 0 && <span className="ml-auto text-[9px] bg-[#3b82f6] text-white rounded-full px-1.5 py-0.5 font-bold">{savedPlaces.length}</span>}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-gray-700/50" />
-              <DropdownMenuItem onClick={() => setActiveTab(prev => prev === 'groupe' ? 'carte' : 'groupe')} className="text-white hover:bg-white/10 cursor-pointer" data-testid="obs-groupe-item">
-                <Users className="h-4 w-4 mr-2 text-[#f5a623]" /> Groupe
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setActiveTab(prev => prev === 'exclusions' ? 'carte' : 'exclusions')} className="text-white hover:bg-white/10 cursor-pointer" data-testid="obs-exclusions-item">
-                <Shield className="h-4 w-4 mr-2 text-[#06b6d4]" /> Exclusions
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 5. INTELLIGENCE — Tableau central ═══ */}
-          <button
-            onClick={() => setActiveTab(prev => prev === 'intelligence' ? 'carte' : 'intelligence')}
-            className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
-              activeTab === 'intelligence'
-                ? 'bg-cyan-500/15 text-cyan-400'
-                : 'text-cyan-400 hover:bg-white/5'
-            }`}
-            data-testid="toolbar-intelligence-btn"
-            title="Intelligence — Tableau central"
-          >
-            <BarChart3 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Intelligence</span>
-          </button>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 7. LOCK — ADMIN ONLY (mode SECRET déplacé dans ADMIN PREMIUM) ═══ */}
-          {adminArchitecteMode && (
-            <>
-              <button
-                onClick={() => setPrivacyMode(!privacyMode)}
-                className={`h-8 w-8 flex items-center justify-center rounded-md transition-all ${
-                  privacyMode ? 'bg-red-500/15 text-red-400' : 'text-green-500 hover:bg-white/5'
-                }`}
-                data-testid="toolbar-lock-btn"
-                title={privacyMode ? 'Mode privé activé — Données sensibles masquées' : 'Mode public — Données visibles'}
-              >
-                {privacyMode ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
-              </button>
-              <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-            </>
-          )}
-
-          {/* ═══ 8a. ONGLET ZONES — Contrôle couches + sous-éléments STEEVE-MAX ═══ */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all" data-testid="toolbar-zones-btn" title="Contrôle des couches">
-                <Layers className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="text-emerald-400 hidden sm:inline">Zones</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={8} className="w-64 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40 max-h-[70vh] overflow-y-auto">
-              <div className="space-y-2">
-                {adminArchitecteMode && (
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1" title="Contrôle la dominance comportementale interne, pas l'affichage.">Couches STEEVE-MAX</div>
-                )}
-
-                {/* ── ZONES ── */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-emerald-400 font-medium">Zones</span>
-                      {adminArchitecteMode && <span className="text-[8px] text-emerald-600 uppercase tracking-widest font-bold">dominant</span>}
-                    </div>
-                    <Switch checked={showZonesLayer} onCheckedChange={setShowZonesLayer} className="scale-[0.6] data-[state=checked]:bg-emerald-500" data-testid="toggle-zones-layer" />
-                  </div>
-                  {showZonesLayer && (
-                    <div className="ml-3 pl-2 border-l border-emerald-800/40 space-y-0.5">
-                      {[
-                        { k: 'alimentation', label: 'Alimentation', color: 'text-green-400' },
-                        { k: 'repos', label: 'Repos', color: 'text-blue-400' },
-                        { k: 'rut', label: 'Rut', color: 'text-orange-400' },
-                        { k: 'habitat', label: 'Habitat', color: 'text-cyan-400' },
-                        { k: 'affuts', label: 'Affûts', color: 'text-red-400' },
-                        { k: 'trajets', label: 'Trajets', color: 'text-yellow-400' },
-                        { k: 'multiEngines', label: 'Multi-Engines', color: 'text-emerald-300' },
-                      ].map(item => (
-                        <button key={item.k} onClick={() => toggleZoneSub(item.k)} className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${zoneSubFilters[item.k] ? `${item.color} bg-white/5` : 'text-gray-600 hover:text-gray-400'}`} data-testid={`zone-sub-${item.k}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${zoneSubFilters[item.k] ? 'bg-current' : 'bg-gray-700'}`} />
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="h-px bg-gray-700/30" />
-
-                {/* ── CORRIDORS ── */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-cyan-400 font-medium">Corridors</span>
-                      {adminArchitecteMode && <span className="text-[8px] text-cyan-700 uppercase tracking-widest font-bold">secondaire</span>}
-                    </div>
-                    <Switch checked={showCorridorsLayer} onCheckedChange={setShowCorridorsLayer} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-layer" />
-                  </div>
-                  {showCorridorsLayer && (
-                    <div className="ml-3 pl-2 border-l border-cyan-800/40 space-y-0.5">
-                      {[
-                        { k: 'normaux', label: 'Normaux', color: 'text-gray-300' },
-                        { k: 'intenses', label: 'Intenses', color: 'text-orange-400' },
-                        { k: 'extreme', label: 'EXTREME', color: 'text-red-400' },
-                        { k: 'saisonniers', label: 'Saisonniers', color: 'text-cyan-300' },
-                      ].map(item => (
-                        <button key={item.k} onClick={() => toggleCorridorSub(item.k)} className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${corridorSubFilters[item.k] ? `${item.color} bg-white/5` : 'text-gray-600 hover:text-gray-400'}`} data-testid={`corridor-sub-${item.k}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${corridorSubFilters[item.k] ? 'bg-current' : 'bg-gray-700'}`} />
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="h-px bg-gray-700/30" />
-
-                {/* ── POINTS ── */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-gray-400 font-medium">Points</span>
-                      {adminArchitecteMode && <span className="text-[8px] text-gray-600 uppercase tracking-widest font-bold">tertiaire</span>}
-                    </div>
-                    <Switch checked={showPointsLayer} onCheckedChange={setShowPointsLayer} className="scale-[0.6] data-[state=checked]:bg-gray-500" data-testid="toggle-points-layer" />
-                  </div>
-                  {showPointsLayer && (
-                    <div className="ml-3 pl-2 border-l border-gray-700/40 space-y-0.5">
-                      {[
-                        { k: 'alimentation', label: 'Alimentation', color: 'text-green-400' },
-                        { k: 'rut', label: 'Rut', color: 'text-orange-400' },
-                        { k: 'repos', label: 'Repos', color: 'text-blue-400' },
-                        { k: 'trajets', label: 'Trajets', color: 'text-yellow-400' },
-                        { k: 'affuts', label: 'Affûts', color: 'text-red-400' },
-                        { k: 'habitat', label: 'Habitat', color: 'text-cyan-400' },
-                        { k: 'centroides', label: 'Centroïdes', color: 'text-white' },
-                        { k: 'individuels', label: 'Individuels', color: 'text-gray-300' },
-                      ].map(item => (
-                        <button key={item.k} onClick={() => togglePointSub(item.k)} className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${pointSubFilters[item.k] ? `${item.color} bg-white/5` : 'text-gray-600 hover:text-gray-400'}`} data-testid={`point-sub-${item.k}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${pointSubFilters[item.k] ? 'bg-current' : 'bg-gray-700'}`} />
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="h-px bg-gray-700/30" />
-
-                {/* ── OVERLAYS ── */}
-                <div className="space-y-1">
-                  <div className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Overlays</div>
-                  <button
-                    onClick={() => setShowWindFlow(!showWindFlow)}
-                    className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                      showWindFlow ? 'text-cyan-400 bg-white/5' : 'text-gray-600 hover:text-gray-400'
-                    }`}
-                    data-testid="layer-toggle-wind-flow"
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${showWindFlow ? 'bg-cyan-400' : 'bg-gray-700'}`} />
-                    Vent directionnel
-                  </button>
-                  {showWindFlow && (
-                    <div className="flex gap-1 ml-4">
-                      <button onClick={() => setWindMode('arrows')} className={`px-2 py-0.5 rounded text-[9px] transition-all ${windMode === 'arrows' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-gray-900/50 text-gray-500 hover:text-gray-300'}`} data-testid="wind-mode-arrows">Minimaliste</button>
-                      <button onClick={() => setWindMode('particles')} className={`px-2 py-0.5 rounded text-[9px] transition-all ${windMode === 'particles' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-gray-900/50 text-gray-500 hover:text-gray-300'}`} data-testid="wind-mode-particles">Particules</button>
-                    </div>
-                  )}
-                  <button
-                    onClick={() => setShowExclusionOverlay(!showExclusionOverlay)}
-                    className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                      showExclusionOverlay ? 'text-red-400 bg-white/5' : 'text-gray-600 hover:text-gray-400'
-                    }`}
-                    data-testid="layer-toggle-exclusion-overlay"
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${showExclusionOverlay ? 'bg-red-400' : 'bg-gray-700'}`} />
-                    Exclusions
-                  </button>
-                  <button
-                    onClick={() => setShowHeatmapV10(!showHeatmapV10)}
-                    className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                      showHeatmapV10 ? 'text-orange-400 bg-white/5' : 'text-gray-600 hover:text-gray-400'
-                    }`}
-                    data-testid="layer-toggle-heatmap-v10"
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${showHeatmapV10 ? 'bg-orange-400' : 'bg-gray-700'}`} />
-                    Heatmap V10
-                    {heatmapV10Data && (
-                      <span className="ml-auto text-[8px] text-gray-500">{heatmapV10Data.score_avg}/100</span>
-                    )}
-                  </button>
-                  {showHeatmapV10 && (
-                    <div className="ml-3 pl-2 border-l border-orange-800/30 space-y-1 pt-0.5">
-                      <button
-                        onClick={() => setHeatmapIncludeCorridors(!heatmapIncludeCorridors)}
-                        className={`w-full flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
-                          heatmapIncludeCorridors ? 'text-cyan-400 bg-white/5' : 'text-gray-600 hover:text-gray-400'
-                        }`}
-                        data-testid="heatmap-toggle-corridors"
-                      >
-                        <span className={`w-1.5 h-1.5 rounded-full ${heatmapIncludeCorridors ? 'bg-cyan-400' : 'bg-gray-700'}`} />
-                        Corridors V10
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 8a2. ONGLET ALIMENTATION — ALIMENTATION-V2 (Position STEEVE-MAX: avant POINTS CHAUDS) ═══ */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${
-                  showAlimentationV2 ? 'bg-yellow-500/15 text-yellow-400' : 'text-gray-400 hover:bg-white/5'
-                }`}
-                data-testid="toolbar-alimentation-btn"
-                title="Sites d'alimentation V2"
-              >
-                <Droplets className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Alimentation</span>
-                {showAlimentationV2 && alimentationV2Data && !alimentationV2Data.salines_disabled && (
-                  <span className="ml-0.5 text-[9px] bg-yellow-500/25 text-yellow-300 rounded px-1 py-px font-bold" data-testid="alimentation-badge">
-                    {alimentationV2Data.n_salines}
-                  </span>
-                )}
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={8} className="w-72 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Alimentation V2</span>
-                  <Switch checked={showAlimentationV2} onCheckedChange={setShowAlimentationV2} className="scale-[0.6] data-[state=checked]:bg-yellow-500" data-testid="toggle-alimentation-v2-master" />
-                </div>
-                <div className="space-y-1.5 pt-1 border-t border-gray-700/40">
-                  <div className="flex items-center justify-between">
-                    <span className={`text-xs font-medium ${alimentationV2Data?.salines_disabled ? 'text-gray-600' : 'text-yellow-400'}`}>Salines</span>
-                    <Switch
-                      checked={showSalines && !alimentationV2Data?.salines_disabled}
-                      onCheckedChange={setShowSalines}
-                      disabled={!!alimentationV2Data?.salines_disabled}
-                      className="scale-[0.6] data-[state=checked]:bg-yellow-500 disabled:opacity-30"
-                      data-testid="toggle-salines"
-                    />
-                  </div>
-                  {alimentationV2Data?.salines_disabled && alimentationV2Data?.salines_message && (
-                    <div className="px-2 py-1.5 bg-amber-900/20 border border-amber-700/30 rounded text-[10px] text-amber-300/80 leading-relaxed" data-testid="salines-disabled-message">
-                      {alimentationV2Data.salines_message}
-                    </div>
-                  )}
-                  {!alimentationV2Data?.salines_disabled && (
-                    <div className="space-y-1" data-testid="salines-count-selector">
-                      <div className="text-[9px] text-gray-500 uppercase font-bold">Nombre de salines</div>
-                      <div className="flex gap-1">
-                        {[1, 2, 3, 4].map(n => (
-                          <button
-                            key={n}
-                            onClick={() => setNSalinesMax(n)}
-                            className={`flex-1 h-7 rounded text-xs font-bold transition-all ${
-                              nSalinesMax === n
-                                ? 'bg-yellow-500/30 text-yellow-300 border border-yellow-500/50'
-                                : 'bg-gray-800/60 text-gray-500 border border-gray-700/30 hover:text-gray-300 hover:bg-gray-700/40'
-                            }`}
-                            data-testid={`salines-count-${n}`}
-                          >
-                            {n}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="text-[8px] text-gray-600">
-                        {nSalinesMax === 1 && 'Meilleur spot absolu'}
-                        {nSalinesMax === 2 && 'Couverture maximale (2 axes)'}
-                        {nSalinesMax === 3 && 'Triangulation optimale'}
-                        {nSalinesMax === 4 && 'Quadrillage optimal (4 zones)'}
-                      </div>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-amber-300 font-medium">Recommandations</span>
-                    <Switch checked={showNutritionPanel} onCheckedChange={setShowNutritionPanel} className="scale-[0.6] data-[state=checked]:bg-amber-500" data-testid="toggle-nutrition-panel" />
-                  </div>
-                </div>
-                {alimentationV2Data && (
-                  <div className="pt-2 border-t border-gray-700/50 space-y-1">
-                    <div className="text-[9px] text-gray-500 uppercase font-bold">Résumé zone</div>
-                    <div className="text-xs text-white">Score: <span className="text-yellow-400 font-bold">{alimentationV2Data.score_global}/100</span></div>
-                    {!alimentationV2Data.salines_disabled && (
-                      <div className="text-xs text-gray-400">Salines: <span className="text-yellow-300">{alimentationV2Data.n_salines}/{alimentationV2Data.n_candidates} candidats</span></div>
-                    )}
-                    <div className="text-xs text-gray-400">Espèce: <span className="text-yellow-300">{alimentationV2Data.species_nom}</span></div>
-                    {alimentationV2Data.carences_detectees?.length > 0 && (
-                      <div className="text-[10px] text-red-400 mt-1">
-                        Carences: {alimentationV2Data.carences_detectees.map(c => c.element).join(', ')}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 8a3. ONGLET POINTS CHAUDS — Sélection comportementale ═══ */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                className={`h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all ${
-                  pointsChaudsMode ? 'bg-orange-500/15 text-orange-400' : 'text-gray-400'
-                }`}
-                data-testid="toolbar-points-chauds-btn"
-                title="Points chauds comportementaux"
-              >
-                <Flame className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Points chauds</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={8} className="w-56 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Points chauds</span>
-                  <Switch checked={pointsChaudsMode} onCheckedChange={(v) => { setPointsChaudsMode(v); if (v) setShowPointsLayer(true); }} className="scale-[0.6] data-[state=checked]:bg-orange-500" data-testid="toggle-points-chauds-mode" />
-                </div>
-                {pointsChaudsMode && (
-                  <div className="space-y-1.5 pt-1 border-t border-gray-700/40">
-                    {[
-                      { key: 'tous', label: 'Tous les points', color: 'text-white' },
-                      { key: 'alimentation', label: 'Alimentation', color: 'text-green-400' },
-                      { key: 'rut', label: 'Rut', color: 'text-orange-400' },
-                      { key: 'repos', label: 'Repos', color: 'text-blue-400' },
-                      { key: 'trajets', label: 'Trajets', color: 'text-yellow-400' },
-                      { key: 'affuts', label: 'Affûts', color: 'text-red-400' },
-                      { key: 'habitat', label: 'Habitat', color: 'text-teal-400' },
-                    ].map(item => (
-                      <button
-                        key={item.key}
-                        onClick={() => setPointsChaudsFilter(item.key)}
-                        className={`w-full text-left px-2 py-1 rounded text-xs font-medium transition-all ${
-                          pointsChaudsFilter === item.key
-                            ? `${item.color} bg-white/10`
-                            : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
-                        }`}
-                        data-testid={`points-chauds-filter-${item.key}`}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          {/* ═══ 8b. SEUIL MINIMUM — contrôle individuel inline avec popover slider ═══ */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all" data-testid="toolbar-seuil-btn" title="Seuil minimum">
-                <span className="text-gray-400">Seuil</span>
-                <span className="text-[#f5a623] font-bold">{minPercentageFilter}%</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" sideOffset={8} className="w-56 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-300 font-medium">Seuil minimum</span>
-                  <span className="text-xs font-bold text-[#f5a623]">{minPercentageFilter}%</span>
-                </div>
-                <input
-                  type="range" min="10" max="80" step="5"
-                  value={minPercentageFilter}
-                  onChange={(e) => setMinPercentageFilter(parseInt(e.target.value))}
-                  className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#f5a623]"
-                  data-testid="min-percentage-slider"
-                />
-                <div className="flex justify-between text-[8px] text-gray-600">
-                  <span>10%</span><span>30%</span><span>50%</span><span>80%</span>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 8c. CURSEUR BIONIC — contrôle individuel inline ═══ */}
-          <div className="h-8 px-2 flex items-center gap-1.5 rounded-md" data-testid="toolbar-curseur-bionic">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-violet-400 hidden sm:inline">Curseur</span>
-            <Switch checked={showCursorBionic} onCheckedChange={setShowCursorBionic} className="scale-[0.6] data-[state=checked]:bg-violet-500" data-testid="toggle-curseur-bionic" />
-          </div>
-
-          {/* ═══ SCORE ÉCOLOGIQUE CONSOLIDÉ — Badge + Anneau ═══ */}
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-          <BionicScoreBadge
-            center={selectedWaypointForZones ? {
-              lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
-              lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
-            } : null}
-            species={selectedSpecies}
-            month={new Date().getMonth() + 1}
-            compact
-          />
-
-          {/* ═══ ADMIN ARCHITECTE — Contrôle interne STEEVE-MAX (masqué utilisateur standard) ═══ */}
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-          <button
-            className={`h-7 w-7 flex items-center justify-center rounded transition-all ${
-              adminArchitecteMode ? 'bg-purple-500/20 text-purple-400' : 'text-gray-700 hover:text-gray-500'
-            }`}
-            title={adminArchitecteMode ? 'Mode Architecte actif — Contrôle la dominance comportementale interne, pas l\'affichage.' : 'Accès Architecte'}
-            data-testid="admin-architecte-btn"
-            onClick={() => {
-              if (adminArchitecteMode) {
-                setAdminArchitecteMode(false);
-              } else {
-                const pwd = window.prompt('Mot de passe administrateur:');
-                if (pwd === 'Saturn5858*') {
-                  setAdminArchitecteMode(true);
-                }
-              }
-            }}
-          >
-            <Shield className="h-3 w-3" />
-          </button>
-        </div>
-      </nav>
+      <TerritoireToolbar
+        activeTab={activeTab} setActiveTab={setActiveTab}
+        splitViewEnabled={splitViewEnabled} toggleSplitView={toggleSplitView}
+        selectedBiologicalSeason={selectedBiologicalSeason} setSelectedBiologicalSeason={setSelectedBiologicalSeason}
+        selectedSpecies={selectedSpecies} setSelectedSpecies={setSelectedSpecies}
+        mapType={mapType} mapOptions={mapOptions} setMapOptions={setMapOptions}
+        cartePopoverOpen={cartePopoverOpen} setCartePopoverOpen={setCartePopoverOpen}
+        handleMapTypeChangeAndClose={handleMapTypeChangeAndClose}
+        showZonesLayer={showZonesLayer} setShowZonesLayer={setShowZonesLayer}
+        showCorridorsLayer={showCorridorsLayer} setShowCorridorsLayer={setShowCorridorsLayer}
+        showPointsLayer={showPointsLayer} setShowPointsLayer={setShowPointsLayer}
+        zoneSubFilters={zoneSubFilters} toggleZoneSub={toggleZoneSub}
+        corridorSubFilters={corridorSubFilters} toggleCorridorSub={toggleCorridorSub}
+        pointSubFilters={pointSubFilters} togglePointSub={togglePointSub}
+        showWindFlow={showWindFlow} setShowWindFlow={setShowWindFlow}
+        windMode={windMode} setWindMode={setWindMode}
+        showExclusionOverlay={showExclusionOverlay} setShowExclusionOverlay={setShowExclusionOverlay}
+        showHeatmapV10={showHeatmapV10} setShowHeatmapV10={setShowHeatmapV10}
+        heatmapV10Data={heatmapV10Data} heatmapIncludeCorridors={heatmapIncludeCorridors}
+        setHeatmapIncludeCorridors={setHeatmapIncludeCorridors}
+        showAlimentationV2={showAlimentationV2} setShowAlimentationV2={setShowAlimentationV2}
+        showSalines={showSalines} setShowSalines={setShowSalines}
+        nSalinesMax={nSalinesMax} setNSalinesMax={setNSalinesMax}
+        showNutritionPanel={showNutritionPanel} setShowNutritionPanel={setShowNutritionPanel}
+        alimentationV2Data={alimentationV2Data}
+        pointsChaudsMode={pointsChaudsMode} setPointsChaudsMode={setPointsChaudsMode}
+        pointsChaudsFilter={pointsChaudsFilter} setPointsChaudsFilter={setPointsChaudsFilter}
+        minPercentageFilter={minPercentageFilter} setMinPercentageFilter={setMinPercentageFilter}
+        showCursorBionic={showCursorBionic} setShowCursorBionic={setShowCursorBionic}
+        adminArchitecteMode={adminArchitecteMode} setAdminArchitecteMode={setAdminArchitecteMode}
+        privacyMode={privacyMode} setPrivacyMode={setPrivacyMode}
+        activeWaypoints={activeWaypoints} savedPlaces={savedPlaces}
+        selectedWaypointForZones={selectedWaypointForZones}
+      />
 
       {/* ════════════════════════════════════════════════════════════════
           SECTION 4+5 — CARTE DOMINANTE + PANNEAU LATÉRAL
@@ -1964,8 +1470,8 @@ const MonTerritoireBionicPage = () => {
           )}
         </div>
 
-        {/* ═══ INTELLIGENCE DASHBOARD — Superposition modale sur la carte ═══ */}
-        {/* BCE-4X R3/R7/R11/R18: La carte reste intacte en dessous, jamais supprimée */}
+        {/* ═══ INTELLIGENCE DASHBOARD — Superposition flottante non-bloquante ═══ */}
+        {/* BCE-4X R3/R7/R11/R18: La carte reste intacte, interactive, jamais supprimée */}
         {activeTab === 'intelligence' && (
           <IntelligenceDashboard
             onClose={() => setActiveTab('carte')}
@@ -1975,112 +1481,40 @@ const MonTerritoireBionicPage = () => {
             onNavigateToPosition={(lat, lng) => {
               if (mapRef.current) {
                 mapRef.current.setView([lat, lng], 15);
-                setActiveTab('carte');
+              }
+            }}
+            onHighlightZoneType={(type) => {
+              // Intelligence -> Carte: highlight zones du type selectionne
+              if (type === 'alimentation') { setShowZonesLayer(true); toggleZoneSub('alimentation'); }
+              else if (type === 'repos') { setShowZonesLayer(true); toggleZoneSub('repos'); }
+              else if (type === 'corridors') { setShowCorridorsLayer(true); }
+              else if (type === 'pression') { setShowHeatmapV10(true); }
+            }}
+            onShowApproachMarkers={(markers) => {
+              // Intelligence -> Carte: affiche marqueurs d'approche
+              if (mapRef.current && markers?.idealPosition) {
+                const L = window.L;
+                if (L) {
+                  // Nettoyer marqueurs precedents
+                  mapRef.current.eachLayer(l => { if (l._isIntelMarker) mapRef.current.removeLayer(l); });
+                  // Position ideale
+                  const m = L.circleMarker([markers.idealPosition.lat, markers.idealPosition.lng], {
+                    radius: 12, color: '#10b981', fillColor: '#10b981', fillOpacity: 0.3, weight: 2, dashArray: '4,4',
+                  }).addTo(mapRef.current);
+                  m._isIntelMarker = true;
+                  m.bindTooltip('Position ideale', { permanent: true, className: 'intel-tooltip', offset: [0, -15] });
+                  // Recentrer
+                  mapRef.current.setView([markers.idealPosition.lat, markers.idealPosition.lng], 15);
+                }
               }
             }}
           />
         )}
       </div>
 
-      {/* ═══ PANNEAU RECOMMANDATIONS NUTRITIONNELLES — ALIMENTATION-V2 ═══ */}
+      {/* ═══ PANNEAU RECOMMANDATIONS NUTRITIONNELLES — ALIMENTATION-V2 (composant extrait) ═══ */}
       {showNutritionPanel && alimentationV2Data && (
-        <div className="fixed right-4 top-24 w-80 max-h-[70vh] bg-gray-950/95 backdrop-blur-md border border-gray-700/60 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-[1001]" data-testid="nutrition-panel">
-          <div className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Droplets className="h-4 w-4 text-yellow-400" />
-              <span className="text-sm font-bold text-white">Recommandations</span>
-            </div>
-            <button onClick={() => setShowNutritionPanel(false)} className="text-gray-500 hover:text-white transition-colors" data-testid="close-nutrition-panel">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="p-3 overflow-y-auto max-h-[60vh] space-y-3">
-            {/* Espèce + Score */}
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-400">{alimentationV2Data.species_nom}</span>
-              <span className="text-sm font-bold text-yellow-400">{alimentationV2Data.score_global}/100</span>
-            </div>
-
-            {/* Carences détectées */}
-            {alimentationV2Data.carences_detectees?.length > 0 && (
-              <div className="space-y-1">
-                <div className="text-[9px] font-bold uppercase tracking-wider text-red-400">Carences détectées</div>
-                {alimentationV2Data.carences_detectees.map((c, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs bg-red-500/10 rounded px-2 py-1">
-                    <span className="text-red-300">{c.element}</span>
-                    <span className="text-red-400 font-bold">-{c.deficit_pct}%</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Aliments recommandés */}
-            <div className="space-y-1">
-              <div className="text-[9px] font-bold uppercase tracking-wider text-green-400">Aliments recommandés</div>
-              {alimentationV2Data.nutrition?.aliments_recommandes?.map((a, i) => (
-                <div key={i} className="text-xs bg-gray-800/50 rounded px-2 py-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-white font-medium">{a.nom}</span>
-                    <span className={`text-[9px] px-1.5 rounded ${a.priorite === 'haute' ? 'bg-red-500/20 text-red-300' : 'bg-gray-700 text-gray-400'}`}>{a.priorite}</span>
-                  </div>
-                  <div className="text-[10px] text-gray-500">{a.saison} — {a.apport}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Protéines */}
-            {alimentationV2Data.nutrition?.proteines && (
-              <div className="space-y-1">
-                <div className="text-[9px] font-bold uppercase tracking-wider text-blue-400">Protéines</div>
-                <div className="text-xs text-gray-300">Besoin: <span className="text-blue-300 font-bold">{alimentationV2Data.nutrition.proteines.besoin_pct}%</span></div>
-                <div className="text-[10px] text-gray-500">{alimentationV2Data.nutrition.proteines.note}</div>
-              </div>
-            )}
-
-            {/* Oligo-éléments */}
-            <div className="space-y-1">
-              <div className="text-[9px] font-bold uppercase tracking-wider text-purple-400">Oligo-éléments</div>
-              {alimentationV2Data.nutrition?.oligo_elements?.map((o, i) => (
-                <div key={i} className="flex items-center justify-between text-xs bg-gray-800/50 rounded px-2 py-1">
-                  <span className="text-gray-300">{o.nom}</span>
-                  <span className="text-purple-300 text-[10px]">{o.besoin_mg_jour} mg/j</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Composition saline — masquée pour espèces sans salines */}
-            {alimentationV2Data.nutrition?.saline_composition && !alimentationV2Data.salines_disabled && (
-              <div className="space-y-1">
-                <div className="text-[9px] font-bold uppercase tracking-wider text-yellow-400">Composition saline recommandée</div>
-                <div className="grid grid-cols-2 gap-1">
-                  {Object.entries(alimentationV2Data.nutrition.saline_composition).map(([k, v]) => (
-                    <div key={k} className="text-[10px] bg-yellow-500/10 rounded px-2 py-0.5">
-                      <span className="text-gray-400">{k.replace('_pct', ' %').replace('_ppm', ' ppm').replace('_', ' ')}: </span>
-                      <span className="text-yellow-300 font-bold">{v}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Message espèce sans salines */}
-            {alimentationV2Data.salines_disabled && alimentationV2Data.salines_message && (
-              <div className="px-3 py-2 bg-amber-900/20 border border-amber-700/30 rounded-lg" data-testid="nutrition-panel-salines-message">
-                <div className="text-[10px] text-amber-300/90 leading-relaxed">{alimentationV2Data.salines_message}</div>
-              </div>
-            )}
-
-            {/* Carences locales Québec */}
-            {alimentationV2Data.nutrition?.carences_locales?.length > 0 && (
-              <div className="space-y-1">
-                <div className="text-[9px] font-bold uppercase tracking-wider text-orange-400">Carences locales (Québec)</div>
-                {alimentationV2Data.nutrition.carences_locales.map((c, i) => (
-                  <div key={i} className="text-[10px] text-orange-300/80 pl-2 border-l border-orange-500/30">{c}</div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        <NutritionPanel alimentationV2Data={alimentationV2Data} onClose={() => setShowNutritionPanel(false)} />
       )}
       
       {/* ═══ DIALOGUES (composants extraits IM1) ═══ */}
