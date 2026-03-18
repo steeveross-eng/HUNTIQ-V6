@@ -98,12 +98,12 @@ Le nombre de fichiers JS chargés (8 au lieu de 30+) confirme que **React.lazy()
 
 **URLs à tester manuellement :**
 ```
-https://steeve-max-multi.preview.emergentagent.com/
-https://steeve-max-multi.preview.emergentagent.com/login
-https://steeve-max-multi.preview.emergentagent.com/shop
-https://steeve-max-multi.preview.emergentagent.com/carte-interactive
-https://steeve-max-multi.preview.emergentagent.com/contenus
-https://steeve-max-multi.preview.emergentagent.com/mon-territoire
+https://alimentation-v2-fix.preview.emergentagent.com/
+https://alimentation-v2-fix.preview.emergentagent.com/login
+https://alimentation-v2-fix.preview.emergentagent.com/shop
+https://alimentation-v2-fix.preview.emergentagent.com/carte-interactive
+https://alimentation-v2-fix.preview.emergentagent.com/contenus
+https://alimentation-v2-fix.preview.emergentagent.com/mon-territoire
 ```
 
 **Outil recommandé :** [PageSpeed Insights](https://pagespeed.web.dev/)

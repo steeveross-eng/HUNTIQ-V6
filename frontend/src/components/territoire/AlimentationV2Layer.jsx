@@ -2,8 +2,11 @@
  * AlimentationV2Layer.jsx — Salines ALIMENTATION-V2
  * Affiche les salines optimales dans la zone d'analyse 2km×2km.
  * Points jaunes distincts. Conforme BCE-4X.
+ *
+ * STABILITÉ: fetchData découplé de center (objet) via primitives lat/lng.
+ * Même pattern que BionicCorridorsV10Layer (bug fix corridors).
  */
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 
@@ -22,6 +25,11 @@ const AlimentationV2Layer = ({
   const layerRef = useRef(null);
   const cacheRef = useRef(null);
   const lastKeyRef = useRef('');
+  const abortRef = useRef(null);
+
+  // Primitives stables (pas de cascade via objet center)
+  const centerLat = center?.lat;
+  const centerLng = center?.lng;
 
   const clearLayers = useCallback(() => {
     if (layerRef.current) {
@@ -38,12 +46,13 @@ const AlimentationV2Layer = ({
 
     for (const sal of data.salines) {
       const marker = L.circleMarker([sal.lat, sal.lng], {
-        radius: 7,
+        radius: 8,
         fillColor: SALINE_COLOR,
         color: SALINE_BORDER,
-        weight: 2,
-        fillOpacity: 0.85,
+        weight: 2.5,
+        fillOpacity: 0.90,
         opacity: 1.0,
+        pane: 'markerPane',
       });
 
       const carences = sal.carences_zone?.join(', ') || 'Aucune';
@@ -64,8 +73,8 @@ const AlimentationV2Layer = ({
         { sticky: true, opacity: 0.95 }
       );
 
-      marker.on('mouseover', function() { this.setStyle({ radius: 9, fillOpacity: 1.0 }); });
-      marker.on('mouseout', function() { this.setStyle({ radius: 7, fillOpacity: 0.85 }); });
+      marker.on('mouseover', function() { this.setStyle({ radius: 10, fillOpacity: 1.0 }); });
+      marker.on('mouseout', function() { this.setStyle({ radius: 8, fillOpacity: 0.90 }); });
 
       group.addLayer(marker);
     }
@@ -74,19 +83,32 @@ const AlimentationV2Layer = ({
     layerRef.current = group;
   }, [map, clearLayers, showSalines]);
 
-  const renderDataRef = useRef(renderSalines);
-  renderDataRef.current = renderSalines;
+  // Ref stable pour renderSalines — évite cascade fetchData→renderSalines
+  const renderRef = useRef(renderSalines);
+  renderRef.current = renderSalines;
 
+  // Fetch découplé — dépend UNIQUEMENT des primitives lat/lng
   const fetchData = useCallback(async () => {
-    if (!center || !enabled) { clearLayers(); return; }
+    if (centerLat == null || centerLng == null || !enabled) {
+      clearLayers();
+      return;
+    }
 
-    const key = `${center.lat.toFixed(4)}:${center.lng.toFixed(4)}:${species}:${month}`;
+    const key = `${centerLat.toFixed(4)}:${centerLng.toFixed(4)}:${species}:${month}`;
+
+    // Skip si même clé ET layers existent déjà
+    if (lastKeyRef.current === key && layerRef.current) return;
+
+    // Données en cache — re-render sans fetch
     if (lastKeyRef.current === key && cacheRef.current) {
-      renderDataRef.current(cacheRef.current);
-      if (onDataLoaded) onDataLoaded(cacheRef.current);
+      renderRef.current(cacheRef.current);
       return;
     }
     lastKeyRef.current = key;
+
+    // Abort previous fetch
+    if (abortRef.current) abortRef.current.abort();
+    abortRef.current = new AbortController();
 
     try {
       const apiUrl = process.env.REACT_APP_BACKEND_URL;
@@ -94,24 +116,35 @@ const AlimentationV2Layer = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          center_lat: center.lat,
-          center_lng: center.lng,
+          center_lat: centerLat,
+          center_lng: centerLng,
           species: species,
           month: month,
         }),
+        signal: abortRef.current.signal,
       });
       if (!res.ok) return;
       const data = await res.json();
       cacheRef.current = data;
-      renderDataRef.current(data);
-      if (onDataLoaded) onDataLoaded(data);
+
+      if (lastKeyRef.current === key) {
+        renderRef.current(data);
+        if (onDataLoaded) onDataLoaded(data);
+      }
     } catch (err) {
-      console.error('[ALIMENTATION-V2]', err);
+      if (err.name !== 'AbortError') console.error('[ALIMENTATION-V2]', err);
     }
-  }, [center, species, month, enabled, clearLayers, onDataLoaded]);
+  }, [centerLat, centerLng, species, month, enabled, clearLayers, onDataLoaded]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  // Fetch effect — ne se re-déclenche que sur changements réels
+  useEffect(() => {
+    fetchData();
+    return () => {
+      if (abortRef.current) abortRef.current.abort();
+    };
+  }, [fetchData]);
 
+  // Re-render visuel quand showSalines change (sans re-fetch)
   useEffect(() => {
     if (cacheRef.current) renderSalines(cacheRef.current);
   }, [renderSalines]);

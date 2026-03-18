@@ -15,7 +15,7 @@ import pytest
 import httpx
 import os
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://steeve-max-multi.preview.emergentagent.com")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://alimentation-v2-fix.preview.emergentagent.com")
 TIMEOUT = 120  # API calls can take 30-60s due to Overpass API
 
 # Test coordinates per requirements
