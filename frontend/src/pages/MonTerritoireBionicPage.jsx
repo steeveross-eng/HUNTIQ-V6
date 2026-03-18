@@ -19,7 +19,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Crosshair, Target, MapPin, Plus, X, LocateFixed,
   BookMarked, Users, Shield, SplitSquareHorizontal,
-  Map, Binoculars, Layers, Lock, Unlock, BarChart3, CheckCircle, Flame,
+  Map, Binoculars, Layers, Lock, Unlock, BarChart3, CheckCircle, Flame, Droplets,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -495,6 +495,12 @@ const MonTerritoireBionicPage = () => {
   const [showPointsLayer, setShowPointsLayer] = useState(true);
   const [pointsChaudsMode, setPointsChaudsMode] = useState(false);
   const [pointsChaudsFilter, setPointsChaudsFilter] = useState('tous');
+
+  // ALIMENTATION-V2: Salines + Recommandations
+  const [showAlimentationV2, setShowAlimentationV2] = useState(true);
+  const [showSalines, setShowSalines] = useState(true);
+  const [showNutritionPanel, setShowNutritionPanel] = useState(false);
+  const [alimentationV2Data, setAlimentationV2Data] = useState(null);
 
   // STEEVE-MAX V3: Sous-éléments granulaires par couche
   const [zoneSubFilters, setZoneSubFilters] = useState({
@@ -1425,6 +1431,42 @@ const MonTerritoireBionicPage = () => {
           </Popover>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
+          {/* ═══ 8a3. ONGLET SITES D'ALIMENTATION — ALIMENTATION-V2 ═══ */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="h-8 px-2 flex items-center gap-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider hover:bg-white/5 transition-all" data-testid="toolbar-alimentation-btn" title="Sites d'alimentation V2">
+                <Droplets className="h-3.5 w-3.5 text-yellow-400" />
+                <span className="text-yellow-400 hidden sm:inline">Alimentation</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align="end" sideOffset={8} className="w-60 bg-gray-950/95 backdrop-blur-md border-gray-700/60 p-3 shadow-xl shadow-black/40">
+              <div className="space-y-2">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Alimentation V2</div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-yellow-400 font-medium">Salines</span>
+                  <Switch checked={showSalines} onCheckedChange={setShowSalines} className="scale-[0.6] data-[state=checked]:bg-yellow-500" data-testid="toggle-salines" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-amber-300 font-medium">Recommandations</span>
+                  <Switch checked={showNutritionPanel} onCheckedChange={setShowNutritionPanel} className="scale-[0.6] data-[state=checked]:bg-amber-500" data-testid="toggle-nutrition-panel" />
+                </div>
+                {alimentationV2Data && (
+                  <div className="pt-2 border-t border-gray-700/50 space-y-1">
+                    <div className="text-[9px] text-gray-500 uppercase font-bold">Résumé zone</div>
+                    <div className="text-xs text-white">Score: <span className="text-yellow-400 font-bold">{alimentationV2Data.score_global}/100</span></div>
+                    <div className="text-xs text-gray-400">Salines: <span className="text-yellow-300">{alimentationV2Data.n_salines}</span></div>
+                    <div className="text-xs text-gray-400">Espèce: <span className="text-yellow-300">{alimentationV2Data.species_nom}</span></div>
+                    {alimentationV2Data.carences_detectees?.length > 0 && (
+                      <div className="text-[10px] text-red-400 mt-1">
+                        Carences: {alimentationV2Data.carences_detectees.map(c => c.element).join(', ')}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+
           {/* ═══ 8b. SEUIL MINIMUM — contrôle individuel inline avec popover slider ═══ */}
           <Popover>
             <PopoverTrigger asChild>
@@ -1602,6 +1644,9 @@ const MonTerritoireBionicPage = () => {
               zoneSubFilters={zoneSubFilters}
               corridorSubFilters={corridorSubFilters}
               pointSubFilters={pointSubFilters}
+              showAlimentationV2={showAlimentationV2}
+              showSalines={showSalines}
+              onAlimentationDataLoaded={setAlimentationV2Data}
             />
           </MapContainer>
 
@@ -1769,6 +1814,100 @@ const MonTerritoireBionicPage = () => {
           )}
         </div>
       </div>
+
+      {/* ═══ PANNEAU RECOMMANDATIONS NUTRITIONNELLES — ALIMENTATION-V2 ═══ */}
+      {showNutritionPanel && alimentationV2Data && (
+        <div className="fixed right-4 top-24 w-80 max-h-[70vh] bg-gray-950/95 backdrop-blur-md border border-gray-700/60 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-[1001]" data-testid="nutrition-panel">
+          <div className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Droplets className="h-4 w-4 text-yellow-400" />
+              <span className="text-sm font-bold text-white">Recommandations</span>
+            </div>
+            <button onClick={() => setShowNutritionPanel(false)} className="text-gray-500 hover:text-white transition-colors" data-testid="close-nutrition-panel">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="p-3 overflow-y-auto max-h-[60vh] space-y-3">
+            {/* Espèce + Score */}
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400">{alimentationV2Data.species_nom}</span>
+              <span className="text-sm font-bold text-yellow-400">{alimentationV2Data.score_global}/100</span>
+            </div>
+
+            {/* Carences détectées */}
+            {alimentationV2Data.carences_detectees?.length > 0 && (
+              <div className="space-y-1">
+                <div className="text-[9px] font-bold uppercase tracking-wider text-red-400">Carences détectées</div>
+                {alimentationV2Data.carences_detectees.map((c, i) => (
+                  <div key={i} className="flex items-center justify-between text-xs bg-red-500/10 rounded px-2 py-1">
+                    <span className="text-red-300">{c.element}</span>
+                    <span className="text-red-400 font-bold">-{c.deficit_pct}%</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Aliments recommandés */}
+            <div className="space-y-1">
+              <div className="text-[9px] font-bold uppercase tracking-wider text-green-400">Aliments recommandés</div>
+              {alimentationV2Data.nutrition?.aliments_recommandes?.map((a, i) => (
+                <div key={i} className="text-xs bg-gray-800/50 rounded px-2 py-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium">{a.nom}</span>
+                    <span className={`text-[9px] px-1.5 rounded ${a.priorite === 'haute' ? 'bg-red-500/20 text-red-300' : 'bg-gray-700 text-gray-400'}`}>{a.priorite}</span>
+                  </div>
+                  <div className="text-[10px] text-gray-500">{a.saison} — {a.apport}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Protéines */}
+            {alimentationV2Data.nutrition?.proteines && (
+              <div className="space-y-1">
+                <div className="text-[9px] font-bold uppercase tracking-wider text-blue-400">Protéines</div>
+                <div className="text-xs text-gray-300">Besoin: <span className="text-blue-300 font-bold">{alimentationV2Data.nutrition.proteines.besoin_pct}%</span></div>
+                <div className="text-[10px] text-gray-500">{alimentationV2Data.nutrition.proteines.note}</div>
+              </div>
+            )}
+
+            {/* Oligo-éléments */}
+            <div className="space-y-1">
+              <div className="text-[9px] font-bold uppercase tracking-wider text-purple-400">Oligo-éléments</div>
+              {alimentationV2Data.nutrition?.oligo_elements?.map((o, i) => (
+                <div key={i} className="flex items-center justify-between text-xs bg-gray-800/50 rounded px-2 py-1">
+                  <span className="text-gray-300">{o.nom}</span>
+                  <span className="text-purple-300 text-[10px]">{o.besoin_mg_jour} mg/j</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Composition saline */}
+            {alimentationV2Data.nutrition?.saline_composition && (
+              <div className="space-y-1">
+                <div className="text-[9px] font-bold uppercase tracking-wider text-yellow-400">Composition saline recommandée</div>
+                <div className="grid grid-cols-2 gap-1">
+                  {Object.entries(alimentationV2Data.nutrition.saline_composition).map(([k, v]) => (
+                    <div key={k} className="text-[10px] bg-yellow-500/10 rounded px-2 py-0.5">
+                      <span className="text-gray-400">{k.replace('_pct', ' %').replace('_ppm', ' ppm').replace('_', ' ')}: </span>
+                      <span className="text-yellow-300 font-bold">{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Carences locales Québec */}
+            {alimentationV2Data.nutrition?.carences_locales?.length > 0 && (
+              <div className="space-y-1">
+                <div className="text-[9px] font-bold uppercase tracking-wider text-orange-400">Carences locales (Québec)</div>
+                {alimentationV2Data.nutrition.carences_locales.map((c, i) => (
+                  <div key={i} className="text-[10px] text-orange-300/80 pl-2 border-l border-orange-500/30">{c}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       
       {/* ═══ DIALOGUES (composants extraits IM1) ═══ */}
       <EditPlaceDialog editingPlace={editingPlace} setEditingPlace={setEditingPlace} handleUpdatePlace={handleUpdatePlace} PLACE_TYPES={PLACE_TYPES} />

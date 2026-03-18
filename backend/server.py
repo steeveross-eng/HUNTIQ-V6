@@ -456,6 +456,10 @@ try:
     from modules.alimentation_v1.router import router as alimentation_v1_router
     app.include_router(alimentation_v1_router)
     logger.info("✓ ALIMENTATION-V1 registered (/api/v1/alimentation)")
+
+    from modules.alimentation_v2.router import router as alimentation_v2_router
+    app.include_router(alimentation_v2_router)
+    logger.info("✓ ALIMENTATION-V2 registered (/api/v2/alimentation)")
 except Exception as e:
     logger.warning(f"ALIMENTATION-V1 not loaded: {e}")
 

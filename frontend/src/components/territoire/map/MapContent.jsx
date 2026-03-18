@@ -22,6 +22,7 @@ import { MapInteractionLayer } from '@/modules/map_interaction';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { PLACE_TYPES } from '@/config/placeTypes';
 import BionicCorridorsV10Layer from '@/components/territoire/BionicCorridorsV10Layer';
+import AlimentationV2Layer from '@/components/territoire/AlimentationV2Layer';
 
 const MapContentInner = React.memo(({
   // Eco layers
@@ -80,6 +81,10 @@ const MapContentInner = React.memo(({
   showHuntingPath,
   // CORRIDORS-V10
   onCorridorDataLoaded,
+  // ALIMENTATION-V2
+  showAlimentationV2,
+  showSalines,
+  onAlimentationDataLoaded,
   // STEEVE-MAX UX: Contrôles couches et points chauds
   showZonesLayer,
   showCorridorsLayer,
@@ -161,6 +166,21 @@ const MapContentInner = React.memo(({
         zoneSubFilters={zoneSubFilters}
         corridorSubFilters={corridorSubFilters}
         pointSubFilters={pointSubFilters}
+      />
+    )}
+
+    {/* ALIMENTATION-V2: Salines optimales dans la zone 2km×2km */}
+    {selectedWaypointForZones && showAlimentationV2 && (
+      <AlimentationV2Layer
+        center={{
+          lat: selectedWaypointForZones.lat || selectedWaypointForZones.latitude,
+          lng: selectedWaypointForZones.lng || selectedWaypointForZones.longitude,
+        }}
+        species={selectedSpecies}
+        month={new Date().getMonth() + 1}
+        enabled={showAlimentationV2}
+        showSalines={showSalines}
+        onDataLoaded={onAlimentationDataLoaded}
       />
     )}
 

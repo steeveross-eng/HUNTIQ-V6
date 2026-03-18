@@ -11,11 +11,16 @@ import { useState, useCallback, useMemo } from 'react';
 import { BIONIC_LAYERS } from '@/core/bionic';
 
 // Couches essentielles activees par defaut quand aucune session n'existe
+// ALIMENTATION-V2: Sites permanents SUPPRIMÉS définitivement
+// 'alimentation' et 'salines' retirés — contrôlés exclusivement par ALIMENTATION-V2
 const ESSENTIAL_LAYERS = [
-  'habitats', 'alimentation', 'repos', 'rut',
+  'habitats', 'repos', 'rut',
   'trajets', 'corridors', 'ensoleillement', 'peuplements',
-  'salines', 'affuts', 'pentes', 'orientation', 'altitude'
+  'affuts', 'pentes', 'orientation', 'altitude'
 ];
+
+// Couches interdites (STEEVE-MAX: anciens sites permanents éliminés)
+const BANNED_LAYERS = new Set(['alimentation', 'salines']);
 
 const useBionicLayers = (initialState = null) => {
   // Etat initial: session restauree OU toutes les couches essentielles
@@ -25,7 +30,8 @@ const useBionicLayers = (initialState = null) => {
     // Si initialState fourni par la session, l'utiliser exactement
     if (initialState && typeof initialState === 'object' && Object.keys(initialState).length > 0) {
       BIONIC_LAYERS.forEach(layer => {
-        state[layer.id] = initialState[layer.id] ?? true;
+        // ALIMENTATION-V2: Forcer alimentation/salines à false
+        state[layer.id] = BANNED_LAYERS.has(layer.id) ? false : (initialState[layer.id] ?? true);
       });
       console.log('[BCE-MAX] Couches restaurees depuis session:', Object.keys(state).filter(k => state[k]).length);
       return state;
