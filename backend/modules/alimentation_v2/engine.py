@@ -13,7 +13,25 @@ SPECIES_MAP = {
     "CERF": "CERF", "ORIGNAL": "ORIGNAL", "OURS": "OURS",
     "WAPITI": "WAPITI", "DINDON": "DINDON",
 }
+
+# Mapping IDs frontend → backend
+FRONTEND_SPECIES_MAP = {
+    "chevreuil": "CERF",
+    "orignal": "ORIGNAL",
+    "ours_noir": "OURS",
+    "dindon_sauvage": "DINDON",
+    "wapiti": "WAPITI",
+    "tous": "CERF",
+}
+
 SPECIES_LIST = list(SPECIES_MAP.keys())
+
+# Espèces qui n'utilisent PAS les salines (directive biologique STEEVE-MAX)
+SPECIES_NO_SALINES = {"OURS", "DINDON"}
+SPECIES_NO_SALINES_MESSAGES = {
+    "OURS": "L'ours noir n'utilise pas les salines. Ce comportement est normal et conforme à la biologie de l'espèce.",
+    "DINDON": "Le dindon n'utilise pas les salines. Ce comportement est normal et conforme à la biologie de l'espèce.",
+}
 
 
 def analyze_alimentation_v2(
@@ -26,16 +44,22 @@ def analyze_alimentation_v2(
     """
     Analyse alimentaire complète V2.
     Retourne: terrain, salines, recommandations nutritionnelles.
+    STEEVE-MAX: OURS et DINDON ne génèrent aucune saline.
     """
-    species = species.upper()
-    if species not in SPECIES_LIST:
-        species = "CERF"
+    # Résolution espèce: accepte IDs frontend ou backend
+    species_resolved = FRONTEND_SPECIES_MAP.get(species.lower(), species.upper())
+    if species_resolved not in SPECIES_LIST:
+        species_resolved = "CERF"
+    species = species_resolved
 
     # 1. Analyse territoriale
     terrain = analyze_terrain(center_lat, center_lng, side_m)
 
-    # 2. Calcul salines optimales
-    salines = compute_salines(center_lat, center_lng, terrain, species, month, side_m)
+    # 2. Calcul salines optimales (OURS/DINDON: aucune saline)
+    if species in SPECIES_NO_SALINES:
+        salines = []
+    else:
+        salines = compute_salines(center_lat, center_lng, terrain, species, month, side_m)
 
     # 3. Recommandations nutritionnelles
     nutrition = get_nutrition(species)
@@ -66,7 +90,7 @@ def analyze_alimentation_v2(
                 "deficit_pct": round((1 - val / seuil) * 100),
             })
 
-    return {
+    result = {
         "version": "ALIMENTATION-V2",
         "species": species,
         "species_nom": nutrition["nom"],
@@ -75,13 +99,15 @@ def analyze_alimentation_v2(
         "terrain": terrain,
         "salines": salines,
         "n_salines": len(salines),
+        "salines_disabled": species in SPECIES_NO_SALINES,
+        "salines_message": SPECIES_NO_SALINES_MESSAGES.get(species),
         "nutrition": {
             "aliments_recommandes": nutrition["aliments_recommandes"],
             "nutriments_essentiels": nutrition["nutriments_essentiels"],
             "proteines": nutrition["proteines"],
             "oligo_elements": nutrition["oligo_elements"],
             "carences_locales": nutrition["carences_locales_quebec"],
-            "saline_composition": nutrition["saline_composition"],
+            "saline_composition": nutrition.get("saline_composition"),
         },
         "carences_detectees": carences_detectees,
         "conformite": {
@@ -91,3 +117,5 @@ def analyze_alimentation_v2(
             "centres_modifies": 0,
         },
     }
+
+    return result

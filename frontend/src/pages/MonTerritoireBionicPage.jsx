@@ -1411,9 +1411,20 @@ const MonTerritoireBionicPage = () => {
                 </div>
                 <div className="space-y-1.5 pt-1 border-t border-gray-700/40">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-yellow-400 font-medium">Salines</span>
-                    <Switch checked={showSalines} onCheckedChange={setShowSalines} className="scale-[0.6] data-[state=checked]:bg-yellow-500" data-testid="toggle-salines" />
+                    <span className={`text-xs font-medium ${alimentationV2Data?.salines_disabled ? 'text-gray-600' : 'text-yellow-400'}`}>Salines</span>
+                    <Switch
+                      checked={showSalines && !alimentationV2Data?.salines_disabled}
+                      onCheckedChange={setShowSalines}
+                      disabled={!!alimentationV2Data?.salines_disabled}
+                      className="scale-[0.6] data-[state=checked]:bg-yellow-500 disabled:opacity-30"
+                      data-testid="toggle-salines"
+                    />
                   </div>
+                  {alimentationV2Data?.salines_disabled && alimentationV2Data?.salines_message && (
+                    <div className="px-2 py-1.5 bg-amber-900/20 border border-amber-700/30 rounded text-[10px] text-amber-300/80 leading-relaxed" data-testid="salines-disabled-message">
+                      {alimentationV2Data.salines_message}
+                    </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-amber-300 font-medium">Recommandations</span>
                     <Switch checked={showNutritionPanel} onCheckedChange={setShowNutritionPanel} className="scale-[0.6] data-[state=checked]:bg-amber-500" data-testid="toggle-nutrition-panel" />
@@ -1423,7 +1434,9 @@ const MonTerritoireBionicPage = () => {
                   <div className="pt-2 border-t border-gray-700/50 space-y-1">
                     <div className="text-[9px] text-gray-500 uppercase font-bold">Résumé zone</div>
                     <div className="text-xs text-white">Score: <span className="text-yellow-400 font-bold">{alimentationV2Data.score_global}/100</span></div>
-                    <div className="text-xs text-gray-400">Salines: <span className="text-yellow-300">{alimentationV2Data.n_salines}</span></div>
+                    {!alimentationV2Data.salines_disabled && (
+                      <div className="text-xs text-gray-400">Salines: <span className="text-yellow-300">{alimentationV2Data.n_salines}</span></div>
+                    )}
                     <div className="text-xs text-gray-400">Espèce: <span className="text-yellow-300">{alimentationV2Data.species_nom}</span></div>
                     {alimentationV2Data.carences_detectees?.length > 0 && (
                       <div className="text-[10px] text-red-400 mt-1">
@@ -1902,8 +1915,8 @@ const MonTerritoireBionicPage = () => {
               ))}
             </div>
 
-            {/* Composition saline */}
-            {alimentationV2Data.nutrition?.saline_composition && (
+            {/* Composition saline — masquée pour espèces sans salines */}
+            {alimentationV2Data.nutrition?.saline_composition && !alimentationV2Data.salines_disabled && (
               <div className="space-y-1">
                 <div className="text-[9px] font-bold uppercase tracking-wider text-yellow-400">Composition saline recommandée</div>
                 <div className="grid grid-cols-2 gap-1">
@@ -1914,6 +1927,13 @@ const MonTerritoireBionicPage = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Message espèce sans salines */}
+            {alimentationV2Data.salines_disabled && alimentationV2Data.salines_message && (
+              <div className="px-3 py-2 bg-amber-900/20 border border-amber-700/30 rounded-lg" data-testid="nutrition-panel-salines-message">
+                <div className="text-[10px] text-amber-300/90 leading-relaxed">{alimentationV2Data.salines_message}</div>
               </div>
             )}
 

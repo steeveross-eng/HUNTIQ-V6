@@ -1,0 +1,168 @@
+{
+  "summary": "ALIMENTATION-V2 species-specific salines behavior fully verified. STEEVE-MAX directive implemented correctly: OURS NOIR and DINDON SAUVAGE do NOT generate salines (salines_disabled=true, n_salines=0, explanatory message shown in ALIMENTATION popover and Nutrition panel). CHEVREUIL, ORIGNAL, and WAPITI generate salines normally (salines_disabled=false, n_salines>0, yellow dots visible on map). Backend tests: 11/11 passed. Frontend UI behaves correctly for all 5 species. All regressions passed: ZONES tab 7/7 sub-elements, V10 Corridors 564 SVG paths rendered.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "backend_api_tests": {
+      "status": "PASS",
+      "total": 11,
+      "passed": 11,
+      "failed": 0,
+      "test_file": "/app/backend/tests/test_alimentation_v2_species.py"
+    },
+    "species_no_salines": {
+      "ours_noir": {
+        "status": "PASS",
+        "salines_disabled": true,
+        "n_salines": 0,
+        "salines_message": "L'ours noir n'utilise pas les salines. Ce comportement est normal et conforme à la biologie de l'espèce.",
+        "species_resolved": "OURS",
+        "yellow_dots_on_map": false
+      },
+      "dindon_sauvage": {
+        "status": "PASS",
+        "salines_disabled": true,
+        "n_salines": 0,
+        "salines_message": "Le dindon n'utilise pas les salines. Ce comportement est normal et conforme à la biologie de l'espèce.",
+        "species_resolved": "DINDON",
+        "yellow_dots_on_map": false
+      }
+    },
+    "species_with_salines": {
+      "chevreuil": {
+        "status": "PASS",
+        "salines_disabled": false,
+        "n_salines": 5,
+        "species_resolved": "CERF",
+        "yellow_dots_on_map": true
+      },
+      "orignal": {
+        "status": "PASS",
+        "salines_disabled": false,
+        "n_salines": 5,
+        "species_resolved": "ORIGNAL",
+        "yellow_dots_on_map": true
+      },
+      "wapiti": {
+        "status": "PASS",
+        "salines_disabled": false,
+        "n_salines": 5,
+        "species_resolved": "WAPITI",
+        "yellow_dots_on_map": true
+      }
+    },
+    "frontend_alimentation_popover": {
+      "ours_noir": {
+        "salines_toggle_disabled": true,
+        "disabled_message_visible": true,
+        "message_data_testid": "salines-disabled-message"
+      },
+      "dindon_sauvage": {
+        "salines_toggle_disabled": true,
+        "disabled_message_visible": true
+      },
+      "chevreuil": {
+        "salines_toggle_enabled": true,
+        "no_disabled_message": true,
+        "salines_count_shown": true
+      },
+      "orignal": {
+        "salines_toggle_enabled": true,
+        "no_disabled_message": true
+      },
+      "wapiti": {
+        "salines_toggle_enabled": true,
+        "no_disabled_message": true
+      }
+    },
+    "nutrition_panel": {
+      "ours_noir": {
+        "saline_composition_hidden": true,
+        "explanatory_message_shown": true,
+        "other_nutrition_data_present": true
+      }
+    },
+    "species_mapping": {
+      "status": "PASS",
+      "mappings_verified": [
+        {"frontend": "chevreuil", "backend": "CERF"},
+        {"frontend": "orignal", "backend": "ORIGNAL"},
+        {"frontend": "ours_noir", "backend": "OURS"},
+        {"frontend": "dindon_sauvage", "backend": "DINDON"},
+        {"frontend": "wapiti", "backend": "WAPITI"},
+        {"frontend": "tous", "backend": "CERF"}
+      ]
+    },
+    "regression_tests": {
+      "zones_tab": {
+        "status": "PASS",
+        "sub_elements_found": "7/7",
+        "elements": ["alimentation", "repos", "rut", "habitat", "affuts", "trajets", "multiEngines"]
+      },
+      "v10_corridors": {
+        "status": "PASS",
+        "svg_paths": 564,
+        "message": "Corridors and zones rendering correctly"
+      },
+      "points_chauds_button": {
+        "status": "PASS",
+        "visible_in_toolbar": true,
+        "note": "POINTS CHAUDS button visible in toolbar screenshots"
+      }
+    }
+  },
+  "features_verified": {
+    "backend_ours_no_salines": "PASS - salines_disabled=true, n_salines=0, message about ours",
+    "backend_dindon_no_salines": "PASS - salines_disabled=true, n_salines=0, message about dindon",
+    "backend_chevreuil_has_salines": "PASS - salines_disabled=false, n_salines>0",
+    "backend_orignal_has_salines": "PASS - salines_disabled=false, n_salines>0",
+    "backend_wapiti_has_salines": "PASS - salines_disabled=false, n_salines>0",
+    "backend_species_mapping": "PASS - All frontend IDs correctly mapped to backend IDs",
+    "frontend_ours_toggle_disabled": "PASS - Salines toggle grayed out, disabled message visible",
+    "frontend_ours_no_yellow_dots": "PASS - No yellow saline markers on map for OURS",
+    "frontend_dindon_toggle_disabled": "PASS - Salines toggle grayed out, disabled message visible",
+    "frontend_dindon_no_yellow_dots": "PASS - No yellow saline markers on map for DINDON",
+    "frontend_chevreuil_toggle_enabled": "PASS - Salines toggle active, count shown",
+    "frontend_chevreuil_yellow_dots": "PASS - Yellow saline markers visible on map",
+    "frontend_orignal_yellow_dots": "PASS - Yellow saline markers visible on map",
+    "frontend_wapiti_yellow_dots": "PASS - Yellow saline markers visible on map",
+    "nutrition_panel_ours_message": "PASS - Explanatory message shown, saline_composition hidden",
+    "no_regression_zones": "PASS - All 7 sub-elements functional",
+    "no_regression_corridors": "PASS - 564 SVG paths rendered"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_alimentation_v2_species.py",
+    "/app/test_reports/pytest/alimentation_v2_species_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "engine.py: SPECIES_NO_SALINES set correctly contains {'OURS', 'DINDON'}",
+    "engine.py: FRONTEND_SPECIES_MAP correctly maps frontend IDs to backend IDs",
+    "engine.py: analyze_alimentation_v2 returns salines_disabled=true, empty salines array, and explanatory message for OURS/DINDON",
+    "MonTerritoireBionicPage.jsx lines 1414-1425: Salines toggle disabled state and message rendering correctly implemented",
+    "MonTerritoireBionicPage.jsx lines 1919-1936: Nutrition panel correctly hides saline_composition and shows message for OURS/DINDON",
+    "AlimentationV2Layer.jsx: Correctly renders yellow markers only when data.salines has content (empty for OURS/DINDON)"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "auto_logged_as": "Steeve Ross"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "ALIMENTATION-V2 species-specific salines behavior fully tested and verified. Key directives: OURS NOIR and DINDON SAUVAGE do NOT use salines (biological behavior). Backend engine.py has SPECIES_NO_SALINES set. Frontend shows disabled toggle with amber message box. Species selector: data-testid=toolbar-species-btn then species-quick-{id}. Disabled message: data-testid=salines-disabled-message. All 5 species tested: chevreuil, orignal, ours_noir, dindon_sauvage, wapiti.",
+  "verification_date": "2026-03-18",
+  "testing_focus": "OURS and DINDON species-specific salines disable behavior, species ID mapping, frontend toggle/message state, no yellow dots for disabled species"
+}
