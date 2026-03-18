@@ -485,7 +485,7 @@ const MonTerritoireBionicPage = () => {
   
   // Mode d'affichage des zones BIONIC
   const [zoneDisplayMode, setZoneDisplayMode] = useState('micro'); // 'micro' ou 'classic'
-  const [showCorridors, setShowCorridors] = useState(true); // BCE-MAX: Corridors toujours visibles
+  const showCorridors = true; // STEEVE-MAX: V10 layer permanent, contrôlé uniquement via ZONES
   const [corridorV10Data, setCorridorV10Data] = useState(null); // CORRIDORS-V10 niveau distribution
   const [minPercentageFilter, setMinPercentageFilter] = useState(30);
   
@@ -1423,13 +1423,6 @@ const MonTerritoireBionicPage = () => {
               </div>
             </PopoverContent>
           </Popover>
-          <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
-
-          {/* ═══ 8a3. CORRIDORS V10 — contrôle individuel inline ═══ */}
-          <div className="h-8 px-2 flex items-center gap-1.5 rounded-md" data-testid="toolbar-corridors-v10">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 hidden sm:inline">Corridors V10</span>
-            <Switch checked={showCorridors} onCheckedChange={setShowCorridors} className="scale-[0.6] data-[state=checked]:bg-cyan-500" data-testid="toggle-corridors-v10" />
-          </div>
           <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
           {/* ═══ 8b. SEUIL MINIMUM — contrôle individuel inline avec popover slider ═══ */}
