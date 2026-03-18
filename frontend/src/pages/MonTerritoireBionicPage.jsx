@@ -1758,8 +1758,8 @@ const MonTerritoireBionicPage = () => {
             showCorridors={showCorridors}
           />
 
-          {/* ── Indicateur Zone d'Analyse — Position fixe bas-gauche (au-dessus de la légende) ── */}
-          {selectedWaypointForZones && (
+          {/* ── Indicateur Zone d'Analyse — ADMIN PREMIUM uniquement ── */}
+          {adminArchitecteMode && selectedWaypointForZones && (
             <div
               className="absolute bottom-[120px] left-2 z-[999] select-none pointer-events-none"
               data-testid="zone-analysis-indicator"

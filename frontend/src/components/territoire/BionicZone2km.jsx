@@ -122,11 +122,10 @@ const BionicZone2km = ({
 export const BionicZone2kmLayer = ({ 
   waypoints = [],
   selectedWaypoint = null,
-  showForAll = false,  // false = uniquement le waypoint sélectionné
+  showForAll = false,
+  showTooltip = false,  // STEEVE-MAX: tooltip DÉSACTIVÉ mode usager (admin only)
   opacity = 0.7,
 }) => {
-  // Si showForAll, afficher pour tous les waypoints actifs
-  // Sinon, uniquement pour le waypoint sélectionné
   const waypointsToRender = showForAll 
     ? waypoints.filter(wp => wp.isActive !== false)
     : (selectedWaypoint ? [selectedWaypoint] : []);
@@ -138,7 +137,7 @@ export const BionicZone2kmLayer = ({
           key={wp.id || `zone-2km-${wp.lat}-${wp.lng}`}
           waypoint={wp}
           opacity={opacity}
-          showTooltip={!showForAll || wp.id === selectedWaypoint?.id}
+          showTooltip={showTooltip}
         />
       ))}
     </>

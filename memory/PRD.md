@@ -9,37 +9,33 @@ Application BIONIC V3 — Outil d'analyse ecologique full-stack pour la gestion 
 - **Database:** MongoDB
 
 ## Taches Completees (resume)
-### iterations 22-48a (voir historique complet)
-### ENGINE ALIMENTATION-V2 — iteration_48 (100%)
-### BUG FIX Tab + Salines Visibility — iteration_49 (100%)
-### DIRECTIVE ESPECES STEEVE-MAX — iteration_50 (100%)
-### OPTIMISATION SALINES + DIVERSIFICATION SPATIALE — iteration_51 (100%)
-### DEPLACEMENT COUCHES STEEVE-MAX — iteration_52 (100%)
-### RETRAIT MODE SECRET — iteration_53 (100%)
+### iterations 22-53 (voir historique complet)
 
-### REPOSITIONNEMENT INDICATEUR ZONE D'ANALYSE (2026-03-18) — iteration_54 (100%)
-- Indicateur fixe repositionne en bas-gauche de la carte (position: bottom-[120px] left-2)
-- Gap 20px avec la legende (conforme 16-24px STEEVE-MAX)
-- Aucune superposition avec: toolbar, badges, popovers, selecteurs, panneaux lateraux
-- Stable: position CSS absolue, z-index 999, pointer-events-none
-- Tooltip hover BionicZone2km desactive (showTooltip=false par defaut)
-- Affichage: icone carree pointillee orange + "Zone d'analyse" + "2 km x 2 km — {waypoint.name}"
-- Visible uniquement quand selectedWaypointForZones actif
+### DESACTIVATION POPUP ZONE D'ANALYSE (2026-03-18) — iteration_55 (100%)
+- **Popup zone d'analyse** completement desactive en mode usager standard
+- BionicZone2kmLayer: showTooltip=false par defaut, prop explicite (plus de forçage interne)
+- BionicZone2km: showTooltip default=false
+- Indicateur fixe bas-gauche: visible uniquement en adminArchitecteMode
+- Aucune interaction (hover, zoom, pan, clic) ne reactive le popup
+- Confirmation visuelle: carte 100% degagee de tout popup zone d'analyse
 
-## Elements SUPPRIMES/DEPLACES
+## Elements SUPPRIMES/DEPLACES (ADMIN ONLY)
 - Onglet LAYERS — supprime iteration_47
 - Onglet CORRIDORS V10 — supprime iteration_48a
 - Point "Alimentation secondaire" (V1) — supprime iteration_51
 - Labels DOMINANT/SECONDAIRE/TERTIAIRE — ADMIN ONLY (iteration_52)
 - Mode SECRET (cadenas) — ADMIN ONLY (iteration_53)
+- Popup zone d'analyse + indicateur fixe — ADMIN ONLY (iteration_55)
 
 ## Architecture de controle STEEVE-MAX (FINAL)
 ```
-ZONES > ALIMENTATION > POINTS CHAUDS > SEUIL > CURSEUR > ADMIN(Shield)
+ZONES > ALIMENTATION(X) > POINTS CHAUDS > SEUIL > CURSEUR > ADMIN(Shield)
 
-Indicateur zone d'analyse: bas-gauche (120px du bas, gap 20px legende)
-Legende: bas-gauche (56px du bas)
-Zoom controls: haut-gauche
+ADMIN PREMIUM (bouclier Shield, mot de passe Saturn5858*):
+- Labels DOMINANT/SECONDAIRE/TERTIAIRE
+- Mode SECRET (cadenas privacyMode)
+- Indicateur zone d'analyse (bas-gauche)
+- Tooltip zone 2km sur rectangle pointille
 ```
 
 ## Backlog
