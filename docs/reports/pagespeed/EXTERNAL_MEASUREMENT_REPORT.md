@@ -98,12 +98,12 @@ Le nombre de fichiers JS chargés (8 au lieu de 30+) confirme que **React.lazy()
 
 **URLs à tester manuellement :**
 ```
-https://solunar-analytics.preview.emergentagent.com/
-https://solunar-analytics.preview.emergentagent.com/login
-https://solunar-analytics.preview.emergentagent.com/shop
-https://solunar-analytics.preview.emergentagent.com/carte-interactive
-https://solunar-analytics.preview.emergentagent.com/contenus
-https://solunar-analytics.preview.emergentagent.com/mon-territoire
+https://guide-pro-hub.preview.emergentagent.com/
+https://guide-pro-hub.preview.emergentagent.com/login
+https://guide-pro-hub.preview.emergentagent.com/shop
+https://guide-pro-hub.preview.emergentagent.com/carte-interactive
+https://guide-pro-hub.preview.emergentagent.com/contenus
+https://guide-pro-hub.preview.emergentagent.com/mon-territoire
 ```
 
 **Outil recommandé :** [PageSpeed Insights](https://pagespeed.web.dev/)

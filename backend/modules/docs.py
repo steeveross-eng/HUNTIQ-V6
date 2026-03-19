@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://solunar-analytics.preview.emergentagent.com",
+                "url": "https://guide-pro-hub.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],
