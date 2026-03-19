@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   X, FlaskConical, Compass, Crosshair,
   TrendingUp, ClipboardList, Database, Activity,
-  ChevronRight, AlertTriangle, Zap,
+  ChevronRight, AlertTriangle, Brain,
 } from 'lucide-react';
 import useBionicStore from '@/stores/useBionicStore';
 import ModeScientifique from './intelligence/ModeScientifique';
@@ -115,7 +115,7 @@ export default function IntelligenceDashboard({
         <div className="flex-shrink-0 px-3 py-1.5 flex items-center gap-2"
           style={{ background: 'rgba(26, 22, 16, 0.6)', borderBottom: '1px solid rgba(139, 111, 71, 0.15)' }}
         >
-          <Zap className="w-3.5 h-3.5" style={{ color: TP.bionic }} />
+          <Brain className="w-3.5 h-3.5" style={{ color: TP.forestLight }} />
           <span className="text-xs font-bold tracking-tight" style={{ color: TP.sandLight }}>INTELLIGENCE</span>
 
           <div className="flex gap-0.5 ml-3 rounded-lg p-0.5" style={{ background: 'rgba(22, 18, 12, 0.5)', border: '1px solid rgba(139, 111, 71, 0.1)' }}>

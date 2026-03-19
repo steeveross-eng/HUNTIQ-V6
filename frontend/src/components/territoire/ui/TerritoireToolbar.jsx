@@ -8,7 +8,7 @@ import React from 'react';
 import {
   Crosshair, Target, MapPin, Plus, X, LocateFixed,
   BookMarked, Users, Shield, SplitSquareHorizontal,
-  Map, Binoculars, Layers, Lock, Unlock, BarChart3, CheckCircle, Flame, Droplets,
+  Map, Binoculars, Layers, Lock, Unlock, Brain, CheckCircle, Flame, Droplets,
 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
@@ -130,7 +130,7 @@ export function TerritoireToolbar({
 
         {/* 5. INTELLIGENCE — terrain premium palette, Brain icon officiel */}
         <button onClick={() => setActiveTab(prev => prev === 'intelligence' ? 'carte' : 'intelligence')} className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${activeTab === 'intelligence' ? 'bg-[#4A7A2E]/15 text-[#4A7A2E]' : 'text-[#A8885E] hover:bg-white/5'}`} data-testid="toolbar-intelligence-btn" title="Intelligence — Tableau central">
-          <BarChart3 className="h-3.5 w-3.5" /><span className="hidden sm:inline">Intelligence</span>
+          <Brain className="h-3.5 w-3.5" /><span className="hidden sm:inline">Intelligence</span>
         </button>
         <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
