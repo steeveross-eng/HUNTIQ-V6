@@ -111,6 +111,7 @@ const MobileNav = ({ isOpen, onClose }) => {
   
   const visibleRoutes = ROUTES.filter(route => {
     if (!route.showInNav) return false;
+    if (route.navGroup === 'intelligence') return false;
     return hasRouteAccess(route, user);
   });
   
@@ -185,12 +186,6 @@ const ModularNavigation = () => {
               isActive={location.pathname === route.path}
             />
           ))}
-        
-        {/* Intelligence Dropdown */}
-        <NavDropdown 
-          group={NAV_GROUPS.intelligence} 
-          currentPath={location.pathname}
-        />
         
         {/* Territory Dropdown */}
         <NavDropdown 

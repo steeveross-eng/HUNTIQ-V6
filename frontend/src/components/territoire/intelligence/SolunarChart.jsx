@@ -4,6 +4,8 @@
  * Palette: vert foret, brun terre, sable, gris roche.
  * Effet WOW: "HEURE BIONIC DE CHASSE" bande orange animee,
  * pointeur temporel anime, marqueurs premium, intensite graduee.
+ * Section 6: HEURES HOT integrees sur la courbe (segments colores,
+ * marqueurs verticaux, tooltips premium, halo temps reel).
  * STEEVE-MAX: zero pollution, hierarchie claire, terrain premium.
  */
 import { useMemo, useState, useEffect } from 'react';
@@ -11,7 +13,6 @@ import { useMemo, useState, useEffect } from 'react';
 const W = 780, H = 220, PAD = 44;
 const PW = W - PAD * 2, PH = H - 40;
 
-// Terrain premium palette
 const C = {
   forest: '#2D5016', forestLight: '#4A7A2E', forestDim: '#1A3A0A',
   earth: '#8B6F47', earthLight: '#A8885E', earthDim: '#5C4A30',
@@ -21,15 +22,29 @@ const C = {
   curve: '#4A7A2E', curveGlow: '#6EAE42',
 };
 
+const HOT_COLORS = {
+  'faible': { stroke: '#EAB308', glow: '#FDE047', bg: 'rgba(234,179,8,0.12)' },
+  'modere': { stroke: '#F59E0B', glow: '#FBBF24', bg: 'rgba(245,158,11,0.15)' },
+  'modéré': { stroke: '#F59E0B', glow: '#FBBF24', bg: 'rgba(245,158,11,0.15)' },
+  'fort': { stroke: '#EA580C', glow: '#FB923C', bg: 'rgba(234,88,12,0.18)' },
+  'extrême': { stroke: '#DC2626', glow: '#F87171', bg: 'rgba(220,38,38,0.2)' },
+  'extreme': { stroke: '#DC2626', glow: '#F87171', bg: 'rgba(220,38,38,0.2)' },
+};
+
+function getHotStyle(intensity) {
+  const key = (intensity || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return HOT_COLORS[key] || HOT_COLORS[(intensity || '').toLowerCase()] || HOT_COLORS['faible'];
+}
+
 export default function SolunarChart({ solunar }) {
   const curve = solunar?.curve_24h || [];
   const periods = solunar?.periods || {};
   const sun = solunar?.sun || {};
   const moon = solunar?.moon || {};
+  const huntingWindows = solunar?.hunting_windows || [];
   const [now, setNow] = useState(new Date());
   const [tooltip, setTooltip] = useState(null);
 
-  // Real-time pointer update
   useEffect(() => {
     const iv = setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(iv);
@@ -51,7 +66,6 @@ export default function SolunarChart({ solunar }) {
     }).join(' ');
   }, [curve]);
 
-  // Find current altitude for pointer dot position
   const currentAlt = useMemo(() => {
     if (!curve.length) return 0;
     const maxAlt = Math.max(...curve.map(p => Math.abs(p.moon_altitude)), 30);
@@ -59,11 +73,9 @@ export default function SolunarChart({ solunar }) {
     return H / 2 - (closest.moon_altitude / maxAlt) * (PH / 2);
   }, [curve, currentH]);
 
-  // Best hunting window (for HEURE BIONIC band)
   const bestWindow = useMemo(() => {
     const majors = periods.major || [];
     if (majors.length > 0) {
-      // Find daylight major window
       const dayMajor = majors.find(p => p.start_h >= sunriseH && p.end_h <= sunsetH);
       return dayMajor || majors[0];
     }
@@ -79,40 +91,61 @@ export default function SolunarChart({ solunar }) {
     return m;
   }, [moon]);
 
+  // Section 6: Current time in HOT window check
+  const currentHotWindow = useMemo(() => {
+    return huntingWindows.find(w => {
+      const s = parseH(w.start), e = parseH(w.end);
+      return s != null && e != null && currentH >= s && currentH <= e;
+    });
+  }, [huntingWindows, currentH]);
+
   const intensity = solunar?.solunar_score || 0;
 
   return (
     <div className="relative" data-testid="solunar-chart">
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}>
         <defs>
-          {/* Topographic texture */}
           <pattern id="topo" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M0 20 Q10 15 20 20 T40 20" fill="none" stroke={C.forest} strokeWidth="0.3" opacity="0.15" />
             <path d="M0 30 Q10 25 20 30 T40 30" fill="none" stroke={C.earth} strokeWidth="0.2" opacity="0.1" />
           </pattern>
-          {/* BIONIC glow gradient */}
           <linearGradient id="bionicBand" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={C.sand} stopOpacity="0.05" />
             <stop offset="30%" stopColor={C.bionic} stopOpacity="0.18" />
             <stop offset="70%" stopColor={C.bionic} stopOpacity="0.18" />
             <stop offset="100%" stopColor={C.earthDim} stopOpacity="0.05" />
           </linearGradient>
-          {/* Curve glow */}
           <filter id="curveGlow">
             <feGaussianBlur stdDeviation="2" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
-          {/* Pointer glow */}
           <radialGradient id="ptrGlow">
             <stop offset="0%" stopColor={C.curveGlow} stopOpacity="0.8" />
             <stop offset="100%" stopColor={C.curveGlow} stopOpacity="0" />
           </radialGradient>
-          {/* Intensity gradient */}
+          {/* HOT pointer glow — uses HOT window color when active */}
+          {currentHotWindow && (
+            <radialGradient id="ptrGlowHot">
+              <stop offset="0%" stopColor={getHotStyle(currentHotWindow.intensity).glow} stopOpacity="0.9" />
+              <stop offset="50%" stopColor={getHotStyle(currentHotWindow.intensity).stroke} stopOpacity="0.3" />
+              <stop offset="100%" stopColor={getHotStyle(currentHotWindow.intensity).stroke} stopOpacity="0" />
+            </radialGradient>
+          )}
           <linearGradient id="intensGrad" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor={C.rockDim} />
             <stop offset="50%" stopColor={C.forest} />
             <stop offset="100%" stopColor={C.bionic} />
           </linearGradient>
+          {/* HOT window clip paths */}
+          {huntingWindows.map((w, i) => {
+            const sx = toX(parseH(w.start) || 0);
+            const ex = toX(parseH(w.end) || 0);
+            return (
+              <clipPath key={`hot-clip-${i}`} id={`hot-clip-${i}`}>
+                <rect x={sx} y={0} width={Math.max(2, ex - sx)} height={H} />
+              </clipPath>
+            );
+          })}
         </defs>
 
         {/* Background with topo texture */}
@@ -121,13 +154,13 @@ export default function SolunarChart({ solunar }) {
         {/* Day zone */}
         <rect x={toX(sunriseH)} y={0} width={toX(sunsetH) - toX(sunriseH)} height={H - 26} fill={C.sand} opacity={0.04} rx={2} />
 
-        {/* Major periods — thick segments */}
+        {/* Major periods — background segments */}
         {(periods.major || []).filter(p => p.start_h != null).map((p, i) => (
-          <rect key={`maj-${i}`} x={toX(p.start_h)} y={8} width={Math.max(2, toX(p.end_h) - toX(p.start_h))} height={H - 36} fill={C.bionic} opacity={0.12} rx={3} />
+          <rect key={`maj-${i}`} x={toX(p.start_h)} y={8} width={Math.max(2, toX(p.end_h) - toX(p.start_h))} height={H - 36} fill={C.bionic} opacity={0.08} rx={3} />
         ))}
-        {/* Minor periods — thin segments */}
+        {/* Minor periods — background segments */}
         {(periods.minor || []).filter(p => p.start_h != null).map((p, i) => (
-          <rect key={`min-${i}`} x={toX(p.start_h)} y={20} width={Math.max(2, toX(p.end_h) - toX(p.start_h))} height={H - 48} fill={C.sand} opacity={0.08} rx={2} />
+          <rect key={`min-${i}`} x={toX(p.start_h)} y={20} width={Math.max(2, toX(p.end_h) - toX(p.start_h))} height={H - 48} fill={C.sand} opacity={0.06} rx={2} />
         ))}
 
         {/* HEURE BIONIC DE CHASSE — glowing band */}
@@ -143,9 +176,39 @@ export default function SolunarChart({ solunar }) {
         {/* Horizon line */}
         <line x1={PAD} y1={H / 2} x2={W - PAD} y2={H / 2} stroke={C.earth} strokeWidth={0.6} strokeDasharray="6,4" opacity={0.4} />
 
-        {/* Moon curve with glow */}
+        {/* Moon curve — base glow + line */}
         <path d={points} fill="none" stroke={C.curveGlow} strokeWidth={3} opacity={0.2} filter="url(#curveGlow)" />
         <path d={points} fill="none" stroke={C.curve} strokeWidth={1.8} />
+
+        {/* ══ SECTION 6: HEURES HOT — Segments colores sur la courbe ══ */}
+        {huntingWindows.map((w, i) => {
+          const hs = getHotStyle(w.intensity);
+          const sx = toX(parseH(w.start) || 0);
+          const ex = toX(parseH(w.end) || 0);
+          return (
+            <g key={`hot-${i}`}
+              onMouseEnter={() => setTooltip({
+                x: (sx + ex) / 2,
+                text: `HOT ${w.start}-${w.end} | ${w.intensity} | ${w.source} | ${w.duration_min}min`,
+              })}
+              onMouseLeave={() => setTooltip(null)}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Background glow behind curve segment */}
+              <path d={points} fill="none" stroke={hs.glow} strokeWidth={10} clipPath={`url(#hot-clip-${i})`} opacity={0.15} filter="url(#curveGlow)" />
+              {/* Thick colored curve segment */}
+              <path d={points} fill="none" stroke={hs.stroke} strokeWidth={4} clipPath={`url(#hot-clip-${i})`} opacity={0.85}>
+                <animate attributeName="opacity" values="0.7;0.95;0.7" dur="2.5s" repeatCount="indefinite" />
+              </path>
+              {/* Vertical marker — start */}
+              <line x1={sx} y1={6} x2={sx} y2={H - 28} stroke={hs.stroke} strokeWidth={1} strokeDasharray="3,2" opacity={0.6} />
+              {/* Vertical marker — end */}
+              <line x1={ex} y1={6} x2={ex} y2={H - 28} stroke={hs.stroke} strokeWidth={1} strokeDasharray="3,2" opacity={0.6} />
+              {/* HOT label */}
+              <text x={(sx + ex) / 2} y={H - 28} fill={hs.stroke} fontSize={5.5} textAnchor="middle" fontWeight="bold" opacity={0.7}>HOT</text>
+            </g>
+          );
+        })}
 
         {/* Hour ticks */}
         {[0, 3, 6, 9, 12, 15, 18, 21, 24].map(h => (
@@ -170,14 +233,28 @@ export default function SolunarChart({ solunar }) {
           </g>
         ))}
 
-        {/* ANIMATED: Current time pointer */}
-        <line x1={toX(currentH)} y1={4} x2={toX(currentH)} y2={H - 26} stroke={C.curveGlow} strokeWidth={1.2} opacity={0.8}>
-          <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
-        </line>
-        <circle cx={toX(currentH)} cy={currentAlt} r={8} fill="url(#ptrGlow)" />
-        <circle cx={toX(currentH)} cy={currentAlt} r={3.5} fill={C.curveGlow} stroke="#fff" strokeWidth={0.8}>
-          <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" />
-        </circle>
+        {/* ANIMATED: Current time pointer — changes to HOT style if in window */}
+        {currentHotWindow ? (
+          <g>
+            <line x1={toX(currentH)} y1={4} x2={toX(currentH)} y2={H - 26} stroke={getHotStyle(currentHotWindow.intensity).glow} strokeWidth={1.8} opacity={0.9}>
+              <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite" />
+            </line>
+            <circle cx={toX(currentH)} cy={currentAlt} r={12} fill="url(#ptrGlowHot)" />
+            <circle cx={toX(currentH)} cy={currentAlt} r={4.5} fill={getHotStyle(currentHotWindow.intensity).glow} stroke="#fff" strokeWidth={1}>
+              <animate attributeName="r" values="4;5.5;4" dur="1.5s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        ) : (
+          <g>
+            <line x1={toX(currentH)} y1={4} x2={toX(currentH)} y2={H - 26} stroke={C.curveGlow} strokeWidth={1.2} opacity={0.8}>
+              <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
+            </line>
+            <circle cx={toX(currentH)} cy={currentAlt} r={8} fill="url(#ptrGlow)" />
+            <circle cx={toX(currentH)} cy={currentAlt} r={3.5} fill={C.curveGlow} stroke="#fff" strokeWidth={0.8}>
+              <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" />
+            </circle>
+          </g>
+        )}
 
         {/* Intensity bar */}
         <rect x={PAD} y={H - 8} width={PW} height={4} fill={C.rockDim} rx={2} opacity={0.3} />
@@ -187,18 +264,40 @@ export default function SolunarChart({ solunar }) {
         {/* Tooltip */}
         {tooltip && (
           <g>
-            <rect x={tooltip.x - 40} y={2} width={80} height={16} fill={C.earthDim} rx={3} opacity={0.95} />
-            <text x={tooltip.x} y={13} fill={C.sandLight} fontSize={7} textAnchor="middle" fontWeight="bold">{tooltip.text}</text>
+            <rect x={Math.max(5, Math.min(tooltip.x - 60, W - 125))} y={2} width={120} height={16} fill={C.earthDim} rx={3} opacity={0.95} />
+            <text x={Math.max(65, Math.min(tooltip.x, W - 65))} y={13} fill={C.sandLight} fontSize={6.5} textAnchor="middle" fontWeight="bold">{tooltip.text}</text>
           </g>
         )}
       </svg>
 
       {/* HEURE BIONIC DE CHASSE label */}
       {bestWindow && (
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-0.5 rounded-b-lg" style={{ background: 'linear-gradient(135deg, rgba(217,119,6,0.15), rgba(146,64,14,0.1))', borderBottom: `1px solid rgba(217,119,6,0.25)` }}>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-0.5 rounded-b-lg" style={{ background: 'linear-gradient(135deg, rgba(217,119,6,0.15), rgba(146,64,14,0.1))', borderBottom: '1px solid rgba(217,119,6,0.25)' }}>
           <span className="text-[8px] font-bold tracking-[0.15em] uppercase" style={{ color: C.bionicGlow }}>HEURE BIONIC DE CHASSE</span>
         </div>
       )}
+
+      {/* Section 6: Mini-legende premium HEURES HOT */}
+      <div className="flex items-center gap-3 mt-1.5 px-1">
+        <span className="flex items-center gap-1 text-[7px]" style={{ color: C.rock }}>
+          <span className="w-3 h-1 rounded-sm" style={{ background: HOT_COLORS['faible'].stroke }} />Faible
+        </span>
+        <span className="flex items-center gap-1 text-[7px]" style={{ color: C.rock }}>
+          <span className="w-3 h-1 rounded-sm" style={{ background: HOT_COLORS['modere'].stroke }} />Modere
+        </span>
+        <span className="flex items-center gap-1 text-[7px]" style={{ color: C.rock }}>
+          <span className="w-3 h-1 rounded-sm" style={{ background: HOT_COLORS['fort'].stroke }} />Fort
+        </span>
+        <span className="flex items-center gap-1 text-[7px]" style={{ color: C.rock }}>
+          <span className="w-3 h-1 rounded-sm" style={{ background: HOT_COLORS['extreme'].stroke }} />Extreme
+        </span>
+        <span className="flex items-center gap-1 text-[7px] ml-auto" style={{ color: C.rock }}>
+          <span className="w-2 h-0.5" style={{ background: 'rgba(217,119,6,0.4)' }} />Bionic
+        </span>
+        <span className="flex items-center gap-1 text-[7px]" style={{ color: C.rock }}>
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: C.curveGlow }} />Temps reel
+        </span>
+      </div>
     </div>
   );
 }

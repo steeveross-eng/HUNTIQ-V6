@@ -168,42 +168,6 @@ const Navigation = ({ cartCount, onCartOpen }) => {
               {t('common_dashboard')}
             </Link>
             
-            {/* Intelligence Dropdown (Analytics + Forecast + Plan Maître) */}
-            <div className="relative group">
-              <button 
-                className={`flex items-center gap-2 px-3 py-2 text-sm font-medium uppercase tracking-wider rounded-sm transition-all duration-200 hover:bg-white/5 ${['/analytics', '/forecast', '/plan-maitre'].includes(location.pathname) ? 'text-[#F5A623] bg-[#F5A623]/10' : 'text-gray-300 hover:text-white'}`}
-                data-testid="nav-intelligence"
-              >
-                <Brain className="h-4 w-4" />
-                {t('common_intelligence')}
-                <ChevronRight className="h-3 w-3 rotate-90 group-hover:rotate-180 transition-transform" />
-              </button>
-              <div className="absolute top-full left-0 mt-1 min-w-[220px] bg-black/95 backdrop-blur-xl border border-white/10 rounded-md shadow-xl py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                {/* V5-ULTIME: Analytics réactivé */}
-                <Link to="/analytics" className="flex items-start gap-3 px-4 py-2 hover:bg-white/5 group/item">
-                  <TrendingUp className="h-4 w-4 mt-0.5 text-gray-300 group-hover/item:text-[#F5A623]" />
-                  <div>
-                    <div className="text-sm font-medium text-white group-hover/item:text-[#F5A623]">{t('common_analytics')}</div>
-                    <div className="text-xs text-gray-500">{t('common_stats_charts')}</div>
-                  </div>
-                </Link>
-                <Link to="/forecast" className="flex items-start gap-3 px-4 py-2 hover:bg-white/5 group/item">
-                  <Target className="h-4 w-4 mt-0.5 text-gray-300 group-hover/item:text-[#F5A623]" />
-                  <div>
-                    <div className="text-sm font-medium text-white group-hover/item:text-[#F5A623]">{t('common_forecast')}</div>
-                    <div className="text-xs text-gray-500">{t('common_weather_wildlife')}</div>
-                  </div>
-                </Link>
-                <Link to="/plan-maitre" className="flex items-start gap-3 px-4 py-2 hover:bg-white/5 group/item">
-                  <Radar className="h-4 w-4 mt-0.5 text-gray-300 group-hover/item:text-[#F5A623]" />
-                  <div>
-                    <div className="text-sm font-medium text-white group-hover/item:text-[#F5A623]">{t('common_plan_master')}</div>
-                    <div className="text-xs text-gray-500">{t('common_full_strategy')}</div>
-                  </div>
-                </Link>
-              </div>
-            </div>
-            
             {/* Carte & Territoire Dropdown */}
             <div className="relative group">
               <button 
@@ -361,16 +325,6 @@ const Navigation = ({ cartCount, onCartOpen }) => {
             </Link>
             <Link to="/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-300 hover:text-white">
               <BarChart3 className="h-4 w-4" /> {t('common_dashboard')}
-            </Link>
-            {/* V5-ULTIME: Analytics réactivé */}
-            <Link to="/analytics" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-300 hover:text-white">
-              <TrendingUp className="h-4 w-4" /> {t('common_analytics')}
-            </Link>
-            <Link to="/forecast" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-300 hover:text-white">
-              <Target className="h-4 w-4" /> {t('common_forecast')}
-            </Link>
-            <Link to="/plan-maitre" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-300 hover:text-white">
-              <Radar className="h-4 w-4" /> {t('common_plan_master')}
             </Link>
             <Link to="/map" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-300 hover:text-white">
               <Globe className="h-4 w-4" /> {t('common_map')}

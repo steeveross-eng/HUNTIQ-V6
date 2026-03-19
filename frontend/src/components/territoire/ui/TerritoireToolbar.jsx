@@ -128,8 +128,8 @@ export function TerritoireToolbar({
         </DropdownMenu>
         <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-        {/* 5. INTELLIGENCE */}
-        <button onClick={() => setActiveTab(prev => prev === 'intelligence' ? 'carte' : 'intelligence')} className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${activeTab === 'intelligence' ? 'bg-cyan-500/15 text-cyan-400' : 'text-cyan-400 hover:bg-white/5'}`} data-testid="toolbar-intelligence-btn" title="Intelligence — Tableau central">
+        {/* 5. INTELLIGENCE — terrain premium palette, Brain icon officiel */}
+        <button onClick={() => setActiveTab(prev => prev === 'intelligence' ? 'carte' : 'intelligence')} className={`h-8 px-2.5 flex items-center gap-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${activeTab === 'intelligence' ? 'bg-[#4A7A2E]/15 text-[#4A7A2E]' : 'text-[#A8885E] hover:bg-white/5'}`} data-testid="toolbar-intelligence-btn" title="Intelligence — Tableau central">
           <BarChart3 className="h-3.5 w-3.5" /><span className="hidden sm:inline">Intelligence</span>
         </button>
         <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
@@ -332,10 +332,10 @@ export function TerritoireToolbar({
         </Popover>
         <div className="w-px h-5 bg-gray-700/50 mx-0.5" />
 
-        {/* 8c. CURSEUR BIONIC */}
+        {/* 8c. CURSEUR BIONIC — terrain premium */}
         <div className="h-8 px-2 flex items-center gap-1.5 rounded-md" data-testid="toolbar-curseur-bionic">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-violet-400 hidden sm:inline">Curseur</span>
-          <Switch checked={showCursorBionic} onCheckedChange={setShowCursorBionic} className="scale-[0.6] data-[state=checked]:bg-violet-500" data-testid="toggle-curseur-bionic" />
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#A8885E] hidden sm:inline">Curseur</span>
+          <Switch checked={showCursorBionic} onCheckedChange={setShowCursorBionic} className="scale-[0.6] data-[state=checked]:bg-[#4A7A2E]" data-testid="toggle-curseur-bionic" />
         </div>
 
         {/* SCORE BADGE */}

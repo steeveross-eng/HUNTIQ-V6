@@ -931,15 +931,8 @@ const MonTerritoireBionicPage = () => {
       {/* ═══ SECTION 1 — HEADER (composant extrait IM1) ═══ */}
       <TerritoireHeader
         navigate={navigate}
-        displayScore={displayScore}
-        rating={rating}
-        weather={weather}
-        temperature={temperature}
-        windInfo={windInfo}
-        huntingScore={huntingScore}
         liveMode={liveMode}
         setLiveMode={setLiveMode}
-        isLoadingZones={isLoadingZones}
         selectedWaypointForZones={selectedWaypointForZones}
         mapClickMode={mapClickMode}
         setMapClickMode={setMapClickMode}

@@ -25,6 +25,7 @@ const useBionicStore = create((set, get) => ({
   solunar: null,
   guidePro: null,
   loading: false,
+  intelligenceWeather: null,
 
   // ── Actions ──
   setSpecies: (species) => set({ species }),
@@ -100,9 +101,15 @@ const useBionicStore = create((set, get) => ({
       const params = new URLSearchParams({ lat: location.lat, lng: location.lng, species, month });
       if (date) params.set('date', date);
       const res = await fetch(`${API}/api/v3/intelligence/guide-pro?${params}`);
-      set({ guidePro: await res.json() });
+      const data = await res.json();
+      set({ guidePro: data });
+      if (data.weather_official) {
+        set({ intelligenceWeather: data.weather_official });
+      }
     } catch { /* silent */ }
   },
+
+  setIntelligenceWeather: (weather) => set({ intelligenceWeather: weather }),
 
   fetchAll: async () => {
     const state = get();

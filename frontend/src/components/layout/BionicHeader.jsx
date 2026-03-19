@@ -91,20 +91,6 @@ const MobileNav = ({ isOpen, onClose, t, user, isBusinessOrAdmin }) => {
           <BarChart3 className="h-4 w-4" /> {t('common_dashboard')}
         </Link>
         
-        {/* Intelligence Section */}
-        <div className="border-t border-white/5 pt-2 mt-2">
-          <div className="px-3 py-1 text-xs text-gray-500 uppercase tracking-wider">{t('common_intelligence')}</div>
-          <Link to="/analytics" onClick={onClose} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-400 hover:text-white">
-            <TrendingUp className="h-4 w-4" /> {t('common_analytics')}
-          </Link>
-          <Link to="/forecast" onClick={onClose} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-400 hover:text-white">
-            <Target className="h-4 w-4" /> {t('common_forecast')}
-          </Link>
-          <Link to="/plan-maitre" onClick={onClose} className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm hover:bg-white/5 text-gray-400 hover:text-white">
-            <Radar className="h-4 w-4" /> {t('common_plan_master')}
-          </Link>
-        </div>
-        
         {/* Map Section */}
         <div className="border-t border-white/5 pt-2 mt-2">
           <div className="px-3 py-1 text-xs text-gray-500 uppercase tracking-wider">{t('common_map')}</div>
@@ -162,13 +148,6 @@ const BionicHeader = ({ cartCount = 0, onCartOpen }) => {
   const isActive = (path) => location.pathname === path;
   const isActiveGroup = (paths) => paths.includes(location.pathname);
 
-  // Intelligence dropdown items
-  const intelligenceItems = [
-    { to: '/analytics', icon: TrendingUp, label: t('common_analytics'), description: t('common_stats_charts') },
-    { to: '/forecast', icon: Target, label: t('common_forecast'), description: t('common_weather_wildlife') },
-    { to: '/plan-maitre', icon: Radar, label: t('common_plan_master'), description: t('common_full_strategy') }
-  ];
-
   // Map dropdown items
   const mapItems = [
     { to: '/map', icon: Globe, label: t('common_interactive_map'), description: t('common_gps_waypoints') },
@@ -202,15 +181,6 @@ const BionicHeader = ({ cartCount = 0, onCartOpen }) => {
               label={t('common_dashboard')} 
               isActive={isActive('/dashboard')} 
               testId="nav-dashboard" 
-            />
-            
-            {/* Intelligence Dropdown */}
-            <NavDropdown 
-              icon={Brain}
-              label={t('common_intelligence')}
-              items={intelligenceItems}
-              isActive={isActiveGroup(['/analytics', '/forecast', '/plan-maitre'])}
-              testId="nav-intelligence"
             />
             
             {/* Map Dropdown */}
