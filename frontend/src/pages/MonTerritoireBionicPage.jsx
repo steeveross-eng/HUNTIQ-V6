@@ -2,12 +2,12 @@
  * MonTerritoireBionicPage - Page dédiée Mon Territoire BIONIC™
  * VERSION: 7.3.0 — IM1 Refactorisation modulaire
  * 
- * Architecture: Composant orchestrateur qui délègue aux sous-composants:
+ * Architecture: Composant orchestrateur qui delegue aux sous-composants:
  * - MapHelpers: composants Leaflet utilitaires
- * - TerritoireHeader: header score/météo/LIVE
+ * - TerritoireHeader: header score/meteo/LIVE
  * - TerritoireDialogs: toutes les modales
- * - SidePanelZones: panneau latéral zones
- * - useGeolocation: hook géolocalisation
+ * - IntelligenceDashboard: cockpit central flottant INTELLIGENCE
+ * - useGeolocation: hook geolocalisation
  * - placeTypes: constantes types de lieux
  */
 
@@ -46,7 +46,7 @@ import { SPECIES_LIST } from '@/core/bionic/speciesConfig';
 import { useZoneOrchestrator } from '@/hooks/useZoneOrchestrator';
 import { useZoneFavorites } from '@/components/territoire/ZoneFavorites';
 import { GroupeTab, useGroupeTracking } from '@/modules/groupe';
-// P2: EcologicalPanel fusionne dans CorridorsEcologyPanel via SidePanelZones
+// P2: EcologicalPanel — module gele (FROZEN)
 import { 
   useEcoMapFallback,
 } from '@/components/territoire/EcoforestryLayers';

@@ -1,12 +1,26 @@
 /**
- * Mode TERRAIN — Vue simplifiée, ultra-lisible, optimisée mobile/hors réseau
+ * Mode TERRAIN — Terrain Premium
+ * ======================================
+ * Vue simplifiee, ultra-lisible, optimisee mobile/hors reseau.
+ * Palette: vert foret, brun terre, sable, gris roche.
+ * STEEVE-MAX: zero pollution, hierarchie terrain premium.
  */
 import { useEffect, useState } from 'react';
-import { Compass, Wind, MapPin, AlertTriangle, CheckCircle } from 'lucide-react';
+import { MapPin, AlertTriangle, CheckCircle } from 'lucide-react';
+
+const TP = {
+  forestLight: '#4A7A2E',
+  earth: '#8B6F47', earthLight: '#A8885E',
+  sand: '#C2A97E', sandLight: '#D4C4A0',
+  rock: '#6B7280', rockDim: '#4B5563',
+  bionic: '#D97706', bionicGlow: '#F59E0B',
+};
 
 const CLASSE_STYLES = {
-  OPTIMAL: 'text-red-400 bg-red-500/10', BON: 'text-amber-400 bg-amber-500/10',
-  MODERE: 'text-emerald-400 bg-emerald-500/10', FAIBLE: 'text-blue-400 bg-blue-500/10',
+  OPTIMAL: { color: TP.bionicGlow, bg: 'rgba(217,119,6,0.1)' },
+  BON: { color: TP.forestLight, bg: 'rgba(74,122,46,0.1)' },
+  MODERE: { color: TP.sand, bg: 'rgba(194,169,126,0.08)' },
+  FAIBLE: { color: TP.rock, bg: 'rgba(107,114,128,0.08)' },
 };
 
 export default function ModeTerrain({ location, species, month }) {
@@ -20,17 +34,18 @@ export default function ModeTerrain({ location, species, month }) {
       .then(r => r.json()).then(setData).catch(() => {});
   }, [location, species, month, API]);
 
-  if (!data) return <div className="text-gray-600 text-sm py-8 text-center">Chargement...</div>;
+  if (!data) return <div className="text-sm py-8 text-center font-mono" style={{ color: TP.rock }}>Chargement...</div>;
 
   const c = data.consolidated;
+  const cs = CLASSE_STYLES[c.classe] || CLASSE_STYLES.FAIBLE;
 
   return (
     <div className="space-y-4" data-testid="mode-terrain">
-      {/* Score principal - GROS */}
-      <div className={`p-6 rounded-lg text-center ${CLASSE_STYLES[c.classe]}`}>
-        <div className="text-6xl font-black tracking-tighter">{c.score}</div>
-        <div className="text-lg font-bold mt-1">{c.label}</div>
-        <div className="text-[10px] opacity-60 mt-1">{species} | Mois {month}</div>
+      {/* Score principal */}
+      <div className="p-6 rounded-lg text-center" style={{ background: cs.bg }}>
+        <div className="text-6xl font-black tracking-tighter" style={{ color: cs.color }}>{c.score}</div>
+        <div className="text-lg font-bold mt-1" style={{ color: cs.color }}>{c.label}</div>
+        <div className="text-[10px] mt-1" style={{ color: TP.rock, opacity: 0.6 }}>{species} | Mois {month}</div>
       </div>
 
       {/* Conditions essentielles */}
@@ -38,9 +53,9 @@ export default function ModeTerrain({ location, species, month }) {
         {Object.entries(data.domains).map(([domain, engines]) => {
           const avgScore = Math.round(engines.reduce((s, e) => s + e.score, 0) / engines.length);
           return (
-            <div key={domain} className="bg-[#12121e] border border-gray-800/50 rounded-lg p-3 text-center">
-              <div className="text-2xl font-bold">{avgScore}</div>
-              <div className="text-[9px] text-gray-500 uppercase mt-0.5">{domain}</div>
+            <div key={domain} className="rounded-lg p-3 text-center" style={{ background: 'rgba(45,80,22,0.06)', border: '1px solid rgba(139,111,71,0.1)' }}>
+              <div className="text-2xl font-bold" style={{ color: TP.sandLight }}>{avgScore}</div>
+              <div className="text-[9px] uppercase mt-0.5" style={{ color: TP.rock }}>{domain}</div>
             </div>
           );
         })}
@@ -50,11 +65,14 @@ export default function ModeTerrain({ location, species, month }) {
       {data.recommendations.length > 0 && (
         <div className="space-y-1.5">
           {data.recommendations.slice(0, 3).map((r, i) => (
-            <div key={i} className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border ${
-              r.priority === 'HAUTE' ? 'border-orange-500/30 bg-orange-500/10' : 'border-gray-700/30 bg-gray-800/30'
-            }`}>
-              {r.priority === 'HAUTE' ? <AlertTriangle className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                : <CheckCircle className="w-4 h-4 text-gray-500 flex-shrink-0" />}
+            <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-lg"
+              style={r.priority === 'HAUTE'
+                ? { border: '1px solid rgba(217,119,6,0.3)', background: 'rgba(217,119,6,0.08)', color: TP.bionic }
+                : { border: '1px solid rgba(139,111,71,0.15)', background: 'rgba(139,111,71,0.05)', color: TP.rock }
+              }
+            >
+              {r.priority === 'HAUTE' ? <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                : <CheckCircle className="w-4 h-4 flex-shrink-0" />}
               <span className="text-xs">{r.action}</span>
             </div>
           ))}
@@ -62,7 +80,7 @@ export default function ModeTerrain({ location, species, month }) {
       )}
 
       {/* Position */}
-      <div className="flex items-center gap-2 text-[9px] text-gray-600">
+      <div className="flex items-center gap-2 text-[9px]" style={{ color: TP.rockDim }}>
         <MapPin className="w-3 h-3" />
         <span>{location?.lat?.toFixed(4)}, {location?.lng?.toFixed(4)}</span>
       </div>
