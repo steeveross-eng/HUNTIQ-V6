@@ -1,0 +1,105 @@
+{
+  "summary": "Iteration 63 — BIONIC V3 Unification Analytique COMPLETE. All 10 backend tests PASSED, all frontend UI tests PASSED. INTELLIGENCE is now the SOLE analytic source. BionicLegend removed from map. SidePanelZones removed from default carte mode. Side panel appears ONLY for operational tabs (waypoints, lieux, groupe, exclusions). MonTerritoireBionicPage reduced from 2119 to 1356 lines with extracted components.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "bce_4x_validation": {
+      "overall_compliant": true,
+      "bce4x": {"passed": 23, "total": 23, "compliant": true},
+      "steeve_max": {"passed": 12, "total": 12, "compliant": true}
+    },
+    "frontend_tests": {
+      "map_visible_full_width_default": "PASS - No side panel in default carte mode",
+      "bionic_legend_not_on_map": "PASS - 0 BionicLegend elements found",
+      "side_panel_zones_not_in_carte_mode": "PASS",
+      "side_panel_appears_only_for_operational_tabs": "PASS - waypoints, lieux, groupe, exclusions",
+      "intelligence_button_opens_floating_dashboard": "PASS",
+      "map_remains_interactive_when_intelligence_open": "PASS - leaflet-container visible",
+      "close_intelligence_returns_to_clean_carte": "PASS",
+      "mode_switching_works": "PASS - guide, scientifique, terrain modes all present",
+      "compact_toggle_exists": "PASS",
+      "old_analyse_button_not_exist": "PASS - toolbar-analyse-btn NOT found (correctly removed)"
+    },
+    "toolbar_buttons": {
+      "split-view-toggle": "PASS",
+      "toolbar-carte-btn": "PASS",
+      "toolbar-species-btn": "PASS",
+      "toolbar-observation-btn": "PASS",
+      "toolbar-intelligence-btn": "PASS",
+      "toolbar-zones-btn": "PASS",
+      "toolbar-alimentation-btn": "PASS",
+      "toolbar-points-chauds-btn": "PASS",
+      "toolbar-seuil-btn": "PASS",
+      "toggle-curseur-bionic": "PASS"
+    },
+    "observation_dropdown": {
+      "waypoints_menu_item": "PASS",
+      "lieux_menu_item": "PASS",
+      "groupe_menu_item": "PASS",
+      "exclusions_menu_item": "PASS"
+    },
+    "side_panel_toggle": {
+      "waypoints_opens_side_panel": "PASS",
+      "waypoints_toggle_off_hides_panel": "PASS",
+      "lieux_opens_side_panel": "PASS",
+      "lieux_toggle_off_hides_panel": "PASS",
+      "groupe_opens_side_panel": "PASS"
+    },
+    "intelligence_dashboard": {
+      "dashboard_visible": "PASS",
+      "panel_visible": "PASS",
+      "mode_guide_exists": "PASS",
+      "mode_scientifique_exists": "PASS",
+      "mode_terrain_exists": "PASS",
+      "compact_toggle_exists": "PASS",
+      "close_button_exists": "PASS"
+    },
+    "backend_api_tests": {
+      "api_v3_engines_validate": "PASS (overall_compliant=true, BCE-4X: 23/23, STEEVE-MAX: 12/12)",
+      "intelligence_summary": "PASS (consolidated score, domains, recommendations)",
+      "intelligence_forecast": "PASS (12 months data, seasonal scores)",
+      "intelligence_plan": "PASS (actions list with urgency)",
+      "intelligence_solunar": "PASS",
+      "intelligence_guide_pro": "PASS (approach plan)",
+      "engines_registry": "PASS",
+      "engines_score_point": "PASS",
+      "species_list": "PASS",
+      "old_analyse_endpoints_removed": "PASS (404)"
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_63_unification_analytique.py",
+    "/app/test_reports/pytest/iteration_63_unification_analytique_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "POSITIVE: MonTerritoireBionicPage successfully refactored from 2119 to 1356 lines",
+    "POSITIVE: TerritoireToolbar, TerritoireDialogs, NutritionPanel, useTerritoireEffects all extracted correctly",
+    "POSITIVE: IntelligenceDashboard is a floating non-blocking panel with pointer-events-none container",
+    "POSITIVE: BCE-4X and STEEVE-MAX validation all passing (23/23 + 12/12)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration_63_unification_analytique.py"
+  ],
+  "success_rate": {
+    "backend": "100% (10/10 tests passed)",
+    "frontend": "100% (all toolbar buttons, intelligence panel, side panel toggle, observation dropdown working)"
+  },
+  "test_credentials": {
+    "user_login": "Steeve.ross@gmail.com / Saturn5858*",
+    "auto_logged_in": true
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 63 UNIFICATION ANALYTIQUE complete. INTELLIGENCE is now the SOLE analytic source - no more BionicLegend on map, no SidePanelZones in default carte mode. Side panel only appears for operational tabs: waypoints, lieux, groupe, exclusions (via OBSERVATION dropdown toggle). IntelligenceDashboard is at /app/frontend/src/components/territoire/IntelligenceDashboard.jsx with pointer-events-none wrapper allowing map clicks through. TerritoireToolbar at /app/frontend/src/components/territoire/ui/TerritoireToolbar.jsx. Key test selectors: toolbar-intelligence-btn, intelligence-dashboard, intelligence-panel, intelligence-close, mode-guide, mode-scientifique, mode-terrain, obs-waypoints-item, obs-lieux-item, obs-groupe-item, obs-exclusions-item. Map route is /mon-territoire. User Steeve Ross auto-logged in.",
+  "verification_date": "2026-03-19",
+  "testing_focus": "BCE-4X UNIFICATION: INTELLIGENCE only source, no lateral panels in carte mode, floating dashboard"
+}

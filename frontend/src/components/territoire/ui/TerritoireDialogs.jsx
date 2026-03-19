@@ -196,3 +196,47 @@ export const GroupDashboardDialog = ({ open, onOpenChange, group, userId, onClos
     </Dialog>
   );
 };
+
+
+/**
+ * TerritoireDialogs — Composant composite regroupant tous les dialogues
+ * Extrait pour le refactoring STEEVE-MAX P0.
+ */
+import WaypointContextMenu from '@/components/territoire/WaypointContextMenu';
+import CompareWidget from '@/components/territoire/CompareWidget';
+
+export function TerritoireDialogs({
+  editingPlace, setEditingPlace, handleUpdatePlace,
+  showAddPlaceDialog, setShowAddPlaceDialog, newPlace, setNewPlace, handleAddPlace, useCurrentPositionForNewPlace,
+  showAddWaypointDialog, setShowAddWaypointDialog, newWaypoint, setNewWaypoint, handleAddWaypointWithWind, useCurrentPositionForNewWaypoint,
+  showShareDialog, setShowShareDialog, waypointToShare, setWaypointToShare, userId,
+  showCreateGroupDialog, setShowCreateGroupDialog, refreshGroups,
+  showGroupDashboard, setShowGroupDashboard, selectedGroup, setSelectedGroup,
+  contextMenuMT, setContextMenuMT, handleDeleteWaypoint, selectWaypointAsTarget,
+  showCompareWidget, compareSelection, handleCloseCompare,
+  PLACE_TYPES,
+}) {
+  return (
+    <>
+      <EditPlaceDialog editingPlace={editingPlace} setEditingPlace={setEditingPlace} handleUpdatePlace={handleUpdatePlace} PLACE_TYPES={PLACE_TYPES} />
+      <AddPlaceDialog open={showAddPlaceDialog} onOpenChange={setShowAddPlaceDialog} newPlace={newPlace} setNewPlace={setNewPlace} handleAddPlace={handleAddPlace} useCurrentPositionForNewPlace={useCurrentPositionForNewPlace} PLACE_TYPES={PLACE_TYPES} />
+      <AddWaypointDialog open={showAddWaypointDialog} onOpenChange={setShowAddWaypointDialog} newWaypoint={newWaypoint} setNewWaypoint={setNewWaypoint} handleAddWaypointFromDialog={handleAddWaypointWithWind} useCurrentPositionForNewWaypoint={useCurrentPositionForNewWaypoint} PLACE_TYPES={PLACE_TYPES} />
+      <ShareDialog open={showShareDialog} onOpenChange={setShowShareDialog} waypoint={waypointToShare} userId={userId} onShared={() => { setShowShareDialog(false); setWaypointToShare(null); }} />
+      <CreateGroupDialog open={showCreateGroupDialog} onOpenChange={setShowCreateGroupDialog} userId={userId} onCreated={() => refreshGroups()} />
+      <GroupDashboardDialog open={showGroupDashboard} onOpenChange={setShowGroupDashboard} group={selectedGroup} userId={userId} onClose={() => { setShowGroupDashboard(false); setSelectedGroup(null); }} />
+      {contextMenuMT && (
+        <WaypointContextMenu
+          position={contextMenuMT.position}
+          waypoint={contextMenuMT.waypoint}
+          onClose={() => setContextMenuMT(null)}
+          onDelete={(id) => handleDeleteWaypoint(id)}
+          onAnalyze={(wp) => selectWaypointAsTarget(wp)}
+          onEdit={(wp) => selectWaypointAsTarget(wp)}
+        />
+      )}
+      {showCompareWidget && compareSelection.length >= 2 && (
+        <CompareWidget waypoints={compareSelection} onClose={handleCloseCompare} />
+      )}
+    </>
+  );
+}

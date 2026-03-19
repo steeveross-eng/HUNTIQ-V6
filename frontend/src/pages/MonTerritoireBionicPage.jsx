@@ -29,12 +29,11 @@ import useBionicSession from '@/hooks/useBionicSession';
 import useBionicLayers from '@/hooks/useBionicLayers';
 import { TerritoireToolbar } from '@/components/territoire/ui/TerritoireToolbar';
 import { NutritionPanel } from '@/components/territoire/ui/NutritionPanel';
+import { TerritoireDialogs } from '@/components/territoire/ui/TerritoireDialogs';
 import useBionicWeather from '@/hooks/useBionicWeather';
 import useBionicScoring from '@/hooks/useBionicScoring';
 import { useUserData } from '@/hooks/useUserData';
 import { useNotifications, useHuntingGroups } from '@/hooks/useSharing';
-import BionicLegend from '@/components/territoire/BionicLegend';
-import WaypointContextMenu from '@/components/territoire/WaypointContextMenu';
 import WaypointUnifiedPanel from '@/components/territoire/WaypointUnifiedPanel';
 import { useAuth } from '@/components/GlobalAuth';
 import DiagnosticExclusionsPanel from '@/components/territoire/DiagnosticExclusionsPanel';
@@ -42,7 +41,6 @@ import BionicZoneDiagnosticPanel from '@/components/territoire/BionicZoneDiagnos
 import PlacesSidePanel from '@/components/territoire/PlacesSidePanel';
 import IntelligenceDashboard from '@/components/territoire/IntelligenceDashboard';
 import useSpatialClipping from '@/hooks/useSpatialClipping';
-import CompareWidget from '@/components/territoire/CompareWidget';
 import { BIONIC_MODULES } from '@/core/bionic';
 import { SPECIES_LIST } from '@/core/bionic/speciesConfig';
 import { useZoneOrchestrator } from '@/hooks/useZoneOrchestrator';
@@ -52,7 +50,6 @@ import { GroupeTab, useGroupeTracking } from '@/modules/groupe';
 import { 
   useEcoMapFallback,
 } from '@/components/territoire/EcoforestryLayers';
-import { toast } from 'sonner';
 // Import BIONIC Map Selector
 import BionicMapSelector from '@/components/maps/BionicMapSelector';
 import useMapType from '@/hooks/useMapType';
@@ -63,11 +60,9 @@ import { BionicScoreBadge } from '@/components/territoire/BionicScoreBadge';
 
 // IM1 — Modules extraits
 import { useGeolocation } from '@/hooks/useGeolocation';
+import { useZoneToasts, useAmenagementEngine, useSnapshotExport, useCategoryScores } from '@/hooks/useTerritoireEffects';
 import { PLACE_TYPES } from '@/config/placeTypes';
 import { TerritoireHeader } from '@/components/territoire/ui/TerritoireHeader';
-import { EditPlaceDialog, AddPlaceDialog, AddWaypointDialog, ShareDialog, GroupDashboardDialog } from '@/components/territoire/ui/TerritoireDialogs';
-import { CreateGroupDialog } from '@/components/territoire/ui/TerritoireDialogs';
-import { SidePanelZones } from '@/components/territoire/ui/SidePanelZones';
 // IM1.2 — Modules extraits (Passe 2)
 import { useWaypointActions } from '@/hooks/useWaypointActions';
 import { MapContent } from '@/components/territoire/map/MapContent';
@@ -804,46 +799,8 @@ const MonTerritoireBionicPage = () => {
     biologicalSeason: splitRightSeason,
   });
 
-  // C13 BIONIC 1000% — Strict state feedback
-  useEffect(() => {
-    if (!zeroZonesReason || isLoadingZones) return;
-    if (zeroZonesReason === 'timeout') {
-      toast.error('Délai d\'analyse dépassé (30s)', {
-        description: 'Le serveur n\'a pas répondu à temps. Veuillez réessayer avec un secteur plus petit.',
-        duration: 8000,
-      });
-    } else if (zeroZonesReason === 'overpass_unavailable') {
-      toast.warning('Service de cartographie temporairement indisponible', {
-        description: 'Les données d\'exclusion n\'ont pas pu être récupérées. Réessayez dans quelques instants.',
-        duration: 6000,
-      });
-    } else if (zeroZonesReason === 'all_filtered_by_exclusions') {
-      toast.info('Aucune zone générée dans ce secteur', {
-        description: 'Toutes les zones candidates ont été exclues par les filtres anthropiques (routes, bâtiments, infrastructures).',
-        duration: 5000,
-      });
-    } else if (zeroZonesReason === 'backend_error') {
-      toast.error('Erreur de calcul des zones', {
-        description: 'Une erreur est survenue lors de l\'analyse. Veuillez réessayer.',
-        duration: 5000,
-      });
-    }
-  }, [zeroZonesReason, isLoadingZones]);
-
-  // T4 COHERENCE: Warn if backend zone count mismatches frontend parsed count
-  useEffect(() => {
-    const stats = bionicZonesData?.stats || {};
-    if (stats.t4_mismatch) {
-      console.error(
-        `[T4-COHERENCE] Backend t4_zone_count=${stats.t4_backend_count}, ` +
-        `frontend parsed=${stats.total}`
-      );
-      toast.warning('Incohérence de données détectée', {
-        description: `Le backend a généré ${stats.t4_backend_count} zones mais ${stats.total} ont été rendues.`,
-        duration: 8000,
-      });
-    }
-  }, [bionicZonesData?.stats]);
+  // Zone notifications + T4 coherence (extrait -> useTerritoireEffects)
+  useZoneToasts(zeroZonesReason, isLoadingZones, bionicZonesData);
 
   // ============================================
   // BIONIC V5 300% — SPATIAL CLIPPING + STATE LOCKING
@@ -960,127 +917,14 @@ const MonTerritoireBionicPage = () => {
   
   const rating = getScoreRating(displayScore);
 
-  // ============================================
-  // STEVE-MAX: Hunting Path + Amenagement Engine
-  // ============================================
-  const [huntingPathData, setHuntingPathData] = useState(null);
-  const [amenagementReport, setAmenagementReport] = useState(null);
-  const [showHuntingPath, setShowHuntingPath] = useState(true);
+  // Amenagement engine + hunting path (extrait -> useTerritoireEffects)
+  const { huntingPathData, showHuntingPath } = useAmenagementEngine(bionicZones, selectedWaypointForZones, bionicZonesData);
 
-  // Auto-fetch hunting path when zones are loaded
-  useEffect(() => {
-    if (!bionicZones.length || !selectedWaypointForZones) return;
-    const corridors = bionicZonesData?.corridors || [];
-    const wp = selectedWaypointForZones;
-    const wpc = { lat: wp.lat || wp.latitude, lng: wp.lng || wp.longitude };
+  // Snapshot export (extrait -> useTerritoireEffects)
+  const handleGenerateSnapshot = useSnapshotExport(selectedWaypointForZones, generateSnapshot, selectedSpecies, layersVisible, temporalHourMT, currentZoom);
 
-    const API = process.env.REACT_APP_BACKEND_URL;
-    // Build zone features for API
-    const zoneFeatures = bionicZones.map(z => ({
-      geometry: z.geometry || { type: 'Polygon', coordinates: z.coordinates ? [z.coordinates] : [] },
-      properties: { layer_id: z.layerId, score: z.score, label: z.label },
-    }));
-
-    fetch(`${API}/api/v1/bionic/amenagement-report`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        zones: zoneFeatures,
-        corridors,
-        waypoint_center: wpc,
-      }),
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          setHuntingPathData(data.hunting_path);
-          setAmenagementReport(data.amenagement_report);
-        }
-      })
-      .catch(() => {});
-  }, [bionicZones.length, selectedWaypointForZones, bionicZonesData?.corridors]);
-
-  // BIONIC V5 300% INVARIANT: Snapshot Territoire handler
-  const handleGenerateSnapshot = useCallback(async (format) => {
-    if (!selectedWaypointForZones) return;
-    const snap = await generateSnapshot(selectedSpecies, layersVisible, {
-      hour: temporalHourMT,
-      zoom: currentZoom,
-      timestamp: new Date().toISOString(),
-    });
-    if (!snap) return;
-    
-    if (format === 'json') {
-      // Export JSON — téléchargement direct
-      const blob = new Blob([JSON.stringify(snap, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${snap.snapshot_id || 'snapshot'}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } else if (format === 'pdf') {
-      // Export PDF avec capture d'écran de la carte
-      try {
-        const { jsPDF } = await import('jspdf');
-        const doc = new jsPDF('landscape', 'mm', 'a4');
-        
-        // Capture de la carte
-        const mapEl = document.querySelector('.leaflet-container');
-        if (mapEl) {
-          const html2canvas = (await import('html2canvas')).default;
-          const canvas = await html2canvas(mapEl, { useCORS: true, scale: 1, logging: false });
-          const imgData = canvas.toDataURL('image/jpeg', 0.8);
-          doc.addImage(imgData, 'JPEG', 10, 10, 180, 120);
-        }
-        
-        // Métadonnées
-        const y0 = 135;
-        doc.setFontSize(14);
-        doc.text(`Snapshot Territoire — BIONIC V5 300%`, 10, y0);
-        doc.setFontSize(9);
-        doc.text(`Waypoint: ${snap.waypoint?.name || 'N/A'}`, 10, y0 + 7);
-        doc.text(`Coords: ${snap.waypoint?.lat?.toFixed(6)}, ${snap.waypoint?.lng?.toFixed(6)}`, 10, y0 + 12);
-        doc.text(`Espece: ${snap.species} | Saison: ${snap.season}`, 10, y0 + 17);
-        doc.text(`Perimetre: 1km x 1km | Zones: ${snap.structural_zones?.length || 0}`, 10, y0 + 22);
-        doc.text(`Date: ${new Date(snap.timestamp).toLocaleString('fr-CA')}`, 10, y0 + 27);
-        doc.text(`ID: ${snap.snapshot_id}`, 10, y0 + 32);
-        
-        // Zone summary
-        if (snap.zone_summary) {
-          let yOff = y0 + 40;
-          doc.setFontSize(10);
-          doc.text('Resume par couche:', 10, yOff);
-          yOff += 5;
-          doc.setFontSize(8);
-          Object.entries(snap.zone_summary).forEach(([lid, info]) => {
-            doc.text(`  ${lid}: ${info.count} zones, score moyen ${info.avg_score}`, 10, yOff);
-            yOff += 4;
-          });
-        }
-        
-        doc.save(`${snap.snapshot_id || 'snapshot'}.pdf`);
-      } catch (err) {
-        console.error('[Snapshot PDF] Error:', err);
-      }
-    }
-  }, [selectedWaypointForZones, generateSnapshot, selectedSpecies, layersVisible, temporalHourMT, currentZoom]);
-
-  
-  // Scores par catégorie (valeurs stables basées sur la position)
-  const categoryScores = useMemo(() => {
-    if (scores?.breakdown) return scores.breakdown;
-    // Scores déterministes basés sur la position
-    const baseSeed = Math.abs(Math.round(currentMapCenter.lat * 100 + currentMapCenter.lng * 50));
-    return {
-      habitat: 75 + (baseSeed % 15),
-      rut: 68 + ((baseSeed + 1) % 20),
-      salines: 60 + ((baseSeed + 2) % 25),
-      affuts: 80 + ((baseSeed + 3) % 15),
-      trajets: 65 + ((baseSeed + 4) % 20),
-      peuplements: 70 + ((baseSeed + 5) % 15)
-    };
-  }, [scores?.breakdown, currentMapCenter.lat, currentMapCenter.lng]);
+  // Category scores (extrait -> useTerritoireEffects)
+  const categoryScores = useCategoryScores(scores, currentMapCenter);
 
   return (
     <div className="fixed inset-0 bg-[#0a0a0f] overflow-hidden flex flex-col" style={{ paddingTop: '64px' }} data-testid="mon-territoire-bionic-page">
@@ -1287,16 +1131,7 @@ const MonTerritoireBionicPage = () => {
             />
           </MapContainer>
 
-          {/* C14 BIONIC 1000%: Charte visuelle + état pipeline */}
-          <BionicLegend
-            pipelineState={pipelineState}
-            zoneCount={bionicZones.length}
-            corridorCount={(bionicZonesData.corridors || []).length}
-            windDeg={225}
-            corridorData={corridorV10Data}
-            selectedSpecies={selectedSpecies}
-            showCorridors={showCorridors}
-          />
+          {/* BCE-4X: BionicLegend absorbee par INTELLIGENCE — carte epuree */}
 
           {/* ── Indicateur Zone d'Analyse — ADMIN PREMIUM uniquement ── */}
           {adminArchitecteMode && selectedWaypointForZones && (
@@ -1346,10 +1181,13 @@ const MonTerritoireBionicPage = () => {
         </div>
 
         {/* ══════════════════════════════════════════════════════════════
-            SECTION 5 — PANNEAUX LATÉRAUX (UN PAR ONGLET)
+            SECTION 5 — PANNEAUX OPERATIONNELS (Waypoints, Lieux, Groupe, Exclusions)
+            BCE-4X: Aucun panneau analytique lateral. INTELLIGENCE = seule source.
+            Le panneau ne s'affiche QUE pour les onglets operationnels.
             ══════════════════════════════════════════════════════════════ */}
+        {['waypoints', 'lieux', 'groupe', 'exclusions'].includes(activeTab) && (
         <div className="w-80 flex-shrink-0 bg-[#0d0d14] border-l border-[#1a1a2e] overflow-y-auto" data-testid="side-panel">
-          {/* ── BIONIC V5 300% — Panneau Diagnostique ULTIME (priorité absolue) ── */}
+          {/* ── Zone diagnostic — panneau flottant sur clic zone (converti en overlay) ── */}
           {selectedZone && (
             <BionicZoneDiagnosticPanel
               zone={selectedZone}
@@ -1362,32 +1200,6 @@ const MonTerritoireBionicPage = () => {
                 }
                 setSelectedZone(null);
               }}
-            />
-          )}
-          {/* ── Panneau Carte → Zones (composant extrait IM1) ── */}
-          {activeTab === 'carte' && !selectedZone && (
-            <SidePanelZones
-              currentZoom={currentZoom}
-              isLoadingZones={isLoadingZones}
-              pipelineState={pipelineState}
-              zoneSource={zoneSource}
-              visibleZonesCount={visibleZonesCount}
-              reloadZones={reloadZones}
-              activeWaypoints={activeWaypoints}
-              corridors={bionicZonesData?.corridors || []}
-              selectedWaypointForZones={selectedWaypointForZones}
-              clearWaypointTarget={clearWaypointTarget}
-              handleDeleteWaypoint={handleDeleteWaypoint}
-              handleGenerateSnapshot={handleGenerateSnapshot}
-              rejectionDiagnostics={bionicZonesData.rejection_diagnostics}
-              weatherMetadata={weatherMetadata}
-              zones={bionicZonesData.zones || []}
-              species={selectedSpecies}
-              displayScore={displayScore}
-              rating={rating}
-              amenagementReport={amenagementReport}
-              showHuntingPath={showHuntingPath}
-              setShowHuntingPath={setShowHuntingPath}
             />
           )}
 
@@ -1440,8 +1252,6 @@ const MonTerritoireBionicPage = () => {
             </div>
           )}
 
-          {/* ── Panneau Analyse SUPPRIME — remplace par INTELLIGENCE central ── */}
-
           {/* ── Panneau Exclusions ── */}
           {activeTab === 'exclusions' && !selectedZone && (
             <DiagnosticExclusionsPanel
@@ -1469,6 +1279,7 @@ const MonTerritoireBionicPage = () => {
             />
           )}
         </div>
+        )}
 
         {/* ═══ INTELLIGENCE DASHBOARD — Superposition flottante non-bloquante ═══ */}
         {/* BCE-4X R3/R7/R11/R18: La carte reste intacte, interactive, jamais supprimée */}
@@ -1517,35 +1328,27 @@ const MonTerritoireBionicPage = () => {
         <NutritionPanel alimentationV2Data={alimentationV2Data} onClose={() => setShowNutritionPanel(false)} />
       )}
       
-      {/* ═══ DIALOGUES (composants extraits IM1) ═══ */}
-      <EditPlaceDialog editingPlace={editingPlace} setEditingPlace={setEditingPlace} handleUpdatePlace={handleUpdatePlace} PLACE_TYPES={PLACE_TYPES} />
-      <AddPlaceDialog open={showAddPlaceDialog} onOpenChange={setShowAddPlaceDialog} newPlace={newPlace} setNewPlace={setNewPlace} handleAddPlace={handleAddPlace} useCurrentPositionForNewPlace={useCurrentPositionForNewPlace} PLACE_TYPES={PLACE_TYPES} />
-      <AddWaypointDialog open={showAddWaypointDialog} onOpenChange={setShowAddWaypointDialog} newWaypoint={newWaypoint} setNewWaypoint={setNewWaypoint} handleAddWaypointFromDialog={handleAddWaypointWithWind} useCurrentPositionForNewWaypoint={useCurrentPositionForNewWaypoint} PLACE_TYPES={PLACE_TYPES} />
-      <ShareDialog open={showShareDialog} onOpenChange={setShowShareDialog} waypoint={waypointToShare} userId={userId} onShared={() => { setShowShareDialog(false); setWaypointToShare(null); }} />
-      <CreateGroupDialog open={showCreateGroupDialog} onOpenChange={setShowCreateGroupDialog} userId={userId} onCreated={(group) => { toast.success(`Groupe "${group.name}" créé !`, { description: `Code d'invitation: ${group.invite_code}` }); refreshGroups(); }} />
-      <GroupDashboardDialog open={showGroupDashboard} onOpenChange={setShowGroupDashboard} group={selectedGroup} userId={userId} onClose={() => { setShowGroupDashboard(false); setSelectedGroup(null); }} />
-
-      {/* CONTEXT MENU: Right-click waypoint menu (Mon Territoire) */}
-      {contextMenuMT && (
-        <WaypointContextMenu
-          position={contextMenuMT.position}
-          waypoint={contextMenuMT.waypoint}
-          onClose={() => setContextMenuMT(null)}
-          onDelete={async (id) => {
-            handleDeleteWaypoint(id);
-          }}
-          onAnalyze={(wp) => selectWaypointAsTarget(wp)}
-          onEdit={(wp) => selectWaypointAsTarget(wp)}
-        />
-      )}
-
-      {/* V8.3.A: Widget de comparaison multi-waypoints */}
-      {showCompareWidget && compareSelection.length >= 2 && (
-        <CompareWidget
-          waypoints={compareSelection}
-          onClose={handleCloseCompare}
-        />
-      )}
+      {/* ═══ DIALOGUES (composant extrait STEEVE-MAX) ═══ */}
+      <TerritoireDialogs
+        editingPlace={editingPlace} setEditingPlace={setEditingPlace} handleUpdatePlace={handleUpdatePlace}
+        showAddPlaceDialog={showAddPlaceDialog} setShowAddPlaceDialog={setShowAddPlaceDialog}
+        newPlace={newPlace} setNewPlace={setNewPlace} handleAddPlace={handleAddPlace}
+        useCurrentPositionForNewPlace={useCurrentPositionForNewPlace}
+        showAddWaypointDialog={showAddWaypointDialog} setShowAddWaypointDialog={setShowAddWaypointDialog}
+        newWaypoint={newWaypoint} setNewWaypoint={setNewWaypoint}
+        handleAddWaypointWithWind={handleAddWaypointWithWind}
+        useCurrentPositionForNewWaypoint={useCurrentPositionForNewWaypoint}
+        showShareDialog={showShareDialog} setShowShareDialog={setShowShareDialog}
+        waypointToShare={waypointToShare} setWaypointToShare={setWaypointToShare} userId={userId}
+        showCreateGroupDialog={showCreateGroupDialog} setShowCreateGroupDialog={setShowCreateGroupDialog}
+        refreshGroups={refreshGroups}
+        showGroupDashboard={showGroupDashboard} setShowGroupDashboard={setShowGroupDashboard}
+        selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup}
+        contextMenuMT={contextMenuMT} setContextMenuMT={setContextMenuMT}
+        handleDeleteWaypoint={handleDeleteWaypoint} selectWaypointAsTarget={selectWaypointAsTarget}
+        showCompareWidget={showCompareWidget} compareSelection={compareSelection}
+        handleCloseCompare={handleCloseCompare} PLACE_TYPES={PLACE_TYPES}
+      />
     </div>
   );
 };
