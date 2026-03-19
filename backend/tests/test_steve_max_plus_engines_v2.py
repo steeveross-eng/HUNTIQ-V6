@@ -17,7 +17,7 @@ import os
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 if not BASE_URL:
-    BASE_URL = "https://guide-pro-hub.preview.emergentagent.com"
+    BASE_URL = "https://lisibilite-pro.preview.emergentagent.com"
 
 # Test bounds (Quebec region)
 TEST_BOUNDS = {

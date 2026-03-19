@@ -1,9 +1,9 @@
 {
   "lighthouseVersion": "13.0.3",
-  "requestedUrl": "https://guide-pro-hub.preview.emergentagent.com/",
-  "mainDocumentUrl": "https://guide-pro-hub.preview.emergentagent.com/",
-  "finalDisplayedUrl": "https://guide-pro-hub.preview.emergentagent.com/",
-  "finalUrl": "https://guide-pro-hub.preview.emergentagent.com/",
+  "requestedUrl": "https://lisibilite-pro.preview.emergentagent.com/",
+  "mainDocumentUrl": "https://lisibilite-pro.preview.emergentagent.com/",
+  "finalDisplayedUrl": "https://lisibilite-pro.preview.emergentagent.com/",
+  "finalUrl": "https://lisibilite-pro.preview.emergentagent.com/",
   "fetchTime": "2026-02-19T21:21:12.645Z",
   "gatherMode": "navigation",
   "runWarnings": [],
@@ -232,7 +232,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://guide-pro-hub.preview.emergentagent.com/api/seo/meta/",
+              "url": "https://lisibilite-pro.preview.emergentagent.com/api/seo/meta/",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -243,7 +243,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://guide-pro-hub.preview.emergentagent.com/api/seo/meta/",
+              "url": "https://lisibilite-pro.preview.emergentagent.com/api/seo/meta/",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -254,7 +254,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://guide-pro-hub.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://lisibilite-pro.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -265,7 +265,7 @@
             "description": "Failed to load resource: the server responded with a status of 404 ()",
             "sourceLocation": {
               "type": "source-location",
-              "url": "https://guide-pro-hub.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+              "url": "https://lisibilite-pro.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
               "urlProvider": "network",
               "line": 0,
               "column": 0
@@ -303,7 +303,7 @@
         ],
         "items": [
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/",
             "responseTime": 165
           }
         ],
@@ -830,7 +830,7 @@
         ],
         "items": [
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "total": 1005.4909999999892,
             "scripting": 651.4249999999892,
             "scriptParseCompile": 244.548
@@ -854,7 +854,7 @@
             "scriptParseCompile": 0
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/",
             "total": 122.08300000000003,
             "scripting": 3.2099999999999995,
             "scriptParseCompile": 0.496
@@ -963,7 +963,7 @@
         ],
         "items": [
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 0,
@@ -997,7 +997,7 @@
             "entity": "emergent.sh"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 253.95000004768372,
@@ -1116,7 +1116,7 @@
             "entity": "Google Fonts"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/api/products/top?limit=10",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/api/products/top?limit=10",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1527.1470000743866,
@@ -1133,7 +1133,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/api/products/top?limit=10",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/api/products/top?limit=10",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1529.1630001068115,
@@ -1218,7 +1218,7 @@
             "entity": "posthog.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/manifest.json",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/manifest.json",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1540.4160001277924,
@@ -1235,7 +1235,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/favicon.ico",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/favicon.ico",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1542.0529999732971,
@@ -1252,7 +1252,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "blob:https://guide-pro-hub.preview.emergentagent.com/4bee29fe-5d5d-461f-89a6-78d35d06aeea",
+            "url": "blob:https://lisibilite-pro.preview.emergentagent.com/4bee29fe-5d5d-461f-89a6-78d35d06aeea",
             "sessionTargetType": "worker",
             "protocol": "blob",
             "rendererStartTime": 1623.9930000305176,
@@ -1267,7 +1267,7 @@
             "priority": "VeryLow"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/api/seo/meta/",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/api/seo/meta/",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1802.1289999485016,
@@ -1301,7 +1301,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/api/auth/auto-login",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/api/auth/auto-login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1866.7969999313354,
@@ -1318,7 +1318,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/api/seo/meta/",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/api/seo/meta/",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1871.218999862671,
@@ -1335,7 +1335,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/api/auth/auto-login",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/api/auth/auto-login",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1897.5910000801086,
@@ -1352,7 +1352,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/logos/bionic-logo-official.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1924.4809999465942,
@@ -1369,7 +1369,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/images/products/urine_cerf.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/images/products/urine_cerf.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1924.8819999694824,
@@ -1386,7 +1386,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/images/products/mineral_block.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/images/products/mineral_block.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1925.1849999427795,
@@ -1403,7 +1403,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/images/products/gel_pomme.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/images/products/gel_pomme.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1925.4379999637604,
@@ -1420,7 +1420,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/images/products/spray_tarsal.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/images/products/spray_tarsal.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1925.7389998435974,
@@ -1437,7 +1437,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/images/products/urine_estrus.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/images/products/urine_estrus.png",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1926.0030000209808,
@@ -1454,7 +1454,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1926.462000131607,
@@ -1471,7 +1471,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/api/v1/notification/legal-time/status?lat=46.8139&lng=-71.208",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1926.7139999866486,
@@ -1488,7 +1488,7 @@
             "entity": "emergentagent.com"
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/logos/bionic-logo.svg",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/logos/bionic-logo.svg",
             "sessionTargetType": "page",
             "protocol": "h2",
             "rendererStartTime": 1964.4459998607635,
@@ -1511,19 +1511,19 @@
           "initiators": [
             {
               "type": "parser",
-              "url": "https://guide-pro-hub.preview.emergentagent.com/",
+              "url": "https://lisibilite-pro.preview.emergentagent.com/",
               "lineNumber": 26,
               "columnNumber": 74
             },
             {
               "type": "parser",
-              "url": "https://guide-pro-hub.preview.emergentagent.com/",
+              "url": "https://lisibilite-pro.preview.emergentagent.com/",
               "lineNumber": 50,
               "columnNumber": 45
             },
             {
               "type": "parser",
-              "url": "https://guide-pro-hub.preview.emergentagent.com/",
+              "url": "https://lisibilite-pro.preview.emergentagent.com/",
               "lineNumber": 94,
               "columnNumber": 18
             },
@@ -1535,7 +1535,7 @@
             },
             {
               "type": "other",
-              "url": "https://guide-pro-hub.preview.emergentagent.com/"
+              "url": "https://lisibilite-pro.preview.emergentagent.com/"
             }
           ]
         }
@@ -1579,7 +1579,7 @@
             "rtt": 12.989
           },
           {
-            "origin": "https://guide-pro-hub.preview.emergentagent.com",
+            "origin": "https://lisibilite-pro.preview.emergentagent.com",
             "rtt": 12.222999999999999
           },
           {
@@ -1626,7 +1626,7 @@
         ],
         "items": [
           {
-            "origin": "https://guide-pro-hub.preview.emergentagent.com",
+            "origin": "https://lisibilite-pro.preview.emergentagent.com",
             "serverResponseTime": 83.80599999999998
           },
           {
@@ -1997,12 +1997,12 @@
         ],
         "items": [
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "duration": 637,
             "startTime": 3124.529999999999
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "duration": 110,
             "startTime": 3780.529999999999
           },
@@ -2017,7 +2017,7 @@
             "startTime": 1184.6675
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "duration": 95,
             "startTime": 3890.529999999999
           }
@@ -2031,7 +2031,7 @@
         "debugData": {
           "type": "debugdata",
           "urls": [
-            "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "https://us-assets.i.posthog.com/static/array.js",
             "https://us-assets.i.posthog.com/static/posthog-recorder.js?v=1.347.2"
           ],
@@ -2380,8 +2380,8 @@
         ],
         "items": [
           {
-            "scriptUrl": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
-            "sourceMapUrl": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js.map",
+            "scriptUrl": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
+            "sourceMapUrl": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js.map",
             "subItems": {
               "type": "subitems",
               "items": [
@@ -2644,7 +2644,7 @@
             "unusedBytes": 1686
           },
           {
-            "name": "https://guide-pro-hub.preview.emergentagent.com/",
+            "name": "https://lisibilite-pro.preview.emergentagent.com/",
             "resourceBytes": 5076,
             "encodedBytes": 1671,
             "unusedBytes": 945,
@@ -3196,7 +3196,7 @@
             "unusedBytes": 0
           },
           {
-            "name": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "name": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "resourceBytes": 25633012,
             "encodedBytes": 2712391,
             "unusedBytes": 16499813,
@@ -20533,11 +20533,11 @@
         ],
         "items": [
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2712524
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/logos/bionic-logo-official.png",
             "totalBytes": 822428
           },
           {
@@ -20561,15 +20561,15 @@
             "totalBytes": 11139
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/images/products/gel_pomme.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/images/products/gel_pomme.png",
             "totalBytes": 9403
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/images/products/mineral_block.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/images/products/mineral_block.png",
             "totalBytes": 9403
           },
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/images/products/spray_tarsal.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/images/products/spray_tarsal.png",
             "totalBytes": 9403
           }
         ],
@@ -20681,7 +20681,7 @@
         ],
         "items": [
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2712391,
             "wastedBytes": 891183,
             "wastedPercent": 32.85600615331511
@@ -20801,7 +20801,7 @@
         ],
         "items": [
           {
-            "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
             "totalBytes": 2711360,
             "wastedBytes": 1831235,
             "wastedPercent": 67.53936291216966,
@@ -21260,7 +21260,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://guide-pro-hub.preview.emergentagent.com/"
+                  "frameUrl": "https://lisibilite-pro.preview.emergentagent.com/"
                 }
               ]
             },
@@ -21273,7 +21273,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://guide-pro-hub.preview.emergentagent.com/"
+                  "frameUrl": "https://lisibilite-pro.preview.emergentagent.com/"
                 }
               ]
             },
@@ -21286,7 +21286,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://guide-pro-hub.preview.emergentagent.com/"
+                  "frameUrl": "https://lisibilite-pro.preview.emergentagent.com/"
                 }
               ]
             },
@@ -21299,7 +21299,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://guide-pro-hub.preview.emergentagent.com/"
+                  "frameUrl": "https://lisibilite-pro.preview.emergentagent.com/"
                 }
               ]
             },
@@ -21312,7 +21312,7 @@
               "type": "subitems",
               "items": [
                 {
-                  "frameUrl": "https://guide-pro-hub.preview.emergentagent.com/"
+                  "frameUrl": "https://lisibilite-pro.preview.emergentagent.com/"
                 }
               ]
             },
@@ -21692,7 +21692,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+                  "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
                   "urlProvider": "network",
                   "line": 232728,
                   "column": 36
@@ -21720,7 +21720,7 @@
               {
                 "source": {
                   "type": "source-location",
-                  "url": "https://guide-pro-hub.preview.emergentagent.com/static/js/bundle.js",
+                  "url": "https://lisibilite-pro.preview.emergentagent.com/static/js/bundle.js",
                   "urlProvider": "network",
                   "line": 336953,
                   "column": 27
@@ -21811,7 +21811,7 @@
               "snippet": "<img alt=\"BIONIC Chasse / Hunt\" x-file-name=\"BionicLogo\" x-line-number=\"35\" x-component=\"img\" x-id=\"BionicLogo_35\" x-dynamic=\"false\" src=\"/logos/bionic-logo-official.png\" style=\"width: 211px; height: 211px; object-fit: contain; mix-blend-mode: screen;\">",
               "nodeLabel": "BIONIC Chasse / Hunt"
             },
-            "url": "https://guide-pro-hub.preview.emergentagent.com/logos/bionic-logo-official.png",
+            "url": "https://lisibilite-pro.preview.emergentagent.com/logos/bionic-logo-official.png",
             "totalBytes": 821393,
             "wastedBytes": 814227,
             "subItems": {
@@ -22001,7 +22001,7 @@
               "type": "network-tree",
               "chains": {
                 "78123CAA2B040D4B20ECCBBF991C0E7A": {
-                  "url": "https://guide-pro-hub.preview.emergentagent.com/",
+                  "url": "https://lisibilite-pro.preview.emergentagent.com/",
                   "navStartToEndTime": 261,
                   "transferSize": 3614,
                   "isLongest": true,
@@ -23131,7 +23131,7 @@
     {
       "name": "emergentagent.com",
       "origins": [
-        "https://guide-pro-hub.preview.emergentagent.com",
+        "https://lisibilite-pro.preview.emergentagent.com",
         "https://customer-assets.emergentagent.com"
       ],
       "isFirstParty": true,

@@ -1,18 +1,17 @@
 /**
- * Mode SCIENTIFIQUE — Terrain Premium
- * =============================================
- * Ponderations, coefficients, formules, metadonnees BCE-4X.
- * Palette: vert foret, brun terre, sable, gris roche.
- * STEEVE-MAX: zero pollution, hierarchie terrain premium.
+ * Mode SCIENTIFIQUE — Terrain Premium + Lisibilite Premium
+ * Section X: polices agrandies, texte eclairci, espacement optimise.
+ * Palette: cream #F2E9D8, sand-gray #C8BBA6, forest #4A7A2E, earth #A8885E.
  */
 import { useEffect, useState } from 'react';
-import { FlaskConical, Database, Scale } from 'lucide-react';
+import { Database, Scale } from 'lucide-react';
 
-const TP = {
+const P = {
+  cream: '#F2E9D8', creamDim: '#C8BBA6',
   forestLight: '#4A7A2E',
   earth: '#8B6F47', earthLight: '#A8885E',
   sand: '#C2A97E', sandLight: '#D4C4A0',
-  rock: '#6B7280', rockLight: '#9CA3AF', rockDim: '#4B5563',
+  rock: '#9CA3AF', rockDim: '#6B7280',
   bionic: '#D97706',
 };
 
@@ -27,67 +26,67 @@ export default function ModeScientifique({ location, species, month }) {
       .then(r => r.json()).then(setData).catch(() => {});
   }, [location, species, month, API]);
 
-  if (!data) return <div className="text-sm py-8 text-center font-mono" style={{ color: TP.rock }}>Chargement...</div>;
+  if (!data) return <div className="text-base py-12 text-center font-medium" style={{ color: P.creamDim }}>Chargement...</div>;
 
   return (
-    <div className="space-y-4" data-testid="mode-scientifique">
+    <div className="space-y-5" data-testid="mode-scientifique">
       {/* Score consolide */}
-      <div className="rounded-lg p-4" style={{ background: 'rgba(45,80,22,0.06)', border: '1px solid rgba(139,111,71,0.12)' }}>
-        <div className="flex items-center gap-2 mb-3">
-          <Scale className="w-4 h-4" style={{ color: TP.sand }} />
-          <span className="text-[10px] uppercase tracking-wider" style={{ color: TP.earthLight }}>Consolidation</span>
+      <div className="rounded-lg p-5" style={{ background: 'rgba(45,80,22,0.08)', border: '1px solid rgba(139,111,71,0.15)' }}>
+        <div className="flex items-center gap-2.5 mb-3">
+          <Scale className="w-5 h-5" style={{ color: P.sand }} />
+          <span className="text-base uppercase tracking-wider font-bold" style={{ color: P.cream }}>Consolidation</span>
         </div>
-        <div className="text-3xl font-bold" style={{ color: TP.sandLight }}>{data.consolidated.score}<span className="text-sm" style={{ color: TP.rock }}>/100</span></div>
-        <div className="text-[9px] mt-1 font-mono" style={{ color: TP.rockDim }}>{data.formulas.consolidation}</div>
-        <div className="text-[8px] mt-0.5" style={{ color: TP.rockDim }}>{data.formulas.classification}</div>
+        <div className="text-5xl font-black" style={{ color: P.cream }}>{data.consolidated.score}<span className="text-lg font-medium" style={{ color: P.rockDim }}>/100</span></div>
+        <div className="text-sm mt-2 font-mono font-medium" style={{ color: P.creamDim }}>{data.formulas.consolidation}</div>
+        <div className="text-sm mt-1 font-medium" style={{ color: P.creamDim }}>{data.formulas.classification}</div>
       </div>
 
       {/* Moteurs detailles */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {data.engines.map(eng => (
-          <div key={eng.name} className="rounded-lg p-3" style={{ background: 'rgba(139,111,71,0.04)', border: '1px solid rgba(139,111,71,0.1)' }}>
-            <div className="flex items-center justify-between mb-2">
+          <div key={eng.name} className="rounded-lg p-5" style={{ background: 'rgba(139,111,71,0.05)', border: '1px solid rgba(139,111,71,0.12)' }}>
+            <div className="flex items-center justify-between mb-3">
               <div>
-                <span className="text-xs font-medium" style={{ color: TP.sandLight }}>{eng.name}</span>
-                <span className="text-[8px] ml-2" style={{ color: TP.rockDim }}>v{eng.version} | {eng.domain} | {eng.engine_type}</span>
+                <span className="text-lg font-semibold" style={{ color: P.cream }}>{eng.name}</span>
+                <span className="text-sm ml-3 font-medium" style={{ color: P.creamDim }}>v{eng.version} | {eng.domain} | {eng.engine_type}</span>
               </div>
-              <span className="text-sm font-bold" style={{ color: TP.forestLight }}>{eng.score}</span>
+              <span className="text-2xl font-bold" style={{ color: P.forestLight }}>{eng.score}</span>
             </div>
-            <div className="flex gap-2 text-[8px]" style={{ color: TP.rock }}>
-              <span>Poids: <span className="font-mono" style={{ color: TP.sand }}>{(eng.weight_in_consolidation * 100).toFixed(1)}%</span></span>
+            <div className="flex gap-4 text-sm font-medium" style={{ color: P.creamDim }}>
+              <span>Poids: <span className="font-mono font-semibold" style={{ color: P.cream }}>{(eng.weight_in_consolidation * 100).toFixed(1)}%</span></span>
               <span>Defaut: {(eng.default_weight * 100).toFixed(0)}%</span>
               <span>Especes: {eng.species_supported.length}</span>
-              {eng.seasonal_modifiers && <span style={{ color: TP.bionic }}>Saisonnier</span>}
+              {eng.seasonal_modifiers && <span style={{ color: P.bionic }}>Saisonnier</span>}
             </div>
             {Object.keys(eng.components).length > 0 && (
-              <div className="mt-1.5 flex gap-2 flex-wrap">
+              <div className="mt-3 flex gap-2.5 flex-wrap">
                 {Object.entries(eng.components).map(([k, v]) => {
-                  let displayValue;
+                  let dv;
                   if (typeof v === 'object' && v !== null) {
-                    displayValue = v.score != null ? v.score.toFixed?.(1) || v.score : JSON.stringify(v).slice(0, 20);
+                    dv = v.score != null ? v.score.toFixed?.(1) || v.score : JSON.stringify(v).slice(0, 20);
                   } else if (typeof v === 'number') {
-                    displayValue = v.toFixed?.(1) || v;
+                    dv = v.toFixed?.(1) || v;
                   } else {
-                    displayValue = String(v);
+                    dv = String(v);
                   }
                   return (
-                    <span key={k} className="text-[7px] px-1.5 py-0.5 rounded font-mono" style={{ background: 'rgba(45,80,22,0.08)', color: TP.rockLight }}>{k}: {displayValue}</span>
+                    <span key={k} className="text-xs px-2.5 py-1 rounded font-mono font-medium" style={{ background: 'rgba(45,80,22,0.1)', color: P.cream }}>{k}: {dv}</span>
                   );
                 })}
               </div>
             )}
-            <div className="text-[7px] mt-1" style={{ color: TP.rockDim }}>{eng.description}</div>
+            <div className="text-sm mt-2 font-medium" style={{ color: P.creamDim }}>{eng.description}</div>
           </div>
         ))}
       </div>
 
       {/* BCE-4X Metadata */}
-      <div className="rounded-lg p-3" style={{ background: 'rgba(45,80,22,0.04)', border: '1px solid rgba(74,122,46,0.08)' }}>
-        <div className="flex items-center gap-2 mb-2">
-          <Database className="w-3.5 h-3.5" style={{ color: TP.earth }} />
-          <span className="text-[10px] uppercase tracking-wider" style={{ color: TP.earthLight }}>Metadonnees BCE-4X</span>
+      <div className="rounded-lg p-5" style={{ background: 'rgba(45,80,22,0.05)', border: '1px solid rgba(74,122,46,0.1)' }}>
+        <div className="flex items-center gap-2.5 mb-3">
+          <Database className="w-5 h-5" style={{ color: P.earth }} />
+          <span className="text-base uppercase tracking-wider font-bold" style={{ color: P.cream }}>Metadonnees BCE-4X</span>
         </div>
-        <div className="text-[8px] font-mono space-y-0.5" style={{ color: TP.rock }}>
+        <div className="text-sm font-mono space-y-1.5 font-medium" style={{ color: P.creamDim }}>
           <div>Version: {data.bce4x.version}</div>
           <div>Especes: {data.bce4x.species_canonical.join(', ')}</div>
           <div>Consolidateur: {data.bce4x.tracability.consolidator}</div>

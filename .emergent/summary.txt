@@ -1,81 +1,75 @@
 <analysis>**original_problem_statement:**
-The primary objective is to build and refine , a sophisticated ecological engine. The project has evolved into a major architectural refactoring effort, codenamed OPTION B, to transform the application's INTELLIGENCE module into a modern, auto-adaptive, and decoupled system.
+The primary objective is to build and refine , a sophisticated ecological engine. The project has evolved into a major architectural refactoring effort, codenamed OPTION B, to transform the application's INTELLIGENCE module into a modern, auto-adaptive, and decoupled system. The user, Steeve, has imposed a strict governance model ( + ) where no action can be taken without explicit approval.
 
 The most recent and highest-priority directives are:
-1.  Implement a central, unified  that serves as the single source of analytical truth. This dashboard must be a **floating, non-blocking central panel** (style: cockpit analytique) that overlays the main map without hiding it or blocking interaction.
+1.  Implement a central, unified  that serves as the single source of analytical truth. This dashboard must be a **floating, non-blocking central panel** (style: cockpit analytique).
 2.  Implement a specific high-fidelity visual concept for the dashboard, codenamed ****, with a terrain premium aesthetic (forest green, earth brown palette, subtle topography background, glass effect) and a WOW effect -style solunar chart.
 3.  The dashboard must have three modes: , , and .
-4.  Implement full **bi-directional synchronization (P0)** between the map and the dashboard.
-5.  Complete a **major refactoring of  (P0)** to reduce its size from ~2100 lines to ~800 lines by modularizing its logic and components.
-6.  Eliminate all redundant analytical UI elements (e.g., side panels, legends) from the main map view, ensuring it remains visually clean.
-
-All work must adhere to strict  (visual) and  (data integrity) norms, enforced by automated validators.
+4.  Implement a **Lisibilité Premium** directive, drastically increasing font sizes, contrast, and spacing throughout the entire  for maximum clarity and zero visual fatigue.
+5.  Implement full **bi-directional synchronization (P0)** between the map and the dashboard.
+6.  Complete a **major refactoring of  (P0)** to reduce its size from ~2100 lines to a target of ~800 lines.
+7.  Eliminate all redundant analytical UI and navigation elements, ensuring  is the sole entry point and source of truth for analytics.
 
 **PRODUCT REQUIREMENTS:**
--   Deliver the  as a floating, non-blocking central panel.
--   The dashboard must have three modes, with the  mode featuring a detailed, visually impressive solunar chart and tactical recommendations.
--   The dashboard's visual design must strictly follow the  directive.
+-   Deliver the  as a floating, non-blocking central panel with a terrain premium aesthetic.
+-   The dashboard must have three modes, all adhering to the  and  directives.
+-   The  mode must feature a detailed, visually impressive solunar chart with integrated .
 -   The main map must remain 100% visible and interactive at all times.
 -   Implement full bi-directional map-dashboard synchronization.
 -   Complete the P0 refactoring of .
--   Unify all analytics within the dashboard, removing all other analytical panels/legends from the map view.
--   All development must pass automated checks against  and .
+-   Unify all analytics within the dashboard and remove all other analytical panels/legends/navigation links.
+-   All development must pass automated checks and explicit user validation against  and  norms.
 
 **User's preferred language**: French
 
 **what currently exists?**
-The application is a full-stack ecological modeling tool with a React/Leaflet frontend and a Python/FastAPI backend. The backend is fully refactored (OPTION B), and the frontend has undergone significant changes.
+The application is a full-stack ecological modeling tool. The backend is stable with a unified  gateway. The frontend features a  store for global state management.
 
--   **Backend:** A modular architecture with a dynamic , / validators, and a unified  gateway is complete. A  engine and associated endpoints (, ) are live and tested.
--   **Frontend:**
-    -    () is used for global state.
-    -    has been significantly refactored, reducing its line count from over 2100 to ~1350 lines by extracting components (, , ) and logic into a custom hook ().
-    -   The  is implemented as a floating, non-blocking central panel that correctly overlays the map without hiding it, as per a critical user directive.
-    -   The UI has been unified by removing the legacy  and  from the default map view, making  the sole analytical source.
-    -   The agent just began implementing the  visual directive by overwriting  and  with new code reflecting the terrain premium aesthetic and advanced visual effects.
+Key frontend components:
+-   : Partially refactored down to ~1350 lines.
+-   : Implemented as a floating, non-blocking overlay. It has been fully themed with the terrain premium palette and a semi-transparent, blurred glass effect.
+-   : A highly advanced  version is implemented, featuring subtle animations, 3D depth effects, and integrated HEURES HOT data (colored curve segments, badges, and visible timestamps).
+-   , , : These components have been fully updated to the terrain premium theme.
+-   **Lisibilité Premium Refactor**: A major visual overhaul was just completed across all dashboard components to dramatically increase font sizes, contrast, and spacing, as per a direct user command to improve readability.
+-   **UI/Nav Cleanup**: The main header navigation link for INTELLIGENCE has been removed, making the contextual button in the  the sole entry point. The official Brain icon has been correctly placed in both the toolbar button and the dashboard's header.
 
 **Last working item**:
--   **Last item agent was working:** Implementing the detailed  visual directive. The agent created new versions of  (with advanced SVG effects like glows and animations) and  (with the new terrain premium color palette and layout).
--   **Status:** IN PROGRESS
+-   **Last item agent was working:** Implementing the **** directive. This was a significant visual refactor of , , , and  to increase font sizes, text contrast, and component spacing for a clearer, more ergonomic cockpit experience.
+-   **Status:** USER VERIFICATION PENDING
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** Frontend testing agent. This is a major visual overhaul. The testing agent must validate the new  design, the WOW effect of the solunar chart, ensure all interactions work as expected, and verify that no regressions were introduced to the underlying map or dashboard functionality.
+-   **Which testing method agent to use?** Frontend testing agent. The agent performed a visual smoke test via screenshots which confirmed the changes were applied, but a full regression and validation test is now required to officially certify the  implementation.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   There are no known bugs. The current focus is entirely on completing the user's P0 feature and refactoring directives.
+-   There are no known bugs. The current focus is on completing the user's P0 feature and refactoring directives.
 
 **In progress Task List**:
--   **Task 1:** Complete the  Visual Implementation (P0)
-    -   **Where to resume:** The agent has created the new  and . It must now integrate these into the main  and apply the full terrain premium aesthetic (topography background, glass effect, fonts, icons) across the entire dashboard container and its other modes (, ) for a cohesive look.
-    -   **What will be achieved with this?** A high-fidelity, production-ready dashboard that matches the user's strict visual and UX requirements.
+-   **Task 1:** Validate Lisibilité Premium Implementation (P0)
+    -   **Where to resume:** The visual changes have been implemented and smoke-tested. The next step is to run the  to conduct a full, automated validation of the new UI, ensuring all functionality remains intact and the visual requirements are met.
+    -   **What will be achieved with this?** Formal validation of the critical  directive, closing out the latest user request.
     -   **Status:** IN PROGRESS
     -   **Should Test frontend/backend/both after fix?** Frontend
     -   **Blocked on something:** None.
 
--   **Task 2:** Complete the Refactoring of  (P0)
-    -   **Where to resume:** The file has been reduced to ~1356 lines. The agent must continue extracting logic (e.g., remaining state, zone processing, split view logic) into custom hooks or components to reach the user's target of ~800 lines.
-    -   **What will be achieved with this?** A fully modular, highly maintainable page that adheres to STEEVE-MAX principles, simplifying future development.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Frontend (for regression)
-    -   **Blocked on something:** None.
-
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **(P0) Implement Bi-directional Sync (Intelligence → Carte):** The initial wiring ( prop) exists, but the map-side logic needs to be built. This involves creating and displaying markers/highlights on the Leaflet map based on recommendations selected in the  (e.g., highlight a recommended zone, show an ideal hunting position).
+    -   **(P0) Complete the Refactoring of :** Resume the refactoring process to reduce the file from ~1356 lines to the user's target of ~800 lines by extracting more logic and components.
+    -   **(P0) Implement Bi-directional Sync (Intelligence → Carte):** Build the map-side logic to create and display visual markers/highlights on the Leaflet map based on recommendations selected in the .
 -   **Future Tasks:**
-    -   **(P1)** **Preparation for BIONIC V3 Certification:** Once all P0 tasks are complete, generate the final documentation for phases M1-M4 and the full BCE-4X/STEEVE-MAX compliance report.
+    -   **(P1)** **Preparation for BIONIC V3 Certification:** Generate the final documentation for phases M1-M4 and the full BCE-4X/STEEVE-MAX compliance report.
     -   **(P2)** **Migration of Legacy Engines:** Migrate , , and  to the  standard (currently GELÉ/FROZEN).
     -   **(P3)** **Final Certification BIONIC V3:** The final validation step for the entire project.
 
 **Completed work in this session**
--   ** Architecture:** Successfully pivoted from a view that hid the map to a floating, non-blocking overlay, satisfying a critical user directive.
--   **UI Unification:** Cleaned the main map interface by removing  and the default , centralizing all analytics into the .
--   **Major Refactoring (Phase 1):** Reduced  from 2119 to 1356 lines.
-    -   Extracted , , and .
-    -   Extracted logic into .
--   **Backend Endpoint:** Added and verified the  endpoint.
--   **Compliance & Testing:** Consistently passed all  (23/23) and  (12/12) validation checks and used the testing agent successfully after each major implementation phase.
--   ** Visual Concept:** Began implementation by creating new, high-fidelity versions of  and .
+-   **Full Governance Audit:** Performed a comprehensive BCE-4X and STEEVE-MAX audit, identifying and reporting anomalies.
+-   ** Mode Removal:** Removed the non-compliant mini-dashboard feature from .
+-   **UI Theme Unification:** Harmonized the color palette and styling of , all its modes, and the  to the required terrain premium theme.
+-   **Header Cleanup:** Removed all scores from  and moved them into the  panel. Synchronized the temperature display to a single source of truth.
+-   **Navigation Cleanup:** Removed the redundant INTELLIGENCE dropdown from the main application header (), making the toolbar button the sole entry point.
+-   **Icon Correction:** Restored the official Brain icon to the  button and the  header.
+-   ** Solunar Chart V2:** Implemented a highly advanced version of the chart with integrated  (visible timestamps, colored curve segments, premium badges), subtle 3D effects, and animations.
+-   ** Refactor:** Completed a massive visual overhaul of all dashboard components, significantly increasing font sizes, contrast, and spacing for improved readability.
+-   **PRD Update:** Updated  with the latest completed tasks and upcoming priorities.
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
@@ -83,79 +77,72 @@ The application is a full-stack ecological modeling tool with a React/Leaflet fr
 **Known issue recurrence from previous fork**
 -   **Issue recurrence in previous fork:** Re-render cascades caused by unstable object props.
 -   **Recurrence count:** 2
--   **Status:** RESOLVED. The pattern was fixed previously, but the ongoing refactor of  is a high-risk area for re-introducing this type of performance bug. The next agent must be vigilant about memoization (, ).
+-   **Status:** RESOLVED. This remains a key consideration for the upcoming refactoring of . The agent must remain vigilant about memoization (, ).
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
 -   **Backend:** FastAPI, Abstract Base Classes (ABC), Dynamic Module Loading, API Gateway Pattern.
--   **Frontend:** React, Leaflet,  (global state), Component/Hook Extraction for large-scale refactoring, advanced SVG for data visualization.
+-   **Frontend:** React, Leaflet,  (global state), Component/Hook Extraction for large-scale refactoring, advanced SVG/CSS for data visualization and animation.
 
 **key DB schema**
 -   No external database. Data is generated programmatically or sourced from backend configuration.
 
 **changes in tech stack**
--   No new third-party libraries were added. The changes were architectural and focused on code organization.
+-   None.
 
 **All files of reference**
 -   **Files to be Modified:**
     -    (Continue refactoring, implement map-side sync logic).
-    -    (Integrate new  visual theme).
     -    (May need state additions for bi-directional sync).
--   **Key New/Updated Files:**
-    -    (Overwritten with high-fidelity  design).
-    -    (Overwritten with terrain premium theme).
-    -    (Extracted component).
-    -    (Extracted component).
-    -    (Extracted component).
-    -    (Extracted logic hook).
-    -    (Added  endpoint).
+-   **Key Modified Files in this session:**
+    -    (Lisibilité refactor).
+    -    (Lisibilité refactor).
+    -    (Lisibilité refactor).
+    -    (Lisibilité refactor).
+    -    (SUPRA-INTELLIGENT V2 implementation).
+    -    (Palette and icon correction).
+    -    (Score removal).
+    -    (Navigation cleanup).
+    -    (Added  to guide-pro endpoint).
 
 **Areas that need refactoring**:
--    is the P0 priority. The goal is to reduce it from its current ~1356 lines to ~800 lines.
+-    remains the P0 priority. The goal is to reduce it from its current ~1356 lines to ~800 lines.
 
 **key api endpoints**
--   **API Gateway:** 
-    -   : Lists all engines.
-    -   : Runs BCE-4X/STEEVE-MAX checks.
-    -   , , : High-level analysis.
-    -   : Tactical plan for GUIDE PRO mode.
-    -   : **(NEW)** Raw data for the solunar chart.
+-   ****: This is the primary endpoint for the dashboard. It now returns a  object used for synchronizing temperature across the UI.
 
 **Critical Info for New Agent**
--   **Language is French:** You MUST communicate with the user in French. The user's directives are very precise and should be followed exactly.
+-   **Language is French:** You MUST communicate with the user in French. The user's directives are extremely precise and must be followed to the letter.
+-   **Absolute Governance:** The user, Steeve, operates under a strict command-and-control model. NO development or changes can be initiated without first presenting a formal suggestion and receiving an explicit GO. The Charte Officielle de Gouvernance BIONIC is permanent.
 -   **Priorities (All P0):**
-    1.  **Finish  Visuals:** Integrate the new chart/mode components and apply the terrain premium theme to the entire dashboard.
-    2.  **Complete  Refactor:** Continue extracting logic to reach the ~800 line count target.
-    3.  **Implement Bi-directional Sync:** Build the logic for Intelligence → Map updates (highlighting zones/positions on the map).
--   **Core UI Principles (Non-negotiable):**
-    -   The  is a **floating, non-blocking overlay**. The map must *always* be visible and interactive underneath.
-    -   **No PiP/widgets/mini-dashboards.** The dashboard has only two states: open (full cockpit) or closed.
-    -   The main map view is for visualization only (overlays, markers). All analytics are centralized in the .
+    1.  **Validate :** Run the testing agent to get final sign-off on the last UI overhaul.
+    2.  **Continue  Refactor:** Address the long-standing technical debt.
+    3.  **Implement Bi-directional Sync:** The next major functional piece.
+-   **Core UI Principles:** The  is a **floating, non-blocking overlay**. The main map must *always* be visible and interactive. There are only two states: open (full cockpit) or closed. No widgets or mini-dashboards are permitted.
 
 **documents and test reports created in this job**
--    (Updated regularly)
+-    (Updated)
 -   
 -   
--   
--    (Latest report)
+-    (Latest test report)
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. User provides a massive directive to create a central  with three modes. (Completed)
-9. Agent asks for confirmation.
-8. User confirms plan.
-7. User provides a critical directive to **restore the map immediately**, forbidding the agent from hiding it. This forced the redesign of the dashboard into a non-blocking overlay. (Completed)
-6. User provides another directive, confirming the overlay approach is correct and promoting the bi-directional sync and  refactoring to **P0 priority**.
-5. Agent asks for confirmation of the P0 priorities.
-4. User confirms the P0 tasks.
-3. User provides a directive to unify all analytics in the dashboard, remove all duplicate panels/legends from the map, and continue the refactoring. (Completed)
-2. User provides the latest, most detailed directive: **forbidding any PiP/widget versions** of the dashboard and providing a highly specific visual brief for a **** terrain premium cockpit concept.
-1. **LATEST:** Agent asks for confirmation to proceed with the  visual implementation and continued P0 refactoring.
+10. User confirms corrections and issues a new directive to fix a missing Brain icon and implement the SUPRA-INTELLIGENT Solunar chart.
+9. Agent confirms understanding.
+8. Agent analyzes the user-provided screenshot showing the issues.
+7. Agent implements the Brain icon fix and the advanced Solunar chart.
+6. Agent performs a visual verification via screenshots.
+5. Agent runs the testing agent, which confirms all changes passed (iteration_66.json).
+4. Agent updates PRD.md and finishes the task.
+3. **LATEST:** User provides a new directive for ****, stating the current dashboard is too dark and small, and provides a screenshot highlighting the poor readability. Demands a +50% increase in text clarity, larger fonts, and better spacing.
+2. Agent confirms understanding, analyzes the screenshot again (though it failed), and correctly identifies the CSS values that need to be changed.
+1. Agent implements the massive  refactor across all four dashboard components and performs visual verification with screenshots. The last action was taking a screenshot of the improved Solunar Chart.
 
 **Project Health Check:**
 -   **Broken:** None.
--   **Mocked:** The new   and  components have been created but not yet fully integrated or tested. They are effectively high-fidelity mockups at this stage.
+-   **Mocked:** None. All components are fully implemented and integrated.
 
 **3rd Party Integrations**
 -   Leaflet & react-leaflet
@@ -165,14 +152,14 @@ The application is a full-stack ecological modeling tool with a React/Leaflet fr
 -    (frontend)
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. Used successfully after every major architectural change, with the latest report being .
+-   **Testing agent used after significant changes:** YES. Used successfully up to .
 -   **Troubleshoot agent used after agent stuck in loop:** NO.
--   **Test files created:** None by the main agent.
--   **Known regressions:** None. The testing agent has validated that no regressions occurred during the refactoring and UI unification.
+-   **Test files created:** None.
+-   **Known regressions:** None. However, the latest  change has not been validated by the testing agent yet.
 
 **Credentials to test flow:**
 -   **User Login:**  / 
 -   **Admin Architecte Password:** 
 
 **What agent forgot to execute**
--   The P0 task for **bi-directional synchronization (Intelligence → Carte)** was acknowledged multiple times but has not been implemented yet. The agent prioritized the other P0 tasks (refactoring, visual redesign) based on the flow of user directives. This is the most significant pending P0 task.</analysis>
+-   The P0 tasks for **bi-directional synchronization (Intelligence → Carte)** and the **completion of the  refactoring** are still pending. The agent correctly and repeatedly prioritized the user's immediate, high-priority visual and corrective directives. These two tasks should be proposed next, after validating the current work.</analysis>
