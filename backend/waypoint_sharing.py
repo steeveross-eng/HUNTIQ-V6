@@ -351,7 +351,7 @@ async def create_share_link(owner_id: str, request: ShareLinkRequest):
         await share_links_collection.insert_one(link_doc)
         
         # Construire l'URL du lien
-        base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://lisibilite-pro.preview.emergentagent.com')
+        base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://huntiq-connect.preview.emergentagent.com')
         share_url = f"{base_url}/share/{link_id}"
         
         return {

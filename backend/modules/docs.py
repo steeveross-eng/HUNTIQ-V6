@@ -264,7 +264,7 @@ Les endpoints admin utilisent l'authentification existante.
         },
         "servers": [
             {
-                "url": "https://lisibilite-pro.preview.emergentagent.com",
+                "url": "https://huntiq-connect.preview.emergentagent.com",
                 "description": "Preview Server"
             }
         ],

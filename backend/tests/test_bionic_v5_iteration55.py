@@ -12,7 +12,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://lisibilite-pro.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://huntiq-connect.preview.emergentagent.com').rstrip('/')
 
 class TestTerrainDataHealth:
     """Test terrain data health endpoint"""

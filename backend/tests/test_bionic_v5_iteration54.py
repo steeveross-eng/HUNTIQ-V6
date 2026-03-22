@@ -10,7 +10,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://lisibilite-pro.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://huntiq-connect.preview.emergentagent.com').rstrip('/')
 
 
 class TestBionicV5DetailLevel:
