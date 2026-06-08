@@ -1353,6 +1353,19 @@ try:
 except Exception as e:
     logger.warning(f"HABITAT-FUSION-P1-INGEST-Ω router not loaded: {e}")
 
+# P22ΩΩ_RUNTIME_DIAGNOSTIC_ELITE_Ω · 2026-06-08 · STEEVE-MAX
+# Endpoint diagnostic Elite Production (whitelist secrets · lecture seule)
+try:
+    from routes.runtime_diagnostic_router import router as runtime_diagnostic_router
+    app.include_router(runtime_diagnostic_router)
+    logger.info(
+        "✓ RUNTIME-DIAGNOSTIC-Ω registered — "
+        "/api/v30/runtime/diagnostic-elite "
+        "(Verrou Phase III · read-only · whitelist)"
+    )
+except Exception as e:
+    logger.warning(f"RUNTIME-DIAGNOSTIC-Ω router not loaded: {e}")
+
 # P22ΩΩ_NDVI_LIDAR_P1_STRUCTURAL+_Ω · 2026-02-20 · STEEVE-MAX
 # Router institutionnel HABITAT-FUSION_P1_STRUCTURAL+_Ω (additif strict · Verrou Phase III).
 # weight_active reste 0.35 (anti-générique strict) · clients ingestion code-ready inertes.
