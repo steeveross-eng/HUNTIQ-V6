@@ -1,0 +1,786 @@
+diff --git a/backend/routes/runtime_diagnostic_router.py b/backend/routes/runtime_diagnostic_router.py
+index 90d9e36..e9fb7d7 100644
+--- a/backend/routes/runtime_diagnostic_router.py
++++ b/backend/routes/runtime_diagnostic_router.py
+@@ -54,8 +54,16 @@ _ENV_WHITELIST = {
+     "ENV", "ENVIRONMENT", "TIER", "ELITE_TIER",
+     "COPERNICUS_USERNAME",  # username pas sensible (déjà loggué dans cdse-auth-probe)
+     "PYTHONPATH", "HOSTNAME", "USER",
++    # P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10
++    "R4_LOG_DIR", "R4_COMPLETION_PATTERN", "R4_SCAN_TAIL_LINES",
+ }
+ 
++# P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
++# Dossier canonique des markers completed_worker_N.flag · doit matcher la
++# valeur R4_LOG_DIR du watchdog (zerocost_seed_r5_supervisor_watchdog.sh).
++_R4_LOG_DIR = os.environ.get("R4_LOG_DIR", "/var/log/bionic-zerocost-seed-r5")
++_R4_COMPLETION_PATTERN = os.environ.get("R4_COMPLETION_PATTERN", "WORKER COMPLET")
++
+ # Patterns d'env vars sensibles · jamais exposés même en debug
+ _SENSITIVE_PATTERNS = re.compile(
+     r"(PASSWORD|SECRET|TOKEN|KEY|CREDENTIAL|AUTH|MONGO_URL|DB_NAME)",
+@@ -178,6 +186,179 @@ def _file_meta(path: str) -> dict[str, Any]:
+         return {"exists": False, "error": str(e)}
+ 
+ 
++# ═══════════════════════════════════════════════════════════════════════════
++# P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
++# BCE-4X ULTIME ABSOLU · Verrou Phase III · STRICT ADDITIF · KIMBERLITE-READY
++# Read-only · collecte les markers completed_worker_N.flag et expose la
++# vision unifiée { active_workers, completed_workers, flags } + skip_map.
++# ═══════════════════════════════════════════════════════════════════════════
++import json as _json
++import re as _re
++
++_FLAG_NAME_RE = _re.compile(r"completed_worker_(\d+)\.flag$")
++
++
++def _list_completed_flag_files() -> list[Path]:
++    """Liste les fichiers completed_worker_N.flag dans R4_LOG_DIR."""
++    p = Path(_R4_LOG_DIR)
++    if not p.is_dir():
++        return []
++    out = []
++    try:
++        for f in p.iterdir():
++            if f.is_file() and _FLAG_NAME_RE.search(f.name):
++                out.append(f)
++    except Exception:
++        return []
++    return sorted(out, key=lambda x: x.name)
++
++
++def _read_flag_json(path: Path) -> dict[str, Any]:
++    """Lit le contenu JSON d'un flag (best-effort · tolère mal-formé)."""
++    try:
++        raw = path.read_text(encoding="utf-8", errors="ignore").strip()
++        try:
++            return _json.loads(raw)
++        except Exception:
++            return {"_raw": raw[:500]}
++    except Exception as e:
++        return {"_error": str(e)}
++
++
++def _collect_r4_sentinels(workers: list[dict[str, Any]]) -> dict[str, Any]:
++    """Construit la structure sentinels R4 unifiée.
++    
++    Returns:
++        {
++            "doctrine": "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω",
++            "log_dir": "/var/log/...",
++            "completion_pattern": "WORKER COMPLET",
++            "active_workers": [0, 1, 2],      # indices PID-vivants
++            "completed_workers": [3, 4, 5, 6, 7], # indices flag présent
++            "flags": [
++                {"worker_index": 3, "flag_path": "...", "size_bytes": N,
++                 "mtime_utc": "...", "content": {...}}, ...
++            ],
++            "completed_count": 5,
++            "active_count": 3,
++        }
++    """
++    active_indices = sorted({
++        w.get("worker_index") for w in workers
++        if w.get("worker_index") is not None
++    })
++    flag_files = _list_completed_flag_files()
++    flags_payload: list[dict[str, Any]] = []
++    completed_indices: list[int] = []
++    for f in flag_files:
++        m = _FLAG_NAME_RE.search(f.name)
++        if not m:
++            continue
++        try:
++            idx = int(m.group(1))
++        except ValueError:
++            continue
++        try:
++            st = f.stat()
++            meta = {
++                "worker_index": idx,
++                "flag_path": str(f),
++                "size_bytes": st.st_size,
++                "mtime_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(st.st_mtime)),
++                "mode_octal": oct(st.st_mode)[-3:],
++                "content": _read_flag_json(f),
++            }
++        except Exception as e:
++            meta = {"worker_index": idx, "flag_path": str(f), "_error": str(e)}
++        flags_payload.append(meta)
++        completed_indices.append(idx)
++    completed_indices = sorted(set(completed_indices))
++    return {
++        "doctrine": "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · BCE-4X · Verrou Phase III · ADDITIF strict",
++        "log_dir": _R4_LOG_DIR,
++        "completion_pattern": _R4_COMPLETION_PATTERN,
++        "active_workers": active_indices,
++        "active_count": len(active_indices),
++        "completed_workers": completed_indices,
++        "completed_count": len(completed_indices),
++        "flags": flags_payload,
++    }
++
++
++def _compute_watchdog_skip_map(
++    target_workers: int,
++    active_indices: list[int],
++    completed_indices: list[int],
++) -> dict[str, Any]:
++    """Calcule la skip_map du watchdog : par index, status + reason.
++    
++    Status enum :
++      - "active"          → worker vivant (PID présent)
++      - "completed"       → WORKER COMPLET (flag présent · skip respawn)
++      - "missing"         → ni vivant ni completed (sera respawné branche 2)
++      - "out_of_range"    → idx >= target_workers (ne s'applique pas ici)
++    """
++    by_index: dict[str, dict[str, Any]] = {}
++    skip_indices: list[int] = []
++    respawn_targets: list[int] = []
++    # Union des indices à couvrir : range(target) ∪ completed_indices (peut excéder target)
++    all_indices = sorted(set(list(range(target_workers)) + list(completed_indices) + list(active_indices)))
++    for idx in all_indices:
++        in_target = (idx < target_workers)
++        if idx in active_indices:
++            by_index[str(idx)] = {
++                "status": "active",
++                "reason": "PID alive",
++                "skip_respawn": False,
++                "in_target_range": in_target,
++            }
++        elif idx in completed_indices:
++            by_index[str(idx)] = {
++                "status": "completed",
++                "reason": f"flag completed_worker_{idx}.flag present · pattern '{_R4_COMPLETION_PATTERN}' detected",
++                "skip_respawn": True,
++                "in_target_range": in_target,
++            }
++            skip_indices.append(idx)
++        else:
++            by_index[str(idx)] = {
++                "status": "missing",
++                "reason": "PID absent and no completion flag",
++                "skip_respawn": False,
++                "in_target_range": in_target,
++            }
++            if in_target:
++                respawn_targets.append(idx)
++    effective_target = target_workers - len(completed_indices)
++    return {
++        "doctrine": "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · skip_map",
++        "target_workers": target_workers,
++        "effective_target": max(effective_target, 0),
++        "skip_indices": skip_indices,
++        "skip_count": len(skip_indices),
++        "respawn_target_indices": respawn_targets,
++        "respawn_target_count": len(respawn_targets),
++        "by_index": by_index,
++    }
++
++
++def _read_target_workers_from_cgroup() -> int:
++    """Détecte TARGET_WORKERS effectif (env ELITE/PREVIEW basé sur cgroup),
++    aligné sur la logique du watchdog bash. Best-effort."""
++    target_preview = int(os.environ.get("TARGET_WORKERS_PREVIEW", "3"))
++    target_elite = int(os.environ.get("TARGET_WORKERS_ELITE", "8"))
++    try:
++        with open("/sys/fs/cgroup/cpu.max") as f:
++            raw = f.read().strip().split()
++        if raw and raw[0] == "max":
++            return target_elite
++        if raw and raw[0].isdigit() and int(raw[0]) >= 400000:
++            return target_elite
++    except Exception:
++        pass
++    return target_preview
++
++
+ @router.get("/diagnostic-elite")
+ def diagnostic_elite(
+     include_env: bool = True,
+@@ -206,6 +387,24 @@ def diagnostic_elite(
+         out["workers"] = _ps_workers()
+         out["workers_count"] = len(out["workers"])
+ 
++    # ═══════════════════════════════════════════════════════════════════
++    # P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
++    # Sentinels R4 + watchdog.skip_map (ADDITIF · zéro mutation legacy)
++    # ═══════════════════════════════════════════════════════════════════
++    _workers_list = out.get("workers", [])
++    sentinels = _collect_r4_sentinels(_workers_list)
++    out["sentinels"] = sentinels
++    _target_workers = _read_target_workers_from_cgroup()
++    out["watchdog"] = {
++        "doctrine": "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · watchdog snapshot",
++        "target_workers_detected": _target_workers,
++        "skip_map": _compute_watchdog_skip_map(
++            target_workers=_target_workers,
++            active_indices=sentinels["active_workers"],
++            completed_indices=sentinels["completed_workers"],
++        ),
++    }
++
+     # Bash watchdog scripts mtimes (preuve Deploy propagation)
+     out["bash_scripts"] = {
+         "watchdog": _file_meta("/app/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh"),
+@@ -214,7 +413,7 @@ def diagnostic_elite(
+         "last_partial_respawn_marker": _file_meta("/tmp/zerocost_last_partial_respawn.ts"),
+     }
+ 
+-    # Test si les helpers R3 sont présents dans le watchdog déployé
++    # Test si les helpers R3 + R4 sont présents dans le watchdog déployé
+     try:
+         with open("/app/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh") as f:
+             content = f.read()
+@@ -224,8 +423,17 @@ def diagnostic_elite(
+             "has_partial_respawn_branch": "PARTIAL RESPAWN" in content,
+             "has_cooldown_check": "partial_respawn_cooldown_ok" in content,
+         }
++        # P22ΩΩ_R4_SENTINELS_Ω : preuve propagation Deploy du patch R4
++        out["watchdog_r4_features"] = {
++            "has_r4_detect_and_mark_completed_workers": "r4_detect_and_mark_completed_workers" in content,
++            "has_r4_get_completed_indices": "r4_get_completed_indices" in content,
++            "has_skip_completed_in_missing": "COMPLETED=$(r4_get_completed_indices" in content,
++            "has_r4_log_prefix": "[WATCHDOG-R4]" in content,
++            "has_effective_target_branch": "_effective_target" in content,
++        }
+     except Exception:
+         out["watchdog_r3_features"] = {"error": "read_fail"}
++        out["watchdog_r4_features"] = {"error": "read_fail"}
+ 
+     if include_supervisor_logs:
+         # Supervisor logs · whitelist programs probables
+diff --git a/backend/tests/test_r4_sentinels_omega.py b/backend/tests/test_r4_sentinels_omega.py
+new file mode 100644
+index 0000000..fd05116
+--- /dev/null
++++ b/backend/tests/test_r4_sentinels_omega.py
+@@ -0,0 +1,212 @@
++"""
++P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω — Test régression
++═════════════════════════════════════════════════════════════════════
++BCE-4X ULTIME ABSOLU · Verrou Phase III · STRICT ADDITIF
++Valide : sentinels + skip_map dans /api/v30/runtime/diagnostic-elite
++
++Exécution :
++  cd /app/backend && python -m pytest tests/test_r4_sentinels_omega.py -v
++
++Couverture :
++  - Helpers Python : _collect_r4_sentinels, _compute_watchdog_skip_map
++  - Endpoint diagnostic-elite : présence champs sentinels, watchdog.skip_map
++  - Idempotence
++"""
++from __future__ import annotations
++
++import json
++import os
++import sys
++import tempfile
++import time
++from pathlib import Path
++
++import pytest
++
++# Ajout du backend au PYTHONPATH
++sys.path.insert(0, str(Path(__file__).parent.parent))
++
++
++def test_r4_helpers_importable():
++    """Le module diagnostic_router doit exposer les helpers R4 publics."""
++    from routes import runtime_diagnostic_router as rd
++
++    assert hasattr(rd, "_collect_r4_sentinels")
++    assert hasattr(rd, "_compute_watchdog_skip_map")
++    assert hasattr(rd, "_list_completed_flag_files")
++    assert hasattr(rd, "_read_target_workers_from_cgroup")
++
++
++def test_collect_r4_sentinels_empty(monkeypatch, tmp_path):
++    """Sans flags ni workers, sentinels doit être vide mais bien structurée."""
++    from routes import runtime_diagnostic_router as rd
++
++    monkeypatch.setattr(rd, "_R4_LOG_DIR", str(tmp_path))
++    out = rd._collect_r4_sentinels(workers=[])
++
++    assert out["log_dir"] == str(tmp_path)
++    assert out["completion_pattern"] == rd._R4_COMPLETION_PATTERN
++    assert out["active_workers"] == []
++    assert out["completed_workers"] == []
++    assert out["active_count"] == 0
++    assert out["completed_count"] == 0
++    assert out["flags"] == []
++    assert "doctrine" in out
++
++
++def test_collect_r4_sentinels_with_flags(monkeypatch, tmp_path):
++    """Avec flags + workers actifs, la collecte doit refléter l'état."""
++    from routes import runtime_diagnostic_router as rd
++
++    # Crée flags 3, 5, 7
++    for idx in [3, 5, 7]:
++        flag = tmp_path / f"completed_worker_{idx}.flag"
++        flag.write_text(json.dumps({
++            "worker_index": idx,
++            "detected_at": "2026-06-10T00:00:00Z",
++            "completion_evidence": "  [STATE_FILE_Ω] r5_idx_done=35 ≥ len=35 · WORKER COMPLET",
++        }))
++
++    monkeypatch.setattr(rd, "_R4_LOG_DIR", str(tmp_path))
++    workers = [
++        {"pid": 100, "worker_index": 0},
++        {"pid": 101, "worker_index": 1},
++        {"pid": 102, "worker_index": 2},
++    ]
++    out = rd._collect_r4_sentinels(workers=workers)
++
++    assert out["active_workers"] == [0, 1, 2]
++    assert out["active_count"] == 3
++    assert out["completed_workers"] == [3, 5, 7]
++    assert out["completed_count"] == 3
++    assert len(out["flags"]) == 3
++    # Vérifier le contenu JSON parsé
++    flag_3 = next(f for f in out["flags"] if f["worker_index"] == 3)
++    assert flag_3["content"]["worker_index"] == 3
++    assert "WORKER COMPLET" in flag_3["content"]["completion_evidence"]
++
++
++def test_skip_map_pure_active():
++    """Tous workers actifs, aucun completed → respawn_targets vides."""
++    from routes import runtime_diagnostic_router as rd
++
++    sm = rd._compute_watchdog_skip_map(
++        target_workers=3, active_indices=[0, 1, 2], completed_indices=[]
++    )
++    assert sm["target_workers"] == 3
++    assert sm["effective_target"] == 3
++    assert sm["skip_indices"] == []
++    assert sm["respawn_target_indices"] == []
++    for idx_str, payload in sm["by_index"].items():
++        assert payload["status"] == "active"
++        assert payload["skip_respawn"] is False
++
++
++def test_skip_map_with_completed():
++    """3 actifs + 5 completed (Élite TARGET=8) → effective_target=3, skip=5."""
++    from routes import runtime_diagnostic_router as rd
++
++    sm = rd._compute_watchdog_skip_map(
++        target_workers=8,
++        active_indices=[0, 1, 2],
++        completed_indices=[3, 4, 5, 6, 7],
++    )
++    assert sm["target_workers"] == 8
++    assert sm["effective_target"] == 3
++    assert sm["skip_indices"] == [3, 4, 5, 6, 7]
++    assert sm["respawn_target_indices"] == []
++    assert sm["by_index"]["3"]["status"] == "completed"
++    assert sm["by_index"]["3"]["skip_respawn"] is True
++    assert sm["by_index"]["3"]["in_target_range"] is True
++    assert sm["by_index"]["0"]["status"] == "active"
++
++
++def test_skip_map_missing_triggers_respawn():
++    """Workers manquants (sans flag) → respawn_target_indices remplie."""
++    from routes import runtime_diagnostic_router as rd
++
++    sm = rd._compute_watchdog_skip_map(
++        target_workers=8,
++        active_indices=[0, 1],
++        completed_indices=[3, 4],
++    )
++    # Missing : 2, 5, 6, 7 (pas actifs, pas completed)
++    assert set(sm["respawn_target_indices"]) == {2, 5, 6, 7}
++    assert sm["by_index"]["2"]["status"] == "missing"
++    assert sm["by_index"]["3"]["status"] == "completed"
++    assert sm["by_index"]["3"]["skip_respawn"] is True
++
++
++def test_skip_map_completed_outside_target_range():
++    """Completed flag pour idx > target (descalation tier) doit être inclus."""
++    from routes import runtime_diagnostic_router as rd
++
++    sm = rd._compute_watchdog_skip_map(
++        target_workers=3, active_indices=[0, 1, 2], completed_indices=[3, 4, 5, 6, 7]
++    )
++    # by_index doit inclure 0-7 (union)
++    assert set(sm["by_index"].keys()) == {"0", "1", "2", "3", "4", "5", "6", "7"}
++    # Indices > target sont marqués in_target_range=False
++    assert sm["by_index"]["3"]["in_target_range"] is False
++    assert sm["by_index"]["7"]["in_target_range"] is False
++    assert sm["by_index"]["0"]["in_target_range"] is True
++
++
++def test_watchdog_script_has_r4_block():
++    """Le script bash watchdog doit contenir les helpers R4 doctrinaux."""
++    p = Path("/app/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh")
++    content = p.read_text()
++    assert "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω" in content
++    assert "r4_detect_and_mark_completed_workers" in content
++    assert "r4_get_completed_indices" in content
++    assert "[WATCHDOG-R4]" in content
++    assert "_effective_target" in content
++    assert "completed_worker_" in content
++
++
++def test_diagnostic_elite_endpoint_exposes_sentinels(monkeypatch, tmp_path):
++    """L'endpoint complet doit retourner sentinels + watchdog.skip_map."""
++    from fastapi.testclient import TestClient
++    from routes import runtime_diagnostic_router as rd
++
++    # Isole R4_LOG_DIR vers tmp_path pour test
++    monkeypatch.setattr(rd, "_R4_LOG_DIR", str(tmp_path))
++
++    from fastapi import FastAPI
++    app = FastAPI()
++    app.include_router(rd.router)
++    client = TestClient(app)
++
++    resp = client.get("/api/v30/runtime/diagnostic-elite")
++    assert resp.status_code == 200
++    body = resp.json()
++
++    # Présence champs R4
++    assert "sentinels" in body
++    assert "watchdog" in body
++    assert "skip_map" in body["watchdog"]
++    assert "watchdog_r4_features" in body
++
++    # Structure sentinels
++    s = body["sentinels"]
++    assert "active_workers" in s
++    assert "completed_workers" in s
++    assert "flags" in s
++    assert "log_dir" in s
++    assert "completion_pattern" in s
++
++    # Structure watchdog.skip_map
++    sm = body["watchdog"]["skip_map"]
++    assert "target_workers" in sm
++    assert "effective_target" in sm
++    assert "skip_indices" in sm
++    assert "respawn_target_indices" in sm
++    assert "by_index" in sm
++
++    # Verrou propagation
++    feats = body["watchdog_r4_features"]
++    assert feats["has_r4_detect_and_mark_completed_workers"] is True
++    assert feats["has_r4_get_completed_indices"] is True
++    assert feats["has_skip_completed_in_missing"] is True
++    assert feats["has_r4_log_prefix"] is True
++    assert feats["has_effective_target_branch"] is True
+diff --git a/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh b/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh
+index 4299e11..3eb2552 100755
+--- a/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh
++++ b/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh
+@@ -81,6 +81,61 @@ PARTIAL_RESPAWN_COOLDOWN_S="${PARTIAL_RESPAWN_COOLDOWN_S:-300}"
+ MIN_PARTIAL_THRESHOLD="${MIN_PARTIAL_THRESHOLD:-3}"
+ LAST_PARTIAL_RESPAWN_FILE="${LAST_PARTIAL_RESPAWN_FILE:-/tmp/zerocost_last_partial_respawn.ts}"
+ 
++# ═══════════════════════════════════════════════════════════════════════════
++# P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
++# BCE-4X ULTIME ABSOLU · Verrou Phase III · STRICT ADDITIF · KIMBERLITE-READY
++# Détection workers en état "WORKER COMPLET" (travail R2 terminé · exit
++# gracieux). Crée un marker flag idempotent et exclut l'index de la liste
++# de respawn afin de stopper la boucle perpétuelle cold-start→exit→respawn.
++# Configuration :
++#   R4_LOG_DIR=/var/log/bionic-zerocost-seed-r5 · dir contenant worker_N.log
++#   R4_COMPLETION_PATTERN="WORKER COMPLET"      · pattern doctrinal d'exit
++#   R4_SCAN_TAIL_LINES=50                       · profondeur scan logs
++# Markers générés (un par worker complet) :
++#   $R4_LOG_DIR/completed_worker_{N}.flag       · JSON forensique
++# Journalisation explicite :
++#   [WATCHDOG-R4] worker N marked completed → skip respawn
++# ═══════════════════════════════════════════════════════════════════════════
++R4_LOG_DIR="${R4_LOG_DIR:-/var/log/bionic-zerocost-seed-r5}"
++R4_COMPLETION_PATTERN="${R4_COMPLETION_PATTERN:-WORKER COMPLET}"
++R4_SCAN_TAIL_LINES="${R4_SCAN_TAIL_LINES:-50}"
++
++# Détecte les workers en état WORKER COMPLET et crée/maintient un flag.
++# Idempotent : si le flag existe déjà, n'écrit pas.
++# Output stdout : liste indices nouvellement marqués (1 par ligne, peut être vide).
++r4_detect_and_mark_completed_workers() {
++    local TARGET=$1
++    [[ -d "$R4_LOG_DIR" ]] || return 0
++    local now_iso=$(date -u +%Y-%m-%dT%H:%M:%SZ)
++    local now_ts=$(date +%s)
++    for ((idx=0; idx<TARGET; idx++)); do
++        local logf="$R4_LOG_DIR/worker_${idx}.log"
++        local flagf="$R4_LOG_DIR/completed_worker_${idx}.flag"
++        [[ -f "$logf" ]] || continue
++        # Cherche le pattern doctrinal dans les N dernières lignes
++        if tail -n "$R4_SCAN_TAIL_LINES" "$logf" 2>/dev/null | grep -qF "$R4_COMPLETION_PATTERN"; then
++            if [[ ! -f "$flagf" ]]; then
++                # Capture la ligne de preuve (dernière occurrence du pattern)
++                local evidence=$(tail -n "$R4_SCAN_TAIL_LINES" "$logf" 2>/dev/null | grep -F "$R4_COMPLETION_PATTERN" | tail -1 | sed 's/"/\\"/g')
++                # Écriture atomique du flag (forensique JSON)
++                printf '{"worker_index":%d,"detected_at":"%s","detected_ts":%d,"log_path":"%s","completion_pattern":"%s","completion_evidence":"%s","doctrine":"P22\\u03a9\\u03a9_R4_SENTINELS_WORKER_COMPLET_\\u03a9"}\n' \
++                    "$idx" "$now_iso" "$now_ts" "$logf" "$R4_COMPLETION_PATTERN" "$evidence" \
++                    > "$flagf.tmp" 2>/dev/null && mv -f "$flagf.tmp" "$flagf" 2>/dev/null
++                echo "$LOG_PREFIX [WATCHDOG-R4] worker $idx marked completed → skip respawn (flag=$flagf)"
++                echo "$idx"
++            fi
++        fi
++    done
++}
++
++# Liste les indices marqués completed (flag présent sur disque)
++# Output : 1 idx par ligne
++r4_get_completed_indices() {
++    [[ -d "$R4_LOG_DIR" ]] || return 0
++    ls -1 "$R4_LOG_DIR"/completed_worker_*.flag 2>/dev/null | \
++        sed -E 's|.*/completed_worker_([0-9]+)\.flag|\1|' | sort -nu
++}
++
+ # Détection indices présents · lit /proc/{PID}/environ pour extraire WORKER_INDEX
+ # Output : liste numérique triée (1 idx par ligne)
+ get_present_worker_indices() {
+@@ -93,15 +148,21 @@ get_present_worker_indices() {
+     done | sort -nu
+ }
+ 
+-# Compute missing indices = expected (0..target-1) ∖ present
++# Compute missing indices = expected (0..target-1) ∖ present ∖ completed (R4)
++# P22ΩΩ_R4_SENTINELS_Ω : exclut les indices avec completed_worker_N.flag
+ get_missing_worker_indices() {
+     local TARGET=$1
+     local PRESENT=$(get_present_worker_indices | tr '\n' ' ')
++    local COMPLETED=$(r4_get_completed_indices | tr '\n' ' ')
+     local MISSING=""
+     for ((idx=0; idx<TARGET; idx++)); do
+-        if ! echo " $PRESENT " | grep -qE " $idx "; then
+-            MISSING="$MISSING $idx"
++        if echo " $PRESENT " | grep -qE " $idx "; then
++            continue  # déjà vivant
++        fi
++        if echo " $COMPLETED " | grep -qE " $idx "; then
++            continue  # marqué completed R4 → skip respawn
+         fi
++        MISSING="$MISSING $idx"
+     done
+     echo "$MISSING" | xargs  # trim
+ }
+@@ -121,6 +182,16 @@ while true; do
+     # Compter workers β2-ΣΤ vivants
+     n=$(ps -ef 2>/dev/null | grep zerocost_worker_seed_r5 | grep -v grep | wc -l)
+ 
++    # ══════════════════════════════════════════════════════════════════════
++    # P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
++    # SCAN PRÉALABLE des workers en état "WORKER COMPLET" · création flags
++    # idempotente AVANT le calcul de MISSING_INDICES (pour pré-exclusion).
++    # Verrou Phase III · additif strict · zéro mutation engine.
++    # ══════════════════════════════════════════════════════════════════════
++    _r4_newly_marked=$(r4_detect_and_mark_completed_workers "$TARGET_WORKERS")
++    _r4_completed_list=$(r4_get_completed_indices | tr '\n' ',' | sed 's/,$//')
++    _r4_completed_count=$(r4_get_completed_indices | wc -l)
++
+     # Configuration env stagger/pacing (TIER-aware, identique à full respawn)
+     if [[ "$_TIER_DETECTED" == ELITE* ]]; then
+         _SPAWN_STAGGER_MS="${SPAWN_STAGGER_MS:-2000}"
+@@ -136,11 +207,21 @@ while true; do
+     #   2) n entre MIN_PARTIAL_THRESHOLD et TARGET ET cooldown OK ET MISSING détectés
+     #      → ★ PARTIAL RESPAWN ciblé des indices manquants (additif Phase III)
+     #   3) n < MIN_WORKERS OU cooldown actif → FULL RESPAWN legacy (preserved)
++    # P22ΩΩ_R4_SENTINELS_Ω : l'objectif effectif exclut les workers complets
++    # (target effectif = total - completed). Si n == effective_target, état stable.
++    _effective_target=$((TARGET_WORKERS - _r4_completed_count))
++    if [[ $_effective_target -lt 0 ]]; then _effective_target=0; fi
++
+     if [[ $n -eq $TARGET_WORKERS ]]; then
+         # ── Branche 1 · État stable · heartbeat ─────────────────────────────
+         if (( $(date +%s) % 300 < CHECK_INTERVAL_S )); then
+             echo "$LOG_PREFIX $(date -u +%H:%M:%SZ) · workers=$n/$TARGET_WORKERS OK · load=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | tr -d ',')"
+         fi
++    elif [[ $n -eq $_effective_target ]] && [[ $_r4_completed_count -gt 0 ]]; then
++        # ── Branche 1b · État stable R4 · workers complets respectés ───────
++        if (( $(date +%s) % 300 < CHECK_INTERVAL_S )); then
++            echo "$LOG_PREFIX [WATCHDOG-R4] $(date -u +%H:%M:%SZ) · workers=$n/$TARGET_WORKERS · completed=[$_r4_completed_list] (effective_target=$_effective_target) · STABLE"
++        fi
+     elif [[ $n -ge $MIN_PARTIAL_THRESHOLD ]] && partial_respawn_cooldown_ok; then
+         # ── Branche 2 · PARTIAL RESPAWN ciblé ──────────────────────────────
+         MISSING_INDICES=$(get_missing_worker_indices "$TARGET_WORKERS")
+@@ -162,9 +243,11 @@ while true; do
+             date +%s > "$LAST_PARTIAL_RESPAWN_FILE"
+             echo "$LOG_PREFIX Partial respawn complet · cooldown ${PARTIAL_RESPAWN_COOLDOWN_S}s actif"
+         fi
+-    elif [[ $n -lt $MIN_WORKERS ]]; then
++    elif [[ $((n + _r4_completed_count)) -lt $MIN_WORKERS ]]; then
+         # ── Branche 3 · FULL RESPAWN legacy (Verrou Phase III preserved) ───
+-        echo "$LOG_PREFIX $(date -u +%Y-%m-%dT%H:%M:%SZ) · workers vivants=$n < MIN=$MIN_WORKERS · RELANCE FULL"
++        # P22ΩΩ_R4_SENTINELS_Ω : seuil ajusté = n + completed_R4 < MIN_WORKERS
++        # (évite de tuer 3 workers actifs alors que 5 sont en WORKER COMPLET valide).
++        echo "$LOG_PREFIX $(date -u +%Y-%m-%dT%H:%M:%SZ) · workers vivants=$n + completed=$_r4_completed_count < MIN=$MIN_WORKERS · RELANCE FULL"
+         # Nettoyage state file
+         bash /app/backend/tools/zerocost_seed_r5_daemon.sh stop 2>&1 | tail -2 || true
+         sleep 2
+diff --git a/memory/R4_SENTINELS_KIMBERLITE_AUDIT.md b/memory/R4_SENTINELS_KIMBERLITE_AUDIT.md
+new file mode 100644
+index 0000000..90c964d
+--- /dev/null
++++ b/memory/R4_SENTINELS_KIMBERLITE_AUDIT.md
+@@ -0,0 +1,165 @@
++# P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω — AUDIT KIMBERLITE
++
++**Date** : 2026-06-10  
++**Doctrine** : BCE-4X ULTIME ABSOLU · Verrou Phase III · STRICT ADDITIF  
++**Autorité** : COMMANDANT STEEVE-MAX  
++**Périmètre** : Préparation déploiement Élite Production · `huntiq-restore.emergent.host`
++
++---
++
++## OBJECTIF DOCTRINAL
++
++Stopper la boucle perpétuelle de respawn-exit des workers `zerocost_worker_seed_r5` ayant
++atteint l'état `WORKER COMPLET` (travail R2 terminé · exit gracieux normal). Le watchdog
++ne doit plus tenter de respawner ces workers.
++
++**Approche ADDITIVE stricte (Verrou Phase III)** :
++- ZERO mutation du daemon `zerocost_seed_r5_daemon.sh`.
++- ZERO mutation du worker `zerocost_worker_seed_r5.py`.
++- ZERO mutation des engines.
++- ZERO reset state R2.
++
++---
++
++## CHANGEMENTS LIVRÉS
++
++### 1. `tools/zerocost_seed_r5_supervisor_watchdog.sh`
++- Ajout helpers R4 :
++  - `r4_detect_and_mark_completed_workers(target)` — scan `worker_{N}.log` (50 dernières lignes) pour pattern `WORKER COMPLET` → crée idempotemment `/var/log/bionic-zerocost-seed-r5/completed_worker_{N}.flag` (JSON forensique).
++  - `r4_get_completed_indices()` — liste indices avec flag présent.
++- Modification (additive) `get_missing_worker_indices()` : exclut les indices completed.
++- Boucle while : appel pré-scan `r4_detect_and_mark_completed_workers` à chaque itération AVANT le calcul de MISSING.
++- Nouvelle Branche 1b : `n == effective_target && completed_count > 0` → STABLE R4 (heartbeat 5min).
++- Branche 3 (FULL RESPAWN) seuil ajusté : `(n + completed_count) < MIN_WORKERS` (évite kill+restart de workers actifs alors que d'autres sont en WORKER COMPLET valide).
++- Logs explicites : `[WATCHDOG-R4] worker N marked completed → skip respawn`.
++
++### 2. `routes/runtime_diagnostic_router.py`
++- Ajout helpers Python :
++  - `_collect_r4_sentinels(workers)` — construit la structure unifiée.
++  - `_compute_watchdog_skip_map(target, active, completed)` — calcule la carte de skip.
++  - `_read_target_workers_from_cgroup()` — détection ELITE/PREVIEW pour skip_map.
++- Endpoint `/api/v30/runtime/diagnostic-elite` étendu (additif) :
++  - Nouveau champ `sentinels` :
++    ```
++    {
++      "doctrine", "log_dir", "completion_pattern",
++      "active_workers", "active_count",
++      "completed_workers", "completed_count",
++      "flags": [{worker_index, flag_path, size, mtime, content}]
++    }
++    ```
++  - Nouveau champ `watchdog.skip_map` :
++    ```
++    {
++      "target_workers", "effective_target",
++      "skip_indices", "skip_count",
++      "respawn_target_indices", "respawn_target_count",
++      "by_index": {idx: {status, reason, skip_respawn, in_target_range}}
++    }
++    ```
++  - Nouveau champ `watchdog_r4_features` (preuve propagation Deploy).
++
++---
++
++## AUDIT KIMBERLITE — PREUVES VALIDÉES SUR PREVIEW
++
++### A. Preuve filesystem — `ls -l completed_worker_*.flag`
++```
++-rw-r--r-- 1 root root 316 Jun 11 00:23 completed_worker_3.flag
++-rw-r--r-- 1 root root 316 Jun 11 00:23 completed_worker_4.flag
++-rw-r--r-- 1 root root 316 Jun 11 00:23 completed_worker_5.flag
++-rw-r--r-- 1 root root 316 Jun 11 00:23 completed_worker_6.flag
++-rw-r--r-- 1 root root 316 Jun 11 00:23 completed_worker_7.flag
++```
++
++Contenu (exemple) :
++```json
++{"worker_index":3,"detected_at":"2026-06-11T00:23:52Z","detected_ts":1781137432,
++ "log_path":"/var/log/bionic-zerocost-seed-r5/worker_3.log",
++ "completion_pattern":"WORKER COMPLET",
++ "completion_evidence":"  [STATE_FILE_Ω] r5_idx_done=35 ≥ len=35 · WORKER COMPLET",
++ "doctrine":"P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω"}
++```
++
++### B. Preuve watchdog — Logs explicites skip respawn
++```
++[β2-ΣΤ-WATCHDOG] [WATCHDOG-R4] worker 3 marked completed → skip respawn (flag=...)
++[β2-ΣΤ-WATCHDOG] [WATCHDOG-R4] worker 4 marked completed → skip respawn (flag=...)
++[β2-ΣΤ-WATCHDOG] [WATCHDOG-R4] worker 5 marked completed → skip respawn (flag=...)
++[β2-ΣΤ-WATCHDOG] [WATCHDOG-R4] worker 6 marked completed → skip respawn (flag=...)
++[β2-ΣΤ-WATCHDOG] [WATCHDOG-R4] worker 7 marked completed → skip respawn (flag=...)
++```
++
++Idempotence vérifiée : 2e itération → ZERO nouveau flag créé.
++
++### C. Preuve API — `/api/v30/runtime/diagnostic-elite` avec sentinels
++```
++sentinels.active_workers   : [0, 1, 2]
++sentinels.completed_workers: [3, 4, 5, 6, 7]
++sentinels.completed_count  : 5
++sentinels.flags            : 5 entrées JSON forensiques
++
++watchdog.skip_map.target_workers       : 8
++watchdog.skip_map.effective_target     : 3
++watchdog.skip_map.skip_indices         : [3, 4, 5, 6, 7]
++watchdog.skip_map.respawn_target_indices: []
++
++watchdog_r4_features:
++  has_r4_detect_and_mark_completed_workers: true
++  has_r4_get_completed_indices            : true
++  has_skip_completed_in_missing           : true
++  has_r4_log_prefix                       : true
++  has_effective_target_branch             : true
++```
++
++### D. Preuve comportementale — Workers 3-7 ne respawnent plus
++Simulation Élite (TARGET=8 forcé · n=3 actifs · 5 flags completed) :
++```
++state: n=3 · TARGET=8 · completed_count=5 · completed_list=[3,4,5,6,7] · effective_target=3
++MISSING_INDICES (après filtrage R4): []
++→ BRANCHE 1b (★ STABLE R4 · workers complets respectés)
++[WATCHDOG-R4] 00:27:15Z · workers=3/8 · completed=[3,4,5,6,7] (effective_target=3) · STABLE
++```
++
++**MISSING_INDICES vide** → Branche 2 NO-OP · Branche 3 NO-OP (car n+completed=8 ≥ MIN=8).
++ZERO respawn déclenché. ZERO process tué. Comportement déterministe.
++
++---
++
++## DÉPLOIEMENT ÉLITE — VALIDATION POST-REDEPLOY
++
++À exécuter par COMMANDANT après redeploy :
++
++```bash
++curl -sS https://huntiq-restore.emergent.host/api/v30/runtime/diagnostic-elite \
++  | python3 -c "
++import sys, json
++d = json.load(sys.stdin)
++print('Verrou propagation Deploy :')
++print('  watchdog_r4_features :', d.get('watchdog_r4_features'))
++print('  sentinels.active     :', d['sentinels']['active_workers'])
++print('  sentinels.completed  :', d['sentinels']['completed_workers'])
++print('  skip_map.target      :', d['watchdog']['skip_map']['target_workers'])
++print('  skip_map.effective   :', d['watchdog']['skip_map']['effective_target'])
++print('  skip_map.skip        :', d['watchdog']['skip_map']['skip_indices'])
++"
++```
++
++Attendu post-redeploy Élite : 
++- `watchdog_r4_features` : tous `true` (preuve script propagé).
++- `target_workers_detected` : `8` (Élite cgroup).
++- Selon état initial workers : 3 actifs + 5 marqués completed (état stable Branche 1b).
++
++---
++
++## CONTRAINTES RESPECTÉES (Verrou Phase III)
++
++✓ Aucun engine modifié (engines/**)  
++✓ Aucun reset R2 (state_worker_N.json intact)  
++✓ Aucun stub créé (pas de mocks)  
++✓ Aucune logique silencieuse (chaque action écrit un log [WATCHDOG-R4])  
++✓ Strictement additif (helpers + branche 1b + champs API additionnels)  
++✓ Idempotent (flags ne sont écrits qu'une fois par worker)  
++✓ Read-only sur l'endpoint API  
++✓ Whitelist secrets respectée (zéro fuite)  
++✓ Backward-compatible (anciennes branches 1, 2, 3 préservées)
