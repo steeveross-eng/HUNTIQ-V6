@@ -81,6 +81,61 @@ PARTIAL_RESPAWN_COOLDOWN_S="${PARTIAL_RESPAWN_COOLDOWN_S:-300}"
 MIN_PARTIAL_THRESHOLD="${MIN_PARTIAL_THRESHOLD:-3}"
 LAST_PARTIAL_RESPAWN_FILE="${LAST_PARTIAL_RESPAWN_FILE:-/tmp/zerocost_last_partial_respawn.ts}"
 
+# ═══════════════════════════════════════════════════════════════════════════
+# P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
+# BCE-4X ULTIME ABSOLU · Verrou Phase III · STRICT ADDITIF · KIMBERLITE-READY
+# Détection workers en état "WORKER COMPLET" (travail R2 terminé · exit
+# gracieux). Crée un marker flag idempotent et exclut l'index de la liste
+# de respawn afin de stopper la boucle perpétuelle cold-start→exit→respawn.
+# Configuration :
+#   R4_LOG_DIR=/var/log/bionic-zerocost-seed-r5 · dir contenant worker_N.log
+#   R4_COMPLETION_PATTERN="WORKER COMPLET"      · pattern doctrinal d'exit
+#   R4_SCAN_TAIL_LINES=50                       · profondeur scan logs
+# Markers générés (un par worker complet) :
+#   $R4_LOG_DIR/completed_worker_{N}.flag       · JSON forensique
+# Journalisation explicite :
+#   [WATCHDOG-R4] worker N marked completed → skip respawn
+# ═══════════════════════════════════════════════════════════════════════════
+R4_LOG_DIR="${R4_LOG_DIR:-/var/log/bionic-zerocost-seed-r5}"
+R4_COMPLETION_PATTERN="${R4_COMPLETION_PATTERN:-WORKER COMPLET}"
+R4_SCAN_TAIL_LINES="${R4_SCAN_TAIL_LINES:-50}"
+
+# Détecte les workers en état WORKER COMPLET et crée/maintient un flag.
+# Idempotent : si le flag existe déjà, n'écrit pas.
+# Output stdout : liste indices nouvellement marqués (1 par ligne, peut être vide).
+r4_detect_and_mark_completed_workers() {
+    local TARGET=$1
+    [[ -d "$R4_LOG_DIR" ]] || return 0
+    local now_iso=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    local now_ts=$(date +%s)
+    for ((idx=0; idx<TARGET; idx++)); do
+        local logf="$R4_LOG_DIR/worker_${idx}.log"
+        local flagf="$R4_LOG_DIR/completed_worker_${idx}.flag"
+        [[ -f "$logf" ]] || continue
+        # Cherche le pattern doctrinal dans les N dernières lignes
+        if tail -n "$R4_SCAN_TAIL_LINES" "$logf" 2>/dev/null | grep -qF "$R4_COMPLETION_PATTERN"; then
+            if [[ ! -f "$flagf" ]]; then
+                # Capture la ligne de preuve (dernière occurrence du pattern)
+                local evidence=$(tail -n "$R4_SCAN_TAIL_LINES" "$logf" 2>/dev/null | grep -F "$R4_COMPLETION_PATTERN" | tail -1 | sed 's/"/\\"/g')
+                # Écriture atomique du flag (forensique JSON)
+                printf '{"worker_index":%d,"detected_at":"%s","detected_ts":%d,"log_path":"%s","completion_pattern":"%s","completion_evidence":"%s","doctrine":"P22\\u03a9\\u03a9_R4_SENTINELS_WORKER_COMPLET_\\u03a9"}\n' \
+                    "$idx" "$now_iso" "$now_ts" "$logf" "$R4_COMPLETION_PATTERN" "$evidence" \
+                    > "$flagf.tmp" 2>/dev/null && mv -f "$flagf.tmp" "$flagf" 2>/dev/null
+                echo "$LOG_PREFIX [WATCHDOG-R4] worker $idx marked completed → skip respawn (flag=$flagf)"
+                echo "$idx"
+            fi
+        fi
+    done
+}
+
+# Liste les indices marqués completed (flag présent sur disque)
+# Output : 1 idx par ligne
+r4_get_completed_indices() {
+    [[ -d "$R4_LOG_DIR" ]] || return 0
+    ls -1 "$R4_LOG_DIR"/completed_worker_*.flag 2>/dev/null | \
+        sed -E 's|.*/completed_worker_([0-9]+)\.flag|\1|' | sort -nu
+}
+
 # Détection indices présents · lit /proc/{PID}/environ pour extraire WORKER_INDEX
 # Output : liste numérique triée (1 idx par ligne)
 get_present_worker_indices() {
@@ -93,15 +148,21 @@ get_present_worker_indices() {
     done | sort -nu
 }
 
-# Compute missing indices = expected (0..target-1) ∖ present
+# Compute missing indices = expected (0..target-1) ∖ present ∖ completed (R4)
+# P22ΩΩ_R4_SENTINELS_Ω : exclut les indices avec completed_worker_N.flag
 get_missing_worker_indices() {
     local TARGET=$1
     local PRESENT=$(get_present_worker_indices | tr '\n' ' ')
+    local COMPLETED=$(r4_get_completed_indices | tr '\n' ' ')
     local MISSING=""
     for ((idx=0; idx<TARGET; idx++)); do
-        if ! echo " $PRESENT " | grep -qE " $idx "; then
-            MISSING="$MISSING $idx"
+        if echo " $PRESENT " | grep -qE " $idx "; then
+            continue  # déjà vivant
         fi
+        if echo " $COMPLETED " | grep -qE " $idx "; then
+            continue  # marqué completed R4 → skip respawn
+        fi
+        MISSING="$MISSING $idx"
     done
     echo "$MISSING" | xargs  # trim
 }
@@ -121,6 +182,16 @@ while true; do
     # Compter workers β2-ΣΤ vivants
     n=$(ps -ef 2>/dev/null | grep zerocost_worker_seed_r5 | grep -v grep | wc -l)
 
+    # ══════════════════════════════════════════════════════════════════════
+    # P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
+    # SCAN PRÉALABLE des workers en état "WORKER COMPLET" · création flags
+    # idempotente AVANT le calcul de MISSING_INDICES (pour pré-exclusion).
+    # Verrou Phase III · additif strict · zéro mutation engine.
+    # ══════════════════════════════════════════════════════════════════════
+    _r4_newly_marked=$(r4_detect_and_mark_completed_workers "$TARGET_WORKERS")
+    _r4_completed_list=$(r4_get_completed_indices | tr '\n' ',' | sed 's/,$//')
+    _r4_completed_count=$(r4_get_completed_indices | wc -l)
+
     # Configuration env stagger/pacing (TIER-aware, identique à full respawn)
     if [[ "$_TIER_DETECTED" == ELITE* ]]; then
         _SPAWN_STAGGER_MS="${SPAWN_STAGGER_MS:-2000}"
@@ -136,10 +207,20 @@ while true; do
     #   2) n entre MIN_PARTIAL_THRESHOLD et TARGET ET cooldown OK ET MISSING détectés
     #      → ★ PARTIAL RESPAWN ciblé des indices manquants (additif Phase III)
     #   3) n < MIN_WORKERS OU cooldown actif → FULL RESPAWN legacy (preserved)
+    # P22ΩΩ_R4_SENTINELS_Ω : l'objectif effectif exclut les workers complets
+    # (target effectif = total - completed). Si n == effective_target, état stable.
+    _effective_target=$((TARGET_WORKERS - _r4_completed_count))
+    if [[ $_effective_target -lt 0 ]]; then _effective_target=0; fi
+
     if [[ $n -eq $TARGET_WORKERS ]]; then
         # ── Branche 1 · État stable · heartbeat ─────────────────────────────
         if (( $(date +%s) % 300 < CHECK_INTERVAL_S )); then
             echo "$LOG_PREFIX $(date -u +%H:%M:%SZ) · workers=$n/$TARGET_WORKERS OK · load=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | tr -d ',')"
+        fi
+    elif [[ $n -eq $_effective_target ]] && [[ $_r4_completed_count -gt 0 ]]; then
+        # ── Branche 1b · État stable R4 · workers complets respectés ───────
+        if (( $(date +%s) % 300 < CHECK_INTERVAL_S )); then
+            echo "$LOG_PREFIX [WATCHDOG-R4] $(date -u +%H:%M:%SZ) · workers=$n/$TARGET_WORKERS · completed=[$_r4_completed_list] (effective_target=$_effective_target) · STABLE"
         fi
     elif [[ $n -ge $MIN_PARTIAL_THRESHOLD ]] && partial_respawn_cooldown_ok; then
         # ── Branche 2 · PARTIAL RESPAWN ciblé ──────────────────────────────
@@ -162,9 +243,11 @@ while true; do
             date +%s > "$LAST_PARTIAL_RESPAWN_FILE"
             echo "$LOG_PREFIX Partial respawn complet · cooldown ${PARTIAL_RESPAWN_COOLDOWN_S}s actif"
         fi
-    elif [[ $n -lt $MIN_WORKERS ]]; then
+    elif [[ $((n + _r4_completed_count)) -lt $MIN_WORKERS ]]; then
         # ── Branche 3 · FULL RESPAWN legacy (Verrou Phase III preserved) ───
-        echo "$LOG_PREFIX $(date -u +%Y-%m-%dT%H:%M:%SZ) · workers vivants=$n < MIN=$MIN_WORKERS · RELANCE FULL"
+        # P22ΩΩ_R4_SENTINELS_Ω : seuil ajusté = n + completed_R4 < MIN_WORKERS
+        # (évite de tuer 3 workers actifs alors que 5 sont en WORKER COMPLET valide).
+        echo "$LOG_PREFIX $(date -u +%Y-%m-%dT%H:%M:%SZ) · workers vivants=$n + completed=$_r4_completed_count < MIN=$MIN_WORKERS · RELANCE FULL"
         # Nettoyage state file
         bash /app/backend/tools/zerocost_seed_r5_daemon.sh stop 2>&1 | tail -2 || true
         sleep 2

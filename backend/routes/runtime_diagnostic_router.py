@@ -54,7 +54,15 @@ _ENV_WHITELIST = {
     "ENV", "ENVIRONMENT", "TIER", "ELITE_TIER",
     "COPERNICUS_USERNAME",  # username pas sensible (déjà loggué dans cdse-auth-probe)
     "PYTHONPATH", "HOSTNAME", "USER",
+    # P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10
+    "R4_LOG_DIR", "R4_COMPLETION_PATTERN", "R4_SCAN_TAIL_LINES",
 }
+
+# P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
+# Dossier canonique des markers completed_worker_N.flag · doit matcher la
+# valeur R4_LOG_DIR du watchdog (zerocost_seed_r5_supervisor_watchdog.sh).
+_R4_LOG_DIR = os.environ.get("R4_LOG_DIR", "/var/log/bionic-zerocost-seed-r5")
+_R4_COMPLETION_PATTERN = os.environ.get("R4_COMPLETION_PATTERN", "WORKER COMPLET")
 
 # Patterns d'env vars sensibles · jamais exposés même en debug
 _SENSITIVE_PATTERNS = re.compile(
@@ -178,6 +186,179 @@ def _file_meta(path: str) -> dict[str, Any]:
         return {"exists": False, "error": str(e)}
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
+# BCE-4X ULTIME ABSOLU · Verrou Phase III · STRICT ADDITIF · KIMBERLITE-READY
+# Read-only · collecte les markers completed_worker_N.flag et expose la
+# vision unifiée { active_workers, completed_workers, flags } + skip_map.
+# ═══════════════════════════════════════════════════════════════════════════
+import json as _json
+import re as _re
+
+_FLAG_NAME_RE = _re.compile(r"completed_worker_(\d+)\.flag$")
+
+
+def _list_completed_flag_files() -> list[Path]:
+    """Liste les fichiers completed_worker_N.flag dans R4_LOG_DIR."""
+    p = Path(_R4_LOG_DIR)
+    if not p.is_dir():
+        return []
+    out = []
+    try:
+        for f in p.iterdir():
+            if f.is_file() and _FLAG_NAME_RE.search(f.name):
+                out.append(f)
+    except Exception:
+        return []
+    return sorted(out, key=lambda x: x.name)
+
+
+def _read_flag_json(path: Path) -> dict[str, Any]:
+    """Lit le contenu JSON d'un flag (best-effort · tolère mal-formé)."""
+    try:
+        raw = path.read_text(encoding="utf-8", errors="ignore").strip()
+        try:
+            return _json.loads(raw)
+        except Exception:
+            return {"_raw": raw[:500]}
+    except Exception as e:
+        return {"_error": str(e)}
+
+
+def _collect_r4_sentinels(workers: list[dict[str, Any]]) -> dict[str, Any]:
+    """Construit la structure sentinels R4 unifiée.
+    
+    Returns:
+        {
+            "doctrine": "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω",
+            "log_dir": "/var/log/...",
+            "completion_pattern": "WORKER COMPLET",
+            "active_workers": [0, 1, 2],      # indices PID-vivants
+            "completed_workers": [3, 4, 5, 6, 7], # indices flag présent
+            "flags": [
+                {"worker_index": 3, "flag_path": "...", "size_bytes": N,
+                 "mtime_utc": "...", "content": {...}}, ...
+            ],
+            "completed_count": 5,
+            "active_count": 3,
+        }
+    """
+    active_indices = sorted({
+        w.get("worker_index") for w in workers
+        if w.get("worker_index") is not None
+    })
+    flag_files = _list_completed_flag_files()
+    flags_payload: list[dict[str, Any]] = []
+    completed_indices: list[int] = []
+    for f in flag_files:
+        m = _FLAG_NAME_RE.search(f.name)
+        if not m:
+            continue
+        try:
+            idx = int(m.group(1))
+        except ValueError:
+            continue
+        try:
+            st = f.stat()
+            meta = {
+                "worker_index": idx,
+                "flag_path": str(f),
+                "size_bytes": st.st_size,
+                "mtime_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(st.st_mtime)),
+                "mode_octal": oct(st.st_mode)[-3:],
+                "content": _read_flag_json(f),
+            }
+        except Exception as e:
+            meta = {"worker_index": idx, "flag_path": str(f), "_error": str(e)}
+        flags_payload.append(meta)
+        completed_indices.append(idx)
+    completed_indices = sorted(set(completed_indices))
+    return {
+        "doctrine": "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · BCE-4X · Verrou Phase III · ADDITIF strict",
+        "log_dir": _R4_LOG_DIR,
+        "completion_pattern": _R4_COMPLETION_PATTERN,
+        "active_workers": active_indices,
+        "active_count": len(active_indices),
+        "completed_workers": completed_indices,
+        "completed_count": len(completed_indices),
+        "flags": flags_payload,
+    }
+
+
+def _compute_watchdog_skip_map(
+    target_workers: int,
+    active_indices: list[int],
+    completed_indices: list[int],
+) -> dict[str, Any]:
+    """Calcule la skip_map du watchdog : par index, status + reason.
+    
+    Status enum :
+      - "active"          → worker vivant (PID présent)
+      - "completed"       → WORKER COMPLET (flag présent · skip respawn)
+      - "missing"         → ni vivant ni completed (sera respawné branche 2)
+      - "out_of_range"    → idx >= target_workers (ne s'applique pas ici)
+    """
+    by_index: dict[str, dict[str, Any]] = {}
+    skip_indices: list[int] = []
+    respawn_targets: list[int] = []
+    # Union des indices à couvrir : range(target) ∪ completed_indices (peut excéder target)
+    all_indices = sorted(set(list(range(target_workers)) + list(completed_indices) + list(active_indices)))
+    for idx in all_indices:
+        in_target = (idx < target_workers)
+        if idx in active_indices:
+            by_index[str(idx)] = {
+                "status": "active",
+                "reason": "PID alive",
+                "skip_respawn": False,
+                "in_target_range": in_target,
+            }
+        elif idx in completed_indices:
+            by_index[str(idx)] = {
+                "status": "completed",
+                "reason": f"flag completed_worker_{idx}.flag present · pattern '{_R4_COMPLETION_PATTERN}' detected",
+                "skip_respawn": True,
+                "in_target_range": in_target,
+            }
+            skip_indices.append(idx)
+        else:
+            by_index[str(idx)] = {
+                "status": "missing",
+                "reason": "PID absent and no completion flag",
+                "skip_respawn": False,
+                "in_target_range": in_target,
+            }
+            if in_target:
+                respawn_targets.append(idx)
+    effective_target = target_workers - len(completed_indices)
+    return {
+        "doctrine": "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · skip_map",
+        "target_workers": target_workers,
+        "effective_target": max(effective_target, 0),
+        "skip_indices": skip_indices,
+        "skip_count": len(skip_indices),
+        "respawn_target_indices": respawn_targets,
+        "respawn_target_count": len(respawn_targets),
+        "by_index": by_index,
+    }
+
+
+def _read_target_workers_from_cgroup() -> int:
+    """Détecte TARGET_WORKERS effectif (env ELITE/PREVIEW basé sur cgroup),
+    aligné sur la logique du watchdog bash. Best-effort."""
+    target_preview = int(os.environ.get("TARGET_WORKERS_PREVIEW", "3"))
+    target_elite = int(os.environ.get("TARGET_WORKERS_ELITE", "8"))
+    try:
+        with open("/sys/fs/cgroup/cpu.max") as f:
+            raw = f.read().strip().split()
+        if raw and raw[0] == "max":
+            return target_elite
+        if raw and raw[0].isdigit() and int(raw[0]) >= 400000:
+            return target_elite
+    except Exception:
+        pass
+    return target_preview
+
+
 @router.get("/diagnostic-elite")
 def diagnostic_elite(
     include_env: bool = True,
@@ -206,6 +387,24 @@ def diagnostic_elite(
         out["workers"] = _ps_workers()
         out["workers_count"] = len(out["workers"])
 
+    # ═══════════════════════════════════════════════════════════════════
+    # P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · 2026-06-10 · STEEVE-MAX
+    # Sentinels R4 + watchdog.skip_map (ADDITIF · zéro mutation legacy)
+    # ═══════════════════════════════════════════════════════════════════
+    _workers_list = out.get("workers", [])
+    sentinels = _collect_r4_sentinels(_workers_list)
+    out["sentinels"] = sentinels
+    _target_workers = _read_target_workers_from_cgroup()
+    out["watchdog"] = {
+        "doctrine": "P22ΩΩ_R4_SENTINELS_WORKER_COMPLET_Ω · watchdog snapshot",
+        "target_workers_detected": _target_workers,
+        "skip_map": _compute_watchdog_skip_map(
+            target_workers=_target_workers,
+            active_indices=sentinels["active_workers"],
+            completed_indices=sentinels["completed_workers"],
+        ),
+    }
+
     # Bash watchdog scripts mtimes (preuve Deploy propagation)
     out["bash_scripts"] = {
         "watchdog": _file_meta("/app/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh"),
@@ -214,7 +413,7 @@ def diagnostic_elite(
         "last_partial_respawn_marker": _file_meta("/tmp/zerocost_last_partial_respawn.ts"),
     }
 
-    # Test si les helpers R3 sont présents dans le watchdog déployé
+    # Test si les helpers R3 + R4 sont présents dans le watchdog déployé
     try:
         with open("/app/backend/tools/zerocost_seed_r5_supervisor_watchdog.sh") as f:
             content = f.read()
@@ -224,8 +423,17 @@ def diagnostic_elite(
             "has_partial_respawn_branch": "PARTIAL RESPAWN" in content,
             "has_cooldown_check": "partial_respawn_cooldown_ok" in content,
         }
+        # P22ΩΩ_R4_SENTINELS_Ω : preuve propagation Deploy du patch R4
+        out["watchdog_r4_features"] = {
+            "has_r4_detect_and_mark_completed_workers": "r4_detect_and_mark_completed_workers" in content,
+            "has_r4_get_completed_indices": "r4_get_completed_indices" in content,
+            "has_skip_completed_in_missing": "COMPLETED=$(r4_get_completed_indices" in content,
+            "has_r4_log_prefix": "[WATCHDOG-R4]" in content,
+            "has_effective_target_branch": "_effective_target" in content,
+        }
     except Exception:
         out["watchdog_r3_features"] = {"error": "read_fail"}
+        out["watchdog_r4_features"] = {"error": "read_fail"}
 
     if include_supervisor_logs:
         # Supervisor logs · whitelist programs probables
