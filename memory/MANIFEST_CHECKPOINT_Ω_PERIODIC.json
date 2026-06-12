@@ -1,15 +1,15 @@
 {
   "_doctrine": "P22ΩΩ_AUTOPILOT_4D_SAFE_PLUS_Ω",
-  "_emitted_at": "2026-06-11T01:11:19.773047+00:00",
+  "_emitted_at": "2026-06-12T13:07:36.407831+00:00",
   "manifest": {
     "doctrine": "P22ΩΩ_ZEROCOST_CANADA_H3R6_Ω",
-    "generated_at": "2026-06-11T00:53:20.779950+00:00",
-    "drift_seconds": 1078.993072,
-    "drift_ok": false,
-    "drift_alert": true,
+    "generated_at": "2026-06-12T13:03:49.934866+00:00",
+    "drift_seconds": 226.472941,
+    "drift_ok": true,
+    "drift_alert": false,
     "n_tiles": 207627,
     "cells_unique": 2920,
-    "total_size_mb": 3632.83,
+    "total_size_mb": 3630.35,
     "by_species": {
       "chevreuil": 2920,
       "coyote": 2880,

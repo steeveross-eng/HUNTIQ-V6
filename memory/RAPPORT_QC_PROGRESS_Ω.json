@@ -1,9 +1,9 @@
 {
   "_doctrine": "P22ΩΩ_AUTOPILOT_4D_SAFE_Ω",
   "_report": "RAPPORT_QC_PROGRESS_Ω",
-  "_generated_at": "2026-06-11T01:08:57.430034+00:00",
+  "_generated_at": "2026-06-12T13:05:58.848497+00:00",
   "_phase": "PHASE_2_QC_LIMITROPHES",
-  "scan_sec": 104.16579079627991,
+  "scan_sec": 96.61490273475647,
   "total_keys_scanned": 207628,
   "targets_r6": {
     "LIMITROPHES_priority_1": 2292,
