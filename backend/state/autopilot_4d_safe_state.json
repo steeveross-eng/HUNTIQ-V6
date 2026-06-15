@@ -16,13 +16,13 @@
     "RAPPORT_3RF_T+100%_Ω_FINAL": "2026-05-24T11:35:33.075166+00:00",
     "MANIFEST_CHECKPOINT_Ω": "2026-05-24T11:35:33.075166+00:00",
     "AUDIT_DIVERGENCE_BIO_Ω": "2026-05-24T11:35:33.075166+00:00",
-    "RAPPORT_QC_PROGRESS_Ω_last": "2026-06-12T13:07:35.611312+00:00",
-    "HABITAT_FUSION_STRUCTURAL_REPORT_Ω_last": "2026-06-12T13:07:35.812717+00:00",
-    "MANIFEST_CHECKPOINT_Ω_periodic_last": "2026-06-12T13:07:36.408174+00:00",
+    "RAPPORT_QC_PROGRESS_Ω_last": "2026-06-14T19:53:45.497202+00:00",
+    "HABITAT_FUSION_STRUCTURAL_REPORT_Ω_last": "2026-06-14T19:53:45.665899+00:00",
+    "MANIFEST_CHECKPOINT_Ω_periodic_last": "2026-06-14T19:53:46.141037+00:00",
     "RAPPORT_AUTOPILOT_MIDPOINT_Ω": "2026-05-28T18:59:24.704340+00:00"
   },
-  "check_count": 143,
-  "last_check_at": "2026-06-12T14:44:08.585239+00:00",
+  "check_count": 145,
+  "last_check_at": "2026-06-14T20:23:46.295793+00:00",
   "last_error": "stability_check: 'stability_actions'",
   "phase_2_grid_full": "/app/backend/cache/zerocost_v1/canada_h3_grid_r5_seed_qc_full.json",
   "phase_2_grid_limitrophes": "/app/backend/cache/zerocost_v1/canada_h3_grid_r5_seed_qc_limitrophes.json",
@@ -31,20 +31,6 @@
   "block_outside_qc": true,
   "workers_supervisor_action_required": true,
   "stability_actions": [
-    {
-      "kind": "WORKERS_ALIVE_COUNT",
-      "at": "2026-06-07T15:42:54.802750+00:00",
-      "count": 3,
-      "target": 8,
-      "min_required": 4
-    },
-    {
-      "kind": "WORKERS_ALIVE_COUNT",
-      "at": "2026-06-07T16:14:31.456395+00:00",
-      "count": 3,
-      "target": 8,
-      "min_required": 4
-    },
     {
       "kind": "WORKERS_ALIVE_COUNT",
       "at": "2026-06-07T20:07:47.025328+00:00",
@@ -427,6 +413,20 @@
     {
       "kind": "WORKERS_ALIVE_COUNT",
       "at": "2026-06-12T14:46:03.792229+00:00",
+      "count": 3,
+      "target": 8,
+      "min_required": 4
+    },
+    {
+      "kind": "WORKERS_ALIVE_COUNT",
+      "at": "2026-06-14T19:53:46.150187+00:00",
+      "count": 3,
+      "target": 8,
+      "min_required": 4
+    },
+    {
+      "kind": "WORKERS_ALIVE_COUNT",
+      "at": "2026-06-14T20:26:39.669367+00:00",
       "count": 3,
       "target": 8,
       "min_required": 4

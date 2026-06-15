@@ -1,14 +1,14 @@
 # HABITAT_FUSION_STRUCTURAL_REPORT_Ω
 
 - **Doctrine**: P22ΩΩ_AUTOPILOT_4D_SAFE_Ω · Phase 3 permanent
-- **Emitted at**: 2026-06-12T13:07:35.812209+00:00
+- **Emitted at**: 2026-06-14T19:53:45.665469+00:00
 - **Cadence**: toutes les 24h
 
 ---
 
 ```
 ══════════════════════════════════════════════════════════════════════════════
-  HABITAT_FUSION_STRUCTURAL_REPORT_Ω · 2026-06-12T13:07:35.765095+00:00
+  HABITAT_FUSION_STRUCTURAL_REPORT_Ω · 2026-06-14T19:53:45.649702+00:00
 ══════════════════════════════════════════════════════════════════════════════
 
 § A · ENGINE P0

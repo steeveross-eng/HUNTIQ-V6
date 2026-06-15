@@ -4,9 +4,9 @@
   "armed_at": "2026-05-24T01:07:37.347471+00:00",
   "emitted": true,
   "emitted_at": "2026-05-24T01:48:21.670607+00:00",
-  "last_check_at": "2026-06-14T19:46:44.765675+00:00",
+  "last_check_at": "2026-06-15T01:04:45.082461+00:00",
   "last_global_pct": 95.04,
-  "check_count": 165,
+  "check_count": 167,
   "emitted_global_pct": 95.04,
   "output_md": "/app/memory/RAPPORT_3RF_T+95%_Ω_EMITTED.md",
   "output_json": "/app/memory/RAPPORT_3RF_T+95%_Ω_EMITTED.json"
