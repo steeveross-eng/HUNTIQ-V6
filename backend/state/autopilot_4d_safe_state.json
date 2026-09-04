@@ -21,8 +21,8 @@
     "MANIFEST_CHECKPOINT_Ω_periodic_last": "2026-06-18T21:28:53.319661+00:00",
     "RAPPORT_AUTOPILOT_MIDPOINT_Ω": "2026-05-28T18:59:24.704340+00:00"
   },
-  "check_count": 159,
-  "last_check_at": "2026-09-04T21:34:53.630327+00:00",
+  "check_count": 161,
+  "last_check_at": "2026-09-04T22:34:55.122271+00:00",
   "last_error": "get_3rf_pct: rapport_3rf_t95_omega.py exit=1 · stderr=/context.py\", line 123, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/.venv/lib/python3.11/site-packages/botocore/",
   "phase_2_grid_full": "/app/backend/cache/zerocost_v1/canada_h3_grid_r5_seed_qc_full.json",
   "phase_2_grid_limitrophes": "/app/backend/cache/zerocost_v1/canada_h3_grid_r5_seed_qc_limitrophes.json",
